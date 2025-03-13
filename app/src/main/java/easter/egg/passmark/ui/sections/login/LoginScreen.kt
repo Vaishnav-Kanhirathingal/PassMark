@@ -18,8 +18,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.R
+import easter.egg.passmark.data.shared.PassMarkFonts
+import easter.egg.passmark.data.shared.RobotoFont
 import easter.egg.passmark.utils.MobilePreview
 
 object LoginScreen {
@@ -28,7 +32,7 @@ object LoginScreen {
         modifier: Modifier
     ) {
         Column(
-            modifier = modifier,
+            modifier = modifier.padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             content = {
@@ -44,7 +48,14 @@ object LoginScreen {
                     contentScale = ContentScale.FillWidth,
                     colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onPrimaryContainer)
                 )
-                Text(text = "login screen")
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "PassMark",
+                    textAlign = TextAlign.Center,
+                    fontFamily = RobotoFont,
+                    fontSize = PassMarkFonts.Title.large,
+                    fontWeight = FontWeight.Bold
+                )
             }
         )
     }
