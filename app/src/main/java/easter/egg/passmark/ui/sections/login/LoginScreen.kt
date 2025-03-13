@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,14 +40,18 @@ object LoginScreen {
     fun Screen(
         modifier: Modifier
     ) {
+        val verticalColumnPadding = 40.dp
         Column(
-            modifier = modifier.padding(horizontal = 16.dp),
+            modifier = modifier
+                .padding(horizontal = 16.dp)
+                .verticalScroll(state = rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
                 space = 8.dp,
                 alignment = Alignment.CenterVertically
             ),
             content = {
+                Spacer(modifier = Modifier.height(height = verticalColumnPadding))
                 Image(
                     modifier = Modifier
                         .widthIn(max = 400.dp)
@@ -92,6 +99,7 @@ object LoginScreen {
                         Text(text = "Google")
                     }
                 )
+                Spacer(modifier = Modifier.height(height = verticalColumnPadding))
             }
         )
     }
