@@ -37,6 +37,15 @@ object PassMarkFonts {
         override val medium: TextUnit = 12.sp
         override val large: TextUnit = 14.sp
     }
+
+    val font = FontFamily(
+        Font(resId = R.font.roboto_thin, weight = FontWeight.Thin),
+        Font(resId = R.font.roboto_regular, weight = FontWeight.Normal),
+        Font(resId = R.font.roboto_medium, weight = FontWeight.Medium),
+        Font(resId = R.font.roboto_semi_bold, weight = FontWeight.SemiBold),
+        Font(resId = R.font.roboto_bold, weight = FontWeight.Bold),
+        Font(resId = R.font.roboto_extra_bold, weight = FontWeight.ExtraBold),
+    )
 }
 
 private interface SubStyleFonts {
@@ -44,12 +53,3 @@ private interface SubStyleFonts {
     val medium: TextUnit
     val large: TextUnit
 }
-
-val RobotoFont = FontFamily(
-    Font(resId = R.font.roboto_thin, weight = FontWeight.Thin),
-    Font(resId = R.font.roboto_regular, weight = FontWeight.Normal),
-    Font(resId = R.font.roboto_medium, weight = FontWeight.Medium),
-    Font(resId = R.font.roboto_semi_bold, weight = FontWeight.SemiBold),
-    Font(resId = R.font.roboto_bold, weight = FontWeight.Bold),
-    Font(resId = R.font.roboto_extra_bold, weight = FontWeight.ExtraBold),
-)

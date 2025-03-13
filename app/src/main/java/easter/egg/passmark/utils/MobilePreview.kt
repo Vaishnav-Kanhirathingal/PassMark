@@ -7,4 +7,4 @@ import androidx.compose.ui.tooling.preview.Preview
     heightDp = 780,
     showBackground = true
 )
-annotation class MobilePreview(val name: String = "")
+annotation class MobilePreview
