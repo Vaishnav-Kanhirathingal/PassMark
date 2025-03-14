@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.sections.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,11 +32,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import easter.egg.passmark.BuildConfig
 import easter.egg.passmark.R
 import easter.egg.passmark.data.shared.PassMarkDimensions
 import easter.egg.passmark.data.shared.PassMarkFonts
 import easter.egg.passmark.utils.MobileHorizontalPreview
 import easter.egg.passmark.utils.MobilePreview
+import kotlinx.coroutines.launch
 
 object LoginScreen {
     private val TAG = this::class.simpleName
@@ -104,6 +111,28 @@ object LoginScreen {
                 minHeight = PassMarkDimensions.minTouchSize
             ),
             onClick = {
+                val googleIdOption = GetGoogleIdOption.Builder()
+                    .setServerClientId(BuildConfig.FIREBASE_WEB_CLIENT_ID)
+                    .setFilterByAuthorizedAccounts(filterByAuthorizedAccounts = false)
+                    .build()
+                val request = GetCredentialRequest.Builder()
+                    .addCredentialOption(googleIdOption)
+                    .build()
+                coroutineScope.launch {
+                    try {
+                        val result = CredentialManager.create(context).getCredential(
+                            request = request,
+                            context = context,
+                        )
+                        TODO()
+                    } catch (e: GetCredentialCancellationException) {
+                        Log.d(TAG,"cancelled sign in")
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        TODO()
+                    }
+                }
+
             },
             content = {
                 Image(
