@@ -36,6 +36,7 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.gson.GsonBuilder
 import easter.egg.passmark.BuildConfig
 import easter.egg.passmark.R
 import easter.egg.passmark.data.shared.PassMarkDimensions
@@ -49,7 +50,8 @@ object LoginScreen {
 
     @Composable
     fun Screen(
-        modifier: Modifier
+        modifier: Modifier,
+        toHomeScreen: () -> Unit
     ) {
         val verticalColumnPadding = 40.dp
         Column(
@@ -93,7 +95,7 @@ object LoginScreen {
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center
                 )
-                GoogleSignInButton()
+                GoogleSignInButton(toHomeScreen = toHomeScreen)
                 Spacer(modifier = Modifier.height(height = verticalColumnPadding))
             }
         )
@@ -101,7 +103,8 @@ object LoginScreen {
 
     @Composable
     private fun GoogleSignInButton(
-        modifier: Modifier = Modifier
+        modifier: Modifier = Modifier,
+        toHomeScreen: () -> Unit
     ) {
         val coroutineScope = rememberCoroutineScope()
         val context = LocalContext.current
@@ -124,9 +127,16 @@ object LoginScreen {
                             request = request,
                             context = context,
                         )
+                        Log.d(
+                            TAG, "credential = ${
+                                GsonBuilder().setPrettyPrinting().create()
+                                    .toJson(result.credential.data)
+                            }"
+                        )
                         TODO()
+//                        toHomeScreen()
                     } catch (e: GetCredentialCancellationException) {
-                        Log.d(TAG,"cancelled sign in")
+                        Log.d(TAG, "cancelled sign in")
                     } catch (e: Exception) {
                         e.printStackTrace()
                         TODO()
@@ -152,5 +162,8 @@ object LoginScreen {
 @MobilePreview
 @MobileHorizontalPreview
 private fun LoginScreenPrev() {
-    LoginScreen.Screen(modifier = Modifier.fillMaxSize())
+    LoginScreen.Screen(
+        modifier = Modifier.fillMaxSize(),
+        toHomeScreen = {}
+    )
 }
