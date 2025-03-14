@@ -1,7 +1,10 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -16,6 +19,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    defaultConfig {
+        buildConfigField(
+            type = "String",//::class.simpleName!!,
+            name = "FIREBASE_WEB_CLIENT_ID",
+            value = Properties()
+                .apply { load(rootProject.file("local.properties").inputStream()) }
+                .getProperty("FIREBASE_WEB_CLIENT_ID")
+        )
     }
 
     buildTypes {
@@ -36,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -55,6 +69,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    //-----------------------------------------------------------------------------------credentials
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    //-------------------------------------------------------------------------------------google-id
+    implementation(libs.googleid)
+    //--------------------------------------------------------------------------------------firebase
+    implementation(libs.firebase.auth)
     //----------------------------------------------------------------------------compose-navigation
     val nav_version = "2.8.9"
     implementation("androidx.navigation:navigation-compose:$nav_version")
