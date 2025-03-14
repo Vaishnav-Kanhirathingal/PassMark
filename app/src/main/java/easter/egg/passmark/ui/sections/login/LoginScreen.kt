@@ -20,11 +20,13 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +38,8 @@ import easter.egg.passmark.utils.MobileHorizontalPreview
 import easter.egg.passmark.utils.MobilePreview
 
 object LoginScreen {
+    private val TAG = this::class.simpleName
+
     @Composable
     fun Screen(
         modifier: Modifier
@@ -82,24 +86,34 @@ object LoginScreen {
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center
                 )
-                ElevatedButton(
-                    modifier = Modifier.sizeIn(
-                        minWidth = PassMarkDimensions.minTouchSize,
-                        minHeight = PassMarkDimensions.minTouchSize
-                    ),
-                    onClick = { TODO() },
-                    content = {
-                        Image(
-                            modifier = Modifier.size(24.dp),
-                            painter = painterResource(id = R.drawable.google_48),
-                            contentScale = ContentScale.Fit,
-                            contentDescription = null
-                        )
-                        Spacer(modifier = Modifier.width(width = 8.dp))
-                        Text(text = "Google")
-                    }
-                )
+                GoogleSignInButton()
                 Spacer(modifier = Modifier.height(height = verticalColumnPadding))
+            }
+        )
+    }
+
+    @Composable
+    private fun GoogleSignInButton(
+        modifier: Modifier = Modifier
+    ) {
+        val coroutineScope = rememberCoroutineScope()
+        val context = LocalContext.current
+        ElevatedButton(
+            modifier = modifier.sizeIn(
+                minWidth = PassMarkDimensions.minTouchSize,
+                minHeight = PassMarkDimensions.minTouchSize
+            ),
+            onClick = {
+            },
+            content = {
+                Image(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(id = R.drawable.google_48),
+                    contentScale = ContentScale.Fit,
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(width = 8.dp))
+                Text(text = "Google")
             }
         )
     }
