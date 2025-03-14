@@ -77,6 +77,7 @@ dependencies {
     //--------------------------------------------------------------------------------------firebase
     implementation(libs.firebase.auth)
     //----------------------------------------------------------------------------compose-navigation
-    val nav_version = "2.8.9"
-    implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation(libs.androidx.navigation.compose)
+    //------------------------------------------------------------------------------------------gson
+    implementation(libs.gson)
 }
