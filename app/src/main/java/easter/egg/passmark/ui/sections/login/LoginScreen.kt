@@ -72,7 +72,8 @@ object LoginScreen {
                     viewModel = viewModel
                 )
 
-                if (state is ScreenState.ApiError) {
+                if ((state is ScreenState.ApiError) && !state.errorHasBeenDisplayed) {
+                    state.setErrorHasBeenDisplayed()
                     Toast.makeText(
                         LocalContext.current,
                         when (state) {
@@ -174,7 +175,13 @@ object LoginScreen {
                         Log.d(TAG, "cancelled sign in")
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        TODO("Toast")
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                context,
+                                "Something Went Wrong",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                 }
             },
