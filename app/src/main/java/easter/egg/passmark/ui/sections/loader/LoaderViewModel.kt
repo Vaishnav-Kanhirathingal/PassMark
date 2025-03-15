@@ -17,7 +17,7 @@ class LoaderViewModel : ViewModel() {
     init {
         Firebase.auth.addAuthStateListener {
             Log.d(TAG, "current user = ${if (it.currentUser == null) "null" else "active"}")
-//            this._hasUser.value = (it.currentUser != null)
+            this._hasUser.value = (it.currentUser != null)
         }
     }
 }

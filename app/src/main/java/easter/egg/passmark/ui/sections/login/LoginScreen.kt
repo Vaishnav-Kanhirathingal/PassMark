@@ -36,6 +36,10 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.google.gson.GsonBuilder
 import easter.egg.passmark.BuildConfig
 import easter.egg.passmark.R
@@ -133,8 +137,18 @@ object LoginScreen {
                                     .toJson(result.credential.data)
                             }"
                         )
-                        TODO()
-//                        toHomeScreen()
+
+                        val googleIdTokenCredential =
+                            GoogleIdTokenCredential.createFrom(data = result.credential.data)
+                        val credential =
+                            GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
+                        Firebase.auth.signInWithCredential(credential)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    toHomeScreen()
+                                } else {
+                                }
+                            }
                     } catch (e: GetCredentialCancellationException) {
                         Log.d(TAG, "cancelled sign in")
                     } catch (e: Exception) {
@@ -142,7 +156,6 @@ object LoginScreen {
                         TODO()
                     }
                 }
-
             },
             content = {
                 Image(
