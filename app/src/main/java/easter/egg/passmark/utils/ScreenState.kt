@@ -13,6 +13,13 @@ sealed class ScreenState<T> {
     class Loaded<T>(val result: T) : ScreenState<T>()
 
     sealed class ApiError<T> : ScreenState<T>() {
+        var errorHasBeenDisplayed: Boolean = false
+            private set
+
+        fun setErrorHasBeenDisplayed() {
+            this.errorHasBeenDisplayed = true
+        }
+
         class NetworkError<T> : ApiError<T>()
         class SomethingWentWrong<T> : ApiError<T>()
     }
