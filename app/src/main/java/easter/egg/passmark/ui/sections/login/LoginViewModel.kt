@@ -8,12 +8,13 @@ import androidx.credentials.GetCredentialResponse
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import easter.egg.passmark.utils.ScreenState
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.asDeferred
+import kotlinx.coroutines.tasks.await
 
 class LoginViewModel : ViewModel() {
     private val TAG = this::class.simpleName
@@ -25,25 +26,21 @@ class LoginViewModel : ViewModel() {
     fun login(credentialResponse: GetCredentialResponse) {
         this@LoginViewModel._screenState.value = ScreenState.Loading()
         viewModelScope.launch {
-            try {
+            val newState: ScreenState<Unit> = try {
+                Log.d(TAG, "delay started")
                 val googleIdTokenCredential =
                     GoogleIdTokenCredential.createFrom(data = credentialResponse.credential.data)
                 val credential =
                     GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
-                Firebase.auth.signInWithCredential(credential)
-                    .addOnSuccessListener { result ->
-                        Log.d(TAG, "email = ${result.user?.email}")
-                        this@LoginViewModel._screenState.value = ScreenState.Loaded(result = Unit)
-                    }
-                    .addOnFailureListener { exception ->
-                        exception.printStackTrace()
-                        this@LoginViewModel._screenState.value =
-                            ScreenState.ApiError.SomethingWentWrong()
-                    }
+                Firebase.auth.signInWithCredential(credential).await()
+                ScreenState.Loaded(result = Unit)
+            } catch (e: FirebaseNetworkException) {
+                ScreenState.ApiError.NetworkError()
             } catch (e: Exception) {
                 e.printStackTrace()
-                this@LoginViewModel._screenState.value = ScreenState.ApiError.SomethingWentWrong()
+                ScreenState.ApiError.SomethingWentWrong()
             }
+            this@LoginViewModel._screenState.value = newState
         }
     }
 }
