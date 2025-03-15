@@ -147,6 +147,7 @@ object LoginScreen {
                                 if (task.isSuccessful) {
                                     toHomeScreen()
                                 } else {
+                                    TODO("Toast Login Failed")
                                 }
                             }
                     } catch (e: GetCredentialCancellationException) {
