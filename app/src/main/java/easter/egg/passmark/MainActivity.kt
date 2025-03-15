@@ -18,6 +18,7 @@ import easter.egg.passmark.ui.sections.home.HomeScreen
 import easter.egg.passmark.ui.sections.loader.LoaderScreen
 import easter.egg.passmark.ui.sections.loader.LoaderViewModel
 import easter.egg.passmark.ui.sections.login.LoginScreen
+import easter.egg.passmark.ui.sections.login.LoginViewModel
 import easter.egg.passmark.ui.theme.PassMarkTheme
 
 class MainActivity : ComponentActivity() {
@@ -81,8 +82,10 @@ class MainActivity : ComponentActivity() {
                 composable(
                     route = MainDestinations.LOGIN.path,
                     content = {
+                        val viewModel by viewModels<LoginViewModel>()
                         LoginScreen.Screen(
                             modifier = composableModifier,
+                            viewModel = viewModel,
                             toHomeScreen = {
                                 navController.navigate(
                                     route = MainDestinations.HOME.path,
