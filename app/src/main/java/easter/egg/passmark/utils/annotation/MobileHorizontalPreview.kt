@@ -1,4 +1,4 @@
-package easter.egg.passmark.utils
+package easter.egg.passmark.utils.annotation
 
 import androidx.compose.ui.tooling.preview.Preview
 

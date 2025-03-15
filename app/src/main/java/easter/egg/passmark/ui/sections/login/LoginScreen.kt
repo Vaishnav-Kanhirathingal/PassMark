@@ -45,8 +45,8 @@ import easter.egg.passmark.BuildConfig
 import easter.egg.passmark.R
 import easter.egg.passmark.data.shared.PassMarkDimensions
 import easter.egg.passmark.data.shared.PassMarkFonts
-import easter.egg.passmark.utils.MobileHorizontalPreview
-import easter.egg.passmark.utils.MobilePreview
+import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
+import easter.egg.passmark.utils.annotation.MobilePreview
 import kotlinx.coroutines.launch
 
 object LoginScreen {
