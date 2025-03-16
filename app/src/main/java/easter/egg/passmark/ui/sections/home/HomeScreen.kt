@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -21,12 +23,15 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -54,34 +59,69 @@ object HomeScreen {
     fun Screen(
         modifier: Modifier
     ) {
-        val appBarModifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = PassMarkDimensions.minTouchSize)
-        val searchText: MutableState<String?> = remember { mutableStateOf(null) }
-        Scaffold(
+        val coroutineScope = rememberCoroutineScope()
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+        ModalNavigationDrawer(
             modifier = modifier,
-            topBar = {
-                HomeTopBar(
-                    modifier = appBarModifier,
-                    searchText = searchText.value,
-                    onSearch = { searchText.value = it }
-                )
-            },
+            drawerState = drawerState,
+            drawerContent = { DrawerContent() },
             content = {
-                HomeContent(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues = it)
-                )
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { TODO() },
-                    content = {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = null
+                val searchText: MutableState<String?> = remember { mutableStateOf(null) }
+                Scaffold(
+                    modifier = modifier,
+                    topBar = {
+                        HomeTopBar(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = PassMarkDimensions.minTouchSize),
+                            searchText = searchText.value,
+                            onSearch = { searchText.value = it },
+                            openNavigationDrawer = {
+                                coroutineScope.launch {
+                                    drawerState.open()
+                                }
+                            }
                         )
+                    },
+                    content = {
+                        HomeContent(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues = it)
+                        )
+                    },
+                    floatingActionButton = {
+                        FloatingActionButton(
+                            onClick = { TODO() },
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = null
+                                )
+                            }
+                        )
+                    }
+                )
+            }
+        )
+    }
+
+    @Composable
+    private fun DrawerContent() {
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(fraction = 0.7f),
+            contentAlignment = Alignment.CenterStart,
+            content = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .widthIn(max = 300.dp)
+                        .fillMaxWidth()
+                        .background(color = MaterialTheme.colorScheme.surface),
+                    content = {
+                        Text(text = "nav drawer")
                     }
                 )
             }
@@ -92,7 +132,8 @@ object HomeScreen {
     private fun HomeTopBar(
         modifier: Modifier,
         searchText: String?,
-        onSearch: (String?) -> Unit
+        onSearch: (String?) -> Unit,
+        openNavigationDrawer: () -> Unit
     ) {
         Row(
             modifier = modifier.padding(
@@ -114,7 +155,7 @@ object HomeScreen {
                             .size(size = componentHeight)
                             .clip(shape = CircleShape)
                             .background(color = MaterialTheme.colorScheme.primaryContainer)
-                            .clickable { TODO() },
+                            .clickable(onClick = openNavigationDrawer),
                         contentAlignment = Alignment.Center,
                         content = {
                             Image(
