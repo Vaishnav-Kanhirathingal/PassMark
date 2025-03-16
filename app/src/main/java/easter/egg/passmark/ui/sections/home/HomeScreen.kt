@@ -26,7 +26,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
@@ -73,11 +72,12 @@ object HomeScreen {
         modifier: Modifier
     ) {
         val coroutineScope = rememberCoroutineScope()
-        val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         ModalNavigationDrawer(
             modifier = modifier,
             drawerState = drawerState,
             drawerContent = {
+                // TODO: fix the width limitation problem
                 DrawerContent(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -191,7 +191,7 @@ object HomeScreen {
                             content = {
                                 Text(
                                     text = "*Pending*",
-                                    fontSize = PassMarkFonts.Display.large
+                                    fontSize = PassMarkFonts.Display.medium
                                 )
                             }
                         )
