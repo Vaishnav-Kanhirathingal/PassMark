@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,9 +48,12 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.R
 import easter.egg.passmark.data.shared.PassMarkDimensions
+import easter.egg.passmark.data.shared.PassMarkFonts
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import kotlinx.coroutines.delay
@@ -64,7 +69,13 @@ object HomeScreen {
         ModalNavigationDrawer(
             modifier = modifier,
             drawerState = drawerState,
-            drawerContent = { DrawerContent() },
+            drawerContent = {
+                DrawerContent(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(fraction = 0.7f)
+                )
+            },
             content = {
                 val searchText: MutableState<String?> = remember { mutableStateOf(null) }
                 Scaffold(
@@ -107,11 +118,11 @@ object HomeScreen {
     }
 
     @Composable
-    private fun DrawerContent() {
+    fun DrawerContent(
+        modifier: Modifier
+    ) {
         Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(fraction = 0.7f),
+            modifier = modifier,
             contentAlignment = Alignment.CenterStart,
             content = {
                 Column(
@@ -120,8 +131,66 @@ object HomeScreen {
                         .widthIn(max = 300.dp)
                         .fillMaxWidth()
                         .background(color = MaterialTheme.colorScheme.surface),
+                    verticalArrangement = Arrangement.spacedBy(
+                        space = 8.dp,
+                        alignment = Alignment.Top
+                    ),
                     content = {
-                        Text(text = "nav drawer")
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(
+                                space = 8.dp,
+                                alignment = Alignment.CenterHorizontally
+                            ),
+                            content = {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(size = PassMarkDimensions.minTouchSize),
+                                    painter = painterResource(id = R.drawable.ic_launcher_uncropped),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    fontSize = PassMarkFonts.Headline.medium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontFamily = PassMarkFonts.font,
+                                    text = stringResource(R.string.app_name)
+                                )
+                            }
+                        )
+                        @Composable
+                        fun DrawerTitle(text: String) {
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                                fontFamily = PassMarkFonts.font,
+                                fontSize = PassMarkFonts.Title.medium,
+                                fontWeight = FontWeight.Medium,
+                                text = text
+                            )
+                        }
+                        DrawerTitle(text = "Vaults")
+                        HorizontalDivider()
+                        Box(
+                            modifier = Modifier
+                                .height(300.dp)
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.surfaceContainer),
+                            contentAlignment = Alignment.Center,
+                            content = {
+                                Text(
+                                    text = "*Pending*",
+                                    fontSize = PassMarkFonts.Display.large
+                                )
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(height = PassMarkDimensions.minTouchSize))
+                        DrawerTitle(text = "Settings")
+                        HorizontalDivider()
                     }
                 )
             }
@@ -274,6 +343,17 @@ object HomeScreen {
 @Composable
 @MobilePreview
 @MobileHorizontalPreview
-fun HomeScreenPreview() {
+private fun HomeScreenPreview() {
     HomeScreen.Screen(modifier = Modifier.fillMaxSize())
+}
+
+@Composable
+@MobilePreview
+@MobileHorizontalPreview
+private fun HomeScreenDrawerPreview() {
+    HomeScreen.DrawerContent(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth(0.7f)
+    )
 }
