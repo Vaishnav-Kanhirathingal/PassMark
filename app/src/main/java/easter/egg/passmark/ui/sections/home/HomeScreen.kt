@@ -15,15 +15,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -46,6 +53,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -121,6 +129,7 @@ object HomeScreen {
     fun DrawerContent(
         modifier: Modifier
     ) {
+        val scrollState = rememberScrollState()
         Box(
             modifier = modifier,
             contentAlignment = Alignment.CenterStart,
@@ -130,11 +139,9 @@ object HomeScreen {
                         .fillMaxHeight()
                         .widthIn(max = 300.dp)
                         .fillMaxWidth()
-                        .background(color = MaterialTheme.colorScheme.surface),
-                    verticalArrangement = Arrangement.spacedBy(
-                        space = 8.dp,
-                        alignment = Alignment.Top
-                    ),
+                        .background(color = MaterialTheme.colorScheme.surface)
+                        .verticalScroll(state = scrollState),
+                    verticalArrangement = Arrangement.Top,
                     content = {
                         Row(
                             modifier = Modifier
@@ -166,7 +173,7 @@ object HomeScreen {
                             Text(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 16.dp),
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
                                 fontFamily = PassMarkFonts.font,
                                 fontSize = PassMarkFonts.Title.medium,
                                 fontWeight = FontWeight.Medium,
@@ -188,9 +195,63 @@ object HomeScreen {
                                 )
                             }
                         )
-                        Spacer(modifier = Modifier.height(height = PassMarkDimensions.minTouchSize))
-                        DrawerTitle(text = "Settings")
+                        Spacer(
+                            modifier = Modifier
+                                .height(height = PassMarkDimensions.minTouchSize)
+                                .fillMaxWidth()
+                        )
+                        DrawerTitle(text = "Options")
                         HorizontalDivider()
+                        Spacer(modifier = Modifier.height(height = 8.dp))
+                        @Composable
+                        fun DrawerButton(
+                            text: String,
+                            icon: ImageVector,
+                            onclick: () -> Unit
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(min = PassMarkDimensions.minTouchSize)
+                                    .clickable(onClick = onclick),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(
+                                    space = 12.dp,
+                                    alignment = Alignment.CenterHorizontally
+                                ),
+                                content = {
+                                    val padding = 16.dp
+                                    Spacer(modifier = Modifier.width(width = padding))
+                                    Icon(
+                                        imageVector = icon,
+                                        contentDescription = null
+                                    )
+                                    Text(
+                                        modifier = Modifier.weight(1f),
+                                        fontSize = PassMarkFonts.Label.medium,
+                                        fontFamily = PassMarkFonts.font,
+                                        fontWeight = FontWeight.Medium,
+                                        text = text
+                                    )
+                                    Spacer(modifier = Modifier.width(width = padding))
+                                }
+                            )
+                        }
+                        DrawerButton(
+                            text = "Settings",
+                            icon = Icons.Default.Settings,
+                            onclick = { TODO() }
+                        )
+                        DrawerButton(
+                            text = "Documentation",
+                            icon = Icons.Default.Info,
+                            onclick = { TODO() }
+                        )
+                        DrawerButton(
+                            text = "Exit",
+                            icon = Icons.AutoMirrored.Filled.ExitToApp,
+                            onclick = { TODO() }
+                        )
                     }
                 )
             }
