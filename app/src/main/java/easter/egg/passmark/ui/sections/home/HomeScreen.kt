@@ -18,8 +18,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,17 +31,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.R
 import easter.egg.passmark.data.shared.PassMarkDimensions
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 object HomeScreen {
     @Composable
@@ -49,7 +57,7 @@ object HomeScreen {
         val appBarModifier = Modifier
             .fillMaxWidth()
             .heightIn(min = PassMarkDimensions.minTouchSize)
-        val searchText: MutableState<String?> = remember { mutableStateOf("search Text") }
+        val searchText: MutableState<String?> = remember { mutableStateOf(null) }
         Scaffold(
             modifier = modifier,
             topBar = {
@@ -66,7 +74,17 @@ object HomeScreen {
                         .padding(paddingValues = it)
                 )
             },
-            bottomBar = { HomeBottomBar(modifier = appBarModifier) }
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { TODO() },
+                    content = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null
+                        )
+                    }
+                )
+            }
         )
     }
 
@@ -76,7 +94,6 @@ object HomeScreen {
         searchText: String?,
         onSearch: (String?) -> Unit
     ) {
-        val componentHeight = PassMarkDimensions.minTouchSize
         Row(
             modifier = modifier.padding(
                 top = 8.dp,
@@ -87,6 +104,10 @@ object HomeScreen {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
             content = {
+                val componentHeight = PassMarkDimensions.minTouchSize
+                val focusRequester = remember { FocusRequester() }
+                val keyboardController = LocalSoftwareKeyboardController.current
+                val coroutineScope = rememberCoroutineScope()
                 if (searchText == null) {
                     Box(
                         modifier = Modifier
@@ -111,7 +132,18 @@ object HomeScreen {
                             .clip(shape = RoundedCornerShape(size = 16.dp))
                             .background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
                             .padding(horizontal = 12.dp)
-                            .clickable { onSearch("") },
+                            .clickable {
+                                onSearch("")
+                                coroutineScope.launch {
+                                    delay(100)
+                                    try {
+                                        focusRequester.requestFocus()
+                                        keyboardController?.show()
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                            },
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
                         content = {
@@ -142,7 +174,8 @@ object HomeScreen {
                     BasicTextField(
                         modifier = Modifier
                             .weight(1f)
-                            .heightIn(min = PassMarkDimensions.minTouchSize),
+                            .heightIn(min = PassMarkDimensions.minTouchSize)
+                            .focusRequester(focusRequester = focusRequester),
                         value = searchText,
                         onValueChange = onSearch,
                         singleLine = true,
@@ -188,22 +221,9 @@ object HomeScreen {
 
     @Composable
     private fun HomeContent(modifier: Modifier) {
-        // TODO: pending
-
         Column(
             modifier = modifier,
             content = {
-                // TODO: pending
-            }
-        )
-    }
-
-    @Composable
-    private fun HomeBottomBar(modifier: Modifier) {
-        Row(
-            modifier = modifier,
-            content = {
-
                 // TODO: pending
             }
         )
