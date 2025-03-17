@@ -1,10 +1,12 @@
 package easter.egg.passmark.ui.sections.password_edit
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,9 +20,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -118,12 +124,15 @@ object PasswordEditScreen {
         modifier: Modifier
     ) {
         Column(
-            modifier = modifier,
+            modifier = modifier.padding(horizontal = 16.dp),
             content = {
-                Card(
+                Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .height(height = 16.dp)
+                )
+                DefaultCard(
+                    modifier = Modifier.fillMaxWidth(),
                     content = {
                         val title = remember { mutableStateOf("") }
                         CustomTextField(
@@ -139,7 +148,119 @@ object PasswordEditScreen {
                         )
                     }
                 )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(height = 32.dp)
+                )
+                val textFieldModifier = Modifier
+                    .fillMaxWidth()
+                    .padding(all = 8.dp)
+
+                val email = remember { mutableStateOf("") }
+                val userName = remember { mutableStateOf("") }
+                val password = remember { mutableStateOf("") }
+                DefaultCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    content = {
+                        CustomTextField(
+                            modifier = textFieldModifier,
+                            leadingIcon = Icons.Outlined.Email,
+                            label = "Email",
+                            placeHolder = "abc@def.xyz",
+                            text = email.value,
+                            onTextChange = { email.value = it }
+                        )
+                        HorizontalDivider(
+                            thickness = 1.dp,
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest
+                        )
+                        CustomTextField(
+                            modifier = textFieldModifier,
+                            leadingIcon = Icons.Outlined.AccountCircle,
+                            label = "UserName",
+                            placeHolder = "John Doe",
+                            text = userName.value,
+                            onTextChange = { userName.value = it }
+                        )
+                        HorizontalDivider(
+                            thickness = 1.dp,
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest
+                        )
+                        CustomTextField(
+                            modifier = textFieldModifier,
+                            leadingIcon = Icons.Default.Edit,
+                            label = "Password",
+                            placeHolder = "",
+                            text = password.value,
+                            onTextChange = { password.value = it }
+                        )
+                    }
+                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(height = 16.dp)
+                )
+
+                val website = remember { mutableStateOf("") }
+                DefaultCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    content = {
+                        CustomTextField(
+                            modifier = textFieldModifier,
+                            leadingIcon = Icons.Default.Info,
+                            label = "Website",
+                            placeHolder = "Https://",
+                            text = website.value,
+                            onTextChange = { website.value = it }
+                        )
+                    }
+                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(height = 16.dp)
+                )
+                val notes = remember { mutableStateOf("") }
+                DefaultCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    content = {
+                        CustomTextField(
+                            modifier = textFieldModifier,
+                            leadingIcon = Icons.Default.Info,
+                            label = "notes",
+                            placeHolder = "Add a note",
+                            text = notes.value,
+                            onTextChange = { notes.value = it }
+                        )
+                    }
+                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(height = 16.dp)
+                )
             }
+        )
+    }
+
+    @Composable
+    fun DefaultCard(
+        modifier: Modifier,
+        content: @Composable ColumnScope.() -> Unit
+    ) {
+        val shape = RoundedCornerShape(size = 12.dp)
+        Column(
+            modifier = modifier
+                .clip(shape)
+                .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    shape = shape
+                ),
+            content = content
         )
     }
 
@@ -168,7 +289,11 @@ object PasswordEditScreen {
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
+                disabledIndicatorColor = Color.Transparent,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent
             ),
             value = text,
             onValueChange = onTextChange,
