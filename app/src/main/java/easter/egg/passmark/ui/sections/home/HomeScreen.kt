@@ -69,7 +69,8 @@ import kotlinx.coroutines.launch
 object HomeScreen {
     @Composable
     fun Screen(
-        modifier: Modifier
+        modifier: Modifier,
+        toAddNewPasswordScreen: () -> Unit
     ) {
         val coroutineScope = rememberCoroutineScope()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -111,7 +112,7 @@ object HomeScreen {
                     },
                     floatingActionButton = {
                         FloatingActionButton(
-                            onClick = { TODO() },
+                            onClick = toAddNewPasswordScreen,
                             content = {
                                 Icon(
                                     imageVector = Icons.Default.Add,
@@ -405,7 +406,10 @@ object HomeScreen {
 @MobilePreview
 @MobileHorizontalPreview
 private fun HomeScreenPreview() {
-    HomeScreen.Screen(modifier = Modifier.fillMaxSize())
+    HomeScreen.Screen(
+        modifier = Modifier.fillMaxSize(),
+        toAddNewPasswordScreen = {}
+    )
 }
 
 @Composable
