@@ -80,4 +80,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     //------------------------------------------------------------------------------------------gson
     implementation(libs.gson)
+    //-----------------------------------------------------------------------------constraint-layout
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.1")
 }
