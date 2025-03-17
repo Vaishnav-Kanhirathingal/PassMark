@@ -16,29 +16,29 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
-import androidx.constraintlayout.compose.Visibility
 import easter.egg.passmark.data.shared.PassMarkDimensions
 import easter.egg.passmark.data.shared.PassMarkFonts
 import easter.egg.passmark.data.shared.setSizeLimitation
@@ -71,7 +71,10 @@ object PasswordEditScreen {
         modifier: Modifier
     ) {
         Row(
-            modifier = modifier.padding(horizontal = 16.dp),
+            modifier = modifier.padding(
+                horizontal = 16.dp,
+                vertical = 8.dp
+            ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             content = {
@@ -114,122 +117,62 @@ object PasswordEditScreen {
     private fun EditContent(
         modifier: Modifier
     ) {
-        // TODO: pending
+        Column(
+            modifier = modifier,
+            content = {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    content = {
+                        val title = remember { mutableStateOf("") }
+                        CustomTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(all = 8.dp),
+                            leadingIcon = null,
+                            label = "Title",
+                            placeHolder = "Untitled",
+                            text = title.value,
+                            onTextChange = { title.value = it },
+                            textStyle = LocalTextStyle.current.copy(fontSize = PassMarkFonts.Title.large)
+                        )
+                    }
+                )
+            }
+        )
     }
 
     @Composable
     fun CustomTextField(
         modifier: Modifier,
-        startIcon: ImageVector,
-        heading: String,
-        hint: String,
+        leadingIcon: ImageVector?,
+        label: String,
+        placeHolder: String,
         text: String,
-        onTextChange: (String) -> Unit
+        onTextChange: (String) -> Unit,
+        textStyle: TextStyle = LocalTextStyle.current
     ) {
-        val hasFocus = true
-        BasicTextField(
+        TextField(
             modifier = modifier,
+            label = { Text(text = label) },
+            placeholder = { Text(text = placeHolder) },
+            leadingIcon = leadingIcon?.let {
+                {
+                    Icon(
+                        imageVector = it,
+                        contentDescription = null
+                    )
+                }
+            },
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            ),
             value = text,
             onValueChange = onTextChange,
-            textStyle = TextStyle(
-                fontSize = PassMarkFonts.Body.large,
-                fontWeight = FontWeight.Medium,
-                fontFamily = PassMarkFonts.font,
-            ),
-            decorationBox = {
-                ConstraintLayout(
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                    content = {
-                        val (iconRef, headingRef, hintRef) = createRefs()
-                        Icon(
-                            modifier = Modifier.constrainAs(
-                                ref = iconRef,
-                                constrainBlock = {
-                                    start.linkTo(parent.start)
-                                    top.linkTo(parent.top)
-                                    bottom.linkTo(parent.bottom)
-                                }
-                            ),
-                            imageVector = startIcon,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        val hintComposableIsVisible = (hasFocus || text.isNotEmpty())
-                        Box(
-                            modifier = Modifier.constrainAs(
-                                ref = hintRef,
-                                constrainBlock = {
-                                    start.linkTo(anchor = iconRef.end, margin = 4.dp)
-                                    top.linkTo(iconRef.top)
-                                    bottom.linkTo(iconRef.bottom)
-                                    width = Dimension.fillToConstraints
-                                    visibility =
-                                        if (hintComposableIsVisible) Visibility.Visible
-                                        else Visibility.Gone
-                                }
-                            ),
-                            content = {
-                                if (text.isEmpty()) {
-                                    Text(
-                                        modifier = Modifier,
-                                        text = hint,
-                                        textAlign = TextAlign.Start,
-                                        fontSize = PassMarkFonts.Body.large,
-                                        fontWeight = FontWeight.Medium,
-                                        fontFamily = PassMarkFonts.font,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                } else {
-                                    it()
-                                }
-                            }
-                        )
-//                        Text(
-//                            modifier = Modifier.constrainAs(
-//                                ref = hintRef,
-//                                constrainBlock = {
-//                                    start.linkTo(anchor = iconRef.end, margin = 4.dp)
-//                                    top.linkTo(iconRef.top)
-//                                    bottom.linkTo(iconRef.bottom)
-//                                    width = Dimension.fillToConstraints
-//                                    visibility =
-//                                        if (hintComposableIsVisible) Visibility.Visible
-//                                        else Visibility.Gone
-//                                }
-//                            ),
-//                            text = hint,
-//                            textAlign = TextAlign.Start,
-//                            fontSize = PassMarkFonts.Body.large,
-//                            fontWeight = FontWeight.Medium,
-//                            fontFamily = PassMarkFonts.font,
-//                            color = MaterialTheme.colorScheme.onPrimaryContainer
-//                        )
-                        Text(
-                            modifier = Modifier.constrainAs(
-                                ref = headingRef,
-                                constrainBlock = {
-                                    if (hintComposableIsVisible) {
-                                        bottom.linkTo(hintRef.top)
-                                    } else {
-                                        top.linkTo(iconRef.top)
-                                        bottom.linkTo(iconRef.bottom)
-                                    }
-                                    start.linkTo(anchor = iconRef.end, margin = 4.dp)
-                                    end.linkTo(parent.end)
-                                    width = Dimension.fillToConstraints
-                                }
-                            ),
-                            text = heading,
-                            textAlign = TextAlign.Start,
-                            fontSize = PassMarkFonts.Label.small,
-                            fontWeight = FontWeight.Normal,
-                            fontFamily = PassMarkFonts.font,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-
-                    }
-                )
-            }
+            textStyle = textStyle
         )
     }
 
@@ -263,9 +206,9 @@ fun CustomTextFieldPreview() {
             .padding(all = 16.dp)
             .clip(shape = RoundedCornerShape(size = 8.dp))
             .background(color = MaterialTheme.colorScheme.primaryContainer),
-        startIcon = Icons.Default.Search,
-        heading = "Some Heading",
-        hint = "Some Hint",
+        leadingIcon = Icons.Default.Search,
+        label = "Some Heading",
+        placeHolder = "Some Hint",
         text = "hi",
         onTextChange = {}
     )
