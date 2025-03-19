@@ -187,13 +187,15 @@ object PasswordEditScreen {
                         .fillMaxWidth()
                         .height(height = 16.dp)
                 )
+                val textFieldModifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 72.dp)
+                    .padding(horizontal = 8.dp)
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
                         CustomTextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(all = 8.dp),
+                            modifier = textFieldModifier,
                             leadingIcon = null,
                             label = "Title",
                             placeHolder = "Untitled",
@@ -208,10 +210,6 @@ object PasswordEditScreen {
                         .fillMaxWidth()
                         .height(height = 32.dp)
                 )
-                // TODO: fix height glitch problem
-                val textFieldModifier = Modifier
-                    .fillMaxWidth()
-                    .padding(all = 8.dp)
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
@@ -343,42 +341,48 @@ object PasswordEditScreen {
         onTextChange: (String) -> Unit,
         textStyle: TextStyle = LocalTextStyle.current
     ) {
-        TextField(
+        Box(
             modifier = modifier,
-            label = { Text(text = label) },
-            placeholder = { Text(text = placeHolder) },
-            leadingIcon = leadingIcon?.let {
-                {
-                    Icon(
-                        imageVector = it,
-                        contentDescription = null
-                    )
-                }
-            },
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                errorContainerColor = Color.Transparent
-            ),
-            value = text,
-            onValueChange = onTextChange,
-            textStyle = textStyle,
-            trailingIcon = text.takeUnless { it.isEmpty() }?.let {
-                {
-                    IconButton(
-                        onClick = { onTextChange("") },
-                        content = {
+            contentAlignment = Alignment.Center,
+            content = {
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text(text = label) },
+                    placeholder = { Text(text = placeHolder) },
+                    leadingIcon = leadingIcon?.let {
+                        {
                             Icon(
-                                imageVector = Icons.Default.Clear,
+                                imageVector = it,
                                 contentDescription = null
                             )
                         }
-                    )
-                }
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        errorContainerColor = Color.Transparent
+                    ),
+                    value = text,
+                    onValueChange = onTextChange,
+                    textStyle = textStyle,
+                    trailingIcon = text.takeUnless { it.isEmpty() }?.let {
+                        {
+                            IconButton(
+                                onClick = { onTextChange("") },
+                                content = {
+                                    Icon(
+                                        imageVector = Icons.Default.Clear,
+                                        contentDescription = null
+                                    )
+                                }
+                            )
+                        }
+                    }
+                )
             }
         )
     }
