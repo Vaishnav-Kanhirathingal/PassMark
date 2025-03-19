@@ -15,35 +15,33 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.shared.PassMarkDimensions
 import easter.egg.passmark.data.shared.PassMarkFonts
@@ -53,19 +51,26 @@ import easter.egg.passmark.utils.annotation.MobilePreview
 
 object PasswordEditScreen {
     @Composable
-    fun Screen(modifier: Modifier) {
-        // TODO: take [title], [email, username, password], [website], [note]
+    fun Screen(
+        modifier: Modifier,
+        viewModel: PasswordEditViewModel
+    ) {
         val barModifier = Modifier
             .fillMaxWidth()
             .heightIn(min = PassMarkDimensions.minTouchSize)
         Scaffold(
             modifier = modifier,
-            topBar = { EditTopBar(modifier = barModifier) },
+            topBar = {
+                EditTopBar(
+                    modifier = barModifier
+                )
+            },
             content = {
                 EditContent(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues = it)
+                        .padding(paddingValues = it),
+                    viewModel = viewModel
                 )
             },
             bottomBar = { EditBottomBar(modifier = barModifier) }
@@ -82,15 +87,16 @@ object PasswordEditScreen {
                 vertical = 8.dp
             ),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.spacedBy(
+                space = 8.dp,
+                alignment = Alignment.CenterHorizontally
+            ),
             content = {
                 Box(
                     modifier = Modifier
                         .size(size = PassMarkDimensions.minTouchSize)
                         .clickable(
-                            onClick = {
-                                TODO()
-                            }
+                            onClick = { TODO() }
                         )
                         .clip(shape = CircleShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer),
@@ -108,11 +114,58 @@ object PasswordEditScreen {
                         .weight(weight = 1f)
                         .height(height = PassMarkDimensions.minTouchSize)
                 )
+                val pillShape = RoundedCornerShape(size = PassMarkDimensions.minTouchSize)
+                Row(
+                    modifier = Modifier
+                        .setSizeLimitation()
+                        .clip(shape = pillShape)
+                        .background(color = MaterialTheme.colorScheme.primaryContainer)
+                        .padding(
+                            start = 12.dp,
+                            end = 20.dp
+                        )
+                        .clickable(
+                            onClick = { TODO() }
+                        ),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = 4.dp,
+                        alignment = Alignment.CenterHorizontally
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    content = {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = null
+                        )
+                        Text(
+                            text = "Folder Name",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontSize = PassMarkFonts.Body.medium,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = PassMarkFonts.font,
+                        )
+                    }
+                )
 
-                Button(
-                    modifier = Modifier.setSizeLimitation(),
-                    onClick = { TODO() },
-                    content = { Text(text = "Save") }
+                Box(
+                    modifier = Modifier
+                        .setSizeLimitation()
+                        .clip(shape = pillShape)
+                        .background(color = MaterialTheme.colorScheme.primary)
+                        .padding(horizontal = 20.dp)
+                        .clickable(
+                            onClick = { TODO() }
+                        ),
+                    contentAlignment = Alignment.Center,
+                    content = {
+                        Text(
+                            text = "Save",
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontSize = PassMarkFonts.Body.medium,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = PassMarkFonts.font,
+                        )
+                    }
                 )
             }
         )
@@ -121,7 +174,8 @@ object PasswordEditScreen {
 
     @Composable
     private fun EditContent(
-        modifier: Modifier
+        modifier: Modifier,
+        viewModel: PasswordEditViewModel
     ) {
         Column(
             modifier = modifier.padding(horizontal = 16.dp),
@@ -134,7 +188,6 @@ object PasswordEditScreen {
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
-                        val title = remember { mutableStateOf("") }
                         CustomTextField(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -142,8 +195,8 @@ object PasswordEditScreen {
                             leadingIcon = null,
                             label = "Title",
                             placeHolder = "Untitled",
-                            text = title.value,
-                            onTextChange = { title.value = it },
+                            text = viewModel.title.collectAsState().value,
+                            onTextChange = { viewModel.updateTitle(newValue = it) },
                             textStyle = LocalTextStyle.current.copy(fontSize = PassMarkFonts.Title.large)
                         )
                     }
@@ -153,13 +206,10 @@ object PasswordEditScreen {
                         .fillMaxWidth()
                         .height(height = 32.dp)
                 )
+                // TODO: fix height glitch problem
                 val textFieldModifier = Modifier
                     .fillMaxWidth()
                     .padding(all = 8.dp)
-
-                val email = remember { mutableStateOf("") }
-                val userName = remember { mutableStateOf("") }
-                val password = remember { mutableStateOf("") }
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
@@ -168,8 +218,8 @@ object PasswordEditScreen {
                             leadingIcon = Icons.Outlined.Email,
                             label = "Email",
                             placeHolder = "abc@def.xyz",
-                            text = email.value,
-                            onTextChange = { email.value = it }
+                            text = viewModel.email.collectAsState().value,
+                            onTextChange = { viewModel.updateEmail(newValue = it) }
                         )
                         HorizontalDivider(
                             thickness = 1.dp,
@@ -180,8 +230,8 @@ object PasswordEditScreen {
                             leadingIcon = Icons.Outlined.AccountCircle,
                             label = "UserName",
                             placeHolder = "John Doe",
-                            text = userName.value,
-                            onTextChange = { userName.value = it }
+                            text = viewModel.userName.collectAsState().value,
+                            onTextChange = { viewModel.updateUserName(newValue = it) }
                         )
                         HorizontalDivider(
                             thickness = 1.dp,
@@ -192,18 +242,15 @@ object PasswordEditScreen {
                             leadingIcon = Icons.Default.Edit,
                             label = "Password",
                             placeHolder = "",
-                            text = password.value,
-                            onTextChange = { password.value = it }
+                            text = viewModel.password.collectAsState().value,
+                            onTextChange = { viewModel.updatePassword(newValue = it) }
                         )
                     }
                 )
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(height = 16.dp)
-                )
-
-                val website = remember { mutableStateOf("") }
+                val spacerModifier = Modifier
+                    .fillMaxWidth()
+                    .height(height = 16.dp)
+                Spacer(modifier = spacerModifier)
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
@@ -212,17 +259,12 @@ object PasswordEditScreen {
                             leadingIcon = Icons.Default.Info,
                             label = "Website",
                             placeHolder = "Https://",
-                            text = website.value,
-                            onTextChange = { website.value = it }
+                            text = viewModel.website.collectAsState().value,
+                            onTextChange = { viewModel.updateWebsite(newValue = it) }
                         )
                     }
                 )
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(height = 16.dp)
-                )
-                val notes = remember { mutableStateOf("") }
+                Spacer(modifier = spacerModifier)
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
@@ -231,16 +273,41 @@ object PasswordEditScreen {
                             leadingIcon = Icons.Default.Info,
                             label = "notes",
                             placeHolder = "Add a note",
-                            text = notes.value,
-                            onTextChange = { notes.value = it }
+                            text = viewModel.notes.collectAsState().value,
+                            onTextChange = { viewModel.updateNotes(newValue = it) }
                         )
                     }
                 )
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(height = 16.dp)
+                Spacer(modifier = spacerModifier)
+                DefaultCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    content = {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = 16.dp,
+                                    vertical = 8.dp
+                                ),
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = {
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    fontSize = PassMarkFonts.Body.medium,
+                                    fontFamily = PassMarkFonts.font,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    text = "Use fingerprint to access"
+                                )
+                                Switch(
+                                    checked = viewModel.useFingerPrint.collectAsState().value,
+                                    onCheckedChange = { viewModel.updateUseFingerPrint(newValue = it) }
+                                )
+                            }
+                        )
+                    }
                 )
+                Spacer(modifier = spacerModifier)
             }
         )
     }
@@ -313,28 +380,8 @@ object PasswordEditScreen {
 @MobilePreview
 @MobileHorizontalPreview
 private fun PasswordEditScreenPreview() {
-    PasswordEditScreen.Screen(modifier = Modifier.fillMaxSize())
-}
-
-@Composable
-@Preview(
-    widthDp = 360,
-    heightDp = 180,
-    showBackground = true
-)
-fun CustomTextFieldPreview() {
-    PasswordEditScreen.CustomTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-//            .requiredHeight(height = 96.dp)
-            .padding(all = 16.dp)
-            .clip(shape = RoundedCornerShape(size = 8.dp))
-            .background(color = MaterialTheme.colorScheme.primaryContainer),
-        leadingIcon = Icons.Default.Search,
-        label = "Some Heading",
-        placeHolder = "Some Hint",
-        text = "hi",
-        onTextChange = {}
+    PasswordEditScreen.Screen(
+        modifier = Modifier.fillMaxSize(),
+        viewModel = PasswordEditViewModel()
     )
 }

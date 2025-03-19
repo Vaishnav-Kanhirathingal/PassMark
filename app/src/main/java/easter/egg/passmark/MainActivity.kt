@@ -20,6 +20,7 @@ import easter.egg.passmark.ui.sections.loader.LoaderViewModel
 import easter.egg.passmark.ui.sections.login.LoginScreen
 import easter.egg.passmark.ui.sections.login.LoginViewModel
 import easter.egg.passmark.ui.sections.password_edit.PasswordEditScreen
+import easter.egg.passmark.ui.sections.password_edit.PasswordEditViewModel
 import easter.egg.passmark.ui.theme.PassMarkTheme
 
 class MainActivity : ComponentActivity() {
@@ -113,7 +114,13 @@ class MainActivity : ComponentActivity() {
                 )
                 composable(
                     route = MainDestinations.PASSWORD_EDIT.path,
-                    content = { PasswordEditScreen.Screen(modifier = composableModifier) }
+                    content = {
+                        val viewModel: PasswordEditViewModel by viewModels()
+                        PasswordEditScreen.Screen(
+                            modifier = composableModifier,
+                            viewModel = viewModel
+                        )
+                    }
                 )
             }
         )
