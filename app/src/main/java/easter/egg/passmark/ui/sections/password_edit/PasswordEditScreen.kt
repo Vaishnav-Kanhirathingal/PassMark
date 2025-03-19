@@ -21,10 +21,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Note
+import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Web
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -227,7 +232,7 @@ object PasswordEditScreen {
                         )
                         CustomTextField(
                             modifier = textFieldModifier,
-                            leadingIcon = Icons.Outlined.AccountCircle,
+                            leadingIcon = Icons.Outlined.Person,
                             label = "UserName",
                             placeHolder = "John Doe",
                             text = viewModel.userName.collectAsState().value,
@@ -239,7 +244,7 @@ object PasswordEditScreen {
                         )
                         CustomTextField(
                             modifier = textFieldModifier,
-                            leadingIcon = Icons.Default.Edit,
+                            leadingIcon = Icons.Default.Password,
                             label = "Password",
                             placeHolder = "",
                             text = viewModel.password.collectAsState().value,
@@ -256,7 +261,7 @@ object PasswordEditScreen {
                     content = {
                         CustomTextField(
                             modifier = textFieldModifier,
-                            leadingIcon = Icons.Default.Info,
+                            leadingIcon = Icons.Default.Web,
                             label = "Website",
                             placeHolder = "Https://",
                             text = viewModel.website.collectAsState().value,
@@ -270,7 +275,7 @@ object PasswordEditScreen {
                     content = {
                         CustomTextField(
                             modifier = textFieldModifier,
-                            leadingIcon = Icons.Default.Info,
+                            leadingIcon = Icons.Default.EditNote,
                             label = "notes",
                             placeHolder = "Add a note",
                             text = viewModel.notes.collectAsState().value,

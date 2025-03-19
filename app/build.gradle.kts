@@ -80,6 +80,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     //------------------------------------------------------------------------------------------gson
     implementation(libs.gson)
-    //-----------------------------------------------------------------------------constraint-layout
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.1")
+    //--------------------------------------------------------------------------------material-icons
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
 }
