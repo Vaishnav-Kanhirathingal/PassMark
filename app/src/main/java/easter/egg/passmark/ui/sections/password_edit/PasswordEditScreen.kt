@@ -15,19 +15,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EditNote
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.Note
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Web
-import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.HorizontalDivider
@@ -66,14 +64,10 @@ object PasswordEditScreen {
         val barModifier = Modifier
             .fillMaxWidth()
             .heightIn(min = PassMarkDimensions.minTouchSize)
+
         Scaffold(
             modifier = modifier,
-            topBar = {
-                EditTopBar(
-                    modifier = barModifier,
-                    navigateBack = navigateBack
-                )
-            },
+            topBar = { EditTopBar(modifier = barModifier, navigateBack = navigateBack) },
             content = {
                 EditContent(
                     modifier = Modifier
@@ -184,8 +178,11 @@ object PasswordEditScreen {
         modifier: Modifier,
         viewModel: PasswordEditViewModel
     ) {
+        val scrollState = rememberScrollState()
         Column(
-            modifier = modifier.padding(horizontal = 16.dp),
+            modifier = modifier
+                .padding(horizontal = 16.dp)
+                .verticalScroll(state = scrollState),
             content = {
                 Spacer(
                     modifier = Modifier
@@ -284,35 +281,24 @@ object PasswordEditScreen {
                     }
                 )
                 Spacer(modifier = spacerModifier)
-                DefaultCard(
+                CustomSwitch(
                     modifier = Modifier.fillMaxWidth(),
-                    content = {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    horizontal = 16.dp,
-                                    vertical = 8.dp
-                                ),
-                            verticalAlignment = Alignment.CenterVertically,
-                            content = {
-                                Text(
-                                    modifier = Modifier.weight(1f),
-                                    fontSize = PassMarkFonts.Body.medium,
-                                    fontFamily = PassMarkFonts.font,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    text = "Use fingerprint to access"
-                                )
-                                Switch(
-                                    checked = viewModel.useFingerPrint.collectAsState().value,
-                                    onCheckedChange = { viewModel.updateUseFingerPrint(newValue = it) }
-                                )
-                            }
-                        )
-                    }
+                    text = "Use fingerprint to access",
+                    isChecked = viewModel.useFingerPrint.collectAsState().value,
+                    onCheckedChange = { viewModel.updateUseFingerPrint(newValue = it) }
                 )
                 Spacer(modifier = spacerModifier)
+                CustomSwitch(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "Keep On Device Only",
+                    isChecked = viewModel.saveToLocalOnly.collectAsState().value,
+                    onCheckedChange = { viewModel.updateSaveToLocalOnly(newValue = it) }
+                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(height = PassMarkDimensions.minTouchSize * 2)
+                )
             }
         )
     }
@@ -386,6 +372,43 @@ object PasswordEditScreen {
                                 }
                             )
                         }
+                    }
+                )
+            }
+        )
+    }
+
+    @Composable
+    fun CustomSwitch(
+        modifier: Modifier,
+        text: String,
+        isChecked: Boolean,
+        onCheckedChange: (Boolean) -> Unit
+    ) {
+        DefaultCard(
+            modifier = modifier,
+            content = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = 8.dp
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    content = {
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            fontSize = PassMarkFonts.Body.medium,
+                            fontFamily = PassMarkFonts.font,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            text = text
+                        )
+                        Switch(
+                            checked = isChecked,
+                            onCheckedChange = onCheckedChange
+                        )
                     }
                 )
             }

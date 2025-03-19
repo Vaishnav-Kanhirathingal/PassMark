@@ -1,6 +1,7 @@
 package easter.egg.passmark.ui.sections.password_edit
 
 import androidx.lifecycle.ViewModel
+import easter.egg.passmark.utils.ScreenState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -46,4 +47,27 @@ class PasswordEditViewModel : ViewModel() {
     fun updateUseFingerPrint(newValue: Boolean) {
         this._useFingerPrint.value = newValue
     }
+
+    private val _saveToLocalOnly: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val saveToLocalOnly: StateFlow<Boolean> get() = _saveToLocalOnly
+    fun updateSaveToLocalOnly(newValue: Boolean) {
+        this._saveToLocalOnly.value = newValue
+    }
+
+    private val _screenState: MutableStateFlow<ScreenState<Unit>> =
+        MutableStateFlow(ScreenState.PreCall())
+    val screenState: StateFlow<ScreenState<Unit>> get() = _screenState
+
+//    fun savePassword() {
+//        _screenState.value = ScreenState.Loading()
+//        viewModelScope.launch {
+//            val newState: ScreenState<Unit> = try {
+//                TODO()
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//                TODO()
+//            }
+//            this@PasswordEditViewModel._screenState.value = newState
+//        }
+//    }
 }
