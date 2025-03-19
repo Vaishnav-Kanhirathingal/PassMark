@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -53,7 +55,8 @@ object PasswordEditScreen {
     @Composable
     fun Screen(
         modifier: Modifier,
-        viewModel: PasswordEditViewModel
+        viewModel: PasswordEditViewModel,
+        navigateBack: () -> Unit
     ) {
         val barModifier = Modifier
             .fillMaxWidth()
@@ -62,7 +65,8 @@ object PasswordEditScreen {
             modifier = modifier,
             topBar = {
                 EditTopBar(
-                    modifier = barModifier
+                    modifier = barModifier,
+                    navigateBack = navigateBack
                 )
             },
             content = {
@@ -79,7 +83,8 @@ object PasswordEditScreen {
 
     @Composable
     private fun EditTopBar(
-        modifier: Modifier
+        modifier: Modifier,
+        navigateBack: () -> Unit
     ) {
         Row(
             modifier = modifier.padding(
@@ -95,9 +100,7 @@ object PasswordEditScreen {
                 Box(
                     modifier = Modifier
                         .size(size = PassMarkDimensions.minTouchSize)
-                        .clickable(
-                            onClick = { TODO() }
-                        )
+                        .clickable(onClick = navigateBack)
                         .clip(shape = CircleShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center,
@@ -120,12 +123,12 @@ object PasswordEditScreen {
                         .setSizeLimitation()
                         .clip(shape = pillShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
+                        .clickable(
+                            onClick = { TODO() }
+                        )
                         .padding(
                             start = 12.dp,
                             end = 20.dp
-                        )
-                        .clickable(
-                            onClick = { TODO() }
                         ),
                     horizontalArrangement = Arrangement.spacedBy(
                         space = 4.dp,
@@ -152,10 +155,10 @@ object PasswordEditScreen {
                         .setSizeLimitation()
                         .clip(shape = pillShape)
                         .background(color = MaterialTheme.colorScheme.primary)
-                        .padding(horizontal = 20.dp)
                         .clickable(
                             onClick = { TODO() }
-                        ),
+                        )
+                        .padding(horizontal = 20.dp),
                     contentAlignment = Alignment.Center,
                     content = {
                         Text(
@@ -169,7 +172,6 @@ object PasswordEditScreen {
                 )
             }
         )
-        // TODO: pending
     }
 
     @Composable
@@ -364,7 +366,20 @@ object PasswordEditScreen {
             ),
             value = text,
             onValueChange = onTextChange,
-            textStyle = textStyle
+            textStyle = textStyle,
+            trailingIcon = text.takeUnless { it.isEmpty() }?.let {
+                {
+                    IconButton(
+                        onClick = { onTextChange("") },
+                        content = {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
+            }
         )
     }
 
@@ -382,6 +397,7 @@ object PasswordEditScreen {
 private fun PasswordEditScreenPreview() {
     PasswordEditScreen.Screen(
         modifier = Modifier.fillMaxSize(),
-        viewModel = PasswordEditViewModel()
+        viewModel = PasswordEditViewModel(),
+        navigateBack = {}
     )
 }

@@ -118,7 +118,8 @@ class MainActivity : ComponentActivity() {
                         val viewModel: PasswordEditViewModel by viewModels()
                         PasswordEditScreen.Screen(
                             modifier = composableModifier,
-                            viewModel = viewModel
+                            viewModel = viewModel,
+                            navigateBack = { navController.navigateUp() }
                         )
                     }
                 )
