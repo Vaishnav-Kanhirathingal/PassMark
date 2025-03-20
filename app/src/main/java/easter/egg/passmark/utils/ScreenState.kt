@@ -23,4 +23,6 @@ sealed class ScreenState<T> {
         class NetworkError<T> : ApiError<T>()
         class SomethingWentWrong<T> : ApiError<T>()
     }
+
+    val isLoading get() = (this is Loading)
 }
