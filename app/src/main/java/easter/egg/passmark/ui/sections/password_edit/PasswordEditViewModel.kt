@@ -1,9 +1,12 @@
 package easter.egg.passmark.ui.sections.password_edit
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import easter.egg.passmark.utils.ScreenState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class PasswordEditViewModel : ViewModel() {
     private val _title: MutableStateFlow<String> = MutableStateFlow("")
@@ -58,16 +61,18 @@ class PasswordEditViewModel : ViewModel() {
         MutableStateFlow(ScreenState.PreCall())
     val screenState: StateFlow<ScreenState<Unit>> get() = _screenState
 
-//    fun savePassword() {
-//        _screenState.value = ScreenState.Loading()
-//        viewModelScope.launch {
-//            val newState: ScreenState<Unit> = try {
-//                TODO()
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//                TODO()
-//            }
-//            this@PasswordEditViewModel._screenState.value = newState
-//        }
-//    }
+    fun savePassword() {
+        _screenState.value = ScreenState.Loading()
+        viewModelScope.launch {
+            val newState: ScreenState<Unit> = try {
+                delay(10_000)
+                throw Exception("todo")
+                TODO()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                ScreenState.ApiError.SomethingWentWrong()
+            }
+            this@PasswordEditViewModel._screenState.value = newState
+        }
+    }
 }

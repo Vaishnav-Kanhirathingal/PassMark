@@ -1,5 +1,7 @@
 package easter.egg.passmark.ui.sections.password_edit
 
+import android.util.Log
+import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,6 +30,7 @@ import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Web
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +45,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -53,8 +57,11 @@ import easter.egg.passmark.data.shared.PassMarkFonts
 import easter.egg.passmark.data.shared.setSizeLimitation
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import kotlinx.coroutines.flow.combine
 
 object PasswordEditScreen {
+    private val TAG = this::class.simpleName
+
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -65,9 +72,30 @@ object PasswordEditScreen {
             .fillMaxWidth()
             .heightIn(min = PassMarkDimensions.minTouchSize)
 
+        // TODO: use
+
+        val passwordRequirementsMet = combine(
+            viewModel.title,
+            viewModel.password,
+            viewModel.email,
+            transform = { title, password, email ->
+                title.isNotEmpty() &&
+                        password.isNotEmpty() &&
+                        email.let { it.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(it).matches() }
+
+            }
+        ).collectAsState(initial = false)
+        Log.d(TAG, "derived passwordRequirementsMet = ${passwordRequirementsMet.value}")
         Scaffold(
             modifier = modifier,
-            topBar = { EditTopBar(modifier = barModifier, navigateBack = navigateBack) },
+            topBar = {
+                EditTopBar(
+                    modifier = barModifier,
+                    navigateBack = navigateBack,
+                    viewModel = viewModel,
+                    passwordRequirementsMet = passwordRequirementsMet.value
+                )
+            },
             content = {
                 EditContent(
                     modifier = Modifier
@@ -83,7 +111,9 @@ object PasswordEditScreen {
     @Composable
     private fun EditTopBar(
         modifier: Modifier,
-        navigateBack: () -> Unit
+        navigateBack: () -> Unit,
+        viewModel: PasswordEditViewModel,
+        passwordRequirementsMet: Boolean
     ) {
         Row(
             modifier = modifier.padding(
@@ -99,7 +129,10 @@ object PasswordEditScreen {
                 Box(
                     modifier = Modifier
                         .size(size = PassMarkDimensions.minTouchSize)
-                        .clickable(onClick = navigateBack)
+                        .clickable(
+                            enabled = !viewModel.screenState.collectAsState().value.isLoading,
+                            onClick = navigateBack
+                        )
                         .clip(shape = CircleShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center,
@@ -123,6 +156,7 @@ object PasswordEditScreen {
                         .clip(shape = pillShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
                         .clickable(
+                            enabled = !viewModel.screenState.collectAsState().value.isLoading,
                             onClick = { TODO() }
                         )
                         .padding(
@@ -149,24 +183,33 @@ object PasswordEditScreen {
                     }
                 )
 
+                val isLoading = viewModel.screenState.collectAsState().value.isLoading
                 Box(
                     modifier = Modifier
                         .setSizeLimitation()
                         .clip(shape = pillShape)
                         .background(color = MaterialTheme.colorScheme.primary)
                         .clickable(
-                            onClick = { TODO() }
+                            enabled = (!isLoading && passwordRequirementsMet),
+                            onClick = { viewModel.savePassword() }
                         )
                         .padding(horizontal = 20.dp),
                     contentAlignment = Alignment.Center,
                     content = {
                         Text(
+                            modifier = Modifier.alpha(alpha = if (isLoading) 0f else 1f),
                             text = "Save",
                             color = MaterialTheme.colorScheme.onPrimary,
                             fontSize = PassMarkFonts.Body.medium,
                             fontWeight = FontWeight.Medium,
                             fontFamily = PassMarkFonts.font,
                         )
+                        if (isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(size = 24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     }
                 )
             }
@@ -178,6 +221,7 @@ object PasswordEditScreen {
         modifier: Modifier,
         viewModel: PasswordEditViewModel
     ) {
+        val isLoading = viewModel.screenState.collectAsState().value.isLoading
         val scrollState = rememberScrollState()
         Column(
             modifier = modifier
@@ -203,7 +247,8 @@ object PasswordEditScreen {
                             placeHolder = "Untitled",
                             text = viewModel.title.collectAsState().value,
                             onTextChange = { viewModel.updateTitle(newValue = it) },
-                            textStyle = LocalTextStyle.current.copy(fontSize = PassMarkFonts.Title.large)
+                            textStyle = LocalTextStyle.current.copy(fontSize = PassMarkFonts.Title.large),
+                            isEnabled = !isLoading
                         )
                     }
                 )
@@ -221,7 +266,8 @@ object PasswordEditScreen {
                             label = "Email",
                             placeHolder = "abc@def.xyz",
                             text = viewModel.email.collectAsState().value,
-                            onTextChange = { viewModel.updateEmail(newValue = it) }
+                            onTextChange = { viewModel.updateEmail(newValue = it) },
+                            isEnabled = !isLoading
                         )
                         HorizontalDivider(
                             thickness = 1.dp,
@@ -233,7 +279,8 @@ object PasswordEditScreen {
                             label = "UserName",
                             placeHolder = "John Doe",
                             text = viewModel.userName.collectAsState().value,
-                            onTextChange = { viewModel.updateUserName(newValue = it) }
+                            onTextChange = { viewModel.updateUserName(newValue = it) },
+                            isEnabled = !isLoading
                         )
                         HorizontalDivider(
                             thickness = 1.dp,
@@ -245,7 +292,8 @@ object PasswordEditScreen {
                             label = "Password",
                             placeHolder = "",
                             text = viewModel.password.collectAsState().value,
-                            onTextChange = { viewModel.updatePassword(newValue = it) }
+                            onTextChange = { viewModel.updatePassword(newValue = it) },
+                            isEnabled = !isLoading
                         )
                     }
                 )
@@ -262,7 +310,8 @@ object PasswordEditScreen {
                             label = "Website",
                             placeHolder = "Https://",
                             text = viewModel.website.collectAsState().value,
-                            onTextChange = { viewModel.updateWebsite(newValue = it) }
+                            onTextChange = { viewModel.updateWebsite(newValue = it) },
+                            isEnabled = !isLoading
                         )
                     }
                 )
@@ -276,7 +325,8 @@ object PasswordEditScreen {
                             label = "notes",
                             placeHolder = "Add a note",
                             text = viewModel.notes.collectAsState().value,
-                            onTextChange = { viewModel.updateNotes(newValue = it) }
+                            onTextChange = { viewModel.updateNotes(newValue = it) },
+                            isEnabled = !isLoading
                         )
                     }
                 )
@@ -285,14 +335,16 @@ object PasswordEditScreen {
                     modifier = Modifier.fillMaxWidth(),
                     text = "Use fingerprint to access",
                     isChecked = viewModel.useFingerPrint.collectAsState().value,
-                    onCheckedChange = { viewModel.updateUseFingerPrint(newValue = it) }
+                    onCheckedChange = { viewModel.updateUseFingerPrint(newValue = it) },
+                    isEnabled = !isLoading
                 )
                 Spacer(modifier = spacerModifier)
                 CustomSwitch(
                     modifier = Modifier.fillMaxWidth(),
                     text = "Keep On Device Only",
                     isChecked = viewModel.saveToLocalOnly.collectAsState().value,
-                    onCheckedChange = { viewModel.updateSaveToLocalOnly(newValue = it) }
+                    onCheckedChange = { viewModel.updateSaveToLocalOnly(newValue = it) },
+                    isEnabled = !isLoading
                 )
                 Spacer(
                     modifier = Modifier
@@ -330,7 +382,8 @@ object PasswordEditScreen {
         placeHolder: String,
         text: String,
         onTextChange: (String) -> Unit,
-        textStyle: TextStyle = LocalTextStyle.current
+        textStyle: TextStyle = LocalTextStyle.current,
+        isEnabled: Boolean
     ) {
         Box(
             modifier = modifier,
@@ -338,6 +391,7 @@ object PasswordEditScreen {
             content = {
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
+                    enabled = isEnabled,
                     label = { Text(text = label) },
                     placeholder = { Text(text = placeHolder) },
                     leadingIcon = leadingIcon?.let {
@@ -383,10 +437,14 @@ object PasswordEditScreen {
         modifier: Modifier,
         text: String,
         isChecked: Boolean,
-        onCheckedChange: (Boolean) -> Unit
+        onCheckedChange: (Boolean) -> Unit,
+        isEnabled: Boolean
     ) {
         DefaultCard(
-            modifier = modifier,
+            modifier = modifier.clickable(
+                enabled = isEnabled,
+                onClick = { onCheckedChange(!isChecked) }
+            ),
             content = {
                 Row(
                     modifier = Modifier
@@ -406,6 +464,7 @@ object PasswordEditScreen {
                             text = text
                         )
                         Switch(
+                            enabled = isEnabled,
                             checked = isChecked,
                             onCheckedChange = onCheckedChange
                         )
