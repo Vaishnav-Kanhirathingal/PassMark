@@ -2,6 +2,7 @@ package easter.egg.passmark.ui.sections.password_edit
 
 import android.util.Log
 import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -42,6 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,12 +51,14 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.shared.PassMarkDimensions
 import easter.egg.passmark.data.shared.PassMarkFonts
 import easter.egg.passmark.data.shared.setSizeLimitation
+import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import kotlinx.coroutines.flow.combine
@@ -71,9 +75,6 @@ object PasswordEditScreen {
         val barModifier = Modifier
             .fillMaxWidth()
             .heightIn(min = PassMarkDimensions.minTouchSize)
-
-        // TODO: use
-
         val passwordRequirementsMet = combine(
             viewModel.title,
             viewModel.password,
@@ -86,6 +87,23 @@ object PasswordEditScreen {
             }
         ).collectAsState(initial = false)
         Log.d(TAG, "derived passwordRequirementsMet = ${passwordRequirementsMet.value}")
+        val context = LocalContext.current
+        LaunchedEffect(
+            key1 = viewModel.screenState.collectAsState().value,
+            block = {
+                val state = viewModel.screenState.value
+                if (state is ScreenState.ApiError) {
+                    if (!state.errorHasBeenDisplayed) {
+                        Toast.makeText(
+                            context,
+                            state.generalToastMessage,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        state.setErrorHasBeenDisplayed()
+                    }
+                }
+            }
+        )
         Scaffold(
             modifier = modifier,
             topBar = {

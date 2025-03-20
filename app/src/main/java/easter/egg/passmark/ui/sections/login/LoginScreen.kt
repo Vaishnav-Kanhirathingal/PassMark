@@ -76,10 +76,7 @@ object LoginScreen {
                     state.setErrorHasBeenDisplayed()
                     Toast.makeText(
                         LocalContext.current,
-                        when (state) {
-                            is ScreenState.ApiError.NetworkError -> "Failed to login due to Network error"
-                            is ScreenState.ApiError.SomethingWentWrong -> "Something went wrong"
-                        },
+                        state.generalToastMessage,
                         Toast.LENGTH_SHORT
                     ).show()
                 }

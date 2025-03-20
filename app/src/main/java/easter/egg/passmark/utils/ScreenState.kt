@@ -12,7 +12,9 @@ sealed class ScreenState<T> {
     /** loaded state, contains the result of the output */
     class Loaded<T>(val result: T) : ScreenState<T>()
 
-    sealed class ApiError<T> : ScreenState<T>() {
+    sealed class ApiError<T>(
+        val generalToastMessage: String
+    ) : ScreenState<T>() {
         var errorHasBeenDisplayed: Boolean = false
             private set
 
@@ -20,8 +22,13 @@ sealed class ScreenState<T> {
             this.errorHasBeenDisplayed = true
         }
 
-        class NetworkError<T> : ApiError<T>()
-        class SomethingWentWrong<T> : ApiError<T>()
+        class NetworkError<T> : ApiError<T>(
+            generalToastMessage = "No internet connection. Please check your network."
+        )
+
+        class SomethingWentWrong<T> : ApiError<T>(
+            generalToastMessage = "Something went wrong. Please try again."
+        )
     }
 
     val isLoading get() = (this is Loading)
