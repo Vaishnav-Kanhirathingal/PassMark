@@ -90,7 +90,7 @@ dependencies {
     //------------------------------------------------------------------------------------------gson
     implementation(libs.gson)
     //--------------------------------------------------------------------------------material-icons
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    implementation(libs.androidx.material.icons.extended)
     //--------------------------------------------------------------------------------------supabase
     val supabaseVersion = "3.1.3"
 //    implementation("io.github.jan-tennert.supabase:[module]:$supabaseVersion")
@@ -104,5 +104,5 @@ dependencies {
     ksp("com.google.dagger:hilt-android-compiler:2.51.1")
 
     //------------------------------------------------------------------------------------------ktor
-    implementation("io.ktor:ktor-client-android:3.1.1")
+    implementation(libs.ktor.client.android)
 }
