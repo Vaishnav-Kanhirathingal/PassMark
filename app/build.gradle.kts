@@ -35,7 +35,7 @@ android {
             )
         }
 
-        addStringFields(name = "FIREBASE_WEB_CLIENT_ID") // TODO: remove
+        addStringFields(name = "FIREBASE_WEB_CLIENT_ID")
         addStringFields(name = "SUPABASE_URL")
         addStringFields(name = "SUPABASE_KEY")
     }
@@ -92,14 +92,13 @@ dependencies {
     //--------------------------------------------------------------------------------material-icons
     implementation(libs.androidx.material.icons.extended)
     //--------------------------------------------------------------------------------------supabase
-    val supabaseVersion = "3.1.3"
     implementation(platform(libs.supabase.bom))
     implementation(libs.supabase.postgrest.kt)
     implementation(libs.supabase.auth.kt)
     implementation(libs.supabase.realtime.kt)
     //------------------------------------------------------------------------------------------hilt
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    ksp("com.google.dagger:hilt-android-compiler:2.51.1")
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 
     //------------------------------------------------------------------------------------------ktor
     implementation(libs.ktor.client.android)
