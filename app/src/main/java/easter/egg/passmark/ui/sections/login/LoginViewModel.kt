@@ -8,15 +8,21 @@ import androidx.credentials.GetCredentialResponse
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.google.firebase.FirebaseNetworkException
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import easter.egg.passmark.utils.ScreenState
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.Google
+import io.github.jan.supabase.auth.providers.builtin.IDToken
+import io.github.jan.supabase.exceptions.HttpRequestException
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val supabaseClient: SupabaseClient
+) : ViewModel() {
     private val TAG = this::class.simpleName
 
     private val _screenState: MutableState<ScreenState<Unit>> =
@@ -28,17 +34,22 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             val newState: ScreenState<Unit> = try {
                 Log.d(TAG, "delay started")
-                val googleIdTokenCredential =
-                    GoogleIdTokenCredential.createFrom(data = credentialResponse.credential.data)
-                val credential =
-                    GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
-                Firebase.auth.signInWithCredential(credential).await()
+                val googleIdToken =
+                    GoogleIdTokenCredential.createFrom(data = credentialResponse.credential.data).idToken
+                supabaseClient.auth.signInWith(
+                    provider = IDToken,
+                    config = {
+                        this.idToken = googleIdToken
+                        this.provider = Google
+                    }
+                )
                 ScreenState.Loaded(result = Unit)
-            } catch (e: FirebaseNetworkException) {
-                ScreenState.ApiError.NetworkError()
             } catch (e: Exception) {
                 e.printStackTrace()
-                ScreenState.ApiError.SomethingWentWrong()
+                when (e) {
+                    is HttpRequestTimeoutException, is HttpRequestException -> ScreenState.ApiError.NetworkError()
+                    else -> ScreenState.ApiError.SomethingWentWrong()
+                }
             }
             this@LoginViewModel._screenState.value = newState
         }

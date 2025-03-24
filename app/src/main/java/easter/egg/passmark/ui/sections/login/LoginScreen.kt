@@ -43,6 +43,7 @@ import easter.egg.passmark.BuildConfig
 import easter.egg.passmark.R
 import easter.egg.passmark.data.shared.PassMarkDimensions
 import easter.egg.passmark.data.shared.PassMarkFonts
+import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
 import kotlinx.coroutines.Dispatchers
@@ -166,7 +167,9 @@ object LoginScreen {
                             request = request,
                             context = context,
                         )
-                        withContext(Dispatchers.Main) { viewModel.login(credentialResponse = result) }
+                        withContext(Dispatchers.Main) {
+                            viewModel.login(credentialResponse = result)
+                        }
                     } catch (e: GetCredentialCancellationException) {
                         Log.d(TAG, "cancelled sign in")
                     } catch (e: Exception) {
@@ -224,7 +227,7 @@ object LoginScreen {
 private fun LoginScreenPrev() {
     LoginScreen.Screen(
         modifier = Modifier.fillMaxSize(),
-        viewModel = LoginViewModel(),
+        viewModel = LoginViewModel(supabaseClient = SupabaseModule.mockClient),
         toHomeScreen = {}
     )
 }
