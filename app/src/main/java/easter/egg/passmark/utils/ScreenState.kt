@@ -1,5 +1,8 @@
 package easter.egg.passmark.utils
 
+import io.github.jan.supabase.exceptions.HttpRequestException
+import io.ktor.client.plugins.HttpRequestTimeoutException
+
 /** the screen state class which maintains the state of an api call. set the type `T` to `Unit` if no
  * return is required
  * */
@@ -15,6 +18,14 @@ sealed class ScreenState<T> {
     sealed class ApiError<T>(
         val generalToastMessage: String
     ) : ScreenState<T>() {
+        companion object{
+            fun <T> fromException(e: Exception): ApiError<T> {
+                return when (e) {
+                    is HttpRequestTimeoutException, is HttpRequestException -> NetworkError()
+                    else -> SomethingWentWrong()
+                }
+            }
+        }
         var errorHasBeenDisplayed: Boolean = false
             private set
 
