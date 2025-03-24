@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.gms.google.services)
+    id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -22,13 +24,20 @@ android {
     }
 
     defaultConfig {
-        buildConfigField(
-            type = "String",//::class.simpleName!!,
-            name = "FIREBASE_WEB_CLIENT_ID",
-            value = Properties()
-                .apply { load(rootProject.file("local.properties").inputStream()) }
-                .getProperty("FIREBASE_WEB_CLIENT_ID")
-        )
+        val propertiesFle = Properties()
+            .apply { load(rootProject.file("local.properties").inputStream()) }
+
+        fun addStringFields(name: String) {
+            buildConfigField(
+                type = String::class.simpleName!!,
+                name = name,
+                value = propertiesFle.getProperty(name)
+            )
+        }
+
+        addStringFields(name = "FIREBASE_WEB_CLIENT_ID") // TODO: remove
+        addStringFields(name = "SUPABASE_URL")
+        addStringFields(name = "SUPABASE_KEY")
     }
 
     buildTypes {
@@ -82,4 +91,16 @@ dependencies {
     implementation(libs.gson)
     //--------------------------------------------------------------------------------material-icons
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    //--------------------------------------------------------------------------------------supabase
+    val supabaseVersion = "3.1.3"
+//    implementation("io.github.jan-tennert.supabase:[module]:$supabaseVersion")
+
+    implementation(platform("io.github.jan-tennert.supabase:bom:$supabaseVersion"))
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:$supabaseVersion")
+    implementation("io.github.jan-tennert.supabase:auth-kt:$supabaseVersion")
+    implementation("io.github.jan-tennert.supabase:realtime-kt:$supabaseVersion")
+    //------------------------------------------------------------------------------------------hilt
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.51.1")
+
 }
