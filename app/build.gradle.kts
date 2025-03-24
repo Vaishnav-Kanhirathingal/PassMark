@@ -93,12 +93,10 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     //--------------------------------------------------------------------------------------supabase
     val supabaseVersion = "3.1.3"
-//    implementation("io.github.jan-tennert.supabase:[module]:$supabaseVersion")
-
-    implementation(platform("io.github.jan-tennert.supabase:bom:$supabaseVersion"))
-    implementation("io.github.jan-tennert.supabase:postgrest-kt:$supabaseVersion")
-    implementation("io.github.jan-tennert.supabase:auth-kt:$supabaseVersion")
-    implementation("io.github.jan-tennert.supabase:realtime-kt:$supabaseVersion")
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.postgrest.kt)
+    implementation(libs.supabase.auth.kt)
+    implementation(libs.supabase.realtime.kt)
     //------------------------------------------------------------------------------------------hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
     ksp("com.google.dagger:hilt-android-compiler:2.51.1")
