@@ -23,6 +23,7 @@ import easter.egg.passmark.ui.sections.login.LoginViewModel
 import easter.egg.passmark.ui.sections.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.sections.password_edit.PasswordEditViewModel
 import easter.egg.passmark.ui.theme.PassMarkTheme
+import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -55,36 +56,34 @@ class MainActivity : ComponentActivity() {
         NavHost(
             modifier = modifier.fillMaxSize(),
             navController = navController,
-            startDestination = MainDestinations.LOADER.path,
+            startDestination = Screens.Loader,
             builder = {
                 val composableModifier = Modifier.fillMaxSize()
-                composable(
-                    route = MainDestinations.LOADER.path,
+                composable<Screens.Loader>(
                     content = {
                         val viewModel: LoaderViewModel by viewModels()
                         val navOptions = NavOptions.Builder()
-                            .setPopUpTo(route = MainDestinations.LOADER.path, inclusive = true)
+                            .setPopUpTo(route = Screens.Loader, inclusive = true)
                             .build()
                         LoaderScreen.Screen(
                             modifier = composableModifier,
                             viewModel = viewModel,
                             toHomeScreen = {
                                 navController.navigate(
-                                    route = MainDestinations.HOME.path,
+                                    route = Screens.Home,
                                     navOptions = navOptions
                                 )
                             },
                             toLoginScreen = {
                                 navController.navigate(
-                                    route = MainDestinations.LOGIN.path,
+                                    route = Screens.Login,
                                     navOptions = navOptions
                                 )
                             }
                         )
                     }
                 )
-                composable(
-                    route = MainDestinations.LOGIN.path,
+                composable<Screens.Login>(
                     content = {
                         val viewModel by viewModels<LoginViewModel>()
                         LoginScreen.Screen(
@@ -92,11 +91,11 @@ class MainActivity : ComponentActivity() {
                             viewModel = viewModel,
                             toHomeScreen = {
                                 navController.navigate(
-                                    route = MainDestinations.HOME.path,
+                                    route = Screens.Home,
                                     navOptions = NavOptions
                                         .Builder()
                                         .setPopUpTo(
-                                            route = MainDestinations.LOGIN.path,
+                                            route = Screens.Login,
                                             inclusive = true
                                         )
                                         .build()
@@ -105,17 +104,25 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 )
-                composable(
-                    route = MainDestinations.HOME.path,
+//                composable<Screens.UserEdit>(
+//                    content = {
+//                        val viewModel by viewModels<UserEditViewModel>()
+//                        UserEditScreen.Screen(
+//                            modifier = composableModifier,
+//                            viewModel = viewModel,
+//                            isNewUser =it.arguments!!.getBoolean(Screens.UserEdit::isNewUser.name)
+//                        )
+//                    }
+//                )
+                composable<Screens.Home>(
                     content = {
                         HomeScreen.Screen(
                             modifier = composableModifier,
-                            toAddNewPasswordScreen = { navController.navigate(route = MainDestinations.PASSWORD_EDIT.path) }
+                            toAddNewPasswordScreen = { navController.navigate(route = Screens.PasswordEdit) }
                         )
                     }
                 )
-                composable(
-                    route = MainDestinations.PASSWORD_EDIT.path,
+                composable<Screens.PasswordEdit>(
                     content = {
                         val viewModel: PasswordEditViewModel by viewModels()
                         PasswordEditScreen.Screen(
@@ -125,16 +132,29 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 )
+//                composable<Screens.UserEdit>(
+//                    content = {
+//                        it.arguments!!.getBoolean(Screens.UserEdit::isNewUser.name)
+//                    }
+//                )
             }
         )
     }
 }
 
-enum class MainDestinations {
-    LOADER,
-    LOGIN,
-    HOME,
-    PASSWORD_EDIT;
+sealed class Screens {
+    @Serializable
+    data object Loader : Screens()
 
-    val path: String get() = "${this}_PATH"
+    @Serializable
+    data object Login : Screens()
+
+//    @Serializable
+//    data class UserEdit(val isNewUser: Boolean) : Screens()
+
+    @Serializable
+    data object Home : Screens()
+
+    @Serializable
+    data object PasswordEdit : Screens()
 }
