@@ -27,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.shared.PassMarkFonts
 import easter.egg.passmark.data.shared.setSizeLimitation
@@ -53,19 +54,25 @@ object UserEditScreen {
             content = {
                 val spacerModifier = Modifier
                     .fillMaxWidth()
-                    .height(height = 16.dp)
+                    .height(height = 8.dp)
                 Spacer(modifier = spacerModifier)
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = if (isNewUser) "Create a Master Key" else "Confirm your master key",
+                    text =
+                        if (isNewUser) "Create a Master Key"
+                        else "Confirm your master key",
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Headline.medium,
+                    fontWeight = FontWeight.SemiBold
                 )
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Make sure to remember your master key. Without this, account recovery would be impossible",
+                    text =
+                        if (isNewUser) "Make sure to remember your master key. Without this, account recovery would be impossible."
+                        else "Enter the master key you used to create your account.",
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Body.medium,
+                    fontWeight = FontWeight.Medium
                 )
                 val errorText: String? =
                     viewModel.masterPasswordText.collectAsState().value.length.let {
@@ -81,7 +88,7 @@ object UserEditScreen {
                     onValueChange = viewModel::updateMasterPasswordText,
                     label = { Text(text = "Master Password") },
                     placeholder = { Text(text = "Secure Password") },
-                    isError = (!viewModel.showError.collectAsState().value || (errorText != null)),
+                    isError = (viewModel.showError.collectAsState().value && (errorText != null)),
                     supportingText = { Text(text = errorText ?: "Password is of correct length") },
                     leadingIcon = {
                         Icon(
@@ -138,10 +145,21 @@ object UserEditScreen {
 @Composable
 @MobilePreview
 @MobileHorizontalPreview
-fun UserEditScreenPreview() {
-    UserEditScreen.Screen(
-        modifier = Modifier.fillMaxSize(),
-        viewModel = UserEditViewModel(),
-        isNewUser = true
-    )
+private fun UserEditScreenPreview() {
+    Column {
+        UserEditScreen.Screen(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f),
+            viewModel = UserEditViewModel(),
+            isNewUser = false
+        )
+        UserEditScreen.Screen(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f),
+            viewModel = UserEditViewModel(),
+            isNewUser = true
+        )
+    }
 }
