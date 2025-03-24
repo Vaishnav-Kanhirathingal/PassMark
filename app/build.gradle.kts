@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
+    kotlin("plugin.serialization") version "2.1.20"
 }
 
 android {
@@ -100,4 +101,6 @@ dependencies {
 
     //------------------------------------------------------------------------------------------ktor
     implementation(libs.ktor.client.android)
+    //---------------------------------------------------------------------------------serialization
+    implementation(libs.kotlinx.serialization.json)
 }
