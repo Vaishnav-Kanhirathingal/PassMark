@@ -58,8 +58,7 @@ object LoginScreen {
         viewModel: LoginViewModel,
         toHomeScreen: () -> Unit
     ) {
-        val state = viewModel.screenState.value
-        when (state) {
+        when (val state = viewModel.screenState.value) {
             is ScreenState.Loading -> LoaderUi(modifier = modifier)
             is ScreenState.Loaded -> LaunchedEffect(
                 key1 = Unit,

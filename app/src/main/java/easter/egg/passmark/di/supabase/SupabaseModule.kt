@@ -14,6 +14,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class SupabaseModule {
+    companion object {
+        val mockClient = createSupabaseClient(
+            supabaseKey = "",
+            supabaseUrl = "",
+            builder = {}
+        )
+    }
+
     @Provides
     @Singleton
     fun provideSupabaseClient(): SupabaseClient = createSupabaseClient(

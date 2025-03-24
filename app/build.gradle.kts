@@ -103,4 +103,6 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.51.1")
     ksp("com.google.dagger:hilt-android-compiler:2.51.1")
 
+    //------------------------------------------------------------------------------------------ktor
+    implementation("io.ktor:ktor-client-android:3.1.1")
 }
