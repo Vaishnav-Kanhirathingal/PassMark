@@ -1,4 +1,4 @@
-package easter.egg.passmark.api.supabase
+package easter.egg.passmark.di.supabase
 
 import dagger.Module
 import dagger.Provides
