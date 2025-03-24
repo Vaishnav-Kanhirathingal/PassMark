@@ -83,8 +83,6 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     //-------------------------------------------------------------------------------------google-id
     implementation(libs.googleid)
-    //--------------------------------------------------------------------------------------firebase
-    implementation(libs.firebase.auth)
     //----------------------------------------------------------------------------compose-navigation
     implementation(libs.androidx.navigation.compose)
     //------------------------------------------------------------------------------------------gson

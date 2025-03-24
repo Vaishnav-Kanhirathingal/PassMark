@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import easter.egg.passmark.data.shared.PassMarkDimensions
+import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 
@@ -51,7 +52,7 @@ object LoaderScreen {
 fun LoaderScreenPreview() {
     LoaderScreen.Screen(
         modifier = Modifier.fillMaxSize(),
-        viewModel = LoaderViewModel(),
+        viewModel = LoaderViewModel(supabaseClient = SupabaseModule.mockClient),
         toHomeScreen = {},
         toLoginScreen = {}
     )
