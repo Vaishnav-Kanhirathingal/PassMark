@@ -14,6 +14,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
 import easter.egg.passmark.ui.sections.home.HomeScreen
 import easter.egg.passmark.ui.sections.loader.LoaderScreen
 import easter.egg.passmark.ui.sections.loader.LoaderViewModel
@@ -23,6 +24,7 @@ import easter.egg.passmark.ui.sections.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.sections.password_edit.PasswordEditViewModel
 import easter.egg.passmark.ui.theme.PassMarkTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
