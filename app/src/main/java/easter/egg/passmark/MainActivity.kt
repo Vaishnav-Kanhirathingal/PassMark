@@ -96,9 +96,9 @@ class MainActivity : ComponentActivity() {
                         LoginScreen.Screen(
                             modifier = composableModifier,
                             viewModel = viewModel,
-                            toHomeScreen = {
+                            toLoaderScreen = {
                                 navController.navigate(
-                                    route = Screens.Home,
+                                    route = Screens.Loader,
                                     navOptions = NavOptions
                                         .Builder()
                                         .setPopUpTo(

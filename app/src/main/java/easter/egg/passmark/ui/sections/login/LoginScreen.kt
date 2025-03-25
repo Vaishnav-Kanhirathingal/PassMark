@@ -57,13 +57,13 @@ object LoginScreen {
     fun Screen(
         modifier: Modifier,
         viewModel: LoginViewModel,
-        toHomeScreen: () -> Unit
+        toLoaderScreen: () -> Unit
     ) {
         when (val state = viewModel.screenState.value) {
             is ScreenState.Loading -> LoaderUi(modifier = modifier)
             is ScreenState.Loaded -> LaunchedEffect(
                 key1 = Unit,
-                block = { withContext(Dispatchers.Main) { toHomeScreen() } }
+                block = { withContext(Dispatchers.Main) { toLoaderScreen() } }
             )
 
             is ScreenState.ApiError, is ScreenState.PreCall -> {
@@ -228,6 +228,6 @@ private fun LoginScreenPrev() {
     LoginScreen.Screen(
         modifier = Modifier.fillMaxSize(),
         viewModel = LoginViewModel(supabaseClient = SupabaseModule.mockClient),
-        toHomeScreen = {}
+        toLoaderScreen = {}
     )
 }
