@@ -19,7 +19,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.shared.PassMarkFonts
 import easter.egg.passmark.data.shared.setSizeLimitation
@@ -42,13 +43,14 @@ object UserEditScreen {
         isNewUser: Boolean
     ) {
         val scrollState = rememberScrollState()
+        val isLoading = viewModel.screenState.collectAsState().value.isLoading
         Column(
             modifier = modifier
                 .padding(horizontal = 16.dp)
                 .verticalScroll(state = scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
-                space = 12.dp,
+                space = 8.dp,
                 alignment = Alignment.CenterVertically
             ),
             content = {
@@ -60,7 +62,7 @@ object UserEditScreen {
                     modifier = Modifier.fillMaxWidth(),
                     text =
                         if (isNewUser) "Create a Master Key"
-                        else "Confirm your master key",
+                        else "Enter your master key",
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Headline.medium,
                     fontWeight = FontWeight.SemiBold
@@ -72,6 +74,7 @@ object UserEditScreen {
                         else "Enter the master key you used to create your account.",
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Body.medium,
+                    lineHeight = PassMarkFonts.Body.medium,
                     fontWeight = FontWeight.Medium
                 )
                 val errorText: String? =
@@ -84,6 +87,7 @@ object UserEditScreen {
                     }
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
+                    enabled = !isLoading,
                     value = viewModel.masterPasswordText.collectAsState().value,
                     onValueChange = viewModel::updateMasterPasswordText,
                     label = { Text(text = "Master Password") },
@@ -98,7 +102,7 @@ object UserEditScreen {
                     },
                     trailingIcon = {
                         IconButton(
-                            onClick = viewModel::updateVisibility,
+                            onClick = viewModel::switchVisibility,
                             content = {
                                 Icon(
                                     imageVector = viewModel.visible.collectAsState().value.let {
@@ -108,28 +112,37 @@ object UserEditScreen {
                                 )
                             }
                         )
-                    }
+                    },
+                    visualTransformation =
+                        if (viewModel.visible.collectAsState().value) VisualTransformation.None
+                        else PasswordVisualTransformation(),
+                    singleLine = true
                 )
                 Button(
                     modifier = Modifier
                         .setSizeLimitation()
                         .align(Alignment.End),
-                    onClick = { TODO() },
+                    enabled = !isLoading,
+                    onClick = {
+                        if (errorText == null) {
+                            viewModel.onButtonPress(isNewUser = isNewUser)
+                        } else {
+                            viewModel.updateShowError()
+                        }
+                    },
                     content = {
                         Box(
                             modifier = Modifier,
                             contentAlignment = Alignment.Center,
                             content = {
-                                val isLoading =
-                                    viewModel.screenState.collectAsState().value.isLoading
                                 Text(
                                     modifier = Modifier.alpha(alpha = if (isLoading) 0f else 1f),
-                                    text = "Create"
+                                    text = if (isNewUser) "Create" else "Confirm"
                                 )
                                 if (isLoading) {
                                     CircularProgressIndicator(
                                         modifier = Modifier.size(size = 24.dp),
-                                        color = MaterialTheme.colorScheme.onPrimary
+                                        strokeWidth = 2.dp
                                     )
                                 }
                             }
