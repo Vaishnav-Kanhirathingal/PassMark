@@ -22,6 +22,8 @@ import easter.egg.passmark.ui.sections.login.LoginScreen
 import easter.egg.passmark.ui.sections.login.LoginViewModel
 import easter.egg.passmark.ui.sections.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.sections.password_edit.PasswordEditViewModel
+import easter.egg.passmark.ui.sections.user_edit.UserEditScreen
+import easter.egg.passmark.ui.sections.user_edit.UserEditViewModel
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import kotlinx.serialization.Serializable
 
@@ -79,6 +81,11 @@ class MainActivity : ComponentActivity() {
                                     route = Screens.Login,
                                     navOptions = navOptions
                                 )
+                            },
+                            toEditUserScreen = { isNewUser: Boolean ->
+                                navController.navigate(
+                                    route = Screens.UserEdit(isNewUser = isNewUser)
+                                )
                             }
                         )
                     }
@@ -104,16 +111,16 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 )
-//                composable<Screens.UserEdit>(
-//                    content = {
-//                        val viewModel by viewModels<UserEditViewModel>()
-//                        UserEditScreen.Screen(
-//                            modifier = composableModifier,
-//                            viewModel = viewModel,
-//                            isNewUser =it.arguments!!.getBoolean(Screens.UserEdit::isNewUser.name)
-//                        )
-//                    }
-//                )
+                composable<Screens.UserEdit>(
+                    content = {
+                        val viewModel by viewModels<UserEditViewModel>()
+                        UserEditScreen.Screen(
+                            modifier = composableModifier,
+                            viewModel = viewModel,
+                            isNewUser = it.arguments!!.getBoolean(Screens.UserEdit::isNewUser.name)
+                        )
+                    }
+                )
                 composable<Screens.Home>(
                     content = {
                         HomeScreen.Screen(
@@ -132,11 +139,6 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 )
-//                composable<Screens.UserEdit>(
-//                    content = {
-//                        it.arguments!!.getBoolean(Screens.UserEdit::isNewUser.name)
-//                    }
-//                )
             }
         )
     }
@@ -149,8 +151,8 @@ sealed class Screens {
     @Serializable
     data object Login : Screens()
 
-//    @Serializable
-//    data class UserEdit(val isNewUser: Boolean) : Screens()
+    @Serializable
+    data class UserEdit(val isNewUser: Boolean) : Screens()
 
     @Serializable
     data object Home : Screens()

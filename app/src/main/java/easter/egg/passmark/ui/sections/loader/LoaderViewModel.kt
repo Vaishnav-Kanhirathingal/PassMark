@@ -1,37 +1,69 @@
 package easter.egg.passmark.ui.sections.loader
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import easter.egg.passmark.data.api.UserApi
+import easter.egg.passmark.utils.ScreenState
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.status.SessionStatus
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoaderViewModel @Inject constructor(
-    val supabaseClient: SupabaseClient
+    val supabaseClient: SupabaseClient,
+    val userApi: UserApi
 ) : ViewModel() {
     private val TAG = this::class.simpleName
 
-    private val _hasUser: MutableState<Boolean?> = mutableStateOf(null)
-    val hasUser: State<Boolean?> get() = _hasUser
+    private val _screenState: MutableStateFlow<ScreenState<UserState>> =
+        MutableStateFlow(value = ScreenState.PreCall())
+    val screenState: StateFlow<ScreenState<UserState>> get() = _screenState
 
-    init {
-        viewModelScope.launch {
-            supabaseClient.auth.sessionStatus.collect {
-                when (it) {
-                    is SessionStatus.Authenticated -> true
-                    SessionStatus.Initializing -> null
-                    is SessionStatus.RefreshFailure, is SessionStatus.NotAuthenticated -> false
-                }.let { newValue: Boolean? ->
-                    this@LoaderViewModel._hasUser.value = newValue
+    private val sessionListener = viewModelScope.launch {
+        supabaseClient.auth.sessionStatus.collect {
+            when (it) {
+                is SessionStatus.Authenticated -> this@LoaderViewModel.verifyKeyState()
+                SessionStatus.Initializing -> {
+                    this@LoaderViewModel._screenState.value = ScreenState.Loading()
+                }
+
+                is SessionStatus.RefreshFailure, is SessionStatus.NotAuthenticated -> {
+                    this@LoaderViewModel._screenState.value =
+                        ScreenState.Loaded(result = UserState.DOES_NOT_EXIST)
                 }
             }
         }
     }
+
+    private fun verifyKeyState() {
+        viewModelScope.launch {
+            this@LoaderViewModel.sessionListener.cancel()
+            this@LoaderViewModel._screenState.value = try {
+                val user = userApi.getUser()
+                if (user == null) {
+                    ScreenState.Loaded(UserState.NEW_USER)
+                } else {
+                    TODO(
+                        "fetch the key from datastore and verify validity. " +
+                                "IF KEY IS IN DATASTORE AND IS CORRECT -> EXISTS_WITH_KEY_IN_STORAGE " +
+                                "ELSE -> EXISTS_WITHOUT_KEY_IN_STORAGE"
+                    )
+                }
+            } catch (e: Exception) {
+                ScreenState.ApiError.fromException(e = e)
+            }
+        }
+    }
+}
+
+enum class UserState {
+    DOES_NOT_EXIST,
+    NEW_USER,
+    EXISTS_WITHOUT_KEY_IN_STORAGE,
+    EXISTS_WITH_KEY_IN_STORAGE
 }
