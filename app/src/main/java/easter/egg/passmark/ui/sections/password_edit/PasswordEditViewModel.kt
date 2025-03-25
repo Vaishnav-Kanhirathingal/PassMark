@@ -2,13 +2,20 @@ package easter.egg.passmark.ui.sections.password_edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import easter.egg.passmark.data.api.PasswordApi
+import easter.egg.passmark.data.models.Password
+import easter.egg.passmark.data.models.PasswordData
 import easter.egg.passmark.utils.ScreenState
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PasswordEditViewModel : ViewModel() {
+@HiltViewModel
+class PasswordEditViewModel @Inject constructor(
+    val passwordApi: PasswordApi
+) : ViewModel() {
     private val _title: MutableStateFlow<String> = MutableStateFlow("")
     val title: StateFlow<String> get() = _title
     fun updateTitle(newValue: String) {
@@ -63,6 +70,21 @@ class PasswordEditViewModel : ViewModel() {
 
     fun savePassword() {
         _screenState.value = ScreenState.Loading()
+        val password = Password(
+            id = null,
+            vaultId = null,
+            data = PasswordData(
+                title = title.value,
+                email = email.value,
+                userName = userName.value,
+                password = password.value,
+                website = website.value,
+                notes = notes.value,
+                useFingerPrint = useFingerPrint.value,
+                saveToLocalOnly = saveToLocalOnly.value,
+            ),
+            lastUsed = System.currentTimeMillis()
+        )
         viewModelScope.launch {
             val newState: ScreenState<Unit> = try {
                 delay(10_000)
