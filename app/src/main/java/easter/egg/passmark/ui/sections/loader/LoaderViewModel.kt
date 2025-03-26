@@ -3,7 +3,7 @@ package easter.egg.passmark.ui.sections.loader
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import easter.egg.passmark.data.api.UserApi
+import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.utils.ScreenState
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth

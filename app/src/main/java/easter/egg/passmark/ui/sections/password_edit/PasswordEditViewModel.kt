@@ -3,7 +3,7 @@ package easter.egg.passmark.ui.sections.password_edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import easter.egg.passmark.data.api.PasswordApi
+import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.data.models.Password
 import easter.egg.passmark.data.models.PasswordData
 import easter.egg.passmark.utils.ScreenState

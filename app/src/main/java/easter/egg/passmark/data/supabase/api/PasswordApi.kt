@@ -1,4 +1,4 @@
-package easter.egg.passmark.data.api
+package easter.egg.passmark.data.supabase.api
 
 import easter.egg.passmark.data.models.Password
 import io.github.jan.supabase.SupabaseClient
@@ -16,7 +16,7 @@ class PasswordApi @Inject constructor(
         password: Password
     ) {
         supabaseClient.from(TABLE_NAME).upsert(
-            value = password,
+            value = password, // TODO: save password capsule
             request = { select() }
         )
     }

@@ -13,7 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import easter.egg.passmark.data.api.UserApi
+import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.data.shared.PassMarkDimensions
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState

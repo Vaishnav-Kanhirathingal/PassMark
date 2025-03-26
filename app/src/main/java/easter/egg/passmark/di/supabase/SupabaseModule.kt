@@ -5,8 +5,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import easter.egg.passmark.BuildConfig
-import easter.egg.passmark.data.api.PasswordApi
-import easter.egg.passmark.data.api.UserApi
+import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
+import easter.egg.passmark.data.supabase.api.PasswordApi
+import easter.egg.passmark.data.supabase.api.UserApi
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
@@ -46,4 +47,13 @@ class SupabaseModule {
     fun provideUserApi(supabaseClient: SupabaseClient): UserApi = UserApi(
         supabaseClient = supabaseClient
     )
+
+    @Provides
+    @Singleton
+    fun providesSupabaseAccountHelper(
+        supabaseClient: SupabaseClient
+    ): SupabaseAccountHelper =
+        SupabaseAccountHelper(
+            supabaseClient = supabaseClient
+        )
 }

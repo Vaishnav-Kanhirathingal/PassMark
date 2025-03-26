@@ -1,4 +1,4 @@
-package easter.egg.passmark.data.api
+package easter.egg.passmark.data.supabase.api
 
 import io.github.jan.supabase.SupabaseClient
 import javax.inject.Inject
