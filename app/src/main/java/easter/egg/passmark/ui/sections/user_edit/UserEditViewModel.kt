@@ -56,7 +56,11 @@ class UserEditViewModel @Inject constructor(
                 delay(timeMillis = 3_000) // TODO: remove
                 val keyStoreHandler = KeyStoreHandler(authId = authId)
                 if (isNewUser) {
-                    TODO("create a new key and save to storage")
+                    TODO(
+                        "create a new key, " +
+                                "create puzzle from key and store user to supabase, " +
+                                "save key to storage"
+                    )
                 } else {
                     TODO(
                         "check if the password solves the puzzle. " +
