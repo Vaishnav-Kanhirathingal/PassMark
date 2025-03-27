@@ -1,14 +1,29 @@
 package easter.egg.passmark.ui.sections.user_edit
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.security.KeyStoreHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.security.spec.KeySpec
+import javax.crypto.SecretKey
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
+import javax.crypto.spec.SecretKeySpec
+import javax.inject.Inject
 
-class UserEditViewModel : ViewModel() {
+@HiltViewModel
+class UserEditViewModel @Inject constructor(
+    private val supabaseAccountHelper: SupabaseAccountHelper
+) : ViewModel() {
+    private val TAG = this::class.simpleName
+
     private val _masterPasswordText: MutableStateFlow<String> = MutableStateFlow(value = "")
     val masterPasswordText: StateFlow<String> get() = _masterPasswordText
     fun updateMasterPasswordText(value: String) {
@@ -34,12 +49,20 @@ class UserEditViewModel : ViewModel() {
     fun onButtonPress(isNewUser: Boolean) {
         _screenState.value = ScreenState.Loading()
         viewModelScope.launch {
+            val password = this@UserEditViewModel.masterPasswordText.value
+            val authId = this@UserEditViewModel.supabaseAccountHelper.getId()
+            Log.d(TAG, "password = $password")
             val newState: ScreenState<UserEditButtonClickResult> = try {
-                delay(timeMillis = 10_000) // TODO: remove
+                delay(timeMillis = 3_000) // TODO: remove
+                val keyStoreHandler = KeyStoreHandler(authId = authId)
                 if (isNewUser) {
                     TODO("create a new key and save to storage")
                 } else {
-                    TODO("check if the password solves the puzzle. if yes, save to storage")
+                    TODO(
+                        "check if the password solves the puzzle. " +
+                                "if yes, save to storage" +
+                                "else, set state to password incorrect"
+                    )
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -50,4 +73,4 @@ class UserEditViewModel : ViewModel() {
     }
 }
 
-class UserEditButtonClickResult(val passwordIsIncorrect:Boolean)
+class UserEditButtonClickResult(val passwordIsIncorrect: Boolean)
