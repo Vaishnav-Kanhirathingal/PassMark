@@ -73,7 +73,7 @@ class KeyStoreHandler(
         return Cipher.getInstance("AES/CBC/PKCS7Padding")
     }
 
-    fun encrypt(input: String): Pair<String, ByteArray> {
+    fun encrypt(input: String): Pair<String, String> {
         val secretKey = getDataStoreKey()
         val cipher = fetchCipher()
         cipher.init(Cipher.ENCRYPT_MODE, secretKey)
@@ -81,16 +81,16 @@ class KeyStoreHandler(
         val encryptedBytes = cipher.doFinal(input.toByteArray())
         return Pair(
             Base64.getEncoder().encodeToString(encryptedBytes),
-            iv
+            iv.toBase64String()
         )
     }
 
     fun decrypt(
         input: String,
-        iv: ByteArray
+        iv: String
     ): String {
         val secretKey = getDataStoreKey()!!
-        val ivSpec = IvParameterSpec(iv)
+        val ivSpec = IvParameterSpec(iv.toBase64Array())
         val cipher = fetchCipher()
         cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
         Log.d(TAG, "init called")
