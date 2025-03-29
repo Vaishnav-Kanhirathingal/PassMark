@@ -103,4 +103,6 @@ dependencies {
     implementation(libs.ktor.client.android)
     //---------------------------------------------------------------------------------serialization
     implementation(libs.kotlinx.serialization.json)
+    //-------------------------------------------------------------------------------------datastore
+    implementation(libs.androidx.datastore.preferences)
 }
