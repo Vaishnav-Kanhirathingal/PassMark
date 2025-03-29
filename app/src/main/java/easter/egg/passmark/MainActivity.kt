@@ -84,7 +84,8 @@ class MainActivity : ComponentActivity() {
                             },
                             toEditUserScreen = { isNewUser: Boolean ->
                                 navController.navigate(
-                                    route = Screens.UserEdit(isNewUser = isNewUser)
+                                    route = Screens.UserEdit(isNewUser = isNewUser),
+                                    navOptions = navOptions
                                 )
                             }
                         )
