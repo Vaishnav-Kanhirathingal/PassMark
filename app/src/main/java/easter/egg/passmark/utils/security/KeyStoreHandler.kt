@@ -73,15 +73,14 @@ class KeyStoreHandler(
         return Cipher.getInstance("AES/CBC/PKCS7Padding")
     }
 
+    /** encrypts given input using the stored key present in keystore
+     * @return a pair of <encryptedString, initializationVector>
+     */
     fun encrypt(input: String): Pair<String, String> {
-        val secretKey = getDataStoreKey()
-        val cipher = fetchCipher()
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
-        val iv = cipher.iv
-        val encryptedBytes = cipher.doFinal(input.toByteArray())
+        val cipher = fetchCipher().also { it.init(Cipher.ENCRYPT_MODE, getDataStoreKey()) }
         return Pair(
-            Base64.getEncoder().encodeToString(encryptedBytes),
-            iv.toBase64String()
+            cipher.doFinal(input.toByteArray()).toBase64String(),
+            cipher.iv.toBase64String()
         )
     }
 
@@ -89,12 +88,18 @@ class KeyStoreHandler(
         input: String,
         iv: String
     ): String {
-        val secretKey = getDataStoreKey()!!
-        val ivSpec = IvParameterSpec(iv.toBase64Array())
-        val cipher = fetchCipher()
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
+        val cipher = fetchCipher().also {
+            it.init(
+                Cipher.DECRYPT_MODE,
+                getDataStoreKey()!!,
+                IvParameterSpec(iv.toBase64Array())
+            )
+        }
         Log.d(TAG, "init called")
-        val decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(input))
-        return String(decryptedBytes)
+        return String(cipher.doFinal(input.toBase64Array()))
     }
+
+
+    private fun ByteArray.toBase64String(): String = Base64.getEncoder().encodeToString(this)
+    private fun String.toBase64Array(): ByteArray = Base64.getDecoder().decode(this)
 }
