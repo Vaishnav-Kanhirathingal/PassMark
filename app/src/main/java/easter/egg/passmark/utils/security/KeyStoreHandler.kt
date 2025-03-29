@@ -4,6 +4,7 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Log
 import java.security.KeyStore
+import java.util.Base64
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -79,7 +80,7 @@ class KeyStoreHandler(
         val iv = cipher.iv
         val encryptedBytes = cipher.doFinal(input.toByteArray())
         return Pair(
-            java.util.Base64.getEncoder().encodeToString(encryptedBytes),
+            Base64.getEncoder().encodeToString(encryptedBytes),
             iv
         )
     }
@@ -93,7 +94,7 @@ class KeyStoreHandler(
         val cipher = fetchCipher()
         cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
         Log.d(TAG, "init called")
-        val decryptedBytes = cipher.doFinal(java.util.Base64.getDecoder().decode(input))
+        val decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(input))
         return String(decryptedBytes)
     }
 }
