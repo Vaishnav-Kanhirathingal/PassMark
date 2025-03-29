@@ -1,6 +1,5 @@
 package easter.egg.passmark.ui.sections.login
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -33,7 +32,6 @@ class LoginViewModel @Inject constructor(
         this@LoginViewModel._screenState.value = ScreenState.Loading()
         viewModelScope.launch {
             val newState: ScreenState<Unit> = try {
-                Log.d(TAG, "delay started")
                 val googleIdToken =
                     GoogleIdTokenCredential.createFrom(data = credentialResponse.credential.data).idToken
                 supabaseClient.auth.signInWith(

@@ -32,6 +32,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.shared.PassMarkFonts
 import easter.egg.passmark.data.shared.setSizeLimitation
+import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
+import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 
@@ -164,14 +166,18 @@ private fun UserEditScreenPreview() {
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
-            viewModel = UserEditViewModel(),
+            viewModel = UserEditViewModel(
+                supabaseAccountHelper = SupabaseAccountHelper(SupabaseModule.mockClient)
+            ),
             isNewUser = false
         )
         UserEditScreen.Screen(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
-            viewModel = UserEditViewModel(),
+            viewModel = UserEditViewModel(
+                supabaseAccountHelper = SupabaseAccountHelper(SupabaseModule.mockClient)
+            ),
             isNewUser = true
         )
     }
