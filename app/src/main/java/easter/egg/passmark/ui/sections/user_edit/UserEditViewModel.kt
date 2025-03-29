@@ -7,7 +7,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.security.KeyStoreHandler
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -53,9 +52,18 @@ class UserEditViewModel @Inject constructor(
             val authId = this@UserEditViewModel.supabaseAccountHelper.getId()
             Log.d(TAG, "password = $password")
             val newState: ScreenState<UserEditButtonClickResult> = try {
-                delay(timeMillis = 3_000) // TODO: remove
                 val keyStoreHandler = KeyStoreHandler(authId = authId)
                 if (isNewUser) {
+                    keyStoreHandler.initialize()
+                    val (encryptedPassword, iv) = keyStoreHandler.encrypt(input = password)
+                    Log.d(TAG, "encryptedPassword = $encryptedPassword")
+                    val decryptedPassword =
+                        keyStoreHandler.decrypt(
+                            input = encryptedPassword,
+                            iv = iv
+                        )
+
+                    Log.d(TAG, "decryptedPassword = $decryptedPassword")
                     TODO(
                         "create a new key, " +
                                 "create puzzle from key and store user to supabase, " +
