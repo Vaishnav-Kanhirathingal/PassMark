@@ -36,10 +36,10 @@ class KeyStoreHandler(
     }
 
     private fun getDataStoreKey(): SecretKey? {
-        val keyStore = fetchKeyStore()
-        return if (keyStore!!.containsAlias(keyAlias)) {
+        val keyStore = fetchKeyStore()!!
+        return if (keyStore.containsAlias(keyAlias)) {
             try {
-                keyStore.getKey(keyAlias, null) as? SecretKey
+                (keyStore.getKey(keyAlias, null) as? SecretKey)!!
             } catch (e: Exception) {
                 e.printStackTrace()
                 null
@@ -59,9 +59,10 @@ class KeyStoreHandler(
                     keyAlias,
                     KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_ENCRYPT
                 )
-                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                .setKeySize(256)
+                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                .setRandomizedEncryptionRequired(true)
+//                .setKeySize(256)
                 .build()
         )
         return keyGenerator.generateKey()
@@ -83,93 +84,40 @@ class KeyStoreHandler(
                 .copyOfRange(0, IV_SIZE)
         )
 
-    private fun fetchCipher(): Cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+    private fun fetchCipher(): Cipher {
+        return Cipher.getInstance("AES/CBC/PKCS7Padding")
+    }
 
-    fun encrypt(
-        input: String
-    ): String? {
-        val cipher = fetchCipher()
-        cipher.init(
-            Cipher.ENCRYPT_MODE,
-            getDataStoreKey()!!
-        )
+    fun encrypt(input: String): Pair<String, String> {
+        val keyStore = KeyStore.getInstance(KEYSTORE_NAME)
+        keyStore.load(null)
+        val secretKey = keyStore.getKey(keyAlias, null) as SecretKey
+
+        val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
         val iv = cipher.iv
+        val encryptedBytes = cipher.doFinal(input.toByteArray())
 
-        Log.d(TAG, "iv = ${Base64.encodeToString(iv, Base64.DEFAULT)}, size = ${iv.size}")
-
-        return Base64.encodeToString(iv + cipher.doFinal(input.toByteArray()), Base64.DEFAULT)
+        return Pair(
+            Base64.encodeToString(encryptedBytes, Base64.DEFAULT),
+            Base64.encodeToString(iv, Base64.DEFAULT)
+        )
     }
 
     fun decrypt(
-        input: String
+        input: String,
+        iv: String
     ): String {
-        val bytes = Base64.decode(input, Base64.DEFAULT)
-        val iv = bytes.copyOfRange(fromIndex = 0, 16)
-        val encryptedData = bytes.copyOfRange(fromIndex = 16, bytes.size)
+        // TODO:
+        val keyStore = KeyStore.getInstance("AndroidKeyStore")
+        keyStore.load(null)
+        val secretKey = keyStore.getKey("MyAESKey", null) as SecretKey
 
-        val cipher = fetchCipher().also {
-            it.init(
-                Cipher.DECRYPT_MODE,
-                getDataStoreKey(),
-                IvParameterSpec(iv)
-            )
-        }
+        val ivSpec = IvParameterSpec(Base64.decode(iv, Base64.DEFAULT))
+        val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
+        val decryptedBytes = cipher.doFinal(Base64.decode(input, Base64.DEFAULT))
 
-        return cipher.doFinal(Base64.decode(encryptedData, Base64.DEFAULT)).toString()
+        return String(decryptedBytes)
     }
-
-    // Encrypt text using AES
-//    fun encrypt(
-//        data: String,
-//        secretKey: SecretKey = getDataStoreKey()!!
-//    ): String {
-//        val cipher = fetchCipher()
-//        val iv = getIvParameterSpec().iv // Generate IV
-//        val ivSpec = IvParameterSpec(iv)
-//        cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec)
-//        val encryptedData = cipher.doFinal(data.toByteArray())
-////        return Pair(
-////            Base64.encodeToString(encryptedData, Base64.DEFAULT),
-////            Base64.encodeToString(iv, Base64.DEFAULT)
-////        )
-//        return Base64.encodeToString(encryptedData, Base64.DEFAULT)
-//    }
-//
-//    // Decrypt text using AES
-//    fun decrypt(
-//        encryptedData: String,
-//        secretKey: SecretKey = getDataStoreKey()!!,
-//        iv: String = Base64.encodeToString(getIvParameterSpec().iv, Base64.DEFAULT)
-//    ): String {
-//        val cipher = fetchCipher()
-//        val ivSpec = IvParameterSpec(Base64.decode(iv, Base64.DEFAULT))
-//        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
-//        val decodedBytes = cipher.doFinal(Base64.decode(encryptedData, Base64.DEFAULT))
-//        return String(decodedBytes)
-//    }
-
-//    fun encrypt(data: String): String {
-//        val ivSpec = IvParameterSpec(getIv())
-//        val cipher = fetchCipher().also {
-//            it.init(Cipher.ENCRYPT_MODE, getDataStoreKey(), ivSpec)
-//        }
-//        val encryptedBytes = cipher.doFinal(data.toByteArray(Charsets.UTF_8))
-//        return Base64.encodeToString(
-//            ivSpec.iv + encryptedBytes,
-//            Base64.DEFAULT
-//        )
-//    }
-//
-//    fun decrypt(encryptedData: String): String {
-//        val decodedBytes = Base64.decode(encryptedData, Base64.DEFAULT)
-//        val iv = decodedBytes.copyOfRange(0, ivSize) // Extract IV from first 16 bytes
-//        val encryptedBytes = decodedBytes.copyOfRange(ivSize, decodedBytes.size)
-//
-//        val cipher = fetchCipher()
-//        val ivSpec = IvParameterSpec(iv)
-//        cipher.init(Cipher.DECRYPT_MODE, getDataStoreKey(), ivSpec)
-//        val decryptedBytes = cipher.doFinal(encryptedBytes)
-//        return String(decryptedBytes, Charsets.UTF_8)
-//    }
-
 }
