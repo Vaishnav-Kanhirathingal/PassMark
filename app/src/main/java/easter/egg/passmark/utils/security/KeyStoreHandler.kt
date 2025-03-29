@@ -14,16 +14,10 @@ class KeyStoreHandler(
 ) {
     companion object {
         const val KEYSTORE_NAME = "AndroidKeyStore"
-
-        enum class KeyAliases {
-            INTERNAL_DATASTORE;
-
-            fun getKeyName(authId: String): String = "${authId}_${this.name}_KEY"
-        }
     }
 
     private val TAG = this::class.simpleName
-    private val keyAlias get() = KeyAliases.INTERNAL_DATASTORE.getKeyName(authId = authId)
+    private val keyAlias get() = "${authId}_INTERNAL_DATASTORE_KEY\""
 
     private fun fetchKeyStore() = try {
         KeyStore.getInstance(KEYSTORE_NAME).apply { load(null) }
