@@ -2,10 +2,8 @@ package easter.egg.passmark.utils.security
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import android.util.Base64
 import android.util.Log
 import java.security.KeyStore
-import java.security.MessageDigest
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -16,7 +14,6 @@ class KeyStoreHandler(
 ) {
     companion object {
         const val KEYSTORE_NAME = "AndroidKeyStore"
-        private const val IV_SIZE = 16
 
         enum class KeyAliases {
             INTERNAL_DATASTORE;
@@ -57,12 +54,12 @@ class KeyStoreHandler(
             KeyGenParameterSpec
                 .Builder(
                     keyAlias,
-                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_ENCRYPT
+                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
                 )
                 .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                .setKeySize(256)
                 .setRandomizedEncryptionRequired(true)
-//                .setKeySize(256)
                 .build()
         )
         return keyGenerator.generateKey()
@@ -77,47 +74,32 @@ class KeyStoreHandler(
         }
     }
 
-    private fun getIvParameterSpec(): IvParameterSpec =
-        IvParameterSpec(
-            MessageDigest.getInstance("SHA-256")
-                .digest(authId.padStart(length = 16, padChar = 'P').toByteArray())
-                .copyOfRange(0, IV_SIZE)
-        )
-
     private fun fetchCipher(): Cipher {
         return Cipher.getInstance("AES/CBC/PKCS7Padding")
     }
 
-    fun encrypt(input: String): Pair<String, String> {
-        val keyStore = KeyStore.getInstance(KEYSTORE_NAME)
-        keyStore.load(null)
-        val secretKey = keyStore.getKey(keyAlias, null) as SecretKey
-
-        val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
+    fun encrypt(input: String): Pair<String, ByteArray> {
+        val secretKey = getDataStoreKey()
+        val cipher = fetchCipher()
         cipher.init(Cipher.ENCRYPT_MODE, secretKey)
         val iv = cipher.iv
         val encryptedBytes = cipher.doFinal(input.toByteArray())
-
         return Pair(
-            Base64.encodeToString(encryptedBytes, Base64.DEFAULT),
-            Base64.encodeToString(iv, Base64.DEFAULT)
+            java.util.Base64.getEncoder().encodeToString(encryptedBytes),
+            iv
         )
     }
 
     fun decrypt(
         input: String,
-        iv: String
+        iv: ByteArray
     ): String {
-        // TODO:
-        val keyStore = KeyStore.getInstance("AndroidKeyStore")
-        keyStore.load(null)
-        val secretKey = keyStore.getKey("MyAESKey", null) as SecretKey
-
-        val ivSpec = IvParameterSpec(Base64.decode(iv, Base64.DEFAULT))
-        val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
+        val secretKey = getDataStoreKey()!!
+        val ivSpec = IvParameterSpec(iv)
+        val cipher = fetchCipher()
         cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
-        val decryptedBytes = cipher.doFinal(Base64.decode(input, Base64.DEFAULT))
-
+        Log.d(TAG, "init called")
+        val decryptedBytes = cipher.doFinal(java.util.Base64.getDecoder().decode(input))
         return String(decryptedBytes)
     }
 }
