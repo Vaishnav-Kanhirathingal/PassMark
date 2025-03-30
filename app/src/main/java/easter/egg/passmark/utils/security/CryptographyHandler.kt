@@ -27,7 +27,7 @@ class CryptographyHandler(
     ): String {
         return fetchCipher()
             .also { it.init(Cipher.ENCRYPT_MODE, secretKeySpec, iv) }
-            .doFinal(input.decodeBase64Bytes()).encodeBase64()
+            .doFinal(input.toByteArray()).encodeBase64()
     }
 
     fun decrypt(
@@ -35,32 +35,31 @@ class CryptographyHandler(
     ): String {
         return fetchCipher()
             .also { it.init(Cipher.DECRYPT_MODE, secretKeySpec, iv) }
-            .doFinal(encryptedInput.decodeBase64Bytes()).encodeBase64()
+            .doFinal(encryptedInput.decodeBase64Bytes())
+            .let { String(it) }
     }
 
     fun getEncryptedPuzzle(): String {
         return encrypt(input = User.PUZZLE_SOLUTION)
     }
 
-    fun isPuzzleCorrect(
-        apiProvidedPuzzle: String
-    ) {
-        (decrypt(apiProvidedPuzzle) == User.PUZZLE_SOLUTION)
-    }
+    fun checkValidation(
+        apiProvidedEncryptedPuzzle: String
+    ): Boolean = (decrypt(apiProvidedEncryptedPuzzle) == User.PUZZLE_SOLUTION)
 }
 
-fun main() {
-    val iv = ByteArray(16).also { SecureRandom().nextBytes(it) }
-    val cryptographyHandler = CryptographyHandler(
-        password = "some password",
-        initializationVector = iv
-    )
-
-    println(
-        cryptographyHandler.decrypt(
-            encryptedInput = cryptographyHandler.encrypt(
-                input = "sample"
-            )
-        )
-    )
-}
+//fun main() {
+//    val iv = ByteArray(16).also { SecureRandom().nextBytes(it) }
+//    val cryptographyHandler = CryptographyHandler(
+//        password = "some password",
+//        initializationVector = iv
+//    )
+//
+//    println(
+//        cryptographyHandler.decrypt(
+//            encryptedInput = cryptographyHandler.encrypt(
+//                input = "sample"
+//            )
+//        )
+//    )
+//}
