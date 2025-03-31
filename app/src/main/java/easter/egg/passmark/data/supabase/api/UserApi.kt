@@ -6,13 +6,10 @@ import io.github.jan.supabase.postgrest.from
 import javax.inject.Inject
 
 class UserApi @Inject constructor(
-    private val supabaseClient: SupabaseClient
+    supabaseClient: SupabaseClient
 ) {
-    companion object {
-        const val TABLE_NAME = "users"
-    }
+    private val table = supabaseClient.from(table = "users")
 
-    suspend fun getUser(): User? = supabaseClient.from(TABLE_NAME)
-        .select(request = {})
-        .decodeSingleOrNull<User>()
+    suspend fun getUser(): User? = table.select().decodeSingleOrNull<User>()
+    suspend fun setUser(user: User) = table.upsert(value = user)
 }
