@@ -118,7 +118,19 @@ class MainActivity : ComponentActivity() {
                         UserEditScreen.Screen(
                             modifier = composableModifier,
                             viewModel = viewModel,
-                            isNewUser = it.arguments!!.getBoolean(Screens.UserEdit::isNewUser.name)
+                            isNewUser = it.arguments!!.getBoolean(Screens.UserEdit::isNewUser.name),
+                            toLoaderScreen = {
+                                navController.navigate(
+                                    route = Screens.Loader,
+                                    navOptions = NavOptions
+                                        .Builder()
+                                        .setPopUpTo(
+                                            route = Screens.UserEdit,
+                                            inclusive = true
+                                        )
+                                        .build()
+                                )
+                            }
                         )
                     }
                 )
@@ -153,7 +165,9 @@ sealed class Screens {
     data object Login : Screens()
 
     @Serializable
-    data class UserEdit(val isNewUser: Boolean) : Screens()
+    data class UserEdit(
+        val isNewUser: Boolean
+    ) : Screens()
 
     @Serializable
     data object Home : Screens()

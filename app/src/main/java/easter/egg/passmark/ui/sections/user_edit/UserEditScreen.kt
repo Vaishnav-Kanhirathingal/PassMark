@@ -22,30 +22,48 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.shared.PassMarkFonts
 import easter.egg.passmark.data.shared.setSizeLimitation
-import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.di.supabase.SupabaseModule
+import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
+// TODO: change name to master-key screen
 object UserEditScreen {
     @Composable
     fun Screen(
         modifier: Modifier,
         viewModel: UserEditViewModel,
-        isNewUser: Boolean
+        isNewUser: Boolean,
+        toLoaderScreen: () -> Unit
     ) {
         val scrollState = rememberScrollState()
         val isLoading = viewModel.screenState.collectAsState().value.isLoading
+        val context = LocalContext.current
+        LaunchedEffect(
+            key1 = viewModel.screenState.collectAsState().value,
+            block = {
+                when (val state = viewModel.screenState.value) {
+                    is ScreenState.PreCall, is ScreenState.Loading -> {}
+                    is ScreenState.Loaded -> withContext(Dispatchers.Main) { toLoaderScreen() }
+                    is ScreenState.ApiError -> state.manageToastActions(context = context)
+                }
+            }
+        )
+
         Column(
             modifier = modifier
                 .padding(horizontal = 16.dp)
@@ -120,6 +138,7 @@ object UserEditScreen {
                         else PasswordVisualTransformation(),
                     singleLine = true
                 )
+                val context = LocalContext.current.applicationContext
                 Button(
                     modifier = Modifier
                         .setSizeLimitation()
@@ -127,7 +146,10 @@ object UserEditScreen {
                     enabled = !isLoading,
                     onClick = {
                         if (errorText == null) {
-                            viewModel.onButtonPress(isNewUser = isNewUser)
+                            viewModel.onButtonPress(
+                                isNewUser = isNewUser,
+                                context = context
+                            )
                         } else {
                             viewModel.updateShowError()
                         }
@@ -162,23 +184,28 @@ object UserEditScreen {
 @MobileHorizontalPreview
 private fun UserEditScreenPreview() {
     Column {
+        val module = SupabaseModule()
         UserEditScreen.Screen(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
             viewModel = UserEditViewModel(
-                supabaseAccountHelper = SupabaseAccountHelper(SupabaseModule.mockClient)
+                supabaseAccountHelper = module.providesSupabaseAccountHelper(supabaseClient = SupabaseModule.mockClient),
+                userApi = module.provideUserApi(supabaseClient = SupabaseModule.mockClient)
             ),
-            isNewUser = false
+            isNewUser = false,
+            toLoaderScreen = {}
         )
         UserEditScreen.Screen(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
             viewModel = UserEditViewModel(
-                supabaseAccountHelper = SupabaseAccountHelper(SupabaseModule.mockClient)
+                supabaseAccountHelper = module.providesSupabaseAccountHelper(supabaseClient = SupabaseModule.mockClient),
+                userApi = module.provideUserApi(supabaseClient = SupabaseModule.mockClient)
             ),
-            isNewUser = true
+            isNewUser = true,
+            toLoaderScreen = {}
         )
     }
 }
