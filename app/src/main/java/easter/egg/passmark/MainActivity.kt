@@ -1,7 +1,6 @@
 package easter.egg.passmark
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -178,16 +177,17 @@ sealed class Screens {
     data object PasswordEdit : Screens()
 }
 
-enum class PassMarkDestinations {
-    LOADER,
-    LOGIN,
-    USER_EDIT {
-        val isNewUserKey = "is_new_user"
-        override val route: String = "${super.route}/{$isNewUserKey}"
-        fun getCustomPath(isNewUser: Boolean) = "${this.route}/$isNewUser"
-    },
-    HOME,
-    PASSWORD_EDIT;
-
-    open val route = "${this.name}_PATH"
-}
+//sealed class Screen {
+//    data object Loader : Screen()
+//    data object Login : Screen()
+//    data object UserEdit : Screen() {
+//        const val IS_NEW_USER_KEU = "isNewUser"
+//        override val route: String = "${super.route}/{$IS_NEW_USER_KEU}"
+//        fun getRoute(isNewUser: Boolean): String = "${super.route}/$isNewUser"
+//    }
+//
+//    data object Home : Screen()
+//    data object PasswordEdit : Screen()
+//
+//    open val route: String get() = "${this::class.simpleName}_ROUTE"
+//}
