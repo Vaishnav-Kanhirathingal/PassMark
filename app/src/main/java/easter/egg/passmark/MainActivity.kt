@@ -1,6 +1,7 @@
 package easter.egg.passmark
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -29,6 +30,7 @@ import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val TAG = this::class.simpleName
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -174,4 +176,18 @@ sealed class Screens {
 
     @Serializable
     data object PasswordEdit : Screens()
+}
+
+enum class PassMarkDestinations {
+    LOADER,
+    LOGIN,
+    USER_EDIT {
+        val isNewUserKey = "is_new_user"
+        override val route: String = "${super.route}/{$isNewUserKey}"
+        fun getCustomPath(isNewUser: Boolean) = "${this.route}/$isNewUser"
+    },
+    HOME,
+    PASSWORD_EDIT;
+
+    open val route = "${this.name}_PATH"
 }
