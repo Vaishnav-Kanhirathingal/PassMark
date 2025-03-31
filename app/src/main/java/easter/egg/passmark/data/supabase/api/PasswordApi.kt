@@ -8,16 +8,13 @@ import javax.inject.Inject
 class PasswordApi @Inject constructor(
     private val supabaseClient: SupabaseClient
 ) {
-    companion object {
-        const val TABLE_NAME = "passwords"
-    }
+    val table = supabaseClient.from("passwords")
 
     suspend fun savePassword(
         password: Password
-    ) {
-        supabaseClient.from(TABLE_NAME).upsert(
-            value = password, // TODO: save password capsule
-            request = { select() }
-        )
-    }
+    ) = table.upsert(
+        value = password, // TODO: save password capsule
+        request = { select() }
+    )
+
 }
