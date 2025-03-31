@@ -116,17 +116,18 @@ class MainActivity : ComponentActivity() {
                 composable<Screens.UserEdit>(
                     content = {
                         val viewModel by viewModels<UserEditViewModel>()
+                        val isNewUser = it.arguments!!.getBoolean(Screens.UserEdit::isNewUser.name)
                         UserEditScreen.Screen(
                             modifier = composableModifier,
                             viewModel = viewModel,
-                            isNewUser = it.arguments!!.getBoolean(Screens.UserEdit::isNewUser.name),
+                            isNewUser = isNewUser,
                             toLoaderScreen = {
                                 navController.navigate(
                                     route = Screens.Loader,
                                     navOptions = NavOptions
                                         .Builder()
                                         .setPopUpTo(
-                                            route = Screens.UserEdit,
+                                            route = Screens.UserEdit(isNewUser = isNewUser),
                                             inclusive = true
                                         )
                                         .build()
