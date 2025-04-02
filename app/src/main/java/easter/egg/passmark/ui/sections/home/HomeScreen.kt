@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -27,9 +28,11 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.LocalPostOffice
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Web
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -39,7 +42,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -58,13 +60,15 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.R
+import easter.egg.passmark.data.models.Vault
+import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
+import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
-import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
-import easter.egg.passmark.utils.annotation.MobilePreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -185,22 +189,9 @@ object HomeScreen {
                         }
                         DrawerTitle(text = "Vaults")
                         HorizontalDivider()
-                        Box(
+                        VaultList(
                             modifier = Modifier
-                                .height(300.dp)
-                                .fillMaxWidth()
-                                .background(color = MaterialTheme.colorScheme.surfaceContainer),
-                            contentAlignment = Alignment.Center,
-                            content = {
-                                Text(
-                                    text = "*Pending*",
-                                    fontSize = PassMarkFonts.Display.medium
-                                )
-                            }
-                        )
-                        Spacer(
-                            modifier = Modifier
-                                .height(height = PassMarkDimensions.minTouchSize)
+                                .heightIn(min = 300.dp)
                                 .fillMaxWidth()
                         )
                         DrawerTitle(text = "Options")
@@ -386,6 +377,137 @@ object HomeScreen {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
                             contentDescription = null
+                        )
+                    }
+                )
+            }
+        )
+    }
+
+    @Composable
+    private fun VaultList(
+        modifier: Modifier
+    ) {
+        val testList = listOf( // TODO: remove this
+            Vault(id = 0, name = "All", iconChoice = 0),
+            Vault(id = 1, name = "Work", iconChoice = 1),
+            Vault(id = 2, name = "Devices", iconChoice = 2),
+            Vault(id = 3, name = "Unimportant", iconChoice = 3)
+        )
+
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
+            content = {
+                val spacerModifier = Modifier
+                    .fillMaxWidth()
+                    .height(height = 8.dp)
+                Spacer(modifier = spacerModifier)
+
+                val vaultSelectableModifier = Modifier.fillMaxWidth()
+                val cornerSize = 12.dp
+                testList.forEachIndexed { index, vault ->
+                    VaultSelectable(
+                        modifier = vaultSelectableModifier,
+                        vault = vault,
+                        itemsInList = 10, // TODO: get
+                        isSelected = index == 0,
+                        cornerSize = cornerSize
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .setSizeLimitation()
+                        .clickable(
+                            onClick = { TODO() }
+                        )
+                        .background(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = RoundedCornerShape(
+                                topStart = 0.dp,
+                                topEnd = cornerSize,
+                                bottomStart = cornerSize,
+                                bottomEnd = cornerSize
+                            )
+                        )
+                        .align(alignment = Alignment.End),
+                    contentAlignment = Alignment.Center,
+                    content = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentDescription = null
+                        )
+                    }
+                )
+                Spacer(modifier = spacerModifier)
+            }
+        )
+    }
+
+    @Composable
+    fun VaultSelectable(
+        modifier: Modifier,
+        vault: Vault,
+        itemsInList: Int,
+        isSelected: Boolean,
+        cornerSize: Dp
+    ) {
+        Row(
+            modifier = modifier
+                .setSizeLimitation()
+                .padding(
+                    start = 16.dp,
+                    end = 8.dp,
+                    top = 4.dp,
+                    bottom = 4.dp
+                )
+                .background(
+                    color =
+                        if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                        else MaterialTheme.colorScheme.surfaceContainer,
+                    shape = RoundedCornerShape(size = cornerSize)
+                )
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(
+                space = 16.dp,
+                alignment = Alignment.CenterHorizontally
+            ),
+            content = {
+                Icon(
+                    modifier = Modifier.sizeIn(maxWidth = 24.dp, maxHeight = 24.dp),
+                    imageVector = when (vault.iconChoice) {
+                        0 -> Icons.Default.Web
+                        1 -> Icons.Default.Web
+                        2 -> Icons.Default.Web
+                        else -> Icons.Default.LocalPostOffice
+                    },
+                    contentDescription = null
+                )
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.spacedBy(
+                        space = 4.dp,
+                        alignment = Alignment.CenterVertically
+                    ),
+                    content = {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            fontSize = PassMarkFonts.Title.medium,
+                            lineHeight = PassMarkFonts.Title.medium,
+                            fontWeight = FontWeight.Bold,
+                            text = vault.name
+                        )
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            fontSize = PassMarkFonts.Label.medium,
+                            lineHeight = PassMarkFonts.Label.medium,
+                            fontWeight = FontWeight.Normal,
+                            text = "$itemsInList passwords"
                         )
                     }
                 )
