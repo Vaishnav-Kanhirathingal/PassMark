@@ -1,22 +1,29 @@
 package easter.egg.passmark.ui.sections.loader
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import easter.egg.passmark.data.storage.PassMarkDataStore
 import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.security.CryptographyHandler
 import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoaderViewModel @Inject constructor(
     val supabaseAccountHelper: SupabaseAccountHelper, // TODO: use this instead
-    val userApi: UserApi
+    val userApi: UserApi,
+    @ApplicationContext val applicationContext: Context
 ) : ViewModel() {
     private val TAG = this::class.simpleName
 
@@ -39,7 +46,7 @@ class LoaderViewModel @Inject constructor(
 
                     is SessionStatus.RefreshFailure, is SessionStatus.NotAuthenticated -> {
                         this@LoaderViewModel._screenState.value =
-                            ScreenState.Loaded(result = UserState.DOES_NOT_EXIST)
+                            ScreenState.Loaded(result = UserState.NOT_LOGGED_IN)
                     }
                 }
             }
@@ -49,15 +56,31 @@ class LoaderViewModel @Inject constructor(
     private suspend fun verifyKeyState() {
         this@LoaderViewModel._screenState.value = try {
             val user = userApi.getUser()
-            if (user == null) {
-                ScreenState.Loaded(UserState.NEW_USER)
-            } else {
-                TODO(
-                    "fetch the key from datastore and verify validity. " +
-                            "IF KEY IS IN DATASTORE AND IS CORRECT -> EXISTS_WITH_KEY_IN_STORAGE " +
-                            "ELSE -> EXISTS_WITHOUT_KEY_IN_STORAGE"
-                )
-            }
+            val userState: UserState =
+                if (user == null) {
+                    UserState.NEW_USER
+                } else {
+                    val password: String? = PassMarkDataStore(
+                        context = applicationContext,
+                        authId = supabaseAccountHelper.getId()
+                    ).fetchPassword().first()
+                    if (password == null) {
+                        UserState.EXISTS_WITHOUT_KEY_IN_STORAGE
+                    } else {
+                        val cryptographyHandler = CryptographyHandler(
+                            password = password,
+                            initializationVector = user.encryptionKeyInitializationVector
+                        )
+                        cryptographyHandler.solvePuzzle(
+                            apiProvidedEncryptedPuzzle = user.passwordPuzzleEncrypted
+                        ).let { passwordSolved ->
+                            if (passwordSolved) UserState.EXISTS_WITH_KEY_IN_STORAGE
+                            else UserState.EXISTS_WITHOUT_KEY_IN_STORAGE
+                        }
+                    }
+                }
+            Log.d(TAG, "user state = ${userState.name}")
+            ScreenState.Loaded(userState)
         } catch (e: Exception) {
             ScreenState.ApiError.fromException(e = e)
         }
@@ -65,7 +88,7 @@ class LoaderViewModel @Inject constructor(
 }
 
 enum class UserState {
-    DOES_NOT_EXIST,
+    NOT_LOGGED_IN,
     NEW_USER,
     EXISTS_WITHOUT_KEY_IN_STORAGE,
     EXISTS_WITH_KEY_IN_STORAGE

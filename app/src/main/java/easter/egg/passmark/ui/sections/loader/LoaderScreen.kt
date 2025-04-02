@@ -39,7 +39,7 @@ object LoaderScreen {
                 when (val state = viewModel.screenState.value) {
                     is ScreenState.Loaded -> {
                         when (state.result) {
-                            UserState.DOES_NOT_EXIST -> toLoginScreen()
+                            UserState.NOT_LOGGED_IN -> toLoginScreen()
                             UserState.NEW_USER -> toEditUserScreen(true)
                             UserState.EXISTS_WITHOUT_KEY_IN_STORAGE -> toEditUserScreen(false)
                             UserState.EXISTS_WITH_KEY_IN_STORAGE -> toHomeScreen()
@@ -81,11 +81,13 @@ object LoaderScreen {
 @MobilePreview
 @MobileHorizontalPreview
 fun LoaderScreenPreview() {
+    val context = LocalContext.current.applicationContext
     LoaderScreen.Screen(
         modifier = Modifier.fillMaxSize(),
         viewModel = LoaderViewModel(
             userApi = UserApi(SupabaseModule.mockClient),
-            supabaseAccountHelper = SupabaseAccountHelper(SupabaseModule.mockClient)
+            supabaseAccountHelper = SupabaseAccountHelper(SupabaseModule.mockClient),
+            applicationContext = context
         ),
         toHomeScreen = {},
         toLoginScreen = {},

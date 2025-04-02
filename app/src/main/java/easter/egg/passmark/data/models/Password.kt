@@ -7,7 +7,7 @@ data class Password(
     val data: PasswordData,
     val lastUsed: Long
 ) {
-    fun toPasswordCapsule(key: String) :PasswordCapsule{
+    fun toPasswordCapsule(key: String): PasswordCapsule {
         TODO("encrypt to string and create capsule")
     }
 }

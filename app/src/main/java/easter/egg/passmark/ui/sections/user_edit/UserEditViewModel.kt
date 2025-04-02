@@ -11,8 +11,6 @@ import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.security.CryptographyHandler
-import io.ktor.util.decodeBase64Bytes
-import io.ktor.util.encodeBase64
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -86,16 +84,14 @@ class UserEditViewModel @Inject constructor(
         password: String,
         dataStoreHandler: PassMarkDataStore,
     ): ScreenState.Loaded<Unit> {
-        val ivForDataEncryption =
-            ByteArray(size = 16).also { SecureRandom().nextBytes(it) }
         val cryptographyHandler = CryptographyHandler(
             password = password,
-            initializationVector = ivForDataEncryption
+            initializationVector = ByteArray(size = 16).also { SecureRandom().nextBytes(it) }
         )
         userApi.setUser(
             user = User(
                 passwordPuzzleEncrypted = cryptographyHandler.getEncryptedPuzzle(),
-                encryptionKeyInitializationVector = ivForDataEncryption.encodeBase64()
+                encryptionKeyInitializationVector = cryptographyHandler.initializationVectorAsString
             )
         )
         dataStoreHandler.savePassword(password = password)
@@ -111,7 +107,7 @@ class UserEditViewModel @Inject constructor(
         val user = userApi.getUser()!!
         val cryptographyHandler = CryptographyHandler(
             password = password,
-            initializationVector = user.encryptionKeyInitializationVector.decodeBase64Bytes()
+            initializationVector = user.encryptionKeyInitializationVector
         )
         val isPasswordCorrect = cryptographyHandler.solvePuzzle(
             apiProvidedEncryptedPuzzle = user.passwordPuzzleEncrypted
