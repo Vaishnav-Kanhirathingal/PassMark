@@ -83,8 +83,8 @@ fun LoaderScreenPreview() {
     LoaderScreen.Screen(
         modifier = Modifier.fillMaxSize(),
         viewModel = LoaderViewModel(
-            supabaseClient = SupabaseModule.mockClient,
-            userApi = UserApi(SupabaseModule.mockClient)
+            userApi = UserApi(SupabaseModule.mockClient),
+            supabaseAccountHelper = SupabaseAccountHelper(SupabaseModule.mockClient)
         ),
         toHomeScreen = {},
         toLoginScreen = {},
