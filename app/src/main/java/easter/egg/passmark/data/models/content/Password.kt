@@ -1,4 +1,4 @@
-package easter.egg.passmark.data.models
+package easter.egg.passmark.data.models.content
 
 /** to be used to display stuff and only to be stored in memory */
 data class Password(

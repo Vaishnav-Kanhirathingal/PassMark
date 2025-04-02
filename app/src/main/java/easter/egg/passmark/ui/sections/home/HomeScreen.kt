@@ -65,7 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.R
-import easter.egg.passmark.data.models.Vault
+import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.values.PassMarkDimensions

@@ -1,4 +1,4 @@
-package easter.egg.passmark.data.models
+package easter.egg.passmark.data.models.content
 
 // TODO: implement
 data class Vault(

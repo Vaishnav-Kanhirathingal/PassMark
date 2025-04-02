@@ -1,6 +1,6 @@
 package easter.egg.passmark.data.supabase.api
 
-import easter.egg.passmark.data.models.Password
+import easter.egg.passmark.data.models.content.Password
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import javax.inject.Inject
