@@ -3,9 +3,9 @@ package easter.egg.passmark.ui.sections.password_edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.data.models.Password
 import easter.egg.passmark.data.models.PasswordData
+import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.utils.ScreenState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -87,12 +87,11 @@ class PasswordEditViewModel @Inject constructor(
         )
         viewModelScope.launch {
             val newState: ScreenState<Unit> = try {
-                delay(10_000)
-                throw Exception("todo")
-                TODO()
+                passwordApi.savePassword(password = password)
+                ScreenState.Loaded(result = Unit)
             } catch (e: Exception) {
                 e.printStackTrace()
-                ScreenState.ApiError.SomethingWentWrong()
+                ScreenState.ApiError.fromException(e = e)
             }
             this@PasswordEditViewModel._screenState.value = newState
         }

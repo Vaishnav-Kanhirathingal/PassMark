@@ -4,7 +4,6 @@ import easter.egg.passmark.data.models.User
 import io.ktor.util.decodeBase64Bytes
 import io.ktor.util.encodeBase64
 import java.security.MessageDigest
-import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec

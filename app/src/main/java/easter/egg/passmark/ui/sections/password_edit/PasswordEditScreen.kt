@@ -55,10 +55,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.data.shared.PassMarkDimensions
 import easter.egg.passmark.data.shared.PassMarkFonts
 import easter.egg.passmark.data.shared.setSizeLimitation
+import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
