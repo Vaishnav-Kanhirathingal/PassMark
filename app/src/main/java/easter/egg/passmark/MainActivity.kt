@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
                 val composableModifier = Modifier.fillMaxSize()
                 composable<Screens.Loader>(
                     content = {
-                        val viewModel: LoaderViewModel by viewModels()
+                        val viewModel: LoaderViewModel = hiltViewModel(viewModelStoreOwner = it)
                         val navOptions = NavOptions.Builder()
                             .setPopUpTo(route = Screens.Loader, inclusive = true)
                             .build()
@@ -94,7 +94,7 @@ class MainActivity : ComponentActivity() {
                 )
                 composable<Screens.Login>(
                     content = {
-                        val viewModel by viewModels<LoginViewModel>()
+                        val viewModel: LoginViewModel = hiltViewModel(viewModelStoreOwner = it)
                         LoginScreen.Screen(
                             modifier = composableModifier,
                             viewModel = viewModel,
@@ -115,7 +115,7 @@ class MainActivity : ComponentActivity() {
                 )
                 composable<Screens.UserEdit>(
                     content = {
-                        val viewModel by viewModels<UserEditViewModel>()
+                        val viewModel: UserEditViewModel = hiltViewModel(viewModelStoreOwner = it)
                         val isNewUser = it.arguments!!.getBoolean(Screens.UserEdit::isNewUser.name)
                         UserEditScreen.Screen(
                             modifier = composableModifier,
@@ -146,7 +146,8 @@ class MainActivity : ComponentActivity() {
                 )
                 composable<Screens.PasswordEdit>(
                     content = {
-                        val viewModel: PasswordEditViewModel by viewModels()
+                        val viewModel: PasswordEditViewModel =
+                            hiltViewModel(viewModelStoreOwner = it)
                         PasswordEditScreen.Screen(
                             modifier = composableModifier,
                             viewModel = viewModel,
