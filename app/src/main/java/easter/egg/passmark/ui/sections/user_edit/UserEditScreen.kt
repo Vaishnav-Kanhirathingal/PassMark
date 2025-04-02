@@ -34,6 +34,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.shared.PassMarkFonts
 import easter.egg.passmark.data.shared.setSizeLimitation
+import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
+import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -43,6 +45,8 @@ import kotlinx.coroutines.withContext
 
 // TODO: change name to master-key screen
 object UserEditScreen {
+    private val TAG = this::class.simpleName
+
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -51,10 +55,11 @@ object UserEditScreen {
         toLoaderScreen: () -> Unit
     ) {
         val scrollState = rememberScrollState()
-        val isLoading = viewModel.screenState.collectAsState().value.isLoading
+        val screenState = viewModel.screenState.collectAsState()
+        val isLoading = screenState.value.isLoading
         val context = LocalContext.current
         LaunchedEffect(
-            key1 = viewModel.screenState.collectAsState().value,
+            key1 = screenState.value,
             block = {
                 when (val state = viewModel.screenState.value) {
                     is ScreenState.PreCall, is ScreenState.Loading -> {}
@@ -138,7 +143,7 @@ object UserEditScreen {
                         else PasswordVisualTransformation(),
                     singleLine = true
                 )
-                val context = LocalContext.current.applicationContext
+                val applicationContext = LocalContext.current.applicationContext
                 Button(
                     modifier = Modifier
                         .setSizeLimitation()
@@ -148,7 +153,7 @@ object UserEditScreen {
                         if (errorText == null) {
                             viewModel.onButtonPress(
                                 isNewUser = isNewUser,
-                                context = context
+                                context = applicationContext
                             )
                         } else {
                             viewModel.updateShowError()
@@ -184,14 +189,13 @@ object UserEditScreen {
 @MobileHorizontalPreview
 private fun UserEditScreenPreview() {
     Column {
-        val module = SupabaseModule()
         UserEditScreen.Screen(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
             viewModel = UserEditViewModel(
-                supabaseAccountHelper = module.providesSupabaseAccountHelper(supabaseClient = SupabaseModule.mockClient),
-                userApi = module.provideUserApi(supabaseClient = SupabaseModule.mockClient)
+                supabaseAccountHelper = SupabaseAccountHelper(supabaseClient = SupabaseModule.mockClient),
+                userApi = UserApi(supabaseClient = SupabaseModule.mockClient)
             ),
             isNewUser = false,
             toLoaderScreen = {}
@@ -201,8 +205,8 @@ private fun UserEditScreenPreview() {
                 .fillMaxSize()
                 .weight(1f),
             viewModel = UserEditViewModel(
-                supabaseAccountHelper = module.providesSupabaseAccountHelper(supabaseClient = SupabaseModule.mockClient),
-                userApi = module.provideUserApi(supabaseClient = SupabaseModule.mockClient)
+                supabaseAccountHelper = SupabaseAccountHelper(supabaseClient = SupabaseModule.mockClient),
+                userApi = UserApi(supabaseClient = SupabaseModule.mockClient)
             ),
             isNewUser = true,
             toLoaderScreen = {}
