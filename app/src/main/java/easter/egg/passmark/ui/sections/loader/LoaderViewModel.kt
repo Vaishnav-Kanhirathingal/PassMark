@@ -67,16 +67,15 @@ class LoaderViewModel @Inject constructor(
                     if (password == null) {
                         UserState.EXISTS_WITHOUT_KEY_IN_STORAGE
                     } else {
-                        val cryptographyHandler = CryptographyHandler(
+                        CryptographyHandler(
                             password = password,
                             initializationVector = user.encryptionKeyInitializationVector
                         )
-                        cryptographyHandler.solvePuzzle(
-                            apiProvidedEncryptedPuzzle = user.passwordPuzzleEncrypted
-                        ).let { passwordSolved ->
-                            if (passwordSolved) UserState.EXISTS_WITH_KEY_IN_STORAGE
-                            else UserState.EXISTS_WITHOUT_KEY_IN_STORAGE
-                        }
+                            .solvePuzzle(apiProvidedEncryptedPuzzle = user.passwordPuzzleEncrypted)
+                            .let { puzzleSolved ->
+                                if (puzzleSolved) UserState.EXISTS_WITH_KEY_IN_STORAGE
+                                else UserState.EXISTS_WITHOUT_KEY_IN_STORAGE
+                            }
                     }
                 }
             Log.d(TAG, "user state = ${userState.name}")

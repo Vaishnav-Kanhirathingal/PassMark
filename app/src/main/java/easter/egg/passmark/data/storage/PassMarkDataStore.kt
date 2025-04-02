@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 
 class PassMarkDataStore(
     private val context: Context,
-    private val authId: String
+    authId: String
 ) {
     companion object {
         private val passwordKey = stringPreferencesKey(name = "password_key")
