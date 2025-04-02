@@ -4,12 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     content = {
                         val viewModel: LoaderViewModel = hiltViewModel(viewModelStoreOwner = it)
                         val navOptions = NavOptions.Builder()
-                            .setPopUpTo(route = Screens.Loader, inclusive = true)
+                            .setPopUpTo<Screens.Loader>(inclusive = true)
                             .build()
                         LoaderScreen.Screen(
                             modifier = composableModifier,
@@ -103,10 +103,7 @@ class MainActivity : ComponentActivity() {
                                     route = Screens.Loader,
                                     navOptions = NavOptions
                                         .Builder()
-                                        .setPopUpTo(
-                                            route = Screens.Login,
-                                            inclusive = true
-                                        )
+                                        .setPopUpTo<Screens.Login>(inclusive = true)
                                         .build()
                                 )
                             }
@@ -126,10 +123,7 @@ class MainActivity : ComponentActivity() {
                                     route = Screens.Loader,
                                     navOptions = NavOptions
                                         .Builder()
-                                        .setPopUpTo(
-                                            route = Screens.UserEdit(isNewUser = isNewUser),
-                                            inclusive = true
-                                        )
+                                        .setPopUpTo<Screens.UserEdit>(inclusive = true)
                                         .build()
                                 )
                             }
@@ -168,9 +162,7 @@ sealed class Screens {
     data object Login : Screens()
 
     @Serializable
-    data class UserEdit(
-        val isNewUser: Boolean
-    ) : Screens()
+    data class UserEdit(val isNewUser: Boolean) : Screens()
 
     @Serializable
     data object Home : Screens()
@@ -178,18 +170,3 @@ sealed class Screens {
     @Serializable
     data object PasswordEdit : Screens()
 }
-
-//sealed class Screen {
-//    data object Loader : Screen()
-//    data object Login : Screen()
-//    data object UserEdit : Screen() {
-//        const val IS_NEW_USER_KEU = "isNewUser"
-//        override val route: String = "${super.route}/{$IS_NEW_USER_KEU}"
-//        fun getRoute(isNewUser: Boolean): String = "${super.route}/$isNewUser"
-//    }
-//
-//    data object Home : Screen()
-//    data object PasswordEdit : Screen()
-//
-//    open val route: String get() = "${this::class.simpleName}_ROUTE"
-//}
