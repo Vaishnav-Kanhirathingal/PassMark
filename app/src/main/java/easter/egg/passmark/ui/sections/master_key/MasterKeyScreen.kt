@@ -32,8 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import easter.egg.passmark.data.shared.PassMarkFonts
-import easter.egg.passmark.data.shared.setSizeLimitation
+import easter.egg.passmark.utils.values.PassMarkFonts
+import easter.egg.passmark.utils.values.setSizeLimitation
 import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.di.supabase.SupabaseModule

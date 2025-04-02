@@ -1,4 +1,4 @@
-package easter.egg.passmark.data.shared
+package easter.egg.passmark.utils.values
 
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.ui.Modifier

@@ -1,4 +1,4 @@
-package easter.egg.passmark.data.shared
+package easter.egg.passmark.utils.values
 
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
