@@ -1,12 +1,12 @@
 package easter.egg.passmark.ui.sections.loader
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.utils.ScreenState
-import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoaderViewModel @Inject constructor(
-    val supabaseClient: SupabaseClient,
+    val supabaseAccountHelper: SupabaseAccountHelper, // TODO: use this instead
     val userApi: UserApi
 ) : ViewModel() {
     private val TAG = this::class.simpleName
@@ -25,7 +25,7 @@ class LoaderViewModel @Inject constructor(
     val screenState: StateFlow<ScreenState<UserState>> get() = _screenState
 
     private val sessionListener = viewModelScope.launch {
-        supabaseClient.auth.sessionStatus.collect {
+        supabaseAccountHelper.getSessionStatus().collect {
             when (it) {
                 is SessionStatus.Authenticated -> this@LoaderViewModel.verifyKeyState()
                 SessionStatus.Initializing -> {

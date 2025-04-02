@@ -10,4 +10,6 @@ class SupabaseAccountHelper @Inject constructor(
     suspend fun getId(): String {
         return supabaseClient.auth.retrieveUserForCurrentSession().id
     }
+
+    fun getSessionStatus() = supabaseClient.auth.sessionStatus
 }
