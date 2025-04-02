@@ -63,6 +63,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.R
 import easter.egg.passmark.data.models.Vault
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -187,7 +188,7 @@ object HomeScreen {
                                     .padding(horizontal = 16.dp, vertical = 8.dp),
                                 fontFamily = PassMarkFonts.font,
                                 fontSize = PassMarkFonts.Title.medium,
-                                fontWeight = FontWeight.Medium,
+                                fontWeight = FontWeight.SemiBold,
                                 text = text
                             )
                         }
@@ -209,8 +210,8 @@ object HomeScreen {
                         ) {
                             Row(
                                 modifier = Modifier
+                                    .setSizeLimitation()
                                     .fillMaxWidth()
-                                    .heightIn(min = PassMarkDimensions.minTouchSize)
                                     .clickable(onClick = onclick),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(
@@ -226,9 +227,9 @@ object HomeScreen {
                                     )
                                     Text(
                                         modifier = Modifier.weight(1f),
-                                        fontSize = PassMarkFonts.Label.medium,
+                                        fontSize = PassMarkFonts.Body.medium,
                                         fontFamily = PassMarkFonts.font,
-                                        fontWeight = FontWeight.Medium,
+                                        fontWeight = FontWeight.SemiBold,
                                         text = text
                                     )
                                     Spacer(modifier = Modifier.width(width = padding))
@@ -443,7 +444,7 @@ object HomeScreen {
                     contentAlignment = Alignment.Center,
                     content = {
                         Icon(
-                            modifier=Modifier.size(size = 28.dp),
+                            modifier = Modifier.size(size = 28.dp),
                             imageVector = Icons.Default.Add,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             contentDescription = null
@@ -502,7 +503,6 @@ object HomeScreen {
 
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .constrainAs(
                             ref = title,
                             constrainBlock = {
@@ -512,6 +512,8 @@ object HomeScreen {
                                     anchor = icon.end,
                                     margin = 16.dp
                                 )
+                                this.end.linkTo(parent.end)
+                                width = Dimension.fillToConstraints
                             }
                         ),
                     fontSize = PassMarkFonts.Title.large,
@@ -524,13 +526,17 @@ object HomeScreen {
                 )
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .constrainAs(
                             ref = subTitle,
                             constrainBlock = {
                                 this.top.linkTo(title.bottom)
-                                this.start.linkTo(title.start)
+                                this.start.linkTo(
+                                    anchor = icon.end,
+                                    margin = 16.dp
+                                )
                                 this.bottom.linkTo(icon.bottom)
+                                this.end.linkTo(parent.end)
+                                width = Dimension.fillToConstraints
                             }
                         ),
                     fontSize = PassMarkFonts.Label.medium,
