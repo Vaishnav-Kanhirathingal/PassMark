@@ -13,8 +13,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.data.shared.PassMarkDimensions
+import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
+import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -29,7 +30,7 @@ object LoaderScreen {
         viewModel: LoaderViewModel,
         toHomeScreen: () -> Unit,
         toLoginScreen: () -> Unit,
-        toEditUserScreen: (isNewUser:Boolean) -> Unit
+        toEditUserScreen: (isNewUser: Boolean) -> Unit
     ) {
         val context = LocalContext.current
         LaunchedEffect(
@@ -39,7 +40,7 @@ object LoaderScreen {
                     is ScreenState.Loaded -> {
                         when (state.result) {
                             UserState.DOES_NOT_EXIST -> toLoginScreen()
-                            UserState.NEW_USER-> toEditUserScreen(true)
+                            UserState.NEW_USER -> toEditUserScreen(true)
                             UserState.EXISTS_WITHOUT_KEY_IN_STORAGE -> toEditUserScreen(false)
                             UserState.EXISTS_WITH_KEY_IN_STORAGE -> toHomeScreen()
                         }
