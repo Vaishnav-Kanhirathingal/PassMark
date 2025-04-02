@@ -22,8 +22,8 @@ import easter.egg.passmark.ui.sections.login.LoginScreen
 import easter.egg.passmark.ui.sections.login.LoginViewModel
 import easter.egg.passmark.ui.sections.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.sections.password_edit.PasswordEditViewModel
-import easter.egg.passmark.ui.sections.user_edit.MasterKeyScreen
-import easter.egg.passmark.ui.sections.user_edit.UserEditViewModel
+import easter.egg.passmark.ui.sections.master_key.MasterKeyScreen
+import easter.egg.passmark.ui.sections.master_key.UserEditViewModel
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import kotlinx.serialization.Serializable
 

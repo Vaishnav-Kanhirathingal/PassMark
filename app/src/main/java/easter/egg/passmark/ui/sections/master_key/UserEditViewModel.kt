@@ -1,4 +1,4 @@
-package easter.egg.passmark.ui.sections.user_edit
+package easter.egg.passmark.ui.sections.master_key
 
 import android.content.Context
 import android.util.Log
