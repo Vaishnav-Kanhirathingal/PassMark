@@ -30,7 +30,7 @@ object LoaderScreen {
         viewModel: LoaderViewModel,
         toHomeScreen: () -> Unit,
         toLoginScreen: () -> Unit,
-        toEditUserScreen: (isNewUser: Boolean) -> Unit
+        toMasterKeyScreen: (isNewUser: Boolean) -> Unit
     ) {
         val context = LocalContext.current
         LaunchedEffect(
@@ -40,8 +40,8 @@ object LoaderScreen {
                     is ScreenState.Loaded -> {
                         when (state.result) {
                             UserState.NOT_LOGGED_IN -> toLoginScreen()
-                            UserState.NEW_USER -> toEditUserScreen(true)
-                            UserState.EXISTS_WITHOUT_KEY_IN_STORAGE -> toEditUserScreen(false)
+                            UserState.NEW_USER -> toMasterKeyScreen(true)
+                            UserState.EXISTS_WITHOUT_KEY_IN_STORAGE -> toMasterKeyScreen(false)
                             UserState.EXISTS_WITH_KEY_IN_STORAGE -> toHomeScreen()
                         }
                     }
@@ -91,6 +91,6 @@ fun LoaderScreenPreview() {
         ),
         toHomeScreen = {},
         toLoginScreen = {},
-        toEditUserScreen = {}
+        toMasterKeyScreen = {}
     )
 }

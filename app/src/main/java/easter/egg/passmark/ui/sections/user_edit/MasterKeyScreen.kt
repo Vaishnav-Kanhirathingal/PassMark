@@ -44,7 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 // TODO: change name to master-key screen
-object UserEditScreen {
+object MasterKeyScreen {
     private val TAG = this::class.simpleName
 
     @Composable
@@ -189,7 +189,7 @@ object UserEditScreen {
 @MobileHorizontalPreview
 private fun UserEditScreenPreview() {
     Column {
-        UserEditScreen.Screen(
+        MasterKeyScreen.Screen(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
@@ -200,7 +200,7 @@ private fun UserEditScreenPreview() {
             isNewUser = false,
             toLoaderScreen = {}
         )
-        UserEditScreen.Screen(
+        MasterKeyScreen.Screen(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),

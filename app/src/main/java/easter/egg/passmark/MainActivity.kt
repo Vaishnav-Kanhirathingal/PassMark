@@ -22,7 +22,7 @@ import easter.egg.passmark.ui.sections.login.LoginScreen
 import easter.egg.passmark.ui.sections.login.LoginViewModel
 import easter.egg.passmark.ui.sections.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.sections.password_edit.PasswordEditViewModel
-import easter.egg.passmark.ui.sections.user_edit.UserEditScreen
+import easter.egg.passmark.ui.sections.user_edit.MasterKeyScreen
 import easter.egg.passmark.ui.sections.user_edit.UserEditViewModel
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import kotlinx.serialization.Serializable
@@ -83,9 +83,9 @@ class MainActivity : ComponentActivity() {
                                     navOptions = navOptions
                                 )
                             },
-                            toEditUserScreen = { isNewUser: Boolean ->
+                            toMasterKeyScreen = { isNewUser: Boolean ->
                                 navController.navigate(
-                                    route = Screens.UserEdit(isNewUser = isNewUser),
+                                    route = Screens.MasterKey(isNewUser = isNewUser),
                                     navOptions = navOptions
                                 )
                             }
@@ -110,11 +110,11 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 )
-                composable<Screens.UserEdit>(
+                composable<Screens.MasterKey>(
                     content = {
                         val viewModel: UserEditViewModel = hiltViewModel(viewModelStoreOwner = it)
-                        val isNewUser = it.arguments!!.getBoolean(Screens.UserEdit::isNewUser.name)
-                        UserEditScreen.Screen(
+                        val isNewUser = it.arguments!!.getBoolean(Screens.MasterKey::isNewUser.name)
+                        MasterKeyScreen.Screen(
                             modifier = composableModifier,
                             viewModel = viewModel,
                             isNewUser = isNewUser,
@@ -123,7 +123,7 @@ class MainActivity : ComponentActivity() {
                                     route = Screens.Loader,
                                     navOptions = NavOptions
                                         .Builder()
-                                        .setPopUpTo<Screens.UserEdit>(inclusive = true)
+                                        .setPopUpTo<Screens.MasterKey>(inclusive = true)
                                         .build()
                                 )
                             }
@@ -162,7 +162,7 @@ sealed class Screens {
     data object Login : Screens()
 
     @Serializable
-    data class UserEdit(val isNewUser: Boolean) : Screens()
+    data class MasterKey(val isNewUser: Boolean) : Screens()
 
     @Serializable
     data object Home : Screens()

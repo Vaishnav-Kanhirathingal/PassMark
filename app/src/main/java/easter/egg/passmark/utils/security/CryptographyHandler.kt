@@ -8,7 +8,7 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-// rename to password data encryption handler
+// TODO: rename to password data encryption handler
 class CryptographyHandler private constructor(
     private val secretKeySpec: SecretKeySpec,
     private val ivSpec: IvParameterSpec
@@ -36,6 +36,8 @@ class CryptographyHandler private constructor(
     val initializationVectorAsString: String get() = ivSpec.iv.encodeBase64()
 
     private fun fetchCipher(): Cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+
+    // TODO: overload both encrypt and decrypt functions for 'password data' object
 
     fun encrypt(
         input: String
