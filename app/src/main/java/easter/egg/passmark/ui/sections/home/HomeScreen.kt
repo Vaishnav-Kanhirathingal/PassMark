@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -60,8 +59,10 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import easter.egg.passmark.R
 import easter.egg.passmark.data.models.Vault
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -153,7 +154,10 @@ object HomeScreen {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 16.dp),
+                                .padding(
+                                    top = 24.dp,
+                                    bottom = 16.dp
+                                ),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(
                                 space = 8.dp,
@@ -398,7 +402,10 @@ object HomeScreen {
         Column(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
+            verticalArrangement = Arrangement.spacedBy(
+                space = 4.dp,
+                alignment = Alignment.Top
+            ),
             content = {
                 val spacerModifier = Modifier
                     .fillMaxWidth()
@@ -416,15 +423,13 @@ object HomeScreen {
                         cornerSize = cornerSize
                     )
                 }
+
                 Box(
                     modifier = Modifier
                         .padding(end = 8.dp)
+                        .size(size = 60.dp)
                         .setSizeLimitation()
-                        .clickable(
-                            onClick = { TODO() }
-                        )
-                        .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
+                        .clip(
                             shape = RoundedCornerShape(
                                 topStart = 0.dp,
                                 topEnd = cornerSize,
@@ -432,10 +437,13 @@ object HomeScreen {
                                 bottomEnd = cornerSize
                             )
                         )
+                        .clickable(onClick = { TODO() })
+                        .background(color = MaterialTheme.colorScheme.primaryContainer)
                         .align(alignment = Alignment.End),
                     contentAlignment = Alignment.Center,
                     content = {
                         Icon(
+                            modifier=Modifier.size(size = 28.dp),
                             imageVector = Icons.Default.Add,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             contentDescription = null
@@ -455,61 +463,83 @@ object HomeScreen {
         isSelected: Boolean,
         cornerSize: Dp
     ) {
-        Row(
+        val onContainerColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
+        else MaterialTheme.colorScheme.onSecondaryContainer
+        ConstraintLayout(
             modifier = modifier
                 .setSizeLimitation()
-                .padding(
-                    start = 16.dp,
-                    end = 8.dp,
-                    top = 4.dp,
-                    bottom = 4.dp
-                )
+                .padding(horizontal = 8.dp)
+                .clip(shape = RoundedCornerShape(size = cornerSize))
                 .background(
                     color =
                         if (isSelected) MaterialTheme.colorScheme.primaryContainer
                         else MaterialTheme.colorScheme.surfaceContainer,
-                    shape = RoundedCornerShape(size = cornerSize)
                 )
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(
-                space = 16.dp,
-                alignment = Alignment.CenterHorizontally
-            ),
+                .clickable(onClick = { TODO() })
+                .padding(horizontal = 16.dp, vertical = 16.dp),
             content = {
+                val (icon, title, subTitle) = createRefs()
                 Icon(
-                    modifier = Modifier.sizeIn(maxWidth = 24.dp, maxHeight = 24.dp),
+                    modifier = Modifier
+                        .size(size = 28.dp)
+                        .constrainAs(
+                            ref = icon,
+                            constrainBlock = {
+                                this.top.linkTo(parent.top)
+                                this.start.linkTo(parent.start)
+                                this.bottom.linkTo(parent.bottom)
+                            }
+                        ),
                     imageVector = when (vault.iconChoice) {
                         0 -> Icons.Default.Web
                         1 -> Icons.Default.Web
                         2 -> Icons.Default.Web
                         else -> Icons.Default.LocalPostOffice
                     },
+                    tint = onContainerColor,
                     contentDescription = null
                 )
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(
-                        space = 4.dp,
-                        alignment = Alignment.CenterVertically
-                    ),
-                    content = {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            fontSize = PassMarkFonts.Title.medium,
-                            lineHeight = PassMarkFonts.Title.medium,
-                            fontWeight = FontWeight.Bold,
-                            text = vault.name
-                        )
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            fontSize = PassMarkFonts.Label.medium,
-                            lineHeight = PassMarkFonts.Label.medium,
-                            fontWeight = FontWeight.Normal,
-                            text = "$itemsInList passwords"
-                        )
-                    }
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .constrainAs(
+                            ref = title,
+                            constrainBlock = {
+                                this.top.linkTo(icon.top)
+                                this.bottom.linkTo(subTitle.top)
+                                this.start.linkTo(
+                                    anchor = icon.end,
+                                    margin = 16.dp
+                                )
+                            }
+                        ),
+                    fontSize = PassMarkFonts.Title.large,
+                    lineHeight = PassMarkFonts.Title.large,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = onContainerColor,
+                    text = vault.name
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .constrainAs(
+                            ref = subTitle,
+                            constrainBlock = {
+                                this.top.linkTo(title.bottom)
+                                this.start.linkTo(title.start)
+                                this.bottom.linkTo(icon.bottom)
+                            }
+                        ),
+                    fontSize = PassMarkFonts.Label.medium,
+                    lineHeight = PassMarkFonts.Label.medium,
+                    fontWeight = FontWeight.Normal,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = onContainerColor,
+                    text = "$itemsInList passwords"
                 )
             }
         )
