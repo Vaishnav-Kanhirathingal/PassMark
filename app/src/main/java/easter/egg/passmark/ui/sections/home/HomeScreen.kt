@@ -404,7 +404,7 @@ object HomeScreen {
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
-                space = 4.dp,
+                space = 8.dp,
                 alignment = Alignment.Top
             ),
             content = {
