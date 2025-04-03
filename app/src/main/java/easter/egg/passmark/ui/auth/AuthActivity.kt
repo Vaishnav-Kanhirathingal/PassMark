@@ -76,7 +76,7 @@ class AuthActivity : ComponentActivity() {
                                         MainActivity::class.java
                                     )
                                 )
-                                    this@AuthActivity.finish()
+                                this@AuthActivity.finish()
                             },
                             toLoginScreen = {
                                 navController.navigate(

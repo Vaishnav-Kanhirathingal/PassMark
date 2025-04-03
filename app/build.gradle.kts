@@ -106,5 +106,5 @@ dependencies {
     //-------------------------------------------------------------------------------------datastore
     implementation(libs.androidx.datastore.preferences)
     //-----------------------------------------------------------------------------constraint-layout
-    implementation (libs.androidx.constraintlayout.compose)
+    implementation(libs.androidx.constraintlayout.compose)
 }

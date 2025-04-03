@@ -41,11 +41,11 @@ import androidx.credentials.exceptions.GetCredentialCancellationException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import easter.egg.passmark.BuildConfig
 import easter.egg.passmark.R
-import easter.egg.passmark.utils.values.PassMarkDimensions
-import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.values.PassMarkDimensions
+import easter.egg.passmark.utils.values.PassMarkFonts
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
