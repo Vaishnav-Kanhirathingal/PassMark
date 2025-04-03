@@ -24,7 +24,9 @@ data class PasswordData(
     val saveToLocalOnly: Boolean
 )
 
-/** attack safe data with encrypted password data to be stored remotely / on-storage */
+/** attack safe data with encrypted password data to be stored remotely / on-storage
+ * @param data is an encrypted json of [PasswordData]
+ */
 data class PasswordCapsule(
     val id: Int? = null,
     val vaultId: Int?,

@@ -1,6 +1,5 @@
 package easter.egg.passmark.data.models.content
 
-// TODO: implement
 data class Vault(
     val id: Int,
     val name: String,
