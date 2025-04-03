@@ -1,4 +1,4 @@
-package easter.egg.passmark.ui.sections.master_key
+package easter.egg.passmark.ui.auth.master_key
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

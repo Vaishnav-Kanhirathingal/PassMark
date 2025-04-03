@@ -1,4 +1,4 @@
-package easter.egg.passmark.ui.sections.home
+package easter.egg.passmark.ui.main.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

@@ -1,4 +1,4 @@
-package easter.egg.passmark.ui.sections.password_edit
+package easter.egg.passmark.ui.main.password_edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

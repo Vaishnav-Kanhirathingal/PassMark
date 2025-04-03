@@ -1,4 +1,4 @@
-package easter.egg.passmark.ui.sections.login
+package easter.egg.passmark.ui.auth.login
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State

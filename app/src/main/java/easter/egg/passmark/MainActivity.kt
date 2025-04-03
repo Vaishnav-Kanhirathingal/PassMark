@@ -15,15 +15,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import easter.egg.passmark.ui.sections.home.HomeScreen
-import easter.egg.passmark.ui.sections.loader.LoaderScreen
-import easter.egg.passmark.ui.sections.loader.LoaderViewModel
-import easter.egg.passmark.ui.sections.login.LoginScreen
-import easter.egg.passmark.ui.sections.login.LoginViewModel
-import easter.egg.passmark.ui.sections.password_edit.PasswordEditScreen
-import easter.egg.passmark.ui.sections.password_edit.PasswordEditViewModel
-import easter.egg.passmark.ui.sections.master_key.MasterKeyScreen
-import easter.egg.passmark.ui.sections.master_key.UserEditViewModel
+import easter.egg.passmark.ui.main.home.HomeScreen
+import easter.egg.passmark.ui.auth.loader.LoaderScreen
+import easter.egg.passmark.ui.auth.loader.LoaderViewModel
+import easter.egg.passmark.ui.auth.login.LoginScreen
+import easter.egg.passmark.ui.auth.login.LoginViewModel
+import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
+import easter.egg.passmark.ui.main.password_edit.PasswordEditViewModel
+import easter.egg.passmark.ui.auth.master_key.MasterKeyScreen
+import easter.egg.passmark.ui.auth.master_key.UserEditViewModel
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import kotlinx.serialization.Serializable
 

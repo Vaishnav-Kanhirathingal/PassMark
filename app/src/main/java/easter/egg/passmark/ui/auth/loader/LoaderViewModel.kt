@@ -1,4 +1,4 @@
-package easter.egg.passmark.ui.sections.loader
+package easter.egg.passmark.ui.auth.loader
 
 import android.content.Context
 import android.util.Log
