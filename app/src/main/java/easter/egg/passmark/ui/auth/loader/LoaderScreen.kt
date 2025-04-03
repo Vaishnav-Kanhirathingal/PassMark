@@ -28,7 +28,7 @@ object LoaderScreen {
     fun Screen(
         modifier: Modifier,
         viewModel: LoaderViewModel,
-        toHomeScreen: () -> Unit,
+        toMainActivity: () -> Unit,
         toLoginScreen: () -> Unit,
         toMasterKeyScreen: (isNewUser: Boolean) -> Unit
     ) {
@@ -42,7 +42,7 @@ object LoaderScreen {
                             UserState.NOT_LOGGED_IN -> toLoginScreen()
                             UserState.NEW_USER -> toMasterKeyScreen(true)
                             UserState.EXISTS_WITHOUT_KEY_IN_STORAGE -> toMasterKeyScreen(false)
-                            UserState.EXISTS_WITH_KEY_IN_STORAGE -> toHomeScreen()
+                            UserState.EXISTS_WITH_KEY_IN_STORAGE -> toMainActivity()
                         }
                     }
 
@@ -89,7 +89,7 @@ fun LoaderScreenPreview() {
             supabaseAccountHelper = SupabaseAccountHelper(SupabaseModule.mockClient),
             applicationContext = context
         ),
-        toHomeScreen = {},
+        toMainActivity = {},
         toLoginScreen = {},
         toMasterKeyScreen = {}
     )

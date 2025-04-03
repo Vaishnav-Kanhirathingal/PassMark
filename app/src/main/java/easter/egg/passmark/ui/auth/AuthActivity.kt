@@ -1,5 +1,6 @@
-package easter.egg.passmark
+package easter.egg.passmark.ui.auth
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,84 +16,84 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import easter.egg.passmark.ui.main.home.HomeScreen
 import easter.egg.passmark.ui.auth.loader.LoaderScreen
 import easter.egg.passmark.ui.auth.loader.LoaderViewModel
 import easter.egg.passmark.ui.auth.login.LoginScreen
 import easter.egg.passmark.ui.auth.login.LoginViewModel
-import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
-import easter.egg.passmark.ui.main.password_edit.PasswordEditViewModel
 import easter.egg.passmark.ui.auth.master_key.MasterKeyScreen
 import easter.egg.passmark.ui.auth.master_key.UserEditViewModel
+import easter.egg.passmark.ui.main.MainActivity
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class AuthActivity : ComponentActivity() {
     private val TAG = this::class.simpleName
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent(
-            content = {
-                PassMarkTheme {
-                    Scaffold(
-                        modifier = Modifier.fillMaxSize(),
-                        content = { innerPadding ->
-                            MainActivityNavHost(
-                                modifier = Modifier.padding(
-                                    paddingValues = innerPadding
-                                )
+        setContent {
+            PassMarkTheme {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    content = { innerPadding ->
+                        AuthActivityNavHost(
+                            modifier = Modifier.padding(
+                                paddingValues = innerPadding
                             )
-                        }
-                    )
-                }
+                        )
+                    }
+                )
             }
-        )
+        }
     }
 
     @Composable
-    fun MainActivityNavHost(
+    private fun AuthActivityNavHost(
         modifier: Modifier
     ) {
         val navController = rememberNavController()
         NavHost(
             modifier = modifier.fillMaxSize(),
             navController = navController,
-            startDestination = Screens.Loader,
+            startDestination = AuthScreens.Loader,
             builder = {
                 val composableModifier = Modifier.fillMaxSize()
-                composable<Screens.Loader>(
+                composable<AuthScreens.Loader>(
                     content = {
                         val viewModel: LoaderViewModel = hiltViewModel(viewModelStoreOwner = it)
                         val navOptions = NavOptions.Builder()
-                            .setPopUpTo<Screens.Loader>(inclusive = true)
+                            .setPopUpTo<AuthScreens.Loader>(inclusive = true)
                             .build()
                         LoaderScreen.Screen(
                             modifier = composableModifier,
                             viewModel = viewModel,
-                            toHomeScreen = {
-                                navController.navigate(
-                                    route = Screens.Home,
-                                    navOptions = navOptions
+                            toMainActivity = {
+                                this@AuthActivity.startActivity(
+                                    Intent(
+                                        this@AuthActivity,
+                                        MainActivity::class.java
+                                    )
                                 )
+                                    this@AuthActivity.finish()
                             },
                             toLoginScreen = {
                                 navController.navigate(
-                                    route = Screens.Login,
+                                    route = AuthScreens.Login,
                                     navOptions = navOptions
                                 )
                             },
                             toMasterKeyScreen = { isNewUser: Boolean ->
                                 navController.navigate(
-                                    route = Screens.MasterKey(isNewUser = isNewUser),
+                                    route = AuthScreens.MasterKey(isNewUser = isNewUser),
                                     navOptions = navOptions
                                 )
                             }
                         )
                     }
                 )
-                composable<Screens.Login>(
+                composable<AuthScreens.Login>(
                     content = {
                         val viewModel: LoginViewModel = hiltViewModel(viewModelStoreOwner = it)
                         LoginScreen.Screen(
@@ -100,52 +101,34 @@ class MainActivity : ComponentActivity() {
                             viewModel = viewModel,
                             toLoaderScreen = {
                                 navController.navigate(
-                                    route = Screens.Loader,
+                                    route = AuthScreens.Loader,
                                     navOptions = NavOptions
                                         .Builder()
-                                        .setPopUpTo<Screens.Login>(inclusive = true)
+                                        .setPopUpTo<AuthScreens.Login>(inclusive = true)
                                         .build()
                                 )
                             }
                         )
                     }
                 )
-                composable<Screens.MasterKey>(
+                composable<AuthScreens.MasterKey>(
                     content = {
                         val viewModel: UserEditViewModel = hiltViewModel(viewModelStoreOwner = it)
-                        val isNewUser = it.arguments!!.getBoolean(Screens.MasterKey::isNewUser.name)
+                        val isNewUser =
+                            it.arguments!!.getBoolean(AuthScreens.MasterKey::isNewUser.name)
                         MasterKeyScreen.Screen(
                             modifier = composableModifier,
                             viewModel = viewModel,
                             isNewUser = isNewUser,
                             toLoaderScreen = {
                                 navController.navigate(
-                                    route = Screens.Loader,
+                                    route = AuthScreens.Loader,
                                     navOptions = NavOptions
                                         .Builder()
-                                        .setPopUpTo<Screens.MasterKey>(inclusive = true)
+                                        .setPopUpTo<AuthScreens.MasterKey>(inclusive = true)
                                         .build()
                                 )
                             }
-                        )
-                    }
-                )
-                composable<Screens.Home>(
-                    content = {
-                        HomeScreen.Screen(
-                            modifier = composableModifier,
-                            toAddNewPasswordScreen = { navController.navigate(route = Screens.PasswordEdit) }
-                        )
-                    }
-                )
-                composable<Screens.PasswordEdit>(
-                    content = {
-                        val viewModel: PasswordEditViewModel =
-                            hiltViewModel(viewModelStoreOwner = it)
-                        PasswordEditScreen.Screen(
-                            modifier = composableModifier,
-                            viewModel = viewModel,
-                            navigateBack = { navController.navigateUp() }
                         )
                     }
                 )
@@ -154,19 +137,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-sealed class Screens {
+private sealed class AuthScreens {
     @Serializable
-    data object Loader : Screens()
+    data object Loader : AuthScreens()
 
     @Serializable
-    data object Login : Screens()
+    data object Login : AuthScreens()
 
     @Serializable
-    data class MasterKey(val isNewUser: Boolean) : Screens()
+    data class MasterKey(val isNewUser: Boolean) : AuthScreens()
 
-    @Serializable
-    data object Home : Screens()
-
-    @Serializable
-    data object PasswordEdit : Screens()
 }

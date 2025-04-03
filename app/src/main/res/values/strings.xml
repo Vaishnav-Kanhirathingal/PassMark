@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PassMark</string>
+    <string name="title_activity_auth">AuthActivity</string>
 </resources>
