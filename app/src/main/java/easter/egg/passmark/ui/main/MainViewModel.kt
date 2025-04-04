@@ -2,6 +2,7 @@ package easter.egg.passmark.ui.main
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import easter.egg.passmark.data.models.content.Password
@@ -13,15 +14,13 @@ import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-private typealias HomeList = Pair<List<Vault>, List<Password>>
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -33,40 +32,54 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
     private val TAG = this::class.simpleName
 
-    private val _screenState: MutableStateFlow<ScreenState<HomeList>> =
+    private val _screenState: MutableStateFlow<ScreenState<HomeListingData>> =
         MutableStateFlow(ScreenState.PreCall())
-    val screenState: StateFlow<ScreenState<HomeList>> get() = _screenState
+    val screenState: StateFlow<ScreenState<HomeListingData>> get() = _screenState
 
     lateinit var passwordCryptographyHandler: PasswordCryptographyHandler
         private set
 
-    suspend fun refreshHomeList(): Unit = withContext(Dispatchers.IO) {
-        try {
-            val passwordCryptographyHandler = PasswordCryptographyHandler(
-                password = PassMarkDataStore(
+    init {
+        refreshHomeList()
+    }
+
+    fun refreshHomeList() {
+        this._screenState.value = ScreenState.Loading()
+        viewModelScope.launch {
+            try {
+                val user = userApi.getUser()!!
+                val password = PassMarkDataStore(
                     context = context,
                     authId = supabaseAccountHelper.getId()
+                ).fetchPassword().first()!!
+
+                val passwordCryptographyHandler = PasswordCryptographyHandler(
+                    password = password,
+                    initializationVector = user.encryptionKeyInitializationVector
+                ).takeIf { it.solvePuzzle(user.passwordPuzzleEncrypted) }!!
+
+                this@MainViewModel.passwordCryptographyHandler = passwordCryptographyHandler
+
+                val vaultListDeferred = async { vaultApi.getVaultList() }
+                val passwordListDeferred =
+                    async { passwordApi.getPasswordList(passwordCryptographyHandler = passwordCryptographyHandler) }
+                ScreenState.Loaded(
+                    result = HomeListingData(
+                        vaultList = vaultListDeferred.await(),
+                        passwordList = passwordListDeferred.await()
+                    )
                 )
-                    .fetchPassword()
-                    .first()!!,
-                initializationVector = userApi.getUser()!!.encryptionKeyInitializationVector
-            )
-            this@MainViewModel.passwordCryptographyHandler = passwordCryptographyHandler
-            val vaultListDeferred = async { vaultApi.getVaultList() }
-            val passwordListDeferred = async {
-                passwordApi.getPasswordList(passwordCryptographyHandler = passwordCryptographyHandler)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                ScreenState.ApiError.fromException(e = e)
+            }.let { newState: ScreenState<HomeListingData> ->
+                this@MainViewModel._screenState.value = newState
             }
-            ScreenState.Loaded(
-                result = Pair(
-                    first = vaultListDeferred.await(),
-                    second = passwordListDeferred.await()
-                )
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ScreenState.ApiError.fromException(e = e)
-        }.let { newState ->
-            this@MainViewModel._screenState.value = newState
         }
     }
 }
+
+data class HomeListingData(
+    val vaultList: List<Vault>,
+    val passwordList: List<Password>
+)
