@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.main.password_edit
 
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -102,4 +103,37 @@ class PasswordEditViewModel @Inject constructor(
             this@PasswordEditViewModel._screenState.value = newState
         }
     }
+}
+
+class ContentErrors(
+    val titleEmpty: Boolean,
+    val passwordIsEmpty: Boolean,
+    val emailFormattingIncorrect: Boolean,
+) {
+    companion object {
+        fun fromData(
+            title: String,
+            password: String,
+            email: String
+        ) = ContentErrors(
+            titleEmpty = title.isEmpty(),
+            passwordIsEmpty = password.isEmpty(),
+            emailFormattingIncorrect = !email.let {
+                it.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(it).matches()
+            }
+        )
+    }
+
+    val requirementsMet: Boolean get() = !(titleEmpty || passwordIsEmpty || emailFormattingIncorrect)
+
+    private var toastShown = false
+
+    fun getToastText(): String? =
+        if (requirementsMet) null
+        else
+            (
+                    (if (titleEmpty) "Title empty, " else "") +
+                            (if (emailFormattingIncorrect) "Email formatting incorrect, " else "") +
+                            (if (passwordIsEmpty) "Password empty, " else "")
+                    ).dropLast(n = 2)
 }
