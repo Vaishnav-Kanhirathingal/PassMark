@@ -1,4 +1,4 @@
-package easter.egg.passmark.ui.main.home
+package easter.egg.passmark.ui.main.home.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -61,7 +61,6 @@ import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.HomeListingData
 import easter.egg.passmark.ui.main.MainViewModel
-import easter.egg.passmark.ui.main.home.screens.HomeDrawer
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview

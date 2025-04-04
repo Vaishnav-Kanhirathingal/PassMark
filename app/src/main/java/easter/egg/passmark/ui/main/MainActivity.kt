@@ -15,7 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import easter.egg.passmark.ui.main.home.HomeScreen
+import easter.egg.passmark.ui.main.home.screens.HomeScreen
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.main.password_edit.PasswordEditViewModel
 import easter.egg.passmark.ui.theme.PassMarkTheme
