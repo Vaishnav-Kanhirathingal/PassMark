@@ -72,7 +72,7 @@ class PasswordCryptographyHandler private constructor(
     }
 
     /** returns `true` if puzzle is solved, `false` otherwise */
-    fun solvePuzzle(
+    fun solvesPuzzle(
         apiProvidedEncryptedPuzzle: String
     ): Boolean = (decrypt(apiProvidedEncryptedPuzzle) == User.PUZZLE_SOLUTION)
 }

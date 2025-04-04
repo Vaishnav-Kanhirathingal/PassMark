@@ -71,7 +71,7 @@ class LoaderViewModel @Inject constructor(
                             password = password,
                             initializationVector = user.encryptionKeyInitializationVector
                         )
-                            .solvePuzzle(apiProvidedEncryptedPuzzle = user.passwordPuzzleEncrypted)
+                            .solvesPuzzle(apiProvidedEncryptedPuzzle = user.passwordPuzzleEncrypted)
                             .let { puzzleSolved ->
                                 if (puzzleSolved) UserState.EXISTS_WITH_KEY_IN_STORAGE
                                 else UserState.EXISTS_WITHOUT_KEY_IN_STORAGE

@@ -15,7 +15,6 @@ import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -56,7 +55,7 @@ class MainViewModel @Inject constructor(
                 val passwordCryptographyHandler = PasswordCryptographyHandler(
                     password = password,
                     initializationVector = user.encryptionKeyInitializationVector
-                ).takeIf { it.solvePuzzle(user.passwordPuzzleEncrypted) }!!
+                ).takeIf { it.solvesPuzzle(user.passwordPuzzleEncrypted) }!!
 
                 this@MainViewModel.passwordCryptographyHandler = passwordCryptographyHandler
 

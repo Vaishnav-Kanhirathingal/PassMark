@@ -109,7 +109,7 @@ class UserEditViewModel @Inject constructor(
             password = password,
             initializationVector = user.encryptionKeyInitializationVector
         )
-        val isPasswordCorrect = passwordCryptographyHandler.solvePuzzle(
+        val isPasswordCorrect = passwordCryptographyHandler.solvesPuzzle(
             apiProvidedEncryptedPuzzle = user.passwordPuzzleEncrypted
         )
         return if (isPasswordCorrect) {
