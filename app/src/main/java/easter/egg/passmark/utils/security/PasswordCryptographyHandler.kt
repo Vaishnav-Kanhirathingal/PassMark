@@ -1,6 +1,8 @@
 package easter.egg.passmark.utils.security
 
+import com.google.gson.Gson
 import easter.egg.passmark.data.models.User
+import easter.egg.passmark.data.models.content.PasswordData
 import io.ktor.util.decodeBase64Bytes
 import io.ktor.util.encodeBase64
 import java.security.MessageDigest
@@ -37,9 +39,7 @@ class PasswordCryptographyHandler private constructor(
 
     private fun fetchCipher(): Cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
 
-    // TODO: overload both encrypt and decrypt functions for 'password data' object
-
-    fun encrypt(
+    private fun encrypt(
         input: String
     ): String {
         return fetchCipher()
@@ -47,13 +47,24 @@ class PasswordCryptographyHandler private constructor(
             .doFinal(input.toByteArray()).encodeBase64()
     }
 
-    fun decrypt(
+    private fun decrypt(
         encryptedInput: String
     ): String {
         return fetchCipher()
             .also { it.init(Cipher.DECRYPT_MODE, secretKeySpec, ivSpec) }
             .doFinal(encryptedInput.decodeBase64Bytes())
             .let { String(it) }
+    }
+
+    fun encryptPasswordData(passwordData: PasswordData): String {
+        return encrypt(input = Gson().toJson(passwordData))
+    }
+
+    fun decryptPasswordData(passwordData: String): PasswordData {
+        return Gson().fromJson(
+            this.decrypt(encryptedInput = passwordData),
+            PasswordData::class.java
+        )
     }
 
     fun getEncryptedPuzzle(): String {
