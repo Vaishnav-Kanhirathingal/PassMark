@@ -10,7 +10,7 @@ import easter.egg.passmark.data.storage.PassMarkDataStore
 import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.utils.ScreenState
-import easter.egg.passmark.utils.security.CryptographyHandler
+import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,7 +67,7 @@ class LoaderViewModel @Inject constructor(
                     if (password == null) {
                         UserState.EXISTS_WITHOUT_KEY_IN_STORAGE
                     } else {
-                        CryptographyHandler(
+                        PasswordCryptographyHandler(
                             password = password,
                             initializationVector = user.encryptionKeyInitializationVector
                         )

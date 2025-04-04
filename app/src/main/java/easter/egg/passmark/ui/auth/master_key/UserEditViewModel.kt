@@ -10,7 +10,7 @@ import easter.egg.passmark.data.storage.PassMarkDataStore
 import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.utils.ScreenState
-import easter.egg.passmark.utils.security.CryptographyHandler
+import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -84,14 +84,14 @@ class UserEditViewModel @Inject constructor(
         password: String,
         dataStoreHandler: PassMarkDataStore,
     ): ScreenState.Loaded<Unit> {
-        val cryptographyHandler = CryptographyHandler(
+        val passwordCryptographyHandler = PasswordCryptographyHandler(
             password = password,
             initializationVector = ByteArray(size = 16).also { SecureRandom().nextBytes(it) }
         )
         userApi.setUser(
             user = User(
-                passwordPuzzleEncrypted = cryptographyHandler.getEncryptedPuzzle(),
-                encryptionKeyInitializationVector = cryptographyHandler.initializationVectorAsString
+                passwordPuzzleEncrypted = passwordCryptographyHandler.getEncryptedPuzzle(),
+                encryptionKeyInitializationVector = passwordCryptographyHandler.initializationVectorAsString
             )
         )
         dataStoreHandler.savePassword(password = password)
@@ -105,11 +105,11 @@ class UserEditViewModel @Inject constructor(
         userApi: UserApi
     ): ScreenState<Unit> {
         val user = userApi.getUser()!!
-        val cryptographyHandler = CryptographyHandler(
+        val passwordCryptographyHandler = PasswordCryptographyHandler(
             password = password,
             initializationVector = user.encryptionKeyInitializationVector
         )
-        val isPasswordCorrect = cryptographyHandler.solvePuzzle(
+        val isPasswordCorrect = passwordCryptographyHandler.solvePuzzle(
             apiProvidedEncryptedPuzzle = user.passwordPuzzleEncrypted
         )
         return if (isPasswordCorrect) {
