@@ -1,9 +1,14 @@
 package easter.egg.passmark.data.models.content
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Vault(
-    val id: Int,
-    val name: String,
-    val iconChoice: Int
+    @SerialName("id") val id: Int,
+    @SerialName("name") val name: String,
+    @SerialName("user_id") val userId: String? = null,
+    @SerialName("icon_choice") val iconChoice: Int
 )
 
 /** types of passwords -

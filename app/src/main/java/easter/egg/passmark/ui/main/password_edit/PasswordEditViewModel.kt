@@ -70,6 +70,7 @@ class PasswordEditViewModel @Inject constructor(
 
     fun savePassword() {
         _screenState.value = ScreenState.Loading()
+        val now = System.currentTimeMillis()
         val password = Password(
             id = null,
             vaultId = null,
@@ -83,7 +84,9 @@ class PasswordEditViewModel @Inject constructor(
                 useFingerPrint = useFingerPrint.value,
                 saveToLocalOnly = saveToLocalOnly.value,
             ),
-            lastUsed = System.currentTimeMillis()
+            lastUsed = now,
+            created = now,
+            lastModified = now
         )
         viewModelScope.launch {
             val newState: ScreenState<Unit> = try {
