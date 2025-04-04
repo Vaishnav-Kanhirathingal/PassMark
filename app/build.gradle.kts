@@ -107,4 +107,6 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     //-----------------------------------------------------------------------------constraint-layout
     implementation(libs.androidx.constraintlayout.compose)
+    //-----------------------------------------------------------------------------constraint-layout
+    implementation(libs.androidx.core.splashscreen)
 }
