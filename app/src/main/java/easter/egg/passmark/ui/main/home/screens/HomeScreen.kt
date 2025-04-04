@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.main.home.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -53,11 +54,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.google.gson.GsonBuilder
 import easter.egg.passmark.R
-import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
-import easter.egg.passmark.data.supabase.api.PasswordApi
-import easter.egg.passmark.data.supabase.api.UserApi
-import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.HomeListingData
 import easter.egg.passmark.ui.main.MainViewModel
@@ -71,6 +69,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 object HomeScreen {
+    private val TAG = this::class.simpleName
+
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -87,10 +87,13 @@ object HomeScreen {
                 }
             )
 
-            is ScreenState.Loaded -> MainScreen(
-                modifier = modifier,
-                toAddNewPasswordScreen = toAddNewPasswordScreen
-            )
+            is ScreenState.Loaded -> {
+                Log.d(TAG, GsonBuilder().setPrettyPrinting().create().toJson(screenState.result))
+                MainScreen(
+                    modifier = modifier,
+                    toAddNewPasswordScreen = toAddNewPasswordScreen
+                )
+            }
 
             is ScreenState.ApiError -> {
                 screenState.manageToastActions(context = context)
@@ -354,13 +357,7 @@ private fun HomeScreenPreview() {
     HomeScreen.Screen(
         modifier = Modifier.fillMaxSize(),
         toAddNewPasswordScreen = {},
-        mainViewModel = MainViewModel(
-            context = LocalContext.current,
-            supabaseAccountHelper = SupabaseAccountHelper(supabaseClient),
-            userApi = UserApi(supabaseClient),
-            vaultApi = VaultApi(supabaseClient),
-            passwordApi = PasswordApi(supabaseClient)
-        )
+        mainViewModel = MainViewModel.getTestViewModel()
     )
 }
 
