@@ -8,7 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="splash_icon">#00FFFF</color>
-    <color name="splash_backgtound">#AAAAAA</color>
-    <color name="splash_icon_backgtound">#FFFFFF</color>
+    <color name="splash_icon">#000000</color>
+    <color name="splash_background">#FFFFFF</color>
+    <color name="splash_icon_background">#AAFFFF</color>
 </resources>
