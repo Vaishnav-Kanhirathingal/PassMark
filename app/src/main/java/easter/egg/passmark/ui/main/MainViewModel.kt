@@ -1,6 +1,8 @@
 package easter.egg.passmark.ui.main
 
 import android.content.Context
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,6 +14,7 @@ import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.data.supabase.api.VaultApi
+import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import kotlinx.coroutines.async
@@ -30,6 +33,20 @@ class MainViewModel @Inject constructor(
     private val passwordApi: PasswordApi
 ) : ViewModel() {
     private val TAG = this::class.simpleName
+
+    companion object {
+        @Composable
+        fun getTestViewModel(): MainViewModel {
+            val supabaseClient = SupabaseModule.mockClient
+            return MainViewModel(
+                context = LocalContext.current,
+                supabaseAccountHelper = SupabaseAccountHelper(supabaseClient),
+                userApi = UserApi(supabaseClient),
+                vaultApi = VaultApi(supabaseClient),
+                passwordApi = PasswordApi(supabaseClient)
+            )
+        }
+    }
 
     private val _screenState: MutableStateFlow<ScreenState<HomeListingData>> =
         MutableStateFlow(ScreenState.PreCall())
