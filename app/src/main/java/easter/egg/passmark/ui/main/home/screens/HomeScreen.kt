@@ -91,7 +91,8 @@ object HomeScreen {
                 Log.d(TAG, GsonBuilder().setPrettyPrinting().create().toJson(screenState.result))
                 MainScreen(
                     modifier = modifier,
-                    toAddNewPasswordScreen = toAddNewPasswordScreen
+                    toAddNewPasswordScreen = toAddNewPasswordScreen,
+                    mainViewModel = mainViewModel
                 )
             }
 
@@ -154,7 +155,7 @@ object HomeScreen {
     private fun MainScreen(
         modifier: Modifier,
         toAddNewPasswordScreen: () -> Unit,
-//        mainViewModel: MainViewModel
+        mainViewModel: MainViewModel
     ) {
         val coroutineScope = rememberCoroutineScope()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -184,10 +185,13 @@ object HomeScreen {
                         )
                     },
                     content = {
-                        HomeContent(
+                        HomeContent.HomeContent(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(paddingValues = it)
+                                .padding(paddingValues = it),
+                            passwordList = (mainViewModel.screenState.value as? ScreenState.Loaded<HomeListingData>)
+                                ?.result
+                                ?.passwordList ?: listOf()
                         )
                     },
                     floatingActionButton = {
@@ -334,16 +338,6 @@ object HomeScreen {
                         )
                     }
                 )
-            }
-        )
-    }
-
-    @Composable
-    private fun HomeContent(modifier: Modifier) {
-        Column(
-            modifier = modifier,
-            content = {
-                // TODO: pending
             }
         )
     }

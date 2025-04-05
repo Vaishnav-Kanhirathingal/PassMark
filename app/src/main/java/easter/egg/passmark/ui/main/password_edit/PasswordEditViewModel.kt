@@ -1,6 +1,5 @@
 package easter.egg.passmark.ui.main.password_edit
 
-import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
