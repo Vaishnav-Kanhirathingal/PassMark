@@ -104,12 +104,13 @@ class PasswordEditViewModel @Inject constructor(
             lastModified = now
         )
         viewModelScope.launch {
-            val newState: ScreenState<Unit> = try {
-//                passwordApi.savePassword(
-//                    password = password
-//                )
-//                ScreenState.Loaded(result = Unit)
-                TODO()
+            val newState: ScreenState<Password> = try {
+                val res = passwordApi.savePassword(
+                    passwordCapsule = password.toPasswordCapsule(
+                        passwordCryptographyHandler = passwordCryptographyHandler
+                    )
+                )
+                ScreenState.Loaded(result = res.toPassword(passwordCryptographyHandler = passwordCryptographyHandler))
             } catch (e: Exception) {
                 e.printStackTrace()
                 ScreenState.ApiError.fromException(e = e)
