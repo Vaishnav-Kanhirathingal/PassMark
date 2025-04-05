@@ -38,7 +38,9 @@ data class PasswordData(
     val useFingerPrint: Boolean,
     val saveToLocalOnly: Boolean
 ) {
-    fun getSubTitle(): String? = listOf(email, userName, website).firstOrNull { !it.isNullOrBlank() }
+    fun getSubTitle(): String? =
+        listOf(email, userName, website).firstOrNull { !it.isNullOrBlank() }
+
     fun getShortName(): String = this.title
         .split(" ")
         .joinToString(separator = "", transform = { it.first().uppercase() })
