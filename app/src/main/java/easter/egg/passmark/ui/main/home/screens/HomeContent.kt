@@ -83,7 +83,6 @@ object HomeContent {
         password: Password,
     ) {
         val iconSize: Dp = PassMarkDimensions.minTouchSize
-        val innerIconRadius = 16.dp
         ConstraintLayout(
             modifier = modifier
                 .clickable(onClick = { TODO() })
@@ -93,7 +92,7 @@ object HomeContent {
                 Box(
                     modifier = Modifier
                         .size(size = iconSize)
-                        .clip(shape = RoundedCornerShape(size = innerIconRadius))
+                        .clip(shape = RoundedCornerShape(size = 12.dp))
                         .background(color = MaterialTheme.colorScheme.surfaceContainer)
                         .constrainAs(
                             ref = startIcon,
