@@ -39,6 +39,10 @@ import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility
+import coil3.ImageLoader
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -117,12 +121,27 @@ object HomeContent {
                         ),
                     contentAlignment = Alignment.Center,
                     content = {
-                        Text(
-                            textAlign = TextAlign.Center,
-                            fontFamily = PassMarkFonts.font,
-                            fontSize = PassMarkFonts.Title.medium,
-                            fontWeight = FontWeight.Bold,
-                            text = password.data.getShortName()
+                        val showText: MutableState<Boolean> = remember { mutableStateOf(true) }
+                        val model = ImageRequest.Builder(LocalContext.current)
+                            .data(password.data.getFavicon())
+                            .crossfade(true)
+                            .listener(onSuccess = { _, _ -> showText.value = false })
+                            .build()
+                        if (showText.value) {
+                            Text(
+                                textAlign = TextAlign.Center,
+                                fontFamily = PassMarkFonts.font,
+                                fontSize = PassMarkFonts.Title.medium,
+                                fontWeight = FontWeight.Bold,
+                                text = password.data.getShortName()
+                            )
+                        }
+                        AsyncImage(
+                            model = model,
+                            modifier = Modifier.size(size = 24.dp),
+                            contentScale = ContentScale.Fit,
+                            contentDescription = null,
+                            imageLoader = ImageLoader(context = LocalContext.current),
                         )
                     }
                 )
