@@ -4,8 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -48,7 +50,6 @@ object HomeContent {
         val listItemModifier = Modifier
             .setSizeLimitation()
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
         LazyColumn(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,6 +58,10 @@ object HomeContent {
                 alignment = Alignment.Top
             ),
             content = {
+                val spacerModifier = Modifier
+                    .fillMaxWidth()
+                    .height(height = 8.dp)
+                item { Spacer(modifier = spacerModifier) }
                 items(
                     items = passwordList,
                     key = { it.id!! },
@@ -67,6 +72,7 @@ object HomeContent {
                         )
                     }
                 )
+                item { Spacer(modifier = spacerModifier) }
             }
         )
     }
@@ -77,38 +83,38 @@ object HomeContent {
         password: Password,
     ) {
         val iconSize: Dp = PassMarkDimensions.minTouchSize
-        val innerIconRadius = 8.dp
-        val innerPadding = 8.dp
-        val outerRadius = (innerIconRadius + innerPadding)
+        val innerIconRadius = 16.dp
         ConstraintLayout(
             modifier = modifier
-                .clip(shape = RoundedCornerShape(size = outerRadius))
-                .background(color = MaterialTheme.colorScheme.surfaceContainer)
-                .clickable(onClick = { TODO() }),
+                .clickable(onClick = { TODO() })
+                .padding(vertical = 8.dp),
             content = {
                 val (startIcon, title, subtitle, optionButton) = createRefs()
                 Box(
                     modifier = Modifier
                         .size(size = iconSize)
                         .clip(shape = RoundedCornerShape(size = innerIconRadius))
-                        .background(color = MaterialTheme.colorScheme.primaryContainer)
+                        .background(color = MaterialTheme.colorScheme.surfaceContainer)
                         .constrainAs(
                             ref = startIcon,
                             constrainBlock = {
-                                this.top.linkTo(parent.top, margin = innerPadding)
-                                this.bottom.linkTo(parent.bottom, margin = innerPadding)
-                                this.start.linkTo(parent.start, margin = innerPadding + 0.dp)
+                                this.top.linkTo(parent.top)
+                                this.bottom.linkTo(parent.bottom)
+                                this.start.linkTo(anchor = parent.start, margin = 16.dp)
                             }
                         ),
                     contentAlignment = Alignment.Center,
                     content = {
                         Text(
                             textAlign = TextAlign.Center,
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Title.medium,
+                            fontWeight = FontWeight.Bold,
                             text = password.data.getShortName()
                         )
                     }
                 )
-                val horizontalPadding = 8.dp
+                val horizontalPadding = 12.dp
                 createVerticalChain(
                     title, subtitle,
                     chainStyle = ChainStyle.Packed
@@ -132,7 +138,7 @@ object HomeContent {
                     fontSize = PassMarkFonts.Title.large,
                     lineHeight = PassMarkFonts.Title.large,
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     modifier = Modifier
@@ -142,8 +148,14 @@ object HomeContent {
                             constrainBlock = {
                                 this.top.linkTo(title.bottom)
                                 this.bottom.linkTo(parent.bottom)
-                                this.start.linkTo(startIcon.end, margin = horizontalPadding)
-                                this.end.linkTo(optionButton.start, margin = horizontalPadding)
+                                this.start.linkTo(
+                                    anchor = startIcon.end,
+                                    margin = horizontalPadding
+                                )
+                                this.end.linkTo(
+                                    anchor = optionButton.start,
+                                    margin = horizontalPadding
+                                )
                                 width = Dimension.fillToConstraints
                             }
                         ),
@@ -151,7 +163,7 @@ object HomeContent {
                     fontSize = PassMarkFonts.Label.small,
                     lineHeight = PassMarkFonts.Label.small,
                     fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = MaterialTheme.colorScheme.onSurface,
                     text = password.data.getSubTitle() ?: "No data"
                 )
 
@@ -163,7 +175,7 @@ object HomeContent {
                             constrainBlock = {
                                 this.top.linkTo(parent.top)
                                 this.bottom.linkTo(parent.bottom)
-                                this.end.linkTo(parent.end)
+                                this.end.linkTo(anchor = parent.end, margin = 4.dp)
                             }
                         ),
                     onClick = { TODO() },
