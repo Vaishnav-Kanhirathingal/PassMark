@@ -107,6 +107,9 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     //-----------------------------------------------------------------------------constraint-layout
     implementation(libs.androidx.constraintlayout.compose)
-    //-----------------------------------------------------------------------------constraint-layout
+    //----------------------------------------------------------------------------------------splash
     implementation(libs.androidx.core.splashscreen)
+    //------------------------------------------------------------------------------------------coil
+    implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
 }
