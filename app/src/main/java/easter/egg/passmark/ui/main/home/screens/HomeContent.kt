@@ -48,15 +48,12 @@ object HomeContent {
         val listItemModifier = Modifier
             .setSizeLimitation()
             .fillMaxWidth()
-            .padding(
-                horizontal = 16.dp,
-                vertical = 8.dp
-            )
+            .padding(horizontal = 8.dp)
         LazyColumn(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
-                space = 4.dp,
+                space = 8.dp,
                 alignment = Alignment.Top
             ),
             content = {
@@ -79,33 +76,35 @@ object HomeContent {
         modifier: Modifier,
         password: Password,
     ) {
-        val iconSize: Dp = 60.dp
+        val iconSize: Dp = PassMarkDimensions.minTouchSize
+        val innerIconRadius = 8.dp
+        val innerPadding = 8.dp
+        val outerRadius = (innerIconRadius + innerPadding)
         ConstraintLayout(
             modifier = modifier
-                .clip(shape = RoundedCornerShape(size = 24.dp))
+                .clip(shape = RoundedCornerShape(size = outerRadius))
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)
-                .clickable(onClick = { TODO() })
-                .padding(all = 8.dp),
+                .clickable(onClick = { TODO() }),
             content = {
                 val (startIcon, title, subtitle, optionButton) = createRefs()
                 Box(
                     modifier = Modifier
                         .size(size = iconSize)
-                        .clip(shape = RoundedCornerShape(size = 16.dp))
+                        .clip(shape = RoundedCornerShape(size = innerIconRadius))
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
                         .constrainAs(
                             ref = startIcon,
                             constrainBlock = {
-                                this.top.linkTo(parent.top)
-                                this.bottom.linkTo(parent.bottom)
-                                this.start.linkTo(parent.start)
+                                this.top.linkTo(parent.top, margin = innerPadding)
+                                this.bottom.linkTo(parent.bottom, margin = innerPadding)
+                                this.start.linkTo(parent.start, margin = innerPadding + 0.dp)
                             }
                         ),
                     contentAlignment = Alignment.Center,
                     content = {
                         Text(
                             textAlign = TextAlign.Center,
-                            text = "GO"
+                            text = password.data.getShortName()
                         )
                     }
                 )

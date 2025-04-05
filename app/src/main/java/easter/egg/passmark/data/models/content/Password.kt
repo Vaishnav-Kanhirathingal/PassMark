@@ -39,6 +39,11 @@ data class PasswordData(
     val saveToLocalOnly: Boolean
 ) {
     fun getSubTitle(): String? = listOf(email, userName, website).firstOrNull { it.isNotBlank() }
+    fun getShortName(): String = this.title
+        .split(" ")
+        .joinToString(separator = "", transform = { it.first().uppercase() })
+        .take(n = 2)
+
 }
 
 //---------------------------------------------------------------------------------encrypted classes
