@@ -56,7 +56,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.gson.GsonBuilder
 import easter.egg.passmark.R
-import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.HomeListingData
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.utils.ScreenState
@@ -75,7 +74,8 @@ object HomeScreen {
     fun Screen(
         modifier: Modifier,
         toAddNewPasswordScreen: () -> Unit,
-        mainViewModel: MainViewModel
+        mainViewModel: MainViewModel,
+        toViewPasswordScreen: (passwordId: Int) -> Unit
     ) {
         val context = LocalContext.current
         when (val screenState = mainViewModel.screenState.collectAsState().value) {
@@ -92,7 +92,8 @@ object HomeScreen {
                 MainScreen(
                     modifier = modifier,
                     toAddNewPasswordScreen = toAddNewPasswordScreen,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    toViewPasswordScreen = toViewPasswordScreen
                 )
             }
 
@@ -155,7 +156,8 @@ object HomeScreen {
     private fun MainScreen(
         modifier: Modifier,
         toAddNewPasswordScreen: () -> Unit,
-        mainViewModel: MainViewModel
+        mainViewModel: MainViewModel,
+        toViewPasswordScreen: (passwordId: Int) -> Unit
     ) {
         val coroutineScope = rememberCoroutineScope()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -191,7 +193,8 @@ object HomeScreen {
                                 .padding(paddingValues = it),
                             passwordList = (mainViewModel.screenState.value as? ScreenState.Loaded<HomeListingData>)
                                 ?.result
-                                ?.passwordList ?: listOf()
+                                ?.passwordList ?: listOf(),
+                            toViewPasswordScreen = toViewPasswordScreen
                         )
                     },
                     floatingActionButton = {
@@ -347,11 +350,11 @@ object HomeScreen {
 @MobilePreview
 @MobileHorizontalPreview
 private fun HomeScreenPreview() {
-    val supabaseClient = SupabaseModule.mockClient
     HomeScreen.Screen(
         modifier = Modifier.fillMaxSize(),
         toAddNewPasswordScreen = {},
-        mainViewModel = MainViewModel.getTestViewModel()
+        mainViewModel = MainViewModel.getTestViewModel(),
+        toViewPasswordScreen = {}
     )
 }
 

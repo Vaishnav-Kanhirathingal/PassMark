@@ -21,9 +21,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.Visibility
 import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -42,10 +48,13 @@ import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 
 object HomeContent {
+    private val TAG = this::class.simpleName
+
     @Composable
     fun HomeContent(
         modifier: Modifier,
-        passwordList: List<Password>
+        passwordList: List<Password>,
+        toViewPasswordScreen: (passwordId: Int) -> Unit
     ) {
         val listItemModifier = Modifier
             .setSizeLimitation()
@@ -68,7 +77,9 @@ object HomeContent {
                     itemContent = {
                         PasswordListItem(
                             modifier = listItemModifier,
-                            password = it
+                            password = it,
+                            viewPassword = { toViewPasswordScreen(it.id!!) },
+                            openOptions = { TODO() }
                         )
                     }
                 )
@@ -81,11 +92,13 @@ object HomeContent {
     fun PasswordListItem(
         modifier: Modifier,
         password: Password,
+        viewPassword: () -> Unit,
+        openOptions: () -> Unit
     ) {
         val iconSize: Dp = PassMarkDimensions.minTouchSize
         ConstraintLayout(
             modifier = modifier
-                .clickable(onClick = { TODO() })
+                .clickable(onClick = viewPassword)
                 .padding(vertical = 8.dp),
             content = {
                 val (startIcon, title, subtitle, optionButton) = createRefs()
@@ -125,8 +138,6 @@ object HomeContent {
                             constrainBlock = {
                                 this.start.linkTo(startIcon.end, margin = horizontalPadding)
                                 this.end.linkTo(optionButton.start, margin = horizontalPadding)
-                                this.top.linkTo(parent.top)
-                                this.bottom.linkTo(subtitle.top)
                                 width = Dimension.fillToConstraints
                             }
                         ),
@@ -139,14 +150,13 @@ object HomeContent {
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                val titleText = password.data.getSubTitle()
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
                         .constrainAs(
                             ref = subtitle,
                             constrainBlock = {
-                                this.top.linkTo(title.bottom)
-                                this.bottom.linkTo(parent.bottom)
                                 this.start.linkTo(
                                     anchor = startIcon.end,
                                     margin = horizontalPadding
@@ -156,6 +166,8 @@ object HomeContent {
                                     margin = horizontalPadding
                                 )
                                 width = Dimension.fillToConstraints
+                                visibility =
+                                    if (titleText == null) Visibility.Gone else Visibility.Visible
                             }
                         ),
                     fontFamily = PassMarkFonts.font,
@@ -163,7 +175,7 @@ object HomeContent {
                     lineHeight = PassMarkFonts.Label.small,
                     fontWeight = FontWeight.Normal,
                     color = MaterialTheme.colorScheme.onSurface,
-                    text = password.data.getSubTitle() ?: "No data"
+                    text = titleText ?: "No data"
                 )
 
                 IconButton(
@@ -177,7 +189,7 @@ object HomeContent {
                                 this.end.linkTo(anchor = parent.end, margin = 4.dp)
                             }
                         ),
-                    onClick = { TODO() },
+                    onClick = openOptions,
                     content = {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
@@ -221,8 +233,12 @@ fun HomeContentPreview() {
             testBasePassword.copy(id = 0, data = testBasePasswordData.copy(title = "Google")),
             testBasePassword.copy(id = 1, data = testBasePasswordData.copy(title = "Facebook")),
             testBasePassword.copy(id = 2, data = testBasePasswordData.copy(title = "Ubisoft")),
-            testBasePassword.copy(id = 3, data = testBasePasswordData.copy(title = "Epic")),
-        )
+            testBasePassword.copy(
+                id = 3,
+                data = testBasePasswordData.copy(title = "Epic", email = "abc@gmail.com")
+            ),
+        ),
+        toViewPasswordScreen = {}
     )
 }
 
@@ -244,6 +260,8 @@ fun PasswordListItemPreview() {
                 userName = "GmailUserName",
                 website = "www.google.com"
             )
-        )
+        ),
+        viewPassword = {},
+        openOptions = {}
     )
 }

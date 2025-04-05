@@ -63,7 +63,8 @@ class MainActivity : ComponentActivity() {
                         HomeScreen.Screen(
                             modifier = composableModifier,
                             toAddNewPasswordScreen = { navController.navigate(route = MainScreens.PasswordEdit) },
-                            mainViewModel = mainViewModel
+                            mainViewModel = mainViewModel,
+                            toViewPasswordScreen = { passwordId -> TODO() }
                         )
                     }
                 )
