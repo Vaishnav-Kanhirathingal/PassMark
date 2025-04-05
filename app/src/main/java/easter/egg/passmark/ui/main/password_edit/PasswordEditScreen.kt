@@ -370,7 +370,7 @@ object PasswordEditScreen {
                     }
                 )
                 Spacer(modifier = smallSpacerModifier)
-                //-------------------------------------------------------------------website
+                //---------------------------------------------------------------------------website
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
@@ -378,7 +378,7 @@ object PasswordEditScreen {
                             modifier = textFieldModifier,
                             leadingIcon = Icons.Default.Web,
                             label = "Website",
-                            placeHolder = "Https://",
+                            placeHolder = "www.abc.com",
                             text = viewModel.website.collectAsState().value,
                             onTextChange = { viewModel.updateWebsite(newValue = it) },
                             isEnabled = !isLoading
@@ -386,7 +386,7 @@ object PasswordEditScreen {
                     }
                 )
                 Spacer(modifier = smallSpacerModifier)
-                //----------------------------------------------------------------------note
+                //------------------------------------------------------------------------------note
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
@@ -558,7 +558,7 @@ object PasswordEditScreen {
 
 @Composable
 @MobilePreview
-@MobileHorizontalPreview
+//@MobileHorizontalPreview
 private fun PasswordEditScreenPreview() {
     PasswordEditScreen.Screen(
         modifier = Modifier.fillMaxSize(),

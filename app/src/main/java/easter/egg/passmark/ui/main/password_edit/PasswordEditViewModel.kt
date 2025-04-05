@@ -7,6 +7,7 @@ import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.extensions.nullIfBlank
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -90,11 +91,11 @@ class PasswordEditViewModel @Inject constructor(
             vaultId = null,
             data = PasswordData(
                 title = title.value,
-                email = email.value,
-                userName = userName.value,
+                email = email.value.nullIfBlank(),
+                userName = userName.value.nullIfBlank(),
                 password = password.value,
-                website = website.value,
-                notes = notes.value,
+                website = website.value.nullIfBlank(),
+                notes = notes.value.nullIfBlank(),
                 useFingerPrint = useFingerPrint.value,
                 saveToLocalOnly = saveToLocalOnly.value,
             ),
