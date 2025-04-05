@@ -3,6 +3,7 @@ package easter.egg.passmark.ui.main.home.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,14 +23,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 
@@ -58,10 +64,10 @@ object HomeContent {
                     items = passwordList,
                     key = { it.id!! },
                     itemContent = {
-//                        PasswordListItem(
-//                            modifier = listItemModifier,
-//                            password = it
-//                        )
+                        PasswordListItem(
+                            modifier = listItemModifier,
+                            password = it
+                        )
                     }
                 )
             }
@@ -71,18 +77,88 @@ object HomeContent {
     @Composable
     fun PasswordListItem(
         modifier: Modifier,
-        password: Password
+        password: Password,
     ) {
+        val iconSize: Dp = 60.dp
         ConstraintLayout(
             modifier = modifier
-                .clip(shape = RoundedCornerShape(size = 12.dp))
-                .background(color = MaterialTheme.colorScheme.primaryContainer)
-                .clickable(onClick = { TODO() }),
+                .clip(shape = RoundedCornerShape(size = 24.dp))
+                .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                .clickable(onClick = { TODO() })
+                .padding(all = 8.dp),
             content = {
-                val (title, optionButton, websiteLink) = createRefs()
+                val (startIcon, title, subtitle, optionButton) = createRefs()
+                Box(
+                    modifier = Modifier
+                        .size(size = iconSize)
+                        .clip(shape = RoundedCornerShape(size = 16.dp))
+                        .background(color = MaterialTheme.colorScheme.primaryContainer)
+                        .constrainAs(
+                            ref = startIcon,
+                            constrainBlock = {
+                                this.top.linkTo(parent.top)
+                                this.bottom.linkTo(parent.bottom)
+                                this.start.linkTo(parent.start)
+                            }
+                        ),
+                    contentAlignment = Alignment.Center,
+                    content = {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            text = "GO"
+                        )
+                    }
+                )
+                val horizontalPadding = 8.dp
+                createVerticalChain(
+                    title, subtitle,
+                    chainStyle = ChainStyle.Packed
+                )
+                Text(
+                    modifier = Modifier
+                        .constrainAs(
+                            ref = title,
+                            constrainBlock = {
+                                this.start.linkTo(startIcon.end, margin = horizontalPadding)
+                                this.end.linkTo(optionButton.start, margin = horizontalPadding)
+                                this.top.linkTo(parent.top)
+                                this.bottom.linkTo(subtitle.top)
+                                width = Dimension.fillToConstraints
+                            }
+                        ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    text = password.data.title,
+                    fontFamily = PassMarkFonts.font,
+                    fontSize = PassMarkFonts.Title.large,
+                    lineHeight = PassMarkFonts.Title.large,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .constrainAs(
+                            ref = subtitle,
+                            constrainBlock = {
+                                this.top.linkTo(title.bottom)
+                                this.bottom.linkTo(parent.bottom)
+                                this.start.linkTo(startIcon.end, margin = horizontalPadding)
+                                this.end.linkTo(optionButton.start, margin = horizontalPadding)
+                                width = Dimension.fillToConstraints
+                            }
+                        ),
+                    fontFamily = PassMarkFonts.font,
+                    fontSize = PassMarkFonts.Label.small,
+                    lineHeight = PassMarkFonts.Label.small,
+                    fontWeight = FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    text = password.data.getSubTitle() ?: "No data"
+                )
+
                 IconButton(
                     modifier = Modifier
-                        .size(size = 60.dp)
+                        .size(size = iconSize)
                         .constrainAs(
                             ref = optionButton,
                             constrainBlock = {
@@ -99,43 +175,6 @@ object HomeContent {
                             contentDescription = null,
                         )
                     }
-                )
-                Text(
-                    modifier = Modifier.constrainAs(
-                        ref = title,
-                        constrainBlock = {
-                            this.top.linkTo(parent.top, margin = 4.dp)
-                            this.bottom.linkTo(websiteLink.top, margin = 0.dp)
-                            this.start.linkTo(parent.start, margin = 16.dp)
-                            this.end.linkTo(optionButton.start, margin = 8.dp)
-                            width = Dimension.fillToConstraints
-                        }
-                    ),
-                    maxLines = 2,
-                    text = password.data.title,
-                    fontFamily = PassMarkFonts.font,
-                    fontSize = PassMarkFonts.Title.medium,
-                    lineHeight = PassMarkFonts.Title.medium,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                Text(
-                    modifier = Modifier.constrainAs(
-                        ref = websiteLink,
-                        constrainBlock = {
-                            width = Dimension.fillToConstraints
-                            this.start.linkTo(title.start)
-                            this.end.linkTo(title.end)
-                            this.top.linkTo(title.bottom)
-                            this.bottom.linkTo(parent.bottom, margin = 4.dp)
-                        }
-                    ),
-                    fontFamily = PassMarkFonts.font,
-                    fontSize = PassMarkFonts.Label.small,
-                    lineHeight = PassMarkFonts.Label.small,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    text = password.data.website
                 )
             }
         )
@@ -191,6 +230,8 @@ fun PasswordListItemPreview() {
         password = testBasePassword.copy(
             data = testBasePasswordData.copy(
                 title = "Google",
+                email = "sample@gmail.com",
+                userName = "GmailUserName",
                 website = "www.google.com"
             )
         )

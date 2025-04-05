@@ -37,7 +37,9 @@ data class PasswordData(
     val notes: String,
     val useFingerPrint: Boolean,
     val saveToLocalOnly: Boolean
-)
+) {
+    fun getSubTitle(): String? = listOf(email, userName, website).firstOrNull { it.isNotBlank() }
+}
 
 //---------------------------------------------------------------------------------encrypted classes
 /** attack safe data with encrypted password data to be stored remotely / on-storage
