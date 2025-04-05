@@ -8,6 +8,7 @@ import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -65,11 +66,24 @@ class PasswordEditViewModel @Inject constructor(
         this._saveToLocalOnly.value = newValue
     }
 
-    private val _screenState: MutableStateFlow<ScreenState<Unit>> =
-        MutableStateFlow(ScreenState.PreCall())
-    val screenState: StateFlow<ScreenState<Unit>> get() = _screenState
+    private val _showFieldError: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val showFieldError: StateFlow<Boolean> get() = _showFieldError
+    fun updateShowFieldError() {
+        if (!this._showFieldError.value) {
+            this._showFieldError.value = true
+        }
+    }
 
-    fun savePassword() {
+    //-----------------------------------------------------------------------------------------state
+
+    /** result should be the title of the password stored */
+    private val _screenState: MutableStateFlow<ScreenState<Password>> =
+        MutableStateFlow(ScreenState.PreCall())
+    val screenState: StateFlow<ScreenState<Password>> get() = _screenState
+
+    fun savePassword(
+        passwordCryptographyHandler: PasswordCryptographyHandler
+    ) {
         _screenState.value = ScreenState.Loading()
         val now = System.currentTimeMillis()
         val password = Password(
@@ -103,37 +117,4 @@ class PasswordEditViewModel @Inject constructor(
             this@PasswordEditViewModel._screenState.value = newState
         }
     }
-}
-
-class ContentErrors(
-    val titleEmpty: Boolean,
-    val passwordIsEmpty: Boolean,
-    val emailFormattingIncorrect: Boolean,
-) {
-    companion object {
-        fun fromData(
-            title: String,
-            password: String,
-            email: String
-        ) = ContentErrors(
-            titleEmpty = title.isEmpty(),
-            passwordIsEmpty = password.isEmpty(),
-            emailFormattingIncorrect = !email.let {
-                it.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(it).matches()
-            }
-        )
-    }
-
-    val requirementsMet: Boolean get() = !(titleEmpty || passwordIsEmpty || emailFormattingIncorrect)
-
-    private var toastShown = false
-
-    fun getToastText(): String? =
-        if (requirementsMet) null
-        else
-            (
-                    (if (titleEmpty) "Title empty, " else "") +
-                            (if (emailFormattingIncorrect) "Email formatting incorrect, " else "") +
-                            (if (passwordIsEmpty) "Password empty, " else "")
-                    ).dropLast(n = 2)
 }

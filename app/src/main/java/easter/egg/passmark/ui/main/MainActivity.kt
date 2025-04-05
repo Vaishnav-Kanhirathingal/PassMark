@@ -74,6 +74,7 @@ class MainActivity : ComponentActivity() {
                         PasswordEditScreen.Screen(
                             modifier = composableModifier,
                             viewModel = viewModel,
+                            mainViewModel = mainViewModel,
                             navigateBack = { navController.navigateUp() }
                         )
                     }

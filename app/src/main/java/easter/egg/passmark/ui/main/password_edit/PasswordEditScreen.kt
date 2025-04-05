@@ -73,6 +73,7 @@ object PasswordEditScreen {
     fun Screen(
         modifier: Modifier,
         viewModel: PasswordEditViewModel,
+        mainViewModel: MainViewModel,
         navigateBack: () -> Unit
     ) {
         val barModifier = Modifier
@@ -92,15 +93,22 @@ object PasswordEditScreen {
         LaunchedEffect(
             key1 = viewModel.screenState.collectAsState().value,
             block = {
-                val state = viewModel.screenState.value
-                if (state is ScreenState.ApiError) {
-                    if (!state.errorHasBeenDisplayed) {
-                        Toast.makeText(
-                            context,
-                            state.generalToastMessage,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        state.setErrorHasBeenDisplayed()
+                when (val state = viewModel.screenState.value) {
+                    is ScreenState.PreCall, is ScreenState.Loading -> {}
+                    is ScreenState.Loaded -> {
+                        // TODO: save to [MainViewModel]'s home list
+                        navigateBack()
+                    }
+
+                    is ScreenState.ApiError -> {
+                        if (!state.errorHasBeenDisplayed) {
+                            Toast.makeText(
+                                context,
+                                state.generalToastMessage,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            state.setErrorHasBeenDisplayed()
+                        }
                     }
                 }
             }
@@ -112,7 +120,8 @@ object PasswordEditScreen {
                     modifier = barModifier,
                     navigateBack = navigateBack,
                     viewModel = viewModel,
-                    passwordRequirementsMet = passwordRequirementsMet.value
+                    passwordRequirementsMet = passwordRequirementsMet.value,
+                    mainViewModel = mainViewModel
                 )
             },
             content = {
@@ -120,7 +129,8 @@ object PasswordEditScreen {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues = it),
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    passwordRequirementsMet = passwordRequirementsMet.value
                 )
             },
             bottomBar = { EditBottomBar(modifier = barModifier) }
@@ -132,7 +142,8 @@ object PasswordEditScreen {
         modifier: Modifier,
         navigateBack: () -> Unit,
         viewModel: PasswordEditViewModel,
-        passwordRequirementsMet: Boolean
+        passwordRequirementsMet: Boolean,
+        mainViewModel: MainViewModel
     ) {
         Row(
             modifier = modifier.padding(
@@ -209,8 +220,16 @@ object PasswordEditScreen {
                         .clip(shape = pillShape)
                         .background(color = MaterialTheme.colorScheme.primary)
                         .clickable(
-                            enabled = (!isLoading && passwordRequirementsMet),
-                            onClick = { viewModel.savePassword() }
+                            enabled = !isLoading,
+                            onClick = {
+                                if (passwordRequirementsMet) {
+                                    viewModel.savePassword(
+                                        passwordCryptographyHandler = mainViewModel.passwordCryptographyHandler
+                                    )
+                                } else {
+                                    viewModel.updateShowFieldError()
+                                }
+                            }
                         )
                         .padding(horizontal = 20.dp),
                     contentAlignment = Alignment.Center,
@@ -238,7 +257,8 @@ object PasswordEditScreen {
     @Composable
     private fun EditContent(
         modifier: Modifier,
-        viewModel: PasswordEditViewModel
+        viewModel: PasswordEditViewModel,
+        passwordRequirementsMet: Boolean
     ) {
         val isLoading = viewModel.screenState.collectAsState().value.isLoading
         val scrollState = rememberScrollState()
@@ -247,10 +267,43 @@ object PasswordEditScreen {
                 .padding(horizontal = 16.dp)
                 .verticalScroll(state = scrollState),
             content = {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(height = 16.dp)
+                val smallSpacerModifier = Modifier
+                    .fillMaxWidth()
+                    .height(height = 16.dp)
+                val largeSpacerModifier = Modifier
+                    .fillMaxWidth()
+                    .height(height = 32.dp)
+                AnimatedVisibility(
+                    modifier = Modifier.fillMaxWidth(),
+                    visible = (!passwordRequirementsMet && viewModel.showFieldError.collectAsState().value),
+                    content = {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            content = {
+                                Spacer(modifier = smallSpacerModifier)
+                                DefaultCard(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    content = {
+                                        Text(
+                                            modifier = Modifier.padding(
+                                                horizontal = 24.dp,
+                                                vertical = 16.dp
+                                            ),
+                                            text = "Make sure all the requirements are met:\n" +
+                                                    "- Title cannot be empty.\n" +
+                                                    "- Email can either be empty or of correct format.\n" +
+                                                    "- Password cannot be empty.",
+                                            fontFamily = PassMarkFonts.font,
+                                            fontSize = PassMarkFonts.Body.medium,
+                                            fontWeight = FontWeight.Medium,
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                )
+                                Spacer(modifier = smallSpacerModifier)
+                            }
+                        )
+                    }
                 )
                 Spacer(modifier = smallSpacerModifier)
                 val textFieldModifier = Modifier
