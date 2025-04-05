@@ -18,7 +18,7 @@ class SupabaseModule {
         val mockClient = createSupabaseClient(
             supabaseKey = "",
             supabaseUrl = "",
-            builder = {}
+            builder = { install(Postgrest) }
         )
     }
 

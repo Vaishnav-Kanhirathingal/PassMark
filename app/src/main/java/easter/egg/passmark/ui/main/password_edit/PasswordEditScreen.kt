@@ -1,8 +1,8 @@
 package easter.egg.passmark.ui.main.password_edit
 
-import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -57,6 +57,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.di.supabase.SupabaseModule
+import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -85,10 +86,8 @@ object PasswordEditScreen {
                 title.isNotEmpty() &&
                         password.isNotEmpty() &&
                         email.let { it.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(it).matches() }
-
             }
         ).collectAsState(initial = false)
-        Log.d(TAG, "derived passwordRequirementsMet = ${passwordRequirementsMet.value}")
         val context = LocalContext.current
         LaunchedEffect(
             key1 = viewModel.screenState.collectAsState().value,
@@ -253,10 +252,12 @@ object PasswordEditScreen {
                         .fillMaxWidth()
                         .height(height = 16.dp)
                 )
+                Spacer(modifier = smallSpacerModifier)
                 val textFieldModifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 72.dp)
                     .padding(horizontal = 8.dp)
+                //-----------------------------------------------------------------------------title
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
@@ -272,11 +273,7 @@ object PasswordEditScreen {
                         )
                     }
                 )
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(height = 32.dp)
-                )
+                Spacer(modifier = largeSpacerModifier)
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
@@ -293,6 +290,7 @@ object PasswordEditScreen {
                             thickness = 1.dp,
                             color = MaterialTheme.colorScheme.surfaceContainerHighest
                         )
+                        //-----------------------------------------------------------------user-name
                         CustomTextField(
                             modifier = textFieldModifier,
                             leadingIcon = Icons.Outlined.Person,
@@ -306,6 +304,7 @@ object PasswordEditScreen {
                             thickness = 1.dp,
                             color = MaterialTheme.colorScheme.surfaceContainerHighest
                         )
+                        //------------------------------------------------------------------password
                         CustomTextField(
                             modifier = textFieldModifier,
                             leadingIcon = Icons.Default.Password,
@@ -317,10 +316,8 @@ object PasswordEditScreen {
                         )
                     }
                 )
-                val spacerModifier = Modifier
-                    .fillMaxWidth()
-                    .height(height = 16.dp)
-                Spacer(modifier = spacerModifier)
+                Spacer(modifier = smallSpacerModifier)
+                //-------------------------------------------------------------------website
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
@@ -335,7 +332,8 @@ object PasswordEditScreen {
                         )
                     }
                 )
-                Spacer(modifier = spacerModifier)
+                Spacer(modifier = smallSpacerModifier)
+                //----------------------------------------------------------------------note
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
@@ -346,11 +344,12 @@ object PasswordEditScreen {
                             placeHolder = "Add a note",
                             text = viewModel.notes.collectAsState().value,
                             onTextChange = { viewModel.updateNotes(newValue = it) },
-                            isEnabled = !isLoading
+                            isEnabled = !isLoading,
                         )
                     }
                 )
-                Spacer(modifier = spacerModifier)
+                Spacer(modifier = smallSpacerModifier)
+                //-------------------------------------------------------------------use-fingerprint
                 CustomSwitch(
                     modifier = Modifier.fillMaxWidth(),
                     text = "Use fingerprint to access",
@@ -358,7 +357,8 @@ object PasswordEditScreen {
                     onCheckedChange = { viewModel.updateUseFingerPrint(newValue = it) },
                     isEnabled = !isLoading
                 )
-                Spacer(modifier = spacerModifier)
+                Spacer(modifier = smallSpacerModifier)
+                //--------------------------------------------------------------------on-device-only
                 CustomSwitch(
                     modifier = Modifier.fillMaxWidth(),
                     text = "Keep On Device Only",
@@ -426,6 +426,7 @@ object PasswordEditScreen {
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent,
+                        errorIndicatorColor = Color.Transparent,
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent,
                         disabledContainerColor = Color.Transparent,
@@ -513,6 +514,7 @@ private fun PasswordEditScreenPreview() {
                 supabaseClient = SupabaseModule.mockClient
             )
         ),
-        navigateBack = {}
+        navigateBack = {},
+        mainViewModel = MainViewModel.getTestViewModel()
     )
 }
