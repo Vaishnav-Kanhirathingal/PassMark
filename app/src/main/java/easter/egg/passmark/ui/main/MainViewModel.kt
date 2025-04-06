@@ -51,9 +51,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private val _screenState: MutableStateFlow<ScreenState<HomeListingData>> =
+    private val _screenState: MutableStateFlow<ScreenState<HomeListData>> =
         MutableStateFlow(ScreenState.PreCall())
-    val screenState: StateFlow<ScreenState<HomeListingData>> get() = _screenState
+    val screenState: StateFlow<ScreenState<HomeListData>> get() = _screenState
 
     lateinit var passwordCryptographyHandler: PasswordCryptographyHandler
         private set
@@ -83,35 +83,18 @@ class MainViewModel @Inject constructor(
                 val passwordListDeferred =
                     async { passwordApi.getPasswordList(passwordCryptographyHandler = passwordCryptographyHandler) }
                 ScreenState.Loaded(
-                    result = HomeListingData(
-                        _vaultList = vaultListDeferred.await().toMutableList(),
-                        _passwordList = passwordListDeferred.await().toMutableList()
+                    result = HomeListData(
+                        vaultList = vaultListDeferred.await().toMutableList(),
+                        passwordList = passwordListDeferred.await().toMutableList()
                     )
                 )
             } catch (e: Exception) {
                 e.printStackTrace()
                 ScreenState.ApiError.fromException(e = e)
-            }.let { newState: ScreenState<HomeListingData> ->
+            }.let { newState: ScreenState<HomeListData> ->
                 this@MainViewModel._screenState.value = newState
             }
         }
-    }
-}
-
-class HomeListingData(
-    private val _vaultList: MutableList<Vault>,
-    private val _passwordList: MutableList<Password>
-) {
-
-    val vaultList: List<Vault> = _vaultList
-    val passwordList: List<Password> = _passwordList
-
-    fun addNewVault(vault: Vault) {
-        this._vaultList.add(vault)
-    }
-
-    fun addNewPassword(password: Password) {
-        this._passwordList.add(password)
     }
 }
 
@@ -124,17 +107,6 @@ class HomeListData(
 
     private val _passwordListState: MutableStateFlow<List<Password>> =
         MutableStateFlow(passwordList)
-    val passwordListState: StateFlow<List<Password>> = _passwordListState
-
-    fun addNewVault(vault: Vault) {
-        this._vaultListState.value =
-            this._vaultListState.value.toMutableList().apply { add(vault) }
-    }
-
-    fun addNewPassword(password: Password) {
-        this._passwordListState.value =
-            this._passwordListState.value.toMutableList().apply { add(password) }
-    }
 
     fun getFilteredPasswordList(
         vaultId: Int?,
@@ -174,5 +146,15 @@ class HomeListData(
                     }
                 }
         }
+    }
+
+    fun addNewPassword(password: Password) {
+        this._passwordListState.value =
+            this._passwordListState.value.toMutableList().apply { add(password) }
+    }
+
+    fun addNewVault(vault: Vault) {
+        this._vaultListState.value =
+            this._vaultListState.value.toMutableList().apply { add(vault) }
     }
 }

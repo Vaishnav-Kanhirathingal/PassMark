@@ -58,7 +58,7 @@ import com.google.gson.GsonBuilder
 import easter.egg.passmark.R
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
-import easter.egg.passmark.ui.main.HomeListingData
+import easter.egg.passmark.ui.main.HomeListData
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.utils.ScreenState
@@ -116,7 +116,7 @@ object HomeScreen {
     @Composable
     fun ErrorScreen(
         modifier: Modifier,
-        errorState: ScreenState.ApiError<HomeListingData>,
+        errorState: ScreenState.ApiError<HomeListData>,
         onRetry: () -> Unit
     ) {
         Column(
@@ -199,9 +199,7 @@ object HomeScreen {
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(paddingValues = it),
-                            passwordList = (mainViewModel.screenState.value as? ScreenState.Loaded<HomeListingData>)
-                                ?.result
-                                ?.passwordList ?: listOf(),
+                            mainViewModel = mainViewModel,
                             toViewPasswordScreen = toViewPasswordScreen
                         )
                     },

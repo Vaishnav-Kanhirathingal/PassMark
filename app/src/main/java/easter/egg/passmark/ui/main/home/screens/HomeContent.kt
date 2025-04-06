@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -45,6 +46,9 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.PasswordData
+import easter.egg.passmark.data.models.content.PasswordSortingOptions
+import easter.egg.passmark.ui.main.MainViewModel
+import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.values.PassMarkDimensions
@@ -57,12 +61,22 @@ object HomeContent {
     @Composable
     fun HomeContent(
         modifier: Modifier,
-        passwordList: List<Password>,
+        mainViewModel: MainViewModel,
         toViewPasswordScreen: (passwordId: Int) -> Unit
     ) {
         val listItemModifier = Modifier
             .setSizeLimitation()
             .fillMaxWidth()
+        val passwordList = (mainViewModel.screenState.value as? ScreenState.Loaded)
+            ?.result
+            ?.getFilteredPasswordList(
+                vaultId = null,
+                passwordSortingOptions = PasswordSortingOptions.NAME,
+                ascending = true
+            )
+            ?.collectAsState(initial = listOf())
+            ?.value
+            ?: listOf()
         LazyColumn(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -249,15 +263,7 @@ private val testBasePassword = System.currentTimeMillis().let { now ->
 fun HomeContentPreview() {
     HomeContent.HomeContent(
         modifier = Modifier.fillMaxSize(),
-        passwordList = listOf(
-            testBasePassword.copy(id = 0, data = testBasePasswordData.copy(title = "Google")),
-            testBasePassword.copy(id = 1, data = testBasePasswordData.copy(title = "Facebook")),
-            testBasePassword.copy(id = 2, data = testBasePasswordData.copy(title = "Ubisoft")),
-            testBasePassword.copy(
-                id = 3,
-                data = testBasePasswordData.copy(title = "Epic", email = "abc@gmail.com")
-            ),
-        ),
+        mainViewModel = MainViewModel.getTestViewModel(),
         toViewPasswordScreen = {}
     )
 }
