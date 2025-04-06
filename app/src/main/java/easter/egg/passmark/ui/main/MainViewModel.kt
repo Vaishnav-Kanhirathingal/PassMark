@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import easter.egg.passmark.data.models.content.Password
+import easter.egg.passmark.data.models.content.PasswordSortingOptions
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.storage.PassMarkDataStore
 import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
@@ -18,9 +19,11 @@ import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -109,5 +112,63 @@ class HomeListingData(
 
     fun addNewPassword(password: Password) {
         this._passwordList.add(password)
+    }
+}
+
+class HomeListData(
+    vaultList: MutableList<Vault>,
+    passwordList: MutableList<Password>
+) {
+    private val _vaultListState: MutableStateFlow<List<Vault>> = MutableStateFlow(vaultList)
+    val vaultListState: StateFlow<List<Vault>> = _vaultListState
+
+    private val _passwordListState: MutableStateFlow<List<Password>> =
+        MutableStateFlow(passwordList)
+    val passwordListState: StateFlow<List<Password>> = _passwordListState
+
+    fun addNewVault(vault: Vault) {
+        this._vaultListState.value =
+            this._vaultListState.value.toMutableList().apply { add(vault) }
+    }
+
+    fun addNewPassword(password: Password) {
+        this._passwordListState.value =
+            this._passwordListState.value.toMutableList().apply { add(password) }
+    }
+
+    fun getFilteredPasswordList(
+        vaultId: Int?,
+        passwordSortingOptions: PasswordSortingOptions,
+        ascending:Boolean
+    ): Flow<List<Password>> {
+        return this._passwordListState.map { list ->
+            list
+                .filter { password: Password ->
+                    vaultId?.let { v -> v == password.vaultId } ?: true
+                }
+                .let { passList ->
+                    when (passwordSortingOptions) {
+                        PasswordSortingOptions.NAME -> {
+                            val selector = { password: Password -> password.data.title }
+                            passList.sortedBy(selector = selector)
+                        }
+
+                        PasswordSortingOptions.USAGE -> {
+                            val selector = { password: Password -> password.usedCount }
+                            passList.sortedBy(selector = selector)
+                        }
+
+                        PasswordSortingOptions.CREATED -> {
+                            val selector = { password: Password -> password.created }
+                            passList.sortedBy(selector = selector)
+                        }
+
+                        PasswordSortingOptions.LAST_USED -> {
+                            val selector = { password: Password -> password.lastUsed }
+                            passList.sortedBy(selector = selector)
+                        }
+                    }
+                }
+        }
     }
 }
