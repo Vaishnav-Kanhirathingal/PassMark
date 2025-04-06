@@ -139,7 +139,7 @@ class HomeListData(
     fun getFilteredPasswordList(
         vaultId: Int?,
         passwordSortingOptions: PasswordSortingOptions,
-        ascending:Boolean
+        ascending: Boolean
     ): Flow<List<Password>> {
         return this._passwordListState.map { list ->
             list
@@ -150,22 +150,26 @@ class HomeListData(
                     when (passwordSortingOptions) {
                         PasswordSortingOptions.NAME -> {
                             val selector = { password: Password -> password.data.title }
-                            passList.sortedBy(selector = selector)
+                            if (ascending) passList.sortedBy(selector = selector)
+                            else passList.sortedByDescending(selector)
                         }
 
                         PasswordSortingOptions.USAGE -> {
                             val selector = { password: Password -> password.usedCount }
-                            passList.sortedBy(selector = selector)
+                            if (ascending) passList.sortedBy(selector = selector)
+                            else passList.sortedByDescending(selector)
                         }
 
                         PasswordSortingOptions.CREATED -> {
                             val selector = { password: Password -> password.created }
-                            passList.sortedBy(selector = selector)
+                            if (ascending) passList.sortedBy(selector = selector)
+                            else passList.sortedByDescending(selector)
                         }
 
                         PasswordSortingOptions.LAST_USED -> {
                             val selector = { password: Password -> password.lastUsed }
-                            passList.sortedBy(selector = selector)
+                            if (ascending) passList.sortedBy(selector = selector)
+                            else passList.sortedByDescending(selector)
                         }
                     }
                 }
