@@ -13,13 +13,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -34,7 +35,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -45,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -418,6 +419,10 @@ object HomeDrawer {
                         alignment = Alignment.CenterVertically
                     ),
                     content = {
+                        val iconSelected =
+                            homeViewModel.vaultDialogState.iconChoice.collectAsState().value
+
+
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -439,41 +444,59 @@ object HomeDrawer {
                                 .padding(horizontal = 16.dp),
                             label = { Text(text = "Name") },
                             placeholder = { Text(text = "Vault ABC") },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Vault.iconList.get(iconSelected),
+                                    contentDescription = null
+                                )
+                            },
                             onValueChange = homeViewModel.vaultDialogState::updateText,
                             value = dialogText,
                             enabled = !screenState.isLoading
                         )
-                        LazyVerticalGrid(
+                        LazyVerticalGrid (
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                                .sizeIn(minHeight = PassMarkDimensions.minTouchSize * 3),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                space = 4.dp,
-                                alignment = Alignment.CenterHorizontally
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(
-                                space = 4.dp,
-                                alignment = Alignment.CenterVertically
-                            ),
+                                .wrapContentHeight()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalArrangement = Arrangement.SpaceEvenly,
                             columns = GridCells.Adaptive(minSize = PassMarkDimensions.minTouchSize),
                             content = {
                                 items(
-                                    items = Vault.iconList,
+                                    count = Vault.iconList.size,
                                     itemContent = {
-                                        IconButton(
-                                            modifier = Modifier.setSizeLimitation(),
-                                            onClick = { TODO() },
+                                        val isSelected = (it == iconSelected)
+                                        Box(
+                                            modifier = Modifier
+                                                .size(size = PassMarkDimensions.minTouchSize)
+                                                .clip(shape = CircleShape)
+                                                .background(
+                                                    color =
+                                                        if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                                                        else Color.Transparent
+                                                )
+                                                .clickable(
+                                                    enabled = !screenState.isLoading,
+                                                    onClick = {
+                                                        homeViewModel.vaultDialogState.updateIconChoice(
+                                                            choice = it
+                                                        )
+                                                    }
+                                                ),
+                                            contentAlignment = Alignment.Center,
                                             content = {
                                                 Icon(
-                                                    imageVector = it,
-                                                    contentDescription = null
+                                                    imageVector = Vault.iconList.get(it),
+                                                    contentDescription = null,
+                                                    tint =
+                                                        if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
+                                                        else MaterialTheme.colorScheme.onSurface
                                                 )
                                             }
                                         )
-                                    },
+                                    }
                                 )
-
                             }
                         )
 

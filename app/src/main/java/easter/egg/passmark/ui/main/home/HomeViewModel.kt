@@ -82,4 +82,8 @@ class VaultDialogState(
     fun updateText(text: String) {
         this._text.value = text
     }
+
+    fun updateIconChoice(choice: Int) {
+        this._iconChoice.value = choice
+    }
 }
