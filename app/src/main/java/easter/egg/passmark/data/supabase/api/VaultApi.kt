@@ -10,7 +10,9 @@ class VaultApi @Inject constructor(
 ) {
     private val table = supabaseClient.from(table = "vaults")
 
-    suspend fun getVaultList(): List<Vault> {
-        return table.select().decodeList<Vault>()
-    }
+    suspend fun getVaultList(): List<Vault> = table.select().decodeList<Vault>()
+
+    suspend fun upsert(vault: Vault) = table
+        .upsert(value = vault, request = { select() })
+        .decodeSingle<Vault>()
 }
