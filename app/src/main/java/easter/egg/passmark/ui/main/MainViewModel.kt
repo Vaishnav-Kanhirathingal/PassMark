@@ -81,8 +81,8 @@ class MainViewModel @Inject constructor(
                     async { passwordApi.getPasswordList(passwordCryptographyHandler = passwordCryptographyHandler) }
                 ScreenState.Loaded(
                     result = HomeListingData(
-                        vaultList = vaultListDeferred.await(),
-                        passwordList = passwordListDeferred.await()
+                        _vaultList = vaultListDeferred.await().toMutableList(),
+                        _passwordList = passwordListDeferred.await().toMutableList()
                     )
                 )
             } catch (e: Exception) {
@@ -95,7 +95,19 @@ class MainViewModel @Inject constructor(
     }
 }
 
-data class HomeListingData(
-    val vaultList: List<Vault>,
-    val passwordList: List<Password>
-)
+class HomeListingData(
+    private val _vaultList: MutableList<Vault>,
+    private val _passwordList: MutableList<Password>
+) {
+
+    val vaultList: List<Vault> = _vaultList
+    val passwordList: List<Password> = _passwordList
+
+    fun addNewVault(vault: Vault) {
+        this._vaultList.add(vault)
+    }
+
+    fun addNewPassword(password: Password) {
+        this._passwordList.add(password)
+    }
+}

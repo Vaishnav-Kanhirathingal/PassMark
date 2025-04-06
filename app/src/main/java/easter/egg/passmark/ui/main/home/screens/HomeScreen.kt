@@ -176,7 +176,8 @@ object HomeScreen {
                     modifier = Modifier
                         .fillMaxHeight()
                         .fillMaxWidth(fraction = 0.7f),
-                    viewModel = homeViewModel
+                    viewModel = homeViewModel,
+                    mainViewModel = mainViewModel
                 )
             },
             content = {

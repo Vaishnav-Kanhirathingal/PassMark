@@ -26,6 +26,9 @@ class HomeViewModel @Inject constructor(
             name = vaultDialogState.text.value,
             iconChoice = vaultDialogState.iconChoice.value
         )
+        vaultDialogState.setScreenState(
+            newState = ScreenState.Loading()
+        )
         viewModelScope.launch {
             val newState: ScreenState<Vault> = try {
                 val receivedVault = vaultApi.upsert(
