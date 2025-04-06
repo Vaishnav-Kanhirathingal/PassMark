@@ -13,8 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -30,6 +34,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -52,6 +57,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.R
+import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel
@@ -437,6 +443,40 @@ object HomeDrawer {
                             value = dialogText,
                             enabled = !screenState.isLoading
                         )
+                        LazyVerticalGrid(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                                .sizeIn(minHeight = PassMarkDimensions.minTouchSize * 3),
+                            horizontalArrangement = Arrangement.spacedBy(
+                                space = 4.dp,
+                                alignment = Alignment.CenterHorizontally
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(
+                                space = 4.dp,
+                                alignment = Alignment.CenterVertically
+                            ),
+                            columns = GridCells.Adaptive(minSize = PassMarkDimensions.minTouchSize),
+                            content = {
+                                items(
+                                    items = Vault.iconList,
+                                    itemContent = {
+                                        IconButton(
+                                            modifier = Modifier.setSizeLimitation(),
+                                            onClick = { TODO() },
+                                            content = {
+                                                Icon(
+                                                    imageVector = it,
+                                                    contentDescription = null
+                                                )
+                                            }
+                                        )
+                                    },
+                                )
+
+                            }
+                        )
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
