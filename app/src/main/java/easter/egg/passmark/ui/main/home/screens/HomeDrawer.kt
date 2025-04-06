@@ -22,9 +22,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.LocalPostOffice
+import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Web
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -53,7 +52,6 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.R
-import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel
@@ -196,10 +194,12 @@ object HomeDrawer {
     @Composable
     private fun VaultSelectable(
         modifier: Modifier,
-        vault: Vault,
-        itemsInList: Int,
+        vaultName: String,
+        vaultIcon: ImageVector,
+        passwordsInVault: Int,
         isSelected: Boolean,
-        cornerSize: Dp
+        cornerSize: Dp,
+        onClick: () -> Unit
     ) {
         val onContainerColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
         else MaterialTheme.colorScheme.onSecondaryContainer
@@ -213,7 +213,7 @@ object HomeDrawer {
                         if (isSelected) MaterialTheme.colorScheme.primaryContainer
                         else MaterialTheme.colorScheme.surfaceContainer,
                 )
-                .clickable(onClick = { TODO() })
+                .clickable(onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 16.dp),
             content = {
                 val (icon, title, subTitle) = createRefs()
@@ -228,12 +228,7 @@ object HomeDrawer {
                                 this.bottom.linkTo(parent.bottom)
                             }
                         ),
-                    imageVector = when (vault.iconChoice) {
-                        0 -> Icons.Default.Web
-                        1 -> Icons.Default.Web
-                        2 -> Icons.Default.Web
-                        else -> Icons.Default.LocalPostOffice
-                    },
+                    imageVector = vaultIcon,
                     tint = onContainerColor,
                     contentDescription = null
                 )
@@ -259,7 +254,7 @@ object HomeDrawer {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     color = onContainerColor,
-                    text = vault.name
+                    text = vaultName
                 )
                 Text(
                     modifier = Modifier
@@ -282,7 +277,7 @@ object HomeDrawer {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     color = onContainerColor,
-                    text = "$itemsInList passwords"
+                    text = "$passwordsInVault passwords"
                 )
             }
         )
@@ -294,13 +289,6 @@ object HomeDrawer {
         homeViewModel: HomeViewModel,
         mainViewModel: MainViewModel
     ) {
-        val testList = listOf( // TODO: remove this
-            Vault(id = 0, name = "All", iconChoice = 0),
-            Vault(id = 1, name = "Work", iconChoice = 1),
-            Vault(id = 2, name = "Devices", iconChoice = 2),
-            Vault(id = 3, name = "Unimportant", iconChoice = 3)
-        )
-
         Column(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -316,41 +304,63 @@ object HomeDrawer {
 
                 val vaultSelectableModifier = Modifier.fillMaxWidth()
                 val cornerSize = 12.dp
-                testList.forEachIndexed { index, vault ->
+
+                val vaultIdSelected = homeViewModel.vaultIdSelected.collectAsState().value
+                VaultSelectable(
+                    modifier = vaultSelectableModifier,
+                    vaultName = "All items",
+                    vaultIcon = Icons.Default.Password,
+                    passwordsInVault = 10,
+                    isSelected = vaultIdSelected == null,
+                    cornerSize = cornerSize,
+                    onClick = { homeViewModel.updateVaultIdSelected(id = null) }
+                )
+                val result =
+                    (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
+                        ?.result
+                val vaultList = result?.vaultListState?.collectAsState()?.value ?: listOf()
+
+                vaultList.forEach { vault ->
+                    var size = 0
+                    result?.passwordListState?.collectAsState()?.value?.forEach { if (it.vaultId == vault.id) size++ }
                     VaultSelectable(
                         modifier = vaultSelectableModifier,
-                        vault = vault,
-                        itemsInList = 10, // TODO: get
-                        isSelected = index == 0,
-                        cornerSize = cornerSize
+                        vaultName = vault.name,
+                        vaultIcon = vault.getIcon(),
+                        passwordsInVault = size,
+                        isSelected = vaultIdSelected == vault.id,
+                        cornerSize = cornerSize,
+                        onClick = { homeViewModel.updateVaultIdSelected(id = vault.id) }
                     )
                 }
-                Box(
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .size(size = 60.dp)
-                        .setSizeLimitation()
-                        .clip(
-                            shape = RoundedCornerShape(
-                                topStart = 0.dp,
-                                topEnd = cornerSize,
-                                bottomStart = cornerSize,
-                                bottomEnd = cornerSize
+                if (vaultList.size < 5) {
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(size = 60.dp)
+                            .setSizeLimitation()
+                            .clip(
+                                shape = RoundedCornerShape(
+                                    topStart = 0.dp,
+                                    topEnd = cornerSize,
+                                    bottomStart = cornerSize,
+                                    bottomEnd = cornerSize
+                                )
                             )
-                        )
-                        .clickable(onClick = { homeViewModel.vaultDialogState.showDialog() })
-                        .background(color = MaterialTheme.colorScheme.primaryContainer)
-                        .align(alignment = Alignment.End),
-                    contentAlignment = Alignment.Center,
-                    content = {
-                        Icon(
-                            modifier = Modifier.size(size = 28.dp),
-                            imageVector = Icons.Default.Add,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            contentDescription = null
-                        )
-                    }
-                )
+                            .clickable(onClick = { homeViewModel.vaultDialogState.showDialog() })
+                            .background(color = MaterialTheme.colorScheme.primaryContainer)
+                            .align(alignment = Alignment.End),
+                        contentAlignment = Alignment.Center,
+                        content = {
+                            Icon(
+                                modifier = Modifier.size(size = 28.dp),
+                                imageVector = Icons.Default.Add,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
                 if (homeViewModel.vaultDialogState.isVisible.collectAsState().value) {
                     VaultDialog(
                         modifier = Modifier.fillMaxWidth(),
