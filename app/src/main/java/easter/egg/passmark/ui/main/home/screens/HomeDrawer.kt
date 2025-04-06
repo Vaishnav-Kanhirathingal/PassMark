@@ -192,6 +192,96 @@ object HomeDrawer {
     }
 
     @Composable
+    private fun VaultList(
+        modifier: Modifier,
+        homeViewModel: HomeViewModel,
+        mainViewModel: MainViewModel
+    ) {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(
+                space = 8.dp,
+                alignment = Alignment.Top
+            ),
+            content = {
+                val spacerModifier = Modifier
+                    .fillMaxWidth()
+                    .height(height = 8.dp)
+                Spacer(modifier = spacerModifier)
+
+                val vaultSelectableModifier = Modifier.fillMaxWidth()
+                val cornerSize = 12.dp
+
+                val vaultIdSelected = homeViewModel.vaultIdSelected.collectAsState().value
+                VaultSelectable(
+                    modifier = vaultSelectableModifier,
+                    vaultName = "All items",
+                    vaultIcon = Icons.Default.Password,
+                    passwordsInVault = 10,
+                    isSelected = vaultIdSelected == null,
+                    cornerSize = cornerSize,
+                    onClick = { homeViewModel.updateVaultIdSelected(id = null) }
+                )
+                val result =
+                    (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
+                        ?.result
+                val vaultList = result?.vaultListState?.collectAsState()?.value ?: listOf()
+
+                vaultList.forEach { vault ->
+                    var size = 0
+                    result?.passwordListState?.collectAsState()?.value?.forEach { if (it.vaultId == vault.id) size++ }
+                    VaultSelectable(
+                        modifier = vaultSelectableModifier,
+                        vaultName = vault.name,
+                        vaultIcon = vault.getIcon(),
+                        passwordsInVault = size,
+                        isSelected = vaultIdSelected == vault.id,
+                        cornerSize = cornerSize,
+                        onClick = { homeViewModel.updateVaultIdSelected(id = vault.id) }
+                    )
+                }
+                if (vaultList.size < 5) {
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(size = 60.dp)
+                            .setSizeLimitation()
+                            .clip(
+                                shape = RoundedCornerShape(
+                                    topStart = 0.dp,
+                                    topEnd = cornerSize,
+                                    bottomStart = cornerSize,
+                                    bottomEnd = cornerSize
+                                )
+                            )
+                            .clickable(onClick = { homeViewModel.vaultDialogState.showDialog() })
+                            .background(color = MaterialTheme.colorScheme.primaryContainer)
+                            .align(alignment = Alignment.End),
+                        contentAlignment = Alignment.Center,
+                        content = {
+                            Icon(
+                                modifier = Modifier.size(size = 28.dp),
+                                imageVector = Icons.Default.Add,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
+                if (homeViewModel.vaultDialogState.isVisible.collectAsState().value) {
+                    VaultDialog(
+                        modifier = Modifier.fillMaxWidth(),
+                        homeViewModel = homeViewModel,
+                        mainViewModel = mainViewModel
+                    )
+                }
+                Spacer(modifier = spacerModifier)
+            }
+        )
+    }
+
+    @Composable
     private fun VaultSelectable(
         modifier: Modifier,
         vaultName: String,
@@ -279,96 +369,6 @@ object HomeDrawer {
                     color = onContainerColor,
                     text = "$passwordsInVault passwords"
                 )
-            }
-        )
-    }
-
-    @Composable
-    private fun VaultList(
-        modifier: Modifier,
-        homeViewModel: HomeViewModel,
-        mainViewModel: MainViewModel
-    ) {
-        Column(
-            modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(
-                space = 8.dp,
-                alignment = Alignment.Top
-            ),
-            content = {
-                val spacerModifier = Modifier
-                    .fillMaxWidth()
-                    .height(height = 8.dp)
-                Spacer(modifier = spacerModifier)
-
-                val vaultSelectableModifier = Modifier.fillMaxWidth()
-                val cornerSize = 12.dp
-
-                val vaultIdSelected = homeViewModel.vaultIdSelected.collectAsState().value
-                VaultSelectable(
-                    modifier = vaultSelectableModifier,
-                    vaultName = "All items",
-                    vaultIcon = Icons.Default.Password,
-                    passwordsInVault = 10,
-                    isSelected = vaultIdSelected == null,
-                    cornerSize = cornerSize,
-                    onClick = { homeViewModel.updateVaultIdSelected(id = null) }
-                )
-                val result =
-                    (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
-                        ?.result
-                val vaultList = result?.vaultListState?.collectAsState()?.value ?: listOf()
-
-                vaultList.forEach { vault ->
-                    var size = 0
-                    result?.passwordListState?.collectAsState()?.value?.forEach { if (it.vaultId == vault.id) size++ }
-                    VaultSelectable(
-                        modifier = vaultSelectableModifier,
-                        vaultName = vault.name,
-                        vaultIcon = vault.getIcon(),
-                        passwordsInVault = size,
-                        isSelected = vaultIdSelected == vault.id,
-                        cornerSize = cornerSize,
-                        onClick = { homeViewModel.updateVaultIdSelected(id = vault.id) }
-                    )
-                }
-                if (vaultList.size < 5) {
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .size(size = 60.dp)
-                            .setSizeLimitation()
-                            .clip(
-                                shape = RoundedCornerShape(
-                                    topStart = 0.dp,
-                                    topEnd = cornerSize,
-                                    bottomStart = cornerSize,
-                                    bottomEnd = cornerSize
-                                )
-                            )
-                            .clickable(onClick = { homeViewModel.vaultDialogState.showDialog() })
-                            .background(color = MaterialTheme.colorScheme.primaryContainer)
-                            .align(alignment = Alignment.End),
-                        contentAlignment = Alignment.Center,
-                        content = {
-                            Icon(
-                                modifier = Modifier.size(size = 28.dp),
-                                imageVector = Icons.Default.Add,
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                contentDescription = null
-                            )
-                        }
-                    )
-                }
-                if (homeViewModel.vaultDialogState.isVisible.collectAsState().value) {
-                    VaultDialog(
-                        modifier = Modifier.fillMaxWidth(),
-                        homeViewModel = homeViewModel,
-                        mainViewModel = mainViewModel
-                    )
-                }
-                Spacer(modifier = spacerModifier)
             }
         )
     }
