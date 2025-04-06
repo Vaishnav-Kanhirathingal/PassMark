@@ -15,6 +15,12 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val vaultApi: VaultApi
 ) : ViewModel() {
+    private val _vaultIdSelected: MutableStateFlow<Int?> = MutableStateFlow(null)
+    val vaultIdSelected: StateFlow<Int?> get() = _vaultIdSelected
+    fun updateVaultIdSelected(id: Int?) {
+        this._vaultIdSelected.value = id
+    }
+
     val vaultDialogState: VaultDialogState = VaultDialogState(
         _isVisible = MutableStateFlow(false),
         _text = MutableStateFlow(""),

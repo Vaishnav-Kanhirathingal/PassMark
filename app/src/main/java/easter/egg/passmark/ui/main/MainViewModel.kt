@@ -107,6 +107,7 @@ class HomeListData(
 
     private val _passwordListState: MutableStateFlow<List<Password>> =
         MutableStateFlow(passwordList)
+    val passwordListState: StateFlow<List<Password>> get() = _passwordListState
 
     fun getFilteredPasswordList(
         vaultId: Int?,

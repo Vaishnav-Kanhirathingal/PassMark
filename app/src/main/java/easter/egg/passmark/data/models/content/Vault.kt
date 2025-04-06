@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -45,6 +46,9 @@ data class Vault(
             Icons.AutoMirrored.Filled.DirectionsBike
         )
     }
+
+    fun getIcon(): ImageVector = iconList.getOrNull(index = iconChoice) ?: iconList.first()
+
 }
 
 /** types of passwords -
