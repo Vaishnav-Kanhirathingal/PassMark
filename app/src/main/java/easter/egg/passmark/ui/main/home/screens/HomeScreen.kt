@@ -56,8 +56,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.gson.GsonBuilder
 import easter.egg.passmark.R
+import easter.egg.passmark.data.supabase.api.VaultApi
+import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.HomeListingData
 import easter.egg.passmark.ui.main.MainViewModel
+import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -75,7 +78,8 @@ object HomeScreen {
         modifier: Modifier,
         toAddNewPasswordScreen: () -> Unit,
         mainViewModel: MainViewModel,
-        toViewPasswordScreen: (passwordId: Int) -> Unit
+        toViewPasswordScreen: (passwordId: Int) -> Unit,
+        homeViewModel: HomeViewModel
     ) {
         val context = LocalContext.current
         when (val screenState = mainViewModel.screenState.collectAsState().value) {
@@ -93,7 +97,8 @@ object HomeScreen {
                     modifier = modifier,
                     toAddNewPasswordScreen = toAddNewPasswordScreen,
                     mainViewModel = mainViewModel,
-                    toViewPasswordScreen = toViewPasswordScreen
+                    toViewPasswordScreen = toViewPasswordScreen,
+                    homeViewModel = homeViewModel
                 )
             }
 
@@ -157,7 +162,8 @@ object HomeScreen {
         modifier: Modifier,
         toAddNewPasswordScreen: () -> Unit,
         mainViewModel: MainViewModel,
-        toViewPasswordScreen: (passwordId: Int) -> Unit
+        toViewPasswordScreen: (passwordId: Int) -> Unit,
+        homeViewModel: HomeViewModel
     ) {
         val coroutineScope = rememberCoroutineScope()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -169,7 +175,8 @@ object HomeScreen {
                 HomeDrawer.DrawerContent(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .fillMaxWidth(fraction = 0.7f)
+                        .fillMaxWidth(fraction = 0.7f),
+                    viewModel = homeViewModel
                 )
             },
             content = {
@@ -354,7 +361,10 @@ private fun HomeScreenPreview() {
         modifier = Modifier.fillMaxSize(),
         toAddNewPasswordScreen = {},
         mainViewModel = MainViewModel.getTestViewModel(),
-        toViewPasswordScreen = {}
+        toViewPasswordScreen = {},
+        homeViewModel = HomeViewModel(
+            vaultApi = VaultApi(supabaseClient = SupabaseModule.mockClient)
+        )
     )
 }
 

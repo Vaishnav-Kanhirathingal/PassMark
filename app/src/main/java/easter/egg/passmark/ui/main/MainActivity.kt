@@ -64,7 +64,8 @@ class MainActivity : ComponentActivity() {
                             modifier = composableModifier,
                             toAddNewPasswordScreen = { navController.navigate(route = MainScreens.PasswordEdit) },
                             mainViewModel = mainViewModel,
-                            toViewPasswordScreen = { passwordId -> TODO() }
+                            toViewPasswordScreen = { passwordId -> TODO() },
+                            homeViewModel = hiltViewModel(viewModelStoreOwner = it)
                         )
                     }
                 )

@@ -25,25 +25,37 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocalPostOffice
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Web
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.R
 import easter.egg.passmark.data.models.content.Vault
+import easter.egg.passmark.data.supabase.api.VaultApi
+import easter.egg.passmark.di.supabase.SupabaseModule
+import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.values.PassMarkDimensions
@@ -53,7 +65,8 @@ import easter.egg.passmark.utils.values.setSizeLimitation
 object HomeDrawer {
     @Composable
     fun DrawerContent(
-        modifier: Modifier
+        modifier: Modifier,
+        viewModel: HomeViewModel
     ) {
         val scrollState = rememberScrollState()
         Box(
@@ -114,7 +127,8 @@ object HomeDrawer {
                         VaultList(
                             modifier = Modifier
                                 .heightIn(min = 300.dp)
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
+                            viewModel = viewModel
                         )
                         DrawerTitle(text = "Options")
                         HorizontalDivider()
@@ -271,7 +285,8 @@ object HomeDrawer {
 
     @Composable
     private fun VaultList(
-        modifier: Modifier
+        modifier: Modifier,
+        viewModel: HomeViewModel
     ) {
         val testList = listOf( // TODO: remove this
             Vault(id = 0, name = "All", iconChoice = 0),
@@ -304,7 +319,6 @@ object HomeDrawer {
                         cornerSize = cornerSize
                     )
                 }
-
                 Box(
                     modifier = Modifier
                         .padding(end = 8.dp)
@@ -318,7 +332,7 @@ object HomeDrawer {
                                 bottomEnd = cornerSize
                             )
                         )
-                        .clickable(onClick = { TODO() })
+                        .clickable(onClick = { viewModel.vaultDialogState.showDialog() })
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
                         .align(alignment = Alignment.End),
                     contentAlignment = Alignment.Center,
@@ -331,7 +345,99 @@ object HomeDrawer {
                         )
                     }
                 )
+                if (viewModel.vaultDialogState.isVisible.collectAsState().value) {
+                    VaultDialog(
+                        modifier = Modifier.fillMaxWidth(),
+                        viewModel = viewModel
+                    )
+                }
                 Spacer(modifier = spacerModifier)
+            }
+        )
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun VaultDialog(
+        modifier: Modifier,
+        viewModel: HomeViewModel
+    ) {
+        val screenState = viewModel.vaultDialogState.apiCallState.collectAsState().value
+        BasicAlertDialog(
+            modifier = modifier
+                .clip(shape = RoundedCornerShape(size = 16.dp))
+                .background(color = MaterialTheme.colorScheme.surface),
+            onDismissRequest = { viewModel.vaultDialogState.resetAndDismiss() },
+            properties = (!screenState.isLoading).let { dismissAllowed ->
+                DialogProperties(
+                    dismissOnClickOutside = dismissAllowed,
+                    dismissOnBackPress = dismissAllowed,
+                )
+            },
+            content = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    content = {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    top = 16.dp,
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    bottom = 8.dp
+                                ),
+                            text = "Name your vault",
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Title.medium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            label = { Text(text = "Name") },
+                            placeholder = { Text(text = "Vault ABC") },
+                            onValueChange = viewModel.vaultDialogState::updateText,
+                            value = viewModel.vaultDialogState.text.collectAsState().value,
+                            enabled = !screenState.isLoading
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = {
+                                TextButton(
+                                    modifier = Modifier.setSizeLimitation(),
+                                    onClick = { viewModel.vaultDialogState.resetAndDismiss() },
+                                    enabled = !screenState.isLoading,
+                                    content = { Text(text = "Cancel") }
+                                )
+                                TextButton(
+                                    modifier = Modifier.setSizeLimitation(),
+                                    onClick = { TODO() },
+                                    enabled = !screenState.isLoading,
+                                    content = {
+                                        Text(
+                                            modifier = Modifier.alpha(alpha = if (screenState.isLoading) 0f else 1f),
+                                            text = "Create"
+                                        )
+                                        if (screenState.isLoading) {
+                                            CircularProgressIndicator(
+                                                modifier = Modifier.size(size = 24.dp),
+                                                strokeWidth = 2.dp
+                                            )
+                                        }
+                                    }
+                                )
+                            }
+                        )
+                    }
+                )
             }
         )
     }
@@ -344,6 +450,16 @@ private fun HomeScreenDrawerPreview() {
     HomeDrawer.DrawerContent(
         modifier = Modifier
             .fillMaxHeight()
-            .fillMaxWidth(0.7f)
+            .fillMaxWidth(0.7f),
+        viewModel = HomeViewModel(vaultApi = VaultApi(supabaseClient = SupabaseModule.mockClient))
+    )
+}
+
+@Composable
+@Preview(widthDp = 360, heightDp = 360, showBackground = true)
+fun VaultDialogPreview() {
+    HomeDrawer.VaultDialog(
+        modifier = Modifier.fillMaxWidth(),
+        viewModel = HomeViewModel(vaultApi = VaultApi(supabaseClient = SupabaseModule.mockClient))
     )
 }
