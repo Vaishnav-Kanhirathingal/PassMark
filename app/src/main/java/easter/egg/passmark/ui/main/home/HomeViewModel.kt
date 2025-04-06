@@ -49,7 +49,7 @@ class HomeViewModel @Inject constructor(
 class VaultDialogState(
     private val _isVisible: MutableStateFlow<Boolean> = MutableStateFlow(false),
     private val _text: MutableStateFlow<String> = MutableStateFlow(""),
-    private val _apiCallState: MutableStateFlow<ScreenState<Vault>> = MutableStateFlow(ScreenState.PreCall<Vault>()),
+    private val _apiCallState: MutableStateFlow<ScreenState<Vault>> = MutableStateFlow(ScreenState.PreCall()),
     private val _iconChoice: MutableStateFlow<Int> = MutableStateFlow(0)
 ) {
 

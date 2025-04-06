@@ -13,7 +13,8 @@ data class Password(
 
     val created: Long,
     val lastUsed: Long,
-    val lastModified: Long
+    val lastModified: Long,
+    val usedCount: Int
 ) {
     fun toPasswordCapsule(
         passwordCryptographyHandler: PasswordCryptographyHandler
@@ -24,6 +25,7 @@ data class Password(
         created = created,
         lastUsed = lastUsed,
         lastModified = lastModified,
+        usedCount = usedCount
     )
 }
 
@@ -60,7 +62,8 @@ data class PasswordCapsule(
     @SerialName(value = "data") val data: String,
     @SerialName(value = "created") val created: Long,
     @SerialName(value = "last_used") val lastUsed: Long,
-    @SerialName(value = "last_modified") val lastModified: Long
+    @SerialName(value = "last_modified") val lastModified: Long,
+    @SerialName(value = "used_count") val usedCount: Int
 ) {
     fun toPassword(
         passwordCryptographyHandler: PasswordCryptographyHandler
@@ -71,5 +74,8 @@ data class PasswordCapsule(
         created = created,
         lastUsed = lastUsed,
         lastModified = lastModified,
+        usedCount = usedCount
     )
 }
+
+enum class PasswordSortingOptions { NAME, USAGE, LAST_USED, CREATED }

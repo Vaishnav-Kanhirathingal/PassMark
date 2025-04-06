@@ -101,7 +101,8 @@ class PasswordEditViewModel @Inject constructor(
             ),
             lastUsed = now,
             created = now,
-            lastModified = now
+            lastModified = now,
+            usedCount = 0
         )
         viewModelScope.launch {
             val newState: ScreenState<Password> = try {

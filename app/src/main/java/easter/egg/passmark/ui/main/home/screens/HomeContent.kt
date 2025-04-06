@@ -238,7 +238,8 @@ private val testBasePassword = System.currentTimeMillis().let { now ->
         data = testBasePasswordData.copy(),
         created = now,
         lastUsed = now,
-        lastModified = now
+        lastModified = now,
+        usedCount = 0
     )
 }
 
