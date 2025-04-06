@@ -69,4 +69,8 @@ class VaultDialogState(
     fun setScreenState(newState: ScreenState<Vault>) {
         this._apiCallState.value = newState
     }
+
+    fun updateText(text: String) {
+        this._text.value = text
+    }
 }
