@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -454,7 +453,7 @@ object HomeDrawer {
                             value = dialogText,
                             enabled = !screenState.isLoading
                         )
-                        LazyVerticalGrid (
+                        LazyVerticalGrid(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .wrapContentHeight()
@@ -468,30 +467,35 @@ object HomeDrawer {
                                     itemContent = {
                                         val isSelected = (it == iconSelected)
                                         Box(
-                                            modifier = Modifier
-                                                .size(size = PassMarkDimensions.minTouchSize)
-                                                .clip(shape = CircleShape)
-                                                .background(
-                                                    color =
-                                                        if (isSelected) MaterialTheme.colorScheme.primaryContainer
-                                                        else Color.Transparent
-                                                )
-                                                .clickable(
-                                                    enabled = !screenState.isLoading,
-                                                    onClick = {
-                                                        homeViewModel.vaultDialogState.updateIconChoice(
-                                                            choice = it
-                                                        )
-                                                    }
-                                                ),
                                             contentAlignment = Alignment.Center,
                                             content = {
-                                                Icon(
-                                                    imageVector = Vault.iconList.get(it),
-                                                    contentDescription = null,
-                                                    tint =
-                                                        if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
-                                                        else MaterialTheme.colorScheme.onSurface
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(size = PassMarkDimensions.minTouchSize)
+                                                        .clip(shape = CircleShape)
+                                                        .background(
+                                                            color =
+                                                                if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                                                                else Color.Transparent
+                                                        )
+                                                        .clickable(
+                                                            enabled = !screenState.isLoading,
+                                                            onClick = {
+                                                                homeViewModel.vaultDialogState.updateIconChoice(
+                                                                    choice = it
+                                                                )
+                                                            }
+                                                        ),
+                                                    contentAlignment = Alignment.Center,
+                                                    content = {
+                                                        Icon(
+                                                            imageVector = Vault.iconList.get(it),
+                                                            contentDescription = null,
+                                                            tint =
+                                                                if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
+                                                                else MaterialTheme.colorScheme.onSurface
+                                                        )
+                                                    }
                                                 )
                                             }
                                         )
