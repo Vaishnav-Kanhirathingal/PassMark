@@ -45,10 +45,14 @@ data class Vault(
             Icons.Default.SensorOccupied,
             Icons.AutoMirrored.Filled.DirectionsBike
         )
+
+        const val VAULT_NAME_FOR_ALL_ITEMS = "All items"
+        val allItemsIcon = iconList.first()
+
+        fun Vault?.getIcon(): ImageVector {
+            return this?.iconChoice?.let { iconList.getOrNull(index = it) } ?: iconList.first()
+        }
     }
-
-    fun getIcon(): ImageVector = iconList.getOrNull(index = iconChoice) ?: iconList.first()
-
 }
 
 /** types of passwords -

@@ -37,6 +37,7 @@ class PasswordEditViewModel @Inject constructor(
         }
     }
 
+    val selectedVault: MutableStateFlow<Vault?> = MutableStateFlow(null)
     //-----------------------------------------------------------------------------------------state
 
     /** result should be the title of the password stored */

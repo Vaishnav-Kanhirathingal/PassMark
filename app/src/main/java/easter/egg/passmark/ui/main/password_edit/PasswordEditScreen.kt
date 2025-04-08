@@ -54,7 +54,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import easter.egg.passmark.data.models.content.Vault
+import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel
@@ -189,8 +192,8 @@ object PasswordEditScreen {
                             onClick = { TODO() }
                         )
                         .padding(
-                            start = 12.dp,
-                            end = 20.dp
+                            start = 16.dp,
+                            end = 16.dp
                         ),
                     horizontalArrangement = Arrangement.spacedBy(
                         space = 4.dp,
@@ -199,15 +202,26 @@ object PasswordEditScreen {
                     verticalAlignment = Alignment.CenterVertically,
                     content = {
                         Icon(
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = null
+                            imageVector = viewModel.selectedVault.collectAsState().value.getIcon(),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
+
                         Text(
-                            text = "Folder Name",
+                            modifier = Modifier.padding(start = 2.dp),
+                            text = viewModel.selectedVault.collectAsState().value?.name
+                                ?: Vault.VAULT_NAME_FOR_ALL_ITEMS,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             fontSize = PassMarkFonts.Body.medium,
                             fontWeight = FontWeight.Medium,
                             fontFamily = PassMarkFonts.font,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
+                        )
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 )

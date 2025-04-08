@@ -58,6 +58,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.R
 import easter.egg.passmark.data.models.content.Vault
+import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel
@@ -222,8 +223,8 @@ object HomeDrawer {
                 val vaultIdSelected = homeViewModel.vaultIdSelected.collectAsState().value
                 VaultSelectable(
                     modifier = vaultSelectableModifier,
-                    vaultName = "All items",
-                    vaultIcon = Icons.Default.Password,
+                    vaultName = Vault.VAULT_NAME_FOR_ALL_ITEMS,
+                    vaultIcon = Vault.allItemsIcon,
                     passwordsInVault = 10,
                     isSelected = vaultIdSelected == null,
                     cornerSize = cornerSize,
