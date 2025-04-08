@@ -319,7 +319,7 @@ object PasswordEditScreen {
                             label = "Title",
                             placeHolder = "Untitled",
                             text = viewModel.title.collectAsState().value,
-                            onTextChange = { viewModel.updateTitle(newValue = it) },
+                            onTextChange = { viewModel.title.value = it },
                             textStyle = LocalTextStyle.current.copy(fontSize = PassMarkFonts.Title.large),
                             isEnabled = !isLoading
                         )
@@ -335,7 +335,7 @@ object PasswordEditScreen {
                             label = "Email",
                             placeHolder = "abc@def.xyz",
                             text = viewModel.email.collectAsState().value,
-                            onTextChange = { viewModel.updateEmail(newValue = it) },
+                            onTextChange = { viewModel.email.value = it },
                             isEnabled = !isLoading
                         )
                         HorizontalDivider(
@@ -349,7 +349,7 @@ object PasswordEditScreen {
                             label = "UserName",
                             placeHolder = "John Doe",
                             text = viewModel.userName.collectAsState().value,
-                            onTextChange = { viewModel.updateUserName(newValue = it) },
+                            onTextChange = { viewModel.userName.value = it },
                             isEnabled = !isLoading
                         )
                         HorizontalDivider(
@@ -363,7 +363,7 @@ object PasswordEditScreen {
                             label = "Password",
                             placeHolder = "",
                             text = viewModel.password.collectAsState().value,
-                            onTextChange = { viewModel.updatePassword(newValue = it) },
+                            onTextChange = { viewModel.password.value = it },
                             isEnabled = !isLoading
                         )
                     }
@@ -379,7 +379,7 @@ object PasswordEditScreen {
                             label = "Website",
                             placeHolder = "www.abc.com",
                             text = viewModel.website.collectAsState().value,
-                            onTextChange = { viewModel.updateWebsite(newValue = it) },
+                            onTextChange = { viewModel.website.value = it },
                             isEnabled = !isLoading
                         )
                     }
@@ -395,7 +395,7 @@ object PasswordEditScreen {
                             label = "notes",
                             placeHolder = "Add a note",
                             text = viewModel.notes.collectAsState().value,
-                            onTextChange = { viewModel.updateNotes(newValue = it) },
+                            onTextChange = { viewModel.notes.value = it },
                             isEnabled = !isLoading,
                         )
                     }
@@ -406,7 +406,7 @@ object PasswordEditScreen {
                     modifier = Modifier.fillMaxWidth(),
                     text = "Use fingerprint to access",
                     isChecked = viewModel.useFingerPrint.collectAsState().value,
-                    onCheckedChange = { viewModel.updateUseFingerPrint(newValue = it) },
+                    onCheckedChange = { viewModel.useFingerPrint.value = it },
                     isEnabled = !isLoading
                 )
                 Spacer(modifier = smallSpacerModifier)
@@ -415,7 +415,7 @@ object PasswordEditScreen {
                     modifier = Modifier.fillMaxWidth(),
                     text = "Keep On Device Only",
                     isChecked = viewModel.saveToLocalOnly.collectAsState().value,
-                    onCheckedChange = { viewModel.updateSaveToLocalOnly(newValue = it) },
+                    onCheckedChange = { viewModel.saveToLocalOnly.value = it },
                     isEnabled = !isLoading
                 )
                 Spacer(
