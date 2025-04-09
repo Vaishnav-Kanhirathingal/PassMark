@@ -36,40 +36,40 @@ import androidx.compose.material.icons.filled.Web
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
+import androidx.constraintlayout.compose.ChainStyle
+import androidx.constraintlayout.compose.ConstraintLayout
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.data.supabase.api.PasswordApi
@@ -81,6 +81,7 @@ import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
 object PasswordEditScreen {
     private val TAG = this::class.simpleName
@@ -153,6 +154,7 @@ object PasswordEditScreen {
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun EditTopBar(
         modifier: Modifier,
@@ -196,8 +198,11 @@ object PasswordEditScreen {
                         .height(height = PassMarkDimensions.minTouchSize)
                 )
                 val pillShape = RoundedCornerShape(size = PassMarkDimensions.minTouchSize)
-                val dropDownExpanded = remember { mutableStateOf(false) } // TODO: set false
-                val parentSize = remember { mutableStateOf(IntSize.Zero) }
+
+                val sheetIsVisible = remember { mutableStateOf(false) }
+                val sheetState = rememberModalBottomSheetState()
+
+                val coroutineScope = rememberCoroutineScope()
                 Row(
                     modifier = Modifier
                         .setSizeLimitation()
@@ -205,15 +210,15 @@ object PasswordEditScreen {
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
                         .clickable(
                             enabled = !passwordEditViewModel.screenState.collectAsState().value.isLoading,
-                            onClick = { dropDownExpanded.value = !dropDownExpanded.value }
+                            onClick = {
+                                sheetIsVisible.value = true
+                                coroutineScope.launch { sheetState.show() }
+                            }
                         )
                         .padding(
                             start = 16.dp,
                             end = 16.dp
-                        )
-                        .onGloballyPositioned {
-                            parentSize.value = it.size
-                        },
+                        ),
                     horizontalArrangement = Arrangement.spacedBy(
                         space = 4.dp,
                         alignment = Alignment.CenterHorizontally
@@ -225,7 +230,6 @@ object PasswordEditScreen {
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
-
                         Text(
                             modifier = Modifier
                                 .padding(start = 4.dp)
@@ -248,18 +252,21 @@ object PasswordEditScreen {
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
-                        val selectedBoxWith =
-                            with(
-                                receiver = LocalDensity.current,
-                                block = { parentSize.value.width.toDp() }
-                            ).let { max(it, PassMarkDimensions.minTouchSize * 3) }
-                        VaultDropDown(
-                            expanded = dropDownExpanded.value,
-                            dismissDropDown = { dropDownExpanded.value = false },
-                            mainViewModel = mainViewModel,
-                            width = selectedBoxWith,
-                            onSelect = { passwordEditViewModel.selectedVault.value = it }
-                        )
+                        if (sheetIsVisible.value) {
+                            VaultSelectionBottomSheet(
+                                dismissDropDown = {
+                                    coroutineScope
+                                        .launch { sheetState.hide() }
+                                        .invokeOnCompletion { sheetIsVisible.value = false }
+                                },
+                                vaultList = (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
+                                    ?.result?.vaultListState?.collectAsState()?.value
+                                    ?: listOf(),
+                                sheetState = sheetState,
+                                mainViewModel = mainViewModel,
+                                passwordEditViewModel = passwordEditViewModel
+                            )
+                        }
                     }
                 )
 
@@ -304,56 +311,120 @@ object PasswordEditScreen {
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun VaultDropDown(
-        expanded: Boolean,
+    fun VaultSelectionBottomSheet(
         dismissDropDown: () -> Unit,
+        vaultList: List<Vault>,
+        sheetState: SheetState,
         mainViewModel: MainViewModel,
-        width: Dp,
-        onSelect: (Vault?) -> Unit
+        passwordEditViewModel: PasswordEditViewModel
     ) {
-        DropdownMenu(
-            expanded = expanded,
+        @Composable
+        fun Selectable(
+            modifier: Modifier,
+            vault: Vault?
+        ) {
+            ConstraintLayout(
+                modifier = modifier
+                    .setSizeLimitation()
+                    .clickable(onClick = { TODO() })
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 8.dp
+                    ),
+                content = {
+                    val (name, subtitle, vaultIcon) = createRefs()
+                    Icon(
+                        modifier = Modifier.constrainAs(
+                            ref = vaultIcon,
+                            constrainBlock = {
+                                this.start.linkTo(parent.start)
+                                this.top.linkTo(parent.top)
+                                this.bottom.linkTo(parent.bottom)
+                            }
+                        ),
+                        imageVector = vault.getIcon(),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                    createVerticalChain(
+                        name, subtitle,
+                        chainStyle = ChainStyle.Packed
+                    )
+                    Text(
+                        modifier = Modifier.constrainAs(
+                            ref = name,
+                            constrainBlock = {
+                                this.top.linkTo(parent.top)
+                                this.start.linkTo(
+                                    anchor = vaultIcon.end,
+                                    margin = 16.dp
+                                )
+                                this.bottom.linkTo(subtitle.top)
+                            }
+                        ),
+                        text = vault?.name ?: Vault.VAULT_NAME_FOR_ALL_ITEMS,
+                        fontFamily = PassMarkFonts.font,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = PassMarkFonts.Title.medium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        modifier = Modifier.constrainAs(
+                            ref = subtitle,
+                            constrainBlock = {
+                                this.top.linkTo(name.bottom)
+                                this.start.linkTo(
+                                    anchor = vaultIcon.end,
+                                    margin = 16.dp
+                                )
+                                this.bottom.linkTo(parent.bottom)
+                            }
+                        ),
+                        text = "TODO",
+                        fontFamily = PassMarkFonts.font,
+                        fontSize = PassMarkFonts.Label.medium,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            )
+        }
+        ModalBottomSheet(
             onDismissRequest = dismissDropDown,
-            offset = DpOffset(x = (-12).dp, y = 0.dp),
+            sheetState = sheetState,
             content = {
-                val vaultList = (mainViewModel.screenState.value as? ScreenState.Loaded)
-                    ?.result?.vaultListState?.collectAsState()?.value ?: listOf()
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "Choose a Vault for storing current password",
+                    maxLines = 2,
+                    textAlign = TextAlign.Center,
+                    fontFamily = PassMarkFonts.font,
+                    fontSize = PassMarkFonts.Title.medium,
+                    fontWeight = FontWeight.SemiBold
+                )
                 LazyColumn(
                     modifier = Modifier
-                        .size(
-                            height = PassMarkDimensions.minTouchSize * (vaultList.size.takeUnless { it > 5 }
-                                ?: 5),
-                            width = width
-                        ),
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 16.dp)
+                        .clip(shape = RoundedCornerShape(size = 16.dp))
+                        .background(color = MaterialTheme.colorScheme.surfaceContainerHighest),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top,
                     content = {
-                        item(
-                            content = {
-                                DropdownMenuItem(
-                                    text = { Text(text = Vault.VAULT_NAME_FOR_ALL_ITEMS) },
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = Vault.allItemsIcon,
-                                            contentDescription = null
-                                        )
-                                    },
-                                    onClick = { onSelect(null) }
-                                )
-                            }
-                        )
+                        item {
+                            Selectable(
+                                modifier = Modifier.fillMaxWidth(),
+                                vault = null
+                            )
+                        }
                         items(
                             items = vaultList,
                             itemContent = {
-                                DropdownMenuItem(
-                                    text = { Text(text = it.name) },
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = it.getIcon(),
-                                            contentDescription = null
-                                        )
-                                    },
-                                    onClick = { onSelect(it) }
+                                Selectable(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    vault = it
                                 )
                             }
                         )
@@ -678,5 +749,23 @@ private fun PasswordEditScreenPreview() {
         ),
         navigateBack = {},
         mainViewModel = MainViewModel.getTestViewModel()
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@MobilePreview
+private fun VaultSelectionBottomSheetPreview() {
+    PasswordEditScreen.VaultSelectionBottomSheet(
+        dismissDropDown = {},
+        vaultList = listOf(
+            Vault(name = "Banking", iconChoice = 5),
+            Vault(name = "Websites", iconChoice = 3),
+            Vault(name = "Shopping", iconChoice = 8),
+            Vault(name = "OTT", iconChoice = 11),
+        ),
+        sheetState = rememberModalBottomSheetState(),
+        mainViewModel = MainViewModel.getTestViewModel(),
+        passwordEditViewModel = PasswordEditViewModel(passwordApi = PasswordApi(SupabaseModule.mockClient))
     )
 }
