@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import easter.egg.passmark.ui.main.home.screens.HomeScreen
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
+import easter.egg.passmark.ui.main.password_view.PasswordViewScreen
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import easter.egg.passmark.utils.ScreenState
 import kotlinx.serialization.Serializable
@@ -53,6 +54,9 @@ class MainActivity : ComponentActivity() {
     ) {
         val navController = rememberNavController()
         val mainViewModel: MainViewModel by viewModels()
+        val passwordList =
+            (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
+                ?.result?.passwordListState?.collectAsState()?.value
         NavHost(
             modifier = modifier.fillMaxSize(),
             navController = navController,
@@ -64,14 +68,12 @@ class MainActivity : ComponentActivity() {
                         HomeScreen.Screen(
                             modifier = composableModifier,
                             toPasswordEditScreen = { passwordId ->
-                                navController.navigate(
-                                    route = MainScreens.PasswordEdit(
-                                        passwordId = passwordId
-                                    )
-                                )
+                                navController.navigate(route = MainScreens.PasswordEdit(passwordId = passwordId))
                             },
                             mainViewModel = mainViewModel,
-                            toViewPasswordScreen = { passwordId -> TODO() },
+                            toViewPasswordScreen = { passwordId ->
+                                navController.navigate(route = MainScreens.PasswordView(passwordId = passwordId))
+                            },
                             homeViewModel = hiltViewModel(viewModelStoreOwner = it)
                         )
                     }
@@ -86,10 +88,24 @@ class MainActivity : ComponentActivity() {
                             passwordToEdit = it.arguments!!
                                 .getInt(MainScreens.PasswordEdit::passwordId.name, -1)
                                 .takeUnless { id -> id == -1 }
-                                .let { id ->
-                                    (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
-                                        ?.result?.passwordListState?.value?.find { p -> p.id == id }
-                                }
+                                .let { id -> passwordList?.find { p -> p.id == id } }
+                        )
+                    }
+                )
+                composable<MainScreens.PasswordView>(
+                    content = { navBackStackEntry ->
+                        val receivedId = navBackStackEntry.arguments!!
+                            .getInt(MainScreens.PasswordView::passwordId.name, -1)
+                            .takeUnless { it == -1 }
+                        PasswordViewScreen.Screen(
+                            modifier = composableModifier,
+                            password = passwordList!!.find { p -> p.id == receivedId }!!,
+                            navigateUp = { navController.navigateUp() },
+                            toEditScreen = {
+                                navController.navigate(
+                                    route = MainScreens.PasswordEdit(passwordId = receivedId)
+                                )
+                            }
                         )
                     }
                 )
@@ -105,5 +121,10 @@ private sealed class MainScreens {
     @Serializable
     data class PasswordEdit(
         val passwordId: Int?
+    ) : MainScreens()
+
+    @Serializable
+    data class PasswordView(
+        val passwordId: Int
     ) : MainScreens()
 }

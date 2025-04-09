@@ -27,19 +27,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import easter.egg.passmark.data.models.content.Password
+import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 
 object PasswordViewScreen {
     @Composable
     fun Screen(
-        modifier: Modifier
+        modifier: Modifier,
+        password: Password,
+        navigateUp: () -> Unit,
+        toEditScreen: () -> Unit,
     ) {
         Scaffold(
             modifier = modifier,
             topBar = {
-                PasswordViewTopBar(modifier = Modifier.fillMaxWidth())
+                PasswordViewTopBar(
+                    modifier = Modifier.fillMaxWidth(),
+                    navigateUp = navigateUp,
+                    toEditScreen = toEditScreen,
+                    onDeleteClicked = { TODO() },
+                )
             },
             content = {
                 PasswordViewContent(
@@ -53,9 +64,12 @@ object PasswordViewScreen {
 
     @Composable
     private fun PasswordViewTopBar(
-        modifier: Modifier
+        modifier: Modifier,
+        navigateUp: () -> Unit,
+        toEditScreen: () -> Unit,
+        onDeleteClicked: () -> Unit
     ) {
-        val barSize = 60.dp
+        val barSize = PassMarkDimensions.minTouchSize
         Row(
             modifier = modifier.padding(
                 horizontal = 16.dp,
@@ -147,6 +161,24 @@ object PasswordViewScreen {
 @MobileHorizontalPreview
 private fun PasswordViewScreenPreview() {
     PasswordViewScreen.Screen(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        password = Password(
+            data = PasswordData(
+                title = "Title",
+                email = null,
+                userName = null,
+                password = "SomePassword",
+                website = null,
+                notes = null,
+                useFingerPrint = false,
+                saveToLocalOnly = false,
+            ),
+            created = 0L,
+            lastUsed = 0L,
+            lastModified = 0L,
+            usedCount = 0
+        ),
+        navigateUp = {},
+        toEditScreen = {}
     )
 }
