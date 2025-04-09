@@ -327,16 +327,31 @@ object PasswordEditScreen {
             modifier: Modifier,
             vault: Vault?
         ) {
+            val passwordCount =
+                (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
+                    ?.result?.passwordListState?.collectAsState()?.value
+                    ?.filter { it.vaultId == vault?.id }?.size
+                    ?: 0
+            val isSelected =
+                vault?.id == passwordEditViewModel.selectedVault.collectAsState().value?.id
             ConstraintLayout(
                 modifier = modifier
+                    .background(
+                        color =
+                            if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                            else MaterialTheme.colorScheme.surfaceContainerHigh
+                    )
                     .setSizeLimitation()
-                    .clickable(onClick = { TODO() })
+                    .clickable(onClick = { passwordEditViewModel.selectedVault.value = vault })
                     .padding(
                         horizontal = 16.dp,
                         vertical = 8.dp
                     ),
                 content = {
                     val (name, subtitle, vaultIcon) = createRefs()
+                    val tint =
+                        if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
+                        else MaterialTheme.colorScheme.onSurfaceVariant
                     Icon(
                         modifier = Modifier.constrainAs(
                             ref = vaultIcon,
@@ -348,9 +363,9 @@ object PasswordEditScreen {
                         ),
                         imageVector = vault.getIcon(),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = tint
                     )
-                    val verticalChain = createVerticalChain(
+                    createVerticalChain(
                         name, subtitle,
                         chainStyle = ChainStyle.Packed
                     )
@@ -372,8 +387,9 @@ object PasswordEditScreen {
                         maxLines = 1,
                         fontFamily = PassMarkFonts.font,
                         fontWeight = FontWeight.SemiBold,
+                        lineHeight = PassMarkFonts.Title.medium,
                         fontSize = PassMarkFonts.Title.medium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = tint
                     )
                     Text(
                         modifier = Modifier.constrainAs(
@@ -389,12 +405,13 @@ object PasswordEditScreen {
                                 this.width = Dimension.fillToConstraints
                             }
                         ),
-                        text = "TODO",
+                        text = "$passwordCount passwords", // TODO:
                         maxLines = 1,
                         fontFamily = PassMarkFonts.font,
+                        lineHeight = PassMarkFonts.Label.medium,
                         fontSize = PassMarkFonts.Label.medium,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = tint
                     )
                 }
             )
@@ -416,32 +433,25 @@ object PasswordEditScreen {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 16.dp)
-                        .clip(shape = RoundedCornerShape(size = 16.dp))
-                        .background(color = MaterialTheme.colorScheme.surfaceContainerHighest),
+                        .clip(shape = RoundedCornerShape(size = 16.dp)),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top,
                     content = {
-                        item {
-                            Selectable(
-                                modifier = Modifier.fillMaxWidth(),
-                                vault = null
-                            )
-                            HorizontalDivider(
-                                modifier = Modifier.fillMaxWidth(),
-                                thickness = 1.dp,
-                            )
-                        }
                         items(
-                            items = vaultList,
+                            items = vaultList.toMutableList<Vault?>().apply {
+                                this.add(index = 0, element = null)
+                            },
                             itemContent = {
                                 Selectable(
                                     modifier = Modifier.fillMaxWidth(),
                                     vault = it
                                 )
-                                HorizontalDivider(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    thickness = 1.dp,
-                                )
+                                if (it != vaultList.last()) {
+                                    HorizontalDivider(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        thickness = 1.dp,
+                                    )
+                                }
                             }
                         )
                     }
