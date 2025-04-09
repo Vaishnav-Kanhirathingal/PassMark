@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -36,6 +37,7 @@ import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,8 +66,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.data.supabase.api.PasswordApi
@@ -225,7 +229,11 @@ object PasswordEditScreen {
                         Text(
                             modifier = Modifier
                                 .padding(start = 4.dp)
-                                .widthIn(max = 120.dp),
+                                .wrapContentWidth()
+                                .widthIn(
+                                    min = PassMarkDimensions.minTouchSize,
+                                    max = PassMarkDimensions.minTouchSize * 2
+                                ),
                             text = passwordEditViewModel.selectedVault.collectAsState().value?.name
                                 ?: Vault.VAULT_NAME_FOR_ALL_ITEMS,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -240,13 +248,17 @@ object PasswordEditScreen {
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
-
+                        val selectedBoxWith =
+                            with(
+                                receiver = LocalDensity.current,
+                                block = { parentSize.value.width.toDp() }
+                            ).let { max(it, PassMarkDimensions.minTouchSize * 3) }
                         VaultDropDown(
                             expanded = dropDownExpanded.value,
                             dismissDropDown = { dropDownExpanded.value = false },
                             mainViewModel = mainViewModel,
-                            width = with(receiver = LocalDensity.current) { parentSize.value.width.toDp() },
-                            onSelect = { TODO() }
+                            width = selectedBoxWith,
+                            onSelect = { passwordEditViewModel.selectedVault.value = it }
                         )
                     }
                 )
@@ -298,71 +310,49 @@ object PasswordEditScreen {
         dismissDropDown: () -> Unit,
         mainViewModel: MainViewModel,
         width: Dp,
-        onSelect: (Vault) -> Unit
+        onSelect: (Vault?) -> Unit
     ) {
-        @Composable
-        fun VaultItem(
-            modifier: Modifier,
-            vault: Vault,
-            onClick: () -> Unit
-        ) {
-            Row(
-                modifier = modifier
-                    .setSizeLimitation()
-                    .background(color = MaterialTheme.colorScheme.surfaceContainer)
-                    .padding(horizontal = 16.dp)
-                    .clickable(onClick = onClick),
-                horizontalArrangement = Arrangement.spacedBy(
-                    space = 8.dp,
-                    alignment = Alignment.Start
-                ),
-                verticalAlignment = Alignment.CenterVertically,
-                content = {
-                    Icon(
-                        imageVector = vault.getIcon(),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        modifier = Modifier.weight(weight = 1f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        text = vault.name,
-                        fontFamily = PassMarkFonts.font,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = PassMarkFonts.Body.medium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            )
-        }
-
         DropdownMenu(
-            modifier = Modifier.background(color = MaterialTheme.colorScheme.outline),
             expanded = expanded,
             onDismissRequest = dismissDropDown,
+            offset = DpOffset(x = (-12).dp, y = 0.dp),
             content = {
                 val vaultList = (mainViewModel.screenState.value as? ScreenState.Loaded)
                     ?.result?.vaultListState?.collectAsState()?.value ?: listOf()
-
                 LazyColumn(
                     modifier = Modifier
-                        .background(color = MaterialTheme.colorScheme.outline)
                         .size(
-                            height = PassMarkDimensions.minTouchSize * vaultList.size,
+                            height = PassMarkDimensions.minTouchSize * (vaultList.size.takeUnless { it > 5 }
+                                ?: 5),
                             width = width
                         ),
-                    verticalArrangement = Arrangement.spacedBy(
-                        space = 1.dp,
-                        alignment = Alignment.Top
-                    ),
+                    verticalArrangement = Arrangement.Top,
                     content = {
+                        item(
+                            content = {
+                                DropdownMenuItem(
+                                    text = { Text(text = Vault.VAULT_NAME_FOR_ALL_ITEMS) },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Vault.allItemsIcon,
+                                            contentDescription = null
+                                        )
+                                    },
+                                    onClick = { onSelect(null) }
+                                )
+                            }
+                        )
                         items(
                             items = vaultList,
                             itemContent = {
-                                VaultItem(
-                                    modifier = Modifier,
-                                    vault = it,
+                                DropdownMenuItem(
+                                    text = { Text(text = it.name) },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = it.getIcon(),
+                                            contentDescription = null
+                                        )
+                                    },
                                     onClick = { onSelect(it) }
                                 )
                             }
