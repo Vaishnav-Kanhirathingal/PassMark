@@ -62,7 +62,8 @@ object HomeContent {
     fun HomeContent(
         modifier: Modifier,
         mainViewModel: MainViewModel,
-        toViewPasswordScreen: (passwordId: Int) -> Unit
+        toViewPasswordScreen: (passwordId: Int) -> Unit,
+        toPasswordEditScreen: (passwordId: Int?) -> Unit
     ) {
         val listItemModifier = Modifier
             .setSizeLimitation()
@@ -264,7 +265,8 @@ fun HomeContentPreview() {
     HomeContent.HomeContent(
         modifier = Modifier.fillMaxSize(),
         mainViewModel = MainViewModel.getTestViewModel(),
-        toViewPasswordScreen = {}
+        toViewPasswordScreen = {},
+        toPasswordEditScreen = {}
     )
 }
 

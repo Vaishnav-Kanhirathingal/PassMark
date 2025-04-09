@@ -94,8 +94,17 @@ object PasswordEditScreen {
         modifier: Modifier,
         viewModel: PasswordEditViewModel,
         mainViewModel: MainViewModel,
-        navigateBack: () -> Unit
+        navigateBack: () -> Unit,
+        passwordToEdit: Password?
     ) {
+        passwordToEdit?.let {
+            viewModel.loadForUpdating(
+                password = it,
+                vault = (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
+                    ?.result?.vaultListState?.collectAsState()?.value?.find { v -> v.id == it.vaultId }
+            )
+        }
+
         val barModifier = Modifier
             .fillMaxWidth()
             .heightIn(min = PassMarkDimensions.minTouchSize)
@@ -780,7 +789,8 @@ private fun PasswordEditScreenPreview() {
             )
         ),
         navigateBack = {},
-        mainViewModel = MainViewModel.getTestViewModel()
+        mainViewModel = MainViewModel.getTestViewModel(),
+        passwordToEdit = null
     )
 }
 

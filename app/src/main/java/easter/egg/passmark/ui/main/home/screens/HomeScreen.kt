@@ -76,7 +76,7 @@ object HomeScreen {
     @Composable
     fun Screen(
         modifier: Modifier,
-        toAddNewPasswordScreen: () -> Unit,
+        toPasswordEditScreen: (passwordId: Int?) -> Unit,
         mainViewModel: MainViewModel,
         toViewPasswordScreen: (passwordId: Int) -> Unit,
         homeViewModel: HomeViewModel
@@ -95,7 +95,7 @@ object HomeScreen {
                 Log.d(TAG, GsonBuilder().setPrettyPrinting().create().toJson(screenState.result))
                 MainScreen(
                     modifier = modifier,
-                    toAddNewPasswordScreen = toAddNewPasswordScreen,
+                    toPasswordEditScreen = toPasswordEditScreen,
                     mainViewModel = mainViewModel,
                     toViewPasswordScreen = toViewPasswordScreen,
                     homeViewModel = homeViewModel
@@ -160,7 +160,7 @@ object HomeScreen {
     @Composable
     private fun MainScreen(
         modifier: Modifier,
-        toAddNewPasswordScreen: () -> Unit,
+        toPasswordEditScreen: (passwordId: Int?) -> Unit,
         mainViewModel: MainViewModel,
         toViewPasswordScreen: (passwordId: Int) -> Unit,
         homeViewModel: HomeViewModel
@@ -200,12 +200,13 @@ object HomeScreen {
                                 .fillMaxSize()
                                 .padding(paddingValues = it),
                             mainViewModel = mainViewModel,
-                            toViewPasswordScreen = toViewPasswordScreen
+                            toViewPasswordScreen = toViewPasswordScreen,
+                            toPasswordEditScreen = toPasswordEditScreen
                         )
                     },
                     floatingActionButton = {
                         FloatingActionButton(
-                            onClick = toAddNewPasswordScreen,
+                            onClick = { toPasswordEditScreen(null) },
                             content = {
                                 Icon(
                                     imageVector = Icons.Default.Add,
@@ -358,7 +359,7 @@ object HomeScreen {
 private fun HomeScreenPreview() {
     HomeScreen.Screen(
         modifier = Modifier.fillMaxSize(),
-        toAddNewPasswordScreen = {},
+        toPasswordEditScreen = {},
         mainViewModel = MainViewModel.getTestViewModel(),
         toViewPasswordScreen = {},
         homeViewModel = HomeViewModel(

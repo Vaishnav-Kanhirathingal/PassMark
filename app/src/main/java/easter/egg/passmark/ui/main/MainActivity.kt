@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -17,8 +18,8 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import easter.egg.passmark.ui.main.home.screens.HomeScreen
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
-import easter.egg.passmark.ui.main.password_edit.PasswordEditViewModel
 import easter.egg.passmark.ui.theme.PassMarkTheme
+import easter.egg.passmark.utils.ScreenState
 import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
@@ -62,7 +63,13 @@ class MainActivity : ComponentActivity() {
                     content = {
                         HomeScreen.Screen(
                             modifier = composableModifier,
-                            toAddNewPasswordScreen = { navController.navigate(route = MainScreens.PasswordEdit) },
+                            toPasswordEditScreen = { passwordId ->
+                                navController.navigate(
+                                    route = MainScreens.PasswordEdit(
+                                        passwordId = passwordId
+                                    )
+                                )
+                            },
                             mainViewModel = mainViewModel,
                             toViewPasswordScreen = { passwordId -> TODO() },
                             homeViewModel = hiltViewModel(viewModelStoreOwner = it)
@@ -71,13 +78,18 @@ class MainActivity : ComponentActivity() {
                 )
                 composable<MainScreens.PasswordEdit>(
                     content = {
-                        val viewModel: PasswordEditViewModel =
-                            hiltViewModel(viewModelStoreOwner = it)
                         PasswordEditScreen.Screen(
                             modifier = composableModifier,
-                            viewModel = viewModel,
+                            viewModel = hiltViewModel(viewModelStoreOwner = it),
                             mainViewModel = mainViewModel,
-                            navigateBack = { navController.navigateUp() }
+                            navigateBack = { navController.navigateUp() },
+                            passwordToEdit = it.arguments!!
+                                .getInt(MainScreens.PasswordEdit::passwordId.name, -1)
+                                .takeUnless { id -> id == -1 }
+                                .let { id ->
+                                    (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
+                                        ?.result?.passwordListState?.value?.find { p -> p.id == id }
+                                }
                         )
                     }
                 )
@@ -91,5 +103,7 @@ private sealed class MainScreens {
     data object Home : MainScreens()
 
     @Serializable
-    data object PasswordEdit : MainScreens()
+    data class PasswordEdit(
+        val passwordId: Int?
+    ) : MainScreens()
 }

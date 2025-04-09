@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.main.password_edit
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,13 +20,15 @@ import javax.inject.Inject
 class PasswordEditViewModel @Inject constructor(
     val passwordApi: PasswordApi
 ) : ViewModel() {
+    private val TAG = this::class.simpleName
+
+    //-------------------------------------------------------------------------------------UI-States
     val title: MutableStateFlow<String> = MutableStateFlow("")
     val email: MutableStateFlow<String> = MutableStateFlow("")
     val userName: MutableStateFlow<String> = MutableStateFlow("")
     val password: MutableStateFlow<String> = MutableStateFlow("")
     val website: MutableStateFlow<String> = MutableStateFlow("")
     val notes: MutableStateFlow<String> = MutableStateFlow("")
-
     val useFingerPrint: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val saveToLocalOnly: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
@@ -42,6 +45,31 @@ class PasswordEditViewModel @Inject constructor(
     fun updateSelectedVault(vault: Vault?) {
         this._selectedVault.value = vault
     }
+
+    //---------------------------------------------------------------------------------loaded-values
+    private var _passwordId: Int? = null
+    private var _loaded = false
+
+    fun loadForUpdating(
+        password: Password,
+        vault: Vault?
+    ) {
+        if (_loaded) {
+            Log.d(TAG, "password already loaded")
+        } else {
+            this.title.value = password.data.title
+            this.email.value = password.data.email ?: ""
+            this.userName.value = password.data.userName ?: ""
+            this.password.value = password.data.password
+            this.website.value = password.data.website ?: ""
+            this.notes.value = password.data.notes ?: ""
+            this.useFingerPrint.value = password.data.useFingerPrint
+            this.saveToLocalOnly.value = password.data.saveToLocalOnly
+            this._selectedVault.value = vault
+            this._passwordId = password.id
+            _loaded = true
+        }
+    }
     //-----------------------------------------------------------------------------------------state
 
     /** result should be the title of the password stored */
@@ -55,7 +83,7 @@ class PasswordEditViewModel @Inject constructor(
         _screenState.value = ScreenState.Loading()
         val now = System.currentTimeMillis()
         val password = Password(
-            id = null,
+            id = _passwordId,
             vaultId = selectedVault.value?.id,
             data = PasswordData(
                 title = title.value,
