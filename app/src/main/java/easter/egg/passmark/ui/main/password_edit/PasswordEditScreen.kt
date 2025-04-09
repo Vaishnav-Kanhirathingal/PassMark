@@ -70,6 +70,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.data.supabase.api.PasswordApi
@@ -82,6 +83,7 @@ import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 object PasswordEditScreen {
     private val TAG = this::class.simpleName
@@ -346,9 +348,9 @@ object PasswordEditScreen {
                         ),
                         imageVector = vault.getIcon(),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    createVerticalChain(
+                    val verticalChain = createVerticalChain(
                         name, subtitle,
                         chainStyle = ChainStyle.Packed
                     )
@@ -362,13 +364,16 @@ object PasswordEditScreen {
                                     margin = 16.dp
                                 )
                                 this.bottom.linkTo(subtitle.top)
+                                this.end.linkTo(parent.end)
+                                this.width = Dimension.fillToConstraints
                             }
                         ),
                         text = vault?.name ?: Vault.VAULT_NAME_FOR_ALL_ITEMS,
+                        maxLines = 1,
                         fontFamily = PassMarkFonts.font,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = PassMarkFonts.Title.medium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         modifier = Modifier.constrainAs(
@@ -380,13 +385,16 @@ object PasswordEditScreen {
                                     margin = 16.dp
                                 )
                                 this.bottom.linkTo(parent.bottom)
+                                this.end.linkTo(parent.end)
+                                this.width = Dimension.fillToConstraints
                             }
                         ),
                         text = "TODO",
+                        maxLines = 1,
                         fontFamily = PassMarkFonts.font,
                         fontSize = PassMarkFonts.Label.medium,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             )
@@ -418,6 +426,10 @@ object PasswordEditScreen {
                                 modifier = Modifier.fillMaxWidth(),
                                 vault = null
                             )
+                            HorizontalDivider(
+                                modifier = Modifier.fillMaxWidth(),
+                                thickness = 1.dp,
+                            )
                         }
                         items(
                             items = vaultList,
@@ -425,6 +437,10 @@ object PasswordEditScreen {
                                 Selectable(
                                     modifier = Modifier.fillMaxWidth(),
                                     vault = it
+                                )
+                                HorizontalDivider(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    thickness = 1.dp,
                                 )
                             }
                         )
@@ -764,7 +780,7 @@ private fun VaultSelectionBottomSheetPreview() {
             Vault(name = "Shopping", iconChoice = 8),
             Vault(name = "OTT", iconChoice = 11),
         ),
-        sheetState = rememberModalBottomSheetState(),
+        sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
         mainViewModel = MainViewModel.getTestViewModel(),
         passwordEditViewModel = PasswordEditViewModel(passwordApi = PasswordApi(SupabaseModule.mockClient))
     )
