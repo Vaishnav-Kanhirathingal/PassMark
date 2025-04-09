@@ -37,7 +37,11 @@ class PasswordEditViewModel @Inject constructor(
         }
     }
 
-    val selectedVault: MutableStateFlow<Vault?> = MutableStateFlow(null)
+    private val _selectedVault: MutableStateFlow<Vault?> = MutableStateFlow(null)
+    val selectedVault: StateFlow<Vault?> get() = _selectedVault
+    fun updateSelectedVault(vault: Vault?) {
+        this._selectedVault.value = vault
+    }
     //-----------------------------------------------------------------------------------------state
 
     /** result should be the title of the password stored */
@@ -52,7 +56,7 @@ class PasswordEditViewModel @Inject constructor(
         val now = System.currentTimeMillis()
         val password = Password(
             id = null,
-            vaultId = null,
+            vaultId = selectedVault.value?.id,
             data = PasswordData(
                 title = title.value,
                 email = email.value.nullIfBlank(),

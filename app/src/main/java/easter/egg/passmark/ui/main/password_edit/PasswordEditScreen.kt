@@ -71,6 +71,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.data.supabase.api.PasswordApi
@@ -255,6 +256,10 @@ object PasswordEditScreen {
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                         if (sheetIsVisible.value) {
+
+                            val passwordList =
+                                (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
+                                    ?.result?.passwordListState?.collectAsState()?.value
                             VaultSelectionBottomSheet(
                                 dismissDropDown = {
                                     coroutineScope
@@ -264,8 +269,8 @@ object PasswordEditScreen {
                                 vaultList = (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
                                     ?.result?.vaultListState?.collectAsState()?.value
                                     ?: listOf(),
+                                passwordList = passwordList ?: listOf(),
                                 sheetState = sheetState,
-                                mainViewModel = mainViewModel,
                                 passwordEditViewModel = passwordEditViewModel
                             )
                         }
@@ -318,8 +323,8 @@ object PasswordEditScreen {
     fun VaultSelectionBottomSheet(
         dismissDropDown: () -> Unit,
         vaultList: List<Vault>,
+        passwordList: List<Password>,
         sheetState: SheetState,
-        mainViewModel: MainViewModel,
         passwordEditViewModel: PasswordEditViewModel
     ) {
         @Composable
@@ -327,11 +332,7 @@ object PasswordEditScreen {
             modifier: Modifier,
             vault: Vault?
         ) {
-            val passwordCount =
-                (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
-                    ?.result?.passwordListState?.collectAsState()?.value
-                    ?.filter { it.vaultId == vault?.id }?.size
-                    ?: 0
+            val passwordCount = passwordList.filter { it.vaultId == vault?.id }.size
             val isSelected =
                 vault?.id == passwordEditViewModel.selectedVault.collectAsState().value?.id
             ConstraintLayout(
@@ -342,7 +343,12 @@ object PasswordEditScreen {
                             else MaterialTheme.colorScheme.surfaceContainerHigh
                     )
                     .setSizeLimitation()
-                    .clickable(onClick = { passwordEditViewModel.selectedVault.value = vault })
+                    .clickable(
+                        onClick = {
+                            passwordEditViewModel.updateSelectedVault(vault = vault)
+                            dismissDropDown()
+                        }
+                    )
                     .padding(
                         horizontal = 16.dp,
                         vertical = 8.dp
@@ -422,11 +428,11 @@ object PasswordEditScreen {
             content = {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Choose a Vault for storing current password",
+                    text = "Choose Vault",
                     maxLines = 2,
                     textAlign = TextAlign.Center,
                     fontFamily = PassMarkFonts.font,
-                    fontSize = PassMarkFonts.Title.medium,
+                    fontSize = PassMarkFonts.Headline.medium,
                     fontWeight = FontWeight.SemiBold
                 )
                 LazyColumn(
@@ -785,13 +791,13 @@ private fun VaultSelectionBottomSheetPreview() {
     PasswordEditScreen.VaultSelectionBottomSheet(
         dismissDropDown = {},
         vaultList = listOf(
-            Vault(name = "Banking", iconChoice = 5),
-            Vault(name = "Websites", iconChoice = 3),
-            Vault(name = "Shopping", iconChoice = 8),
-            Vault(name = "OTT", iconChoice = 11),
+            Vault(id = 1, name = "Banking", iconChoice = 5),
+            Vault(id = 2, name = "Websites", iconChoice = 3),
+            Vault(id = 3, name = "Shopping", iconChoice = 8),
+            Vault(id = 4, name = "OTT", iconChoice = 11),
         ),
+        passwordList = listOf(),
         sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
-        mainViewModel = MainViewModel.getTestViewModel(),
         passwordEditViewModel = PasswordEditViewModel(passwordApi = PasswordApi(SupabaseModule.mockClient))
     )
 }
