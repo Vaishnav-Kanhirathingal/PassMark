@@ -215,36 +215,26 @@ object HomeDrawer {
                     .fillMaxWidth()
                     .height(height = 8.dp)
                 Spacer(modifier = spacerModifier)
-
-                val vaultSelectableModifier = Modifier.fillMaxWidth()
                 val cornerSize = 12.dp
-
                 val vaultIdSelected = homeViewModel.vaultIdSelected.collectAsState().value
-                VaultSelectable(
-                    modifier = vaultSelectableModifier,
-                    vaultName = Vault.VAULT_NAME_FOR_ALL_ITEMS,
-                    vaultIcon = Vault.allItemsIcon,
-                    passwordsInVault = 10,
-                    isSelected = vaultIdSelected == null,
-                    cornerSize = cornerSize,
-                    onClick = { homeViewModel.updateVaultIdSelected(id = null) }
-                )
                 val result =
                     (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
                         ?.result
-                val vaultList = result?.vaultListState?.collectAsState()?.value ?: listOf()
-
+                val vaultList = (result?.vaultListState?.collectAsState()?.value ?: listOf())
+                    .toMutableList<Vault?>()
+                    .apply { this.add(index = 0, element = null) }
+                val vaultSelectableModifier = Modifier.fillMaxWidth()
                 vaultList.forEach { vault ->
                     var size = 0
-                    result?.passwordListState?.collectAsState()?.value?.forEach { if (it.vaultId == vault.id) size++ }
+                    result?.passwordListState?.collectAsState()?.value?.forEach { if (it.vaultId == vault?.id) size++ }
                     VaultSelectable(
                         modifier = vaultSelectableModifier,
-                        vaultName = vault.name,
+                        vaultName = vault?.name ?: Vault.VAULT_NAME_FOR_ALL_ITEMS,
                         vaultIcon = vault.getIcon(),
                         passwordsInVault = size,
-                        isSelected = vaultIdSelected == vault.id,
+                        isSelected = vaultIdSelected == vault?.id,
                         cornerSize = cornerSize,
-                        onClick = { homeViewModel.updateVaultIdSelected(id = vault.id) }
+                        onClick = { homeViewModel.updateVaultIdSelected(id = vault?.id) }
                     )
                 }
                 if (vaultList.size < 5) {
