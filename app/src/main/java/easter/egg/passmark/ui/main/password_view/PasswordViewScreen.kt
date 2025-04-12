@@ -19,12 +19,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Web
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -165,11 +166,16 @@ object PasswordViewScreen {
                         .size(size = barSize)
                         .clip(shape = CircleShape)
                         .background(color = MaterialTheme.colorScheme.errorContainer)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.error,
+                            shape = CircleShape
+                        )
                         .clickable(onClick = onDeleteClicked),
                     contentAlignment = Alignment.Center,
                     content = {
                         Icon(
-                            imageVector = Icons.Default.Delete,
+                            imageVector = Icons.Outlined.Delete,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onErrorContainer
                         )
@@ -225,7 +231,7 @@ object PasswordViewScreen {
                         }
                         this.add(
                             PasswordProperty(
-                                imageVector = Icons.Default.Email,
+                                imageVector = Icons.Default.Password,
                                 title = "Password",
                                 field = password.data.password
                             )
@@ -318,7 +324,6 @@ object PasswordViewScreen {
                         )
                     }
                 )
-
                 Text(
                     modifier = Modifier.constrainAs(
                         ref = title,
@@ -338,7 +343,6 @@ object PasswordViewScreen {
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-
                 Row(
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(size = 24.dp))
@@ -446,7 +450,7 @@ object PasswordViewScreen {
         ConstraintLayout(
             modifier = modifier
                 .setSizeLimitation()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = 24.dp, vertical = 12.dp),
             content = {
                 val (iconRef, titleRef, contentRef) = createRefs()
                 Icon(
@@ -468,7 +472,7 @@ object PasswordViewScreen {
                         constrainBlock = {
                             this.top.linkTo(parent.top)
                             this.bottom.linkTo(contentRef.top)
-                            this.start.linkTo(anchor = iconRef.end, margin = 16.dp)
+                            this.start.linkTo(anchor = iconRef.end, margin = 24.dp)
                             this.end.linkTo(parent.end)
                             width = Dimension.fillToConstraints
                         }
@@ -487,7 +491,7 @@ object PasswordViewScreen {
                         constrainBlock = {
                             this.top.linkTo(titleRef.bottom)
                             this.bottom.linkTo(parent.bottom)
-                            this.start.linkTo(anchor = iconRef.end, margin = 16.dp)
+                            this.start.linkTo(anchor = iconRef.end, margin = 24.dp)
                             this.end.linkTo(parent.end)
                             width = Dimension.fillToConstraints
                         }
@@ -500,6 +504,7 @@ object PasswordViewScreen {
                     overflow = TextOverflow.Ellipsis,
                     text = passwordProperty.field,
                 )
+                createVerticalChain(titleRef, contentRef)
             }
         )
     }
