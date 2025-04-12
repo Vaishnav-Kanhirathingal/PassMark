@@ -54,9 +54,11 @@ class MainActivity : ComponentActivity() {
     ) {
         val navController = rememberNavController()
         val mainViewModel: MainViewModel by viewModels()
-        val passwordList =
+        val result =
             (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
-                ?.result?.passwordListState?.collectAsState()?.value
+                ?.result
+        val passwordList = result?.passwordListState?.collectAsState()?.value
+        val vaultList = result?.vaultListState?.collectAsState()?.value
         NavHost(
             modifier = modifier.fillMaxSize(),
             navController = navController,
@@ -97,15 +99,18 @@ class MainActivity : ComponentActivity() {
                         val receivedId = navBackStackEntry.arguments!!
                             .getInt(MainScreens.PasswordView::passwordId.name, -1)
                             .takeUnless { it == -1 }
+                        val password = passwordList!!.find { p -> p.id == receivedId }!!
+
                         PasswordViewScreen.Screen(
                             modifier = composableModifier,
-                            password = passwordList!!.find { p -> p.id == receivedId }!!,
+                            password = password,
                             navigateUp = { navController.navigateUp() },
                             toEditScreen = {
                                 navController.navigate(
                                     route = MainScreens.PasswordEdit(passwordId = receivedId)
                                 )
-                            }
+                            },
+                            associatedVault =password.vaultId?.let {vid-> vaultList?.find {v->v.id==vid  } }
                         )
                     }
                 )

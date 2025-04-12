@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -22,13 +25,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
+import coil3.ImageLoader
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.PasswordData
+import easter.egg.passmark.data.models.content.Vault
+import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.values.PassMarkDimensions
@@ -41,6 +59,7 @@ object PasswordViewScreen {
         password: Password,
         navigateUp: () -> Unit,
         toEditScreen: () -> Unit,
+        associatedVault: Vault?
     ) {
         Scaffold(
             modifier = modifier,
@@ -56,7 +75,9 @@ object PasswordViewScreen {
                 PasswordViewContent(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues = it)
+                        .padding(paddingValues = it),
+                    password = password,
+                    associatedVault = associatedVault
                 )
             }
         )
@@ -86,7 +107,7 @@ object PasswordViewScreen {
                         .size(size = barSize)
                         .clip(shape = CircleShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
-                        .clickable(onClick = { TODO() }),
+                        .clickable(onClick = navigateUp),
                     contentAlignment = Alignment.Center,
                     content = {
                         Icon(
@@ -108,7 +129,8 @@ object PasswordViewScreen {
                             end = 24.dp,
                             top = 8.dp,
                             bottom = 8.dp
-                        ),
+                        )
+                        .clickable(onClick = toEditScreen),
                     horizontalArrangement = Arrangement.spacedBy(
                         space = 4.dp,
                         alignment = Alignment.CenterHorizontally
@@ -135,7 +157,7 @@ object PasswordViewScreen {
                         .size(size = barSize)
                         .clip(shape = CircleShape)
                         .background(color = MaterialTheme.colorScheme.errorContainer)
-                        .clickable(onClick = { TODO() }),
+                        .clickable(onClick = onDeleteClicked),
                     contentAlignment = Alignment.Center,
                     content = {
                         Icon(
@@ -151,8 +173,128 @@ object PasswordViewScreen {
 
     @Composable
     private fun PasswordViewContent(
-        modifier: Modifier
+        modifier: Modifier,
+        password: Password,
+        associatedVault: Vault?
     ) {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
+            content = {
+                ConstraintLayout(
+                    modifier = Modifier.fillMaxWidth(),
+                    content = {
+                        val (passwordIcon, title, subtitle) = createRefs()
+                        Box(
+                            modifier = Modifier
+                                .size(size = 100.dp)
+                                .clip(shape = RoundedCornerShape(size = 24.dp))
+                                .background(color = MaterialTheme.colorScheme.primaryContainer)
+                                .constrainAs(
+                                    ref = passwordIcon,
+                                    constrainBlock = {
+                                        this.top.linkTo(anchor = parent.top, margin = 16.dp)
+                                        this.bottom.linkTo(anchor = parent.bottom, margin = 16.dp)
+                                        this.start.linkTo(anchor = parent.start, margin = 16.dp)
+                                    }
+                                ),
+                            contentAlignment = Alignment.Center,
+                            content = {
+                                val showText: MutableState<Boolean> =
+                                    remember { mutableStateOf(true) }
+                                val model = ImageRequest.Builder(LocalContext.current)
+                                    .data(password.data.getFavicon())
+                                    .crossfade(true)
+                                    .listener(onSuccess = { _, _ -> showText.value = false })
+                                    .build()
+                                if (showText.value) {
+                                    Text(
+                                        textAlign = TextAlign.Center,
+                                        fontFamily = PassMarkFonts.font,
+                                        fontSize = PassMarkFonts.Display.medium,
+                                        fontWeight = FontWeight.Bold,
+                                        text = password.data.getShortName(),
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                }
+                                AsyncImage(
+                                    model = model,
+                                    modifier = Modifier.size(size = 24.dp),
+                                    contentScale = ContentScale.Fit,
+                                    contentDescription = null,
+                                    imageLoader = ImageLoader(context = LocalContext.current),
+                                )
+                            }
+                        )
+
+                        Text(
+                            modifier = Modifier.constrainAs(
+                                ref = title,
+                                constrainBlock = {
+                                    this.top.linkTo(anchor = parent.top, margin = 16.dp)
+                                    this.bottom.linkTo(subtitle.top)
+                                    this.start.linkTo(anchor = passwordIcon.end, margin = 16.dp)
+                                    this.end.linkTo(anchor = parent.end, margin = 16.dp)
+                                    width = Dimension.fillToConstraints
+                                }
+                            ),
+                            text = password.data.title,
+                            fontFamily = PassMarkFonts.font,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = PassMarkFonts.Display.medium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .clip(shape = RoundedCornerShape(size = 24.dp))
+                                .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                                .padding(
+                                    vertical = 2.dp,
+                                    horizontal = 4.dp
+                                )
+                                .constrainAs(
+                                    ref = subtitle,
+                                    constrainBlock = {
+                                        this.start.linkTo(anchor = passwordIcon.end, margin = 16.dp)
+                                        this.top.linkTo(anchor = title.bottom)
+                                        width = Dimension.wrapContent
+                                    }
+                                ),
+                            horizontalArrangement = Arrangement.spacedBy(
+                                space = 4.dp,
+                                alignment = Alignment.Start
+                            ),
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = {
+                                Icon(
+                                    modifier = Modifier.size(size = 16.dp),
+                                    imageVector = associatedVault.getIcon(),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    modifier = Modifier
+                                        .padding(end = 4.dp)
+                                        .widthIn(max = 120.dp),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    text = associatedVault?.name ?: Vault.VAULT_NAME_FOR_ALL_ITEMS,
+                                    fontFamily = PassMarkFonts.font,
+                                    fontSize = PassMarkFonts.Label.small,
+                                    lineHeight = PassMarkFonts.Label.small,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        )
+                    }
+                )
+            }
+        )
     }
 }
 
@@ -179,6 +321,7 @@ private fun PasswordViewScreenPreview() {
             usedCount = 0
         ),
         navigateUp = {},
-        toEditScreen = {}
+        toEditScreen = {},
+        associatedVault = null
     )
 }
