@@ -1,11 +1,12 @@
 package easter.egg.passmark.ui.main.password_view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -31,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -51,6 +56,7 @@ import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
+import easter.egg.passmark.utils.values.setSizeLimitation
 
 object PasswordViewScreen {
     @Composable
@@ -293,6 +299,157 @@ object PasswordViewScreen {
                         )
                     }
                 )
+                PropertyListCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    passwordPropertyList = mutableListOf<PasswordProperty>().apply {
+                        // TODO: email, username, password
+                        password.data.email?.let { email ->
+                            this.add(
+                                PasswordProperty(
+                                    imageVector = Icons.Default.Email,
+                                    title = "Email",
+                                    field = email
+                                )
+                            )
+                        }
+                        password.data.userName?.let { username ->
+                            this.add(
+                                PasswordProperty(
+                                    imageVector = Icons.Default.Person,
+                                    title = "Username",
+                                    field = username
+                                )
+                            )
+                        }
+                        this.add(
+                            PasswordProperty(
+                                imageVector = Icons.Default.Email,
+                                title = "Password",
+                                field = password.data.password
+                            )
+                        )
+                    },
+                )
+            }
+        )
+    }
+
+    @Composable
+    private fun PropertyListCard(
+        passwordPropertyList: List<PasswordProperty>,
+        modifier: Modifier
+    ) {
+        DefaultCard(
+            modifier = modifier,
+            content = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top,
+                    content = {
+                        val contentModifier = Modifier.fillMaxWidth()
+                        passwordPropertyList.forEachIndexed { index, passwordProperty ->
+                            DisplayFieldContent(
+                                modifier = contentModifier,
+                                passwordProperty = passwordProperty
+                            )
+                            if (index != passwordPropertyList.lastIndex) {
+                                HorizontalDivider(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
+                )
+            }
+        )
+    }
+
+    @Composable
+    private fun DefaultCard(
+        modifier: Modifier,
+        content: @Composable BoxScope.() -> Unit
+    ) {
+        val shape = RoundedCornerShape(size = 16.dp)
+        Box(
+            modifier = modifier
+                .clip(shape = shape)
+                .background(color = MaterialTheme.colorScheme.primaryContainer)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = shape
+                ),
+            contentAlignment = Alignment.Center,
+            content = content
+        )
+    }
+
+    @Composable
+    private fun DisplayFieldContent(
+        modifier: Modifier,
+        passwordProperty: PasswordProperty
+    ) {
+        ConstraintLayout(
+            modifier = modifier
+                .setSizeLimitation()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            content = {
+                val (iconRef, titleRef, contentRef) = createRefs()
+                Icon(
+                    modifier = Modifier.constrainAs(
+                        ref = iconRef,
+                        constrainBlock = {
+                            this.top.linkTo(parent.top)
+                            this.bottom.linkTo(parent.bottom)
+                            this.start.linkTo(parent.start)
+                        }
+                    ),
+                    imageVector = passwordProperty.imageVector,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    contentDescription = null
+                )
+                Text(
+                    modifier = Modifier.constrainAs(
+                        ref = titleRef,
+                        constrainBlock = {
+                            this.top.linkTo(parent.top)
+                            this.bottom.linkTo(contentRef.top)
+                            this.start.linkTo(anchor = iconRef.end, margin = 16.dp)
+                            this.end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                        }
+                    ),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontFamily = PassMarkFonts.font,
+                    fontSize = PassMarkFonts.Label.medium,
+                    fontWeight = FontWeight.Normal,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    text = passwordProperty.title,
+                )
+                Text(
+                    modifier = Modifier.constrainAs(
+                        ref = contentRef,
+                        constrainBlock = {
+                            this.top.linkTo(titleRef.bottom)
+                            this.bottom.linkTo(parent.bottom)
+                            this.start.linkTo(anchor = iconRef.end, margin = 16.dp)
+                            this.end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                        }
+                    ),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontFamily = PassMarkFonts.font,
+                    fontSize = PassMarkFonts.Title.medium,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    text = passwordProperty.field,
+                )
             }
         )
     }
@@ -325,3 +482,9 @@ private fun PasswordViewScreenPreview() {
         associatedVault = null
     )
 }
+
+private class PasswordProperty(
+    val imageVector: ImageVector,
+    val title: String,
+    val field: String
+)
