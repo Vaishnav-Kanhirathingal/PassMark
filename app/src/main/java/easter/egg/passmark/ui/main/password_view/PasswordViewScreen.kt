@@ -188,116 +188,10 @@ object PasswordViewScreen {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
             content = {
-                ConstraintLayout(
+                Heading(
                     modifier = Modifier.fillMaxWidth(),
-                    content = {
-                        val (passwordIcon, title, subtitle) = createRefs()
-                        Box(
-                            modifier = Modifier
-                                .size(size = 100.dp)
-                                .clip(shape = RoundedCornerShape(size = 24.dp))
-                                .background(color = MaterialTheme.colorScheme.primaryContainer)
-                                .constrainAs(
-                                    ref = passwordIcon,
-                                    constrainBlock = {
-                                        this.top.linkTo(anchor = parent.top, margin = 16.dp)
-                                        this.bottom.linkTo(anchor = parent.bottom, margin = 16.dp)
-                                        this.start.linkTo(anchor = parent.start, margin = 16.dp)
-                                    }
-                                ),
-                            contentAlignment = Alignment.Center,
-                            content = {
-                                val showText: MutableState<Boolean> =
-                                    remember { mutableStateOf(true) }
-                                val model = ImageRequest.Builder(LocalContext.current)
-                                    .data(password.data.getFavicon())
-                                    .crossfade(true)
-                                    .listener(onSuccess = { _, _ -> showText.value = false })
-                                    .build()
-                                if (showText.value) {
-                                    Text(
-                                        textAlign = TextAlign.Center,
-                                        fontFamily = PassMarkFonts.font,
-                                        fontSize = PassMarkFonts.Display.medium,
-                                        fontWeight = FontWeight.Bold,
-                                        text = password.data.getShortName(),
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                }
-                                AsyncImage(
-                                    model = model,
-                                    modifier = Modifier.size(size = 24.dp),
-                                    contentScale = ContentScale.Fit,
-                                    contentDescription = null,
-                                    imageLoader = ImageLoader(context = LocalContext.current),
-                                )
-                            }
-                        )
-
-                        Text(
-                            modifier = Modifier.constrainAs(
-                                ref = title,
-                                constrainBlock = {
-                                    this.top.linkTo(anchor = parent.top, margin = 16.dp)
-                                    this.bottom.linkTo(subtitle.top)
-                                    this.start.linkTo(anchor = passwordIcon.end, margin = 16.dp)
-                                    this.end.linkTo(anchor = parent.end, margin = 16.dp)
-                                    width = Dimension.fillToConstraints
-                                }
-                            ),
-                            text = password.data.title,
-                            fontFamily = PassMarkFonts.font,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = PassMarkFonts.Display.medium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-
-                        Row(
-                            modifier = Modifier
-                                .clip(shape = RoundedCornerShape(size = 24.dp))
-                                .background(color = MaterialTheme.colorScheme.surfaceContainer)
-                                .padding(
-                                    vertical = 2.dp,
-                                    horizontal = 4.dp
-                                )
-                                .constrainAs(
-                                    ref = subtitle,
-                                    constrainBlock = {
-                                        this.start.linkTo(anchor = passwordIcon.end, margin = 16.dp)
-                                        this.top.linkTo(anchor = title.bottom)
-                                        width = Dimension.wrapContent
-                                    }
-                                ),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                space = 4.dp,
-                                alignment = Alignment.Start
-                            ),
-                            verticalAlignment = Alignment.CenterVertically,
-                            content = {
-                                Icon(
-                                    modifier = Modifier.size(size = 16.dp),
-                                    imageVector = associatedVault.getIcon(),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    modifier = Modifier
-                                        .padding(end = 4.dp)
-                                        .widthIn(max = 120.dp),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    text = associatedVault?.name ?: Vault.VAULT_NAME_FOR_ALL_ITEMS,
-                                    fontFamily = PassMarkFonts.font,
-                                    fontSize = PassMarkFonts.Label.small,
-                                    lineHeight = PassMarkFonts.Label.small,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        )
-                    }
+                    password = password,
+                    associatedVault = associatedVault
                 )
                 PropertyListCard(
                     modifier = Modifier
@@ -337,6 +231,125 @@ object PasswordViewScreen {
     }
 
     @Composable
+    private fun Heading(
+        password: Password,
+        modifier: Modifier,
+        associatedVault: Vault?
+    ) {
+        ConstraintLayout(
+            modifier = modifier,
+            content = {
+                val (passwordIcon, title, subtitle) = createRefs()
+                Box(
+                    modifier = Modifier
+                        .size(size = 100.dp)
+                        .clip(shape = RoundedCornerShape(size = 24.dp))
+                        .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                        .constrainAs(
+                            ref = passwordIcon,
+                            constrainBlock = {
+                                this.top.linkTo(anchor = parent.top, margin = 16.dp)
+                                this.bottom.linkTo(anchor = parent.bottom, margin = 16.dp)
+                                this.start.linkTo(anchor = parent.start, margin = 16.dp)
+                            }
+                        ),
+                    contentAlignment = Alignment.Center,
+                    content = {
+                        val showText: MutableState<Boolean> =
+                            remember { mutableStateOf(true) }
+                        val model = ImageRequest.Builder(LocalContext.current)
+                            .data(password.data.getFavicon())
+                            .crossfade(true)
+                            .listener(onSuccess = { _, _ -> showText.value = false })
+                            .build()
+                        if (showText.value) {
+                            Text(
+                                textAlign = TextAlign.Center,
+                                fontFamily = PassMarkFonts.font,
+                                fontSize = PassMarkFonts.Display.medium,
+                                fontWeight = FontWeight.Bold,
+                                text = password.data.getShortName(),
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        }
+                        AsyncImage(
+                            model = model,
+                            modifier = Modifier.size(size = 72.dp),
+                            contentScale = ContentScale.Fit,
+                            contentDescription = null,
+                            imageLoader = ImageLoader(context = LocalContext.current),
+                        )
+                    }
+                )
+
+                Text(
+                    modifier = Modifier.constrainAs(
+                        ref = title,
+                        constrainBlock = {
+                            this.top.linkTo(anchor = parent.top, margin = 16.dp)
+                            this.bottom.linkTo(subtitle.top)
+                            this.start.linkTo(anchor = passwordIcon.end, margin = 16.dp)
+                            this.end.linkTo(anchor = parent.end, margin = 16.dp)
+                            width = Dimension.fillToConstraints
+                        }
+                    ),
+                    text = password.data.title,
+                    fontFamily = PassMarkFonts.font,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = PassMarkFonts.Display.medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Row(
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(size = 24.dp))
+                        .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                        .padding(
+                            vertical = 2.dp,
+                            horizontal = 4.dp
+                        )
+                        .constrainAs(
+                            ref = subtitle,
+                            constrainBlock = {
+                                this.start.linkTo(anchor = passwordIcon.end, margin = 16.dp)
+                                this.top.linkTo(anchor = title.bottom)
+                                width = Dimension.wrapContent
+                            }
+                        ),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = 4.dp,
+                        alignment = Alignment.Start
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    content = {
+                        Icon(
+                            modifier = Modifier.size(size = 16.dp),
+                            imageVector = associatedVault.getIcon(),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            modifier = Modifier
+                                .padding(end = 4.dp)
+                                .widthIn(max = 120.dp),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            text = associatedVault?.name ?: Vault.VAULT_NAME_FOR_ALL_ITEMS,
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Label.small,
+                            lineHeight = PassMarkFonts.Label.small,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+            }
+        )
+    }
+
+    @Composable
     private fun PropertyListCard(
         passwordPropertyList: List<PasswordProperty>,
         modifier: Modifier
@@ -358,7 +371,7 @@ object PasswordViewScreen {
                             if (index != passwordPropertyList.lastIndex) {
                                 HorizontalDivider(
                                     modifier = Modifier.fillMaxWidth(),
-                                    color = MaterialTheme.colorScheme.primary
+                                    color = MaterialTheme.colorScheme.outline
                                 )
                             }
                         }
@@ -377,10 +390,10 @@ object PasswordViewScreen {
         Box(
             modifier = modifier
                 .clip(shape = shape)
-                .background(color = MaterialTheme.colorScheme.primaryContainer)
+                .background(color = MaterialTheme.colorScheme.surfaceContainer)
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.outline,
                     shape = shape
                 ),
             contentAlignment = Alignment.Center,
@@ -409,7 +422,7 @@ object PasswordViewScreen {
                         }
                     ),
                     imageVector = passwordProperty.imageVector,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
                     contentDescription = null
                 )
                 Text(
@@ -423,7 +436,7 @@ object PasswordViewScreen {
                             width = Dimension.fillToConstraints
                         }
                     ),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Label.medium,
                     fontWeight = FontWeight.Normal,
@@ -442,7 +455,7 @@ object PasswordViewScreen {
                             width = Dimension.fillToConstraints
                         }
                     ),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Title.medium,
                     fontWeight = FontWeight.SemiBold,
@@ -464,11 +477,11 @@ private fun PasswordViewScreenPreview() {
         password = Password(
             data = PasswordData(
                 title = "Title",
-                email = null,
-                userName = null,
+                email = "someEmail@gmail.com",
+                userName = "SomeUserName",
                 password = "SomePassword",
-                website = null,
-                notes = null,
+                website = "www.google.com",
+                notes = "Some note",
                 useFingerPrint = false,
                 saveToLocalOnly = false,
             ),
