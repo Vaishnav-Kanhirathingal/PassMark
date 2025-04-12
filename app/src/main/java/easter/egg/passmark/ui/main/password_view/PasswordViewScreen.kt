@@ -15,17 +15,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.EventRepeat
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Web
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -60,6 +66,7 @@ import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
+import java.time.ZoneId
 
 object PasswordViewScreen {
     @Composable
@@ -77,7 +84,6 @@ object PasswordViewScreen {
                     modifier = Modifier.fillMaxWidth(),
                     navigateUp = navigateUp,
                     toEditScreen = toEditScreen,
-                    onDeleteClicked = { TODO() },
                 )
             },
             content = {
@@ -96,8 +102,7 @@ object PasswordViewScreen {
     private fun PasswordViewTopBar(
         modifier: Modifier,
         navigateUp: () -> Unit,
-        toEditScreen: () -> Unit,
-        onDeleteClicked: () -> Unit
+        toEditScreen: () -> Unit
     ) {
         val barSize = PassMarkDimensions.minTouchSize
         Row(
@@ -160,27 +165,6 @@ object PasswordViewScreen {
                         )
                     }
                 )
-
-                Box(
-                    modifier = Modifier
-                        .size(size = barSize)
-                        .clip(shape = CircleShape)
-                        .background(color = MaterialTheme.colorScheme.errorContainer)
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.error,
-                            shape = CircleShape
-                        )
-                        .clickable(onClick = onDeleteClicked),
-                    contentAlignment = Alignment.Center,
-                    content = {
-                        Icon(
-                            imageVector = Icons.Outlined.Delete,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onErrorContainer
-                        )
-                    }
-                )
             }
         )
     }
@@ -192,7 +176,7 @@ object PasswordViewScreen {
         associatedVault: Vault?
     ) {
         Column(
-            modifier = modifier,
+            modifier = modifier.verticalScroll(state = rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
                 space = 16.dp,
@@ -269,6 +253,81 @@ object PasswordViewScreen {
                         }
                     )
                 }
+                PropertyListCard(
+                    modifier = itemModifier,
+                    passwordPropertyList = listOf(
+                        PasswordProperty(
+                            imageVector = Icons.Default.Cloud,
+                            title = "Storage Type",
+                            field = if (password.data.saveToLocalOnly) "Saved to device only" else "Saved on the cloud"
+                        ),
+                        PasswordProperty(
+                            imageVector = Icons.Default.Fingerprint,
+                            title = "Fingerprint Authentication",
+                            field = if (password.data.useFingerPrint) "Enabled" else "Disabled"
+                        )
+                    )
+                )
+                val deleteShape = RoundedCornerShape(size = 16.dp)
+                fun Long.formatToTime(): String {
+                    return try {
+                        val instant = java.time.Instant.ofEpochMilli(this)
+                        val dateTime =
+                            java.time.LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+                        val formatted =
+                            dateTime.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss | dd/MM/yyyy"))
+                        formatted!!
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        "Time Error"
+                    }
+                }
+                PropertyListCard(
+                    modifier = itemModifier,
+                    passwordPropertyList = listOf(
+                        PasswordProperty(
+                            imageVector = Icons.Default.CalendarToday,
+                            title = "Created",
+                            field = password.created.formatToTime()
+                        ),
+                        PasswordProperty(
+                            imageVector = Icons.Default.EditCalendar,
+                            title = "Updated",
+                            field = password.lastModified.formatToTime()
+                        ),
+                        PasswordProperty(
+                            imageVector = Icons.Default.EventRepeat,
+                            title = "Last Used",
+                            field = password.lastUsed.formatToTime()
+                        )
+                    )
+                )
+                Box(
+                    modifier = Modifier
+                        .align(alignment = Alignment.End)
+                        .setSizeLimitation()
+                        .padding(horizontal = 16.dp)
+                        .clip(shape = deleteShape)
+                        .background(color = MaterialTheme.colorScheme.error)
+                        .clickable(onClick = { TODO() }),
+                    contentAlignment = Alignment.Center,
+                    content = {
+                        Text(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Body.medium,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onError,
+                            text = "Delete"
+                        )
+                    }
+                )
+
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(height = PassMarkDimensions.minTouchSize * 3)
+                )
             }
         )
     }
@@ -522,8 +581,8 @@ private fun PasswordViewScreenPreview() {
                 email = "someEmail@gmail.com",
                 userName = "SomeUserName",
                 password = "SomePassword",
-                website = "www.google.com",
-                notes = "Some note",
+                website = null, // "www.google.com",
+                notes = null, // "Some note",
                 useFingerPrint = false,
                 saveToLocalOnly = false,
             ),
