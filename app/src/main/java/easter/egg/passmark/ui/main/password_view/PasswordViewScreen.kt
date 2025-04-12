@@ -21,8 +21,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Web
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -186,17 +188,21 @@ object PasswordViewScreen {
         Column(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
+            verticalArrangement = Arrangement.spacedBy(
+                space = 16.dp,
+                alignment = Alignment.Top
+            ),
             content = {
                 Heading(
                     modifier = Modifier.fillMaxWidth(),
                     password = password,
                     associatedVault = associatedVault
                 )
+                val itemModifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
                 PropertyListCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                    modifier = itemModifier,
                     passwordPropertyList = mutableListOf<PasswordProperty>().apply {
                         // TODO: email, username, password
                         password.data.email?.let { email ->
@@ -226,6 +232,37 @@ object PasswordViewScreen {
                         )
                     },
                 )
+
+                password.data.website?.let { website ->
+                    DefaultCard(
+                        modifier = itemModifier,
+                        content = {
+                            DisplayFieldContent(
+                                modifier = Modifier.fillMaxWidth(),
+                                passwordProperty = PasswordProperty(
+                                    imageVector = Icons.Default.Web,
+                                    title = "Website",
+                                    field = website
+                                )
+                            )
+                        }
+                    )
+                }
+                password.data.notes?.let { notes ->
+                    DefaultCard(
+                        modifier = itemModifier,
+                        content = {
+                            DisplayFieldContent(
+                                modifier = Modifier.fillMaxWidth(),
+                                passwordProperty = PasswordProperty(
+                                    imageVector = Icons.Default.EditNote,
+                                    title = "Notes",
+                                    field = notes
+                                )
+                            )
+                        }
+                    )
+                }
             }
         )
     }
@@ -371,7 +408,7 @@ object PasswordViewScreen {
                             if (index != passwordPropertyList.lastIndex) {
                                 HorizontalDivider(
                                     modifier = Modifier.fillMaxWidth(),
-                                    color = MaterialTheme.colorScheme.outline
+                                    color = MaterialTheme.colorScheme.surfaceContainerHighest
                                 )
                             }
                         }
@@ -393,7 +430,7 @@ object PasswordViewScreen {
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
                     shape = shape
                 ),
             contentAlignment = Alignment.Center,
@@ -422,7 +459,7 @@ object PasswordViewScreen {
                         }
                     ),
                     imageVector = passwordProperty.imageVector,
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null
                 )
                 Text(
@@ -436,7 +473,7 @@ object PasswordViewScreen {
                             width = Dimension.fillToConstraints
                         }
                     ),
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Label.medium,
                     fontWeight = FontWeight.Normal,
@@ -455,7 +492,7 @@ object PasswordViewScreen {
                             width = Dimension.fillToConstraints
                         }
                     ),
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Title.medium,
                     fontWeight = FontWeight.SemiBold,
