@@ -74,7 +74,8 @@ object HomeDrawer {
     fun DrawerContent(
         modifier: Modifier,
         viewModel: HomeViewModel,
-        mainViewModel: MainViewModel
+        mainViewModel: MainViewModel,
+        selectVault: (vaultId: Int?) -> Unit
     ) {
         val scrollState = rememberScrollState()
         Box(
@@ -137,7 +138,8 @@ object HomeDrawer {
                                 .heightIn(min = 300.dp)
                                 .fillMaxWidth(),
                             homeViewModel = viewModel,
-                            mainViewModel = mainViewModel
+                            mainViewModel = mainViewModel,
+                            selectVault = selectVault
                         )
                         DrawerTitle(text = "Options")
                         HorizontalDivider()
@@ -201,7 +203,8 @@ object HomeDrawer {
     private fun VaultList(
         modifier: Modifier,
         homeViewModel: HomeViewModel,
-        mainViewModel: MainViewModel
+        mainViewModel: MainViewModel,
+        selectVault: (vaultId: Int?) -> Unit
     ) {
         Column(
             modifier = modifier,
@@ -234,7 +237,7 @@ object HomeDrawer {
                         passwordsInVault = size,
                         isSelected = vaultIdSelected == vault?.id,
                         cornerSize = cornerSize,
-                        onClick = { homeViewModel.updateVaultIdSelected(id = vault?.id) }
+                        onClick = { selectVault(vault?.id) }
                     )
                 }
                 if (vaultList.size < 5) {
@@ -582,7 +585,8 @@ private fun HomeScreenDrawerPreview() {
             .fillMaxHeight()
             .fillMaxWidth(0.7f),
         viewModel = HomeViewModel(vaultApi = VaultApi(supabaseClient = SupabaseModule.mockClient)),
-        mainViewModel = MainViewModel.getTestViewModel()
+        mainViewModel = MainViewModel.getTestViewModel(),
+        selectVault = {}
     )
 }
 
