@@ -269,7 +269,11 @@ object HomeDrawer {
                     VaultDialog(
                         modifier = Modifier.fillMaxWidth(),
                         homeViewModel = homeViewModel,
-                        mainViewModel = mainViewModel
+                        cacheVault = {
+                            (mainViewModel.screenState.value as? ScreenState.Loaded)?.result?.addNewVault(
+                                vault = it
+                            )
+                        }
                     )
                 }
                 Spacer(modifier = spacerModifier)
@@ -374,16 +378,14 @@ object HomeDrawer {
     fun VaultDialog(
         modifier: Modifier,
         homeViewModel: HomeViewModel,
-        mainViewModel: MainViewModel
+        cacheVault: (Vault) -> Unit,
     ) {
         val screenState = homeViewModel.vaultDialogState.apiCallState.collectAsState().value
         LaunchedEffect(
             key1 = screenState,
             block = {
                 if (screenState is ScreenState.Loaded) {
-                    (mainViewModel.screenState.value as? ScreenState.Loaded)?.result?.addNewVault(
-                        vault = screenState.result
-                    )
+                    cacheVault(screenState.result)
                     homeViewModel.vaultDialogState.resetAndDismiss()
                 }
             }
@@ -590,6 +592,6 @@ fun VaultDialogPreview() {
     HomeDrawer.VaultDialog(
         modifier = Modifier.fillMaxWidth(),
         homeViewModel = HomeViewModel(vaultApi = VaultApi(supabaseClient = SupabaseModule.mockClient)),
-        mainViewModel = MainViewModel.getTestViewModel()
+        cacheVault = {}
     )
 }
