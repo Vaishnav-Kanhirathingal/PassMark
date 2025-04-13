@@ -371,7 +371,7 @@ object PasswordViewScreen {
                                 fontSize = PassMarkFonts.Display.medium,
                                 fontWeight = FontWeight.Bold,
                                 text = password.data.getShortName(),
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                         AsyncImage(

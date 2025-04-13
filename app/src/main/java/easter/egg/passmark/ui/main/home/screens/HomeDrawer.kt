@@ -288,7 +288,7 @@ object HomeDrawer {
         onClick: () -> Unit
     ) {
         val onContainerColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
-        else MaterialTheme.colorScheme.onSecondaryContainer
+        else MaterialTheme.colorScheme.onSurface
         ConstraintLayout(
             modifier = modifier
                 .setSizeLimitation()
