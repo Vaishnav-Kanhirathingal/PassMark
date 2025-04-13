@@ -200,6 +200,7 @@ object HomeScreen {
                                 .fillMaxSize()
                                 .padding(paddingValues = it),
                             mainViewModel = mainViewModel,
+                            homeViewModel = homeViewModel,
                             toViewPasswordScreen = toViewPasswordScreen,
                             toPasswordEditScreen = toPasswordEditScreen
                         )

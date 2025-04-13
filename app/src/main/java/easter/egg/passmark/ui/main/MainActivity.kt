@@ -110,7 +110,7 @@ class MainActivity : ComponentActivity() {
                                     route = MainScreens.PasswordEdit(passwordId = receivedId)
                                 )
                             },
-                            associatedVault =password.vaultId?.let {vid-> vaultList?.find {v->v.id==vid  } }
+                            associatedVault = password.vaultId?.let { vid -> vaultList?.find { v -> v.id == vid } }
                         )
                     }
                 )

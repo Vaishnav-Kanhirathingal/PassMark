@@ -47,7 +47,10 @@ import coil3.request.crossfade
 import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.data.models.content.PasswordSortingOptions
+import easter.egg.passmark.data.supabase.api.VaultApi
+import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel
+import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -62,6 +65,7 @@ object HomeContent {
     fun HomeContent(
         modifier: Modifier,
         mainViewModel: MainViewModel,
+        homeViewModel: HomeViewModel,
         toViewPasswordScreen: (passwordId: Int) -> Unit,
         toPasswordEditScreen: (passwordId: Int?) -> Unit
     ) {
@@ -71,7 +75,7 @@ object HomeContent {
         val passwordList = (mainViewModel.screenState.value as? ScreenState.Loaded)
             ?.result
             ?.getFilteredPasswordList(
-                vaultId = null,
+                vaultId = homeViewModel.vaultIdSelected.collectAsState().value,
                 passwordSortingOptions = PasswordSortingOptions.NAME,
                 ascending = true
             )
@@ -266,7 +270,10 @@ fun HomeContentPreview() {
         modifier = Modifier.fillMaxSize(),
         mainViewModel = MainViewModel.getTestViewModel(),
         toViewPasswordScreen = {},
-        toPasswordEditScreen = {}
+        toPasswordEditScreen = {},
+        homeViewModel = HomeViewModel(
+            vaultApi = VaultApi(SupabaseModule.mockClient)
+        )
     )
 }
 
