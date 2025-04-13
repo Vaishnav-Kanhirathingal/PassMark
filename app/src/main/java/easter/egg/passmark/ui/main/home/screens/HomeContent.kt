@@ -5,12 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -88,7 +90,10 @@ object HomeContent {
             ?.value
             ?: listOf()
         if (passwordList.isEmpty()) {
-            EmptyListUI(modifier = modifier)
+            EmptyListUI(
+                modifier = modifier,
+                vaultSelectedName = null // TODO: change to actual name
+            )
         } else {
             LazyColumn(
                 modifier = modifier,
@@ -121,17 +126,45 @@ object HomeContent {
     }
 
     @Composable
-    fun EmptyListUI(modifier: Modifier) {
-        Box(
+    fun EmptyListUI(
+        modifier: Modifier,
+        vaultSelectedName: String?
+    ) {
+        Column(
             modifier = modifier.padding(all = 16.dp),
-            contentAlignment = Alignment.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(
+                space = 4.dp,
+                alignment = Alignment.CenterVertically
+            ),
             content = {
+                val contentModifier = Modifier
+                    .sizeIn(maxWidth = 360.dp, maxHeight = 360.dp)
+                    .fillMaxWidth(fraction = 0.5f)
+                Text(
+                    modifier = contentModifier,
+                    text = vaultSelectedName.let {
+                        if (it == null) {
+                            "You do not have any saved passwords"
+                        } else {
+                            "Vault '$vaultSelectedName' does not have any saved passwords"
+                        }
+                    },
+                    textAlign = TextAlign.Center,
+                    fontFamily = PassMarkFonts.font,
+                    fontSize = PassMarkFonts.Body.medium,
+                    lineHeight = PassMarkFonts.Body.medium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
                 Box(
-                    modifier = Modifier.widthIn(max = 180.dp),
+                    modifier = Modifier
+                        .sizeIn(maxWidth = 360.dp, maxHeight = 360.dp)
+                        .fillMaxSize(fraction = 0.5f),
                     contentAlignment = Alignment.Center,
                     content = {
                         Image(
-                            painter = painterResource(id = R.drawable.note_list),
+                            painter = painterResource(id = R.drawable.note_list_0_base),
                             contentDescription = null,
                         )
                         Image(
@@ -165,6 +198,16 @@ object HomeContent {
                             colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.surfaceContainerHighest)
                         )
                     }
+                )
+                Text(
+                    modifier = contentModifier,
+                    textAlign = TextAlign.Center,
+                    text = "To create a new Password, click on the '+' floating button",
+                    fontFamily = PassMarkFonts.font,
+                    fontSize = PassMarkFonts.Label.medium,
+                    lineHeight = PassMarkFonts.Label.medium,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         )
@@ -364,5 +407,8 @@ fun PasswordListItemPreview() {
 @MobilePreview
 @MobileHorizontalPreview
 private fun EmptyState() {
-    HomeContent.EmptyListUI(modifier = Modifier.fillMaxSize())
+    HomeContent.EmptyListUI(
+        modifier = Modifier.fillMaxSize(),
+        vaultSelectedName = "Banking"
+    )
 }
