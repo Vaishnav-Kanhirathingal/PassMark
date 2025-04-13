@@ -164,7 +164,6 @@ object PasswordEditScreen {
                     passwordRequirementsMet = passwordRequirementsMet.value
                 )
             },
-            bottomBar = { EditBottomBar(modifier = barModifier) }
         )
     }
 
@@ -769,13 +768,6 @@ object PasswordEditScreen {
                 )
             }
         )
-    }
-
-    @Composable
-    private fun EditBottomBar(
-        modifier: Modifier
-    ) {
-        // TODO: pending
     }
 }
 
