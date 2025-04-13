@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.main.home.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,8 +30,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,6 +48,7 @@ import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import easter.egg.passmark.R
 import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.data.models.content.PasswordSortingOptions
@@ -82,31 +87,85 @@ object HomeContent {
             ?.collectAsState(initial = listOf())
             ?.value
             ?: listOf()
-        LazyColumn(
-            modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(
-                space = 8.dp,
-                alignment = Alignment.Top
-            ),
+        if (passwordList.isEmpty()) {
+            EmptyListUI(modifier = modifier)
+        } else {
+            LazyColumn(
+                modifier = modifier,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(
+                    space = 8.dp,
+                    alignment = Alignment.Top
+                ),
+                content = {
+                    val spacerModifier = Modifier
+                        .fillMaxWidth()
+                        .height(height = 8.dp)
+                    item { Spacer(modifier = spacerModifier) }
+                    items(
+                        items = passwordList,
+                        key = { it.id!! },
+                        itemContent = {
+                            PasswordListItem(
+                                modifier = listItemModifier,
+                                password = it,
+                                viewPassword = { toViewPasswordScreen(it.id!!) },
+                                openOptions = { TODO() }
+                            )
+                        }
+                    )
+                    item { Spacer(modifier = spacerModifier) }
+                }
+            )
+        }
+    }
+
+    @Composable
+    fun EmptyListUI(modifier: Modifier) {
+        Box(
+            modifier = modifier.padding(all = 16.dp),
+            contentAlignment = Alignment.Center,
             content = {
-                val spacerModifier = Modifier
-                    .fillMaxWidth()
-                    .height(height = 8.dp)
-                item { Spacer(modifier = spacerModifier) }
-                items(
-                    items = passwordList,
-                    key = { it.id!! },
-                    itemContent = {
-                        PasswordListItem(
-                            modifier = listItemModifier,
-                            password = it,
-                            viewPassword = { toViewPasswordScreen(it.id!!) },
-                            openOptions = { TODO() }
+                Box(
+                    modifier = Modifier.widthIn(max = 180.dp),
+                    contentAlignment = Alignment.Center,
+                    content = {
+                        Image(
+                            painter = painterResource(id = R.drawable.note_list),
+                            contentDescription = null,
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.note_list_1_leaves),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.surfaceContainer)
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.note_list_2_phone_frame),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.outline)
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.note_list_3_phone_screen_surface),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.surface)
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.note_list_4_phone_screen_icons),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface)
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.note_list_5_phone_screen_primary_elements),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.note_list_6_phone_screen_surface_container_elements),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.surfaceContainerHighest)
                         )
                     }
                 )
-                item { Spacer(modifier = spacerModifier) }
             }
         )
     }
@@ -299,4 +358,11 @@ fun PasswordListItemPreview() {
         viewPassword = {},
         openOptions = {}
     )
+}
+
+@Composable
+@MobilePreview
+@MobileHorizontalPreview
+private fun EmptyState() {
+    HomeContent.EmptyListUI(modifier = Modifier.fillMaxSize())
 }
