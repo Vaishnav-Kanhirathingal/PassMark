@@ -1,6 +1,7 @@
 package easter.egg.passmark.ui.main
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
@@ -102,6 +103,8 @@ class HomeListData(
     vaultList: MutableList<Vault>,
     passwordList: MutableList<Password>
 ) {
+    private val TAG = this::class.simpleName
+
     private val _vaultListState: MutableStateFlow<List<Vault>> = MutableStateFlow(vaultList)
     val vaultListState: StateFlow<List<Vault>> = _vaultListState
 
@@ -149,11 +152,24 @@ class HomeListData(
         }
     }
 
-    fun addNewPassword(password: Password) {
-        this._passwordListState.value =
-            this._passwordListState.value.toMutableList().apply { add(password) }
+    fun upsertPassword(password: Password) {
+        val newList = this._passwordListState.value.toMutableList()
+        newList
+            .indexOfLast { p -> p.id == password.id }
+            .takeUnless { it == -1 }
+            .let {
+                if (it == null) {
+                    newList.add(password)
+                    Log.d(TAG, "password is new, adding")
+                } else {
+                    newList.set(index = it, element = password)
+                    Log.d(TAG, "password already exists, updating")
+                }
+            }
+        this._passwordListState.value = newList
     }
 
+    // TODO: upsert
     fun addNewVault(vault: Vault) {
         this._vaultListState.value =
             this._vaultListState.value.toMutableList().apply { add(vault) }

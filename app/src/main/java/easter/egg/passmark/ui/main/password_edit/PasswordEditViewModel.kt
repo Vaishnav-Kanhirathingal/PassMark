@@ -47,7 +47,7 @@ class PasswordEditViewModel @Inject constructor(
     }
 
     //---------------------------------------------------------------------------------loaded-values
-    private var _passwordId: Int? = null
+    private var _oldPassword: Password? = null
     private var _loaded = false
 
     fun loadForUpdating(
@@ -66,7 +66,7 @@ class PasswordEditViewModel @Inject constructor(
             this.useFingerPrint.value = password.data.useFingerPrint
             this.saveToLocalOnly.value = password.data.saveToLocalOnly
             this._selectedVault.value = vault
-            this._passwordId = password.id
+            this._oldPassword = password
             _loaded = true
         }
     }
@@ -83,7 +83,7 @@ class PasswordEditViewModel @Inject constructor(
         _screenState.value = ScreenState.Loading()
         val now = System.currentTimeMillis()
         val password = Password(
-            id = _passwordId,
+            id = _oldPassword?.id,
             vaultId = selectedVault.value?.id,
             data = PasswordData(
                 title = title.value,
@@ -95,8 +95,8 @@ class PasswordEditViewModel @Inject constructor(
                 useFingerPrint = useFingerPrint.value,
                 saveToLocalOnly = saveToLocalOnly.value,
             ),
-            lastUsed = now,
-            created = now,
+            lastUsed = _oldPassword?.lastUsed ?: now,
+            created = _oldPassword?.created ?: now,
             lastModified = now,
             usedCount = 0
         )

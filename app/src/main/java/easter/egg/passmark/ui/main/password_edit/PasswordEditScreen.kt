@@ -125,7 +125,9 @@ object PasswordEditScreen {
                 when (val state = viewModel.screenState.value) {
                     is ScreenState.PreCall, is ScreenState.Loading -> {}
                     is ScreenState.Loaded -> {
-                        // TODO: save to [MainViewModel]'s home list
+                        (mainViewModel.screenState.value as? ScreenState.Loaded)
+                            ?.result
+                            ?.upsertPassword(password = state.result)
                         navigateBack()
                     }
 
