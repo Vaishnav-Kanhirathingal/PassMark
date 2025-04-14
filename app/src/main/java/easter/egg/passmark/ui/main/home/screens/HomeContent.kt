@@ -1,8 +1,16 @@
 package easter.egg.passmark.ui.main.home.screens
 
+import android.content.Context
+import android.content.Intent
 import android.os.Build
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.LocalActivity
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
+import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,6 +50,7 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -67,6 +76,7 @@ import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility
+import androidx.fragment.app.FragmentActivity
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -79,6 +89,8 @@ import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
+import easter.egg.passmark.ui.main.home.SecurityChoices
+import easter.egg.passmark.ui.main.home.SecurityPromptState
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -138,9 +150,35 @@ object HomeContent {
                                 toPasswordEditScreen(password.id!!)
                                 optionSheetIsVisible.value = null
                             }
-                    }
+                    },
+                    setPromptState = { homeViewModel.securityPromptState.value = it }
                 )
             }
+            val securityPromptState = homeViewModel.securityPromptState.collectAsState().value
+            val activity = LocalActivity.current as? FragmentActivity
+            LaunchedEffect(
+                key1 = securityPromptState,
+                block = {
+                    if (securityPromptState?.securityChoices == SecurityChoices.BIOMETRICS) {
+                        activity?.let {
+                            BiometricPrompt(
+                                it, object : BiometricPrompt.AuthenticationCallback() {
+
+                                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                                        super.onAuthenticationSucceeded(result)
+                                        TODO("copy password")
+                                    }
+                                }
+                            )
+                            TODO("show biometrics")
+                        }
+                    }
+                }
+            )
+            if (securityPromptState?.securityChoices == SecurityChoices.MASTER_PASSWORD) {
+                TODO("show master password prompt")
+            }
+
             LazyColumn(
                 modifier = modifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -398,6 +436,7 @@ object HomeContent {
         sheetState: SheetState,
         dismissSheet: () -> Unit,
         toPasswordEditScreen: () -> Unit,
+        setPromptState: (SecurityPromptState) -> Unit
     ) {
         ModalBottomSheet(
             onDismissRequest = dismissSheet,
@@ -503,7 +542,6 @@ object HomeContent {
                                 Log.d(TAG, "system has it's own toast")
                             }
                         }
-
                         password.data.website?.let { website ->
                             SheetButton(
                                 startIcon = Icons.Default.Web,
@@ -532,8 +570,40 @@ object HomeContent {
                             startIcon = Icons.Default.Password,
                             title = "Copy password",
                             onClick = {
-                                if (password.data.useFingerPrint) TODO()
-                                else copyToClipBoard(str = password.data.password)
+                                if (password.data.useFingerPrint) {
+                                    val securityChoice = getSecurityChoices(context = context)
+                                    if (securityChoice == null) { // show toast or open settings
+                                        if (Build.VERSION.SDK_INT > 29) {
+                                            try {
+                                                val enrollIntent =
+                                                    Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
+                                                        putExtra(
+                                                            Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
+                                                            BIOMETRIC_STRONG or DEVICE_CREDENTIAL
+                                                        )
+                                                    }
+                                                context.startActivity(enrollIntent)
+                                            } catch (e: Exception) {
+                                                e.printStackTrace()
+                                            }
+                                        }
+                                        Toast.makeText(
+                                            context,
+                                            "Biometrics not enabled on device. Go to Settings -> Security -> Fingerprint -> set fingerprint",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        setPromptState(
+                                            SecurityPromptState(
+                                                password = password.data.password,
+                                                securityChoices = securityChoice
+                                            )
+                                        )
+                                    }
+                                } else {
+                                    copyToClipBoard(str = password.data.password)
+                                }
+                                dismissSheet()
                             },
                             endIcon =
                                 if (password.data.useFingerPrint) Icons.Default.Fingerprint
@@ -551,6 +621,18 @@ object HomeContent {
                 )
             }
         )
+    }
+
+    private fun getSecurityChoices(
+        context: Context,
+    ): SecurityChoices? {
+        return when (
+            BiometricManager.from(context).canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
+        ) {
+            BiometricManager.BIOMETRIC_SUCCESS -> SecurityChoices.BIOMETRICS
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> null
+            else -> SecurityChoices.MASTER_PASSWORD
+        }
     }
 }
 
@@ -648,6 +730,7 @@ private fun PasswordOptionDrawerPreview() {
         ),
         sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
         dismissSheet = {},
-        toPasswordEditScreen = {}
+        toPasswordEditScreen = {},
+        setPromptState = {}
     )
 }

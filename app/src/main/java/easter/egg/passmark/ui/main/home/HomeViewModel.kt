@@ -3,6 +3,7 @@ package easter.egg.passmark.ui.main.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.utils.ScreenState
@@ -50,6 +51,8 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
+
+    val securityPromptState: MutableStateFlow<SecurityPromptState?> = MutableStateFlow(null)
 }
 
 class VaultDialogState(
@@ -86,4 +89,13 @@ class VaultDialogState(
     fun updateIconChoice(choice: Int) {
         this._iconChoice.value = choice
     }
+}
+
+class SecurityPromptState(
+    val password: String,
+    val securityChoices: SecurityChoices
+)
+
+enum class SecurityChoices {
+    BIOMETRICS, MASTER_PASSWORD
 }
