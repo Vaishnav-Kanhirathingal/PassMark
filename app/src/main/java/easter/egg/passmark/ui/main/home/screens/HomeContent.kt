@@ -1,5 +1,8 @@
 package easter.egg.passmark.ui.main.home.screens
 
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -50,8 +53,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -482,9 +487,23 @@ object HomeContent {
                             }
                         }
 
+                        val clipboardManager = LocalClipboardManager.current
+                        val context = LocalContext.current
                         fun copyToClipBoard(str: String) {
-                            TODO()
+                            clipboardManager.setText(AnnotatedString(text = str))
+                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Text copied to clipboard",
+                                        Toast.LENGTH_LONG
+                                    )
+                                    .show()
+                            } else {
+                                Log.d(TAG, "system has it's own toast")
+                            }
                         }
+
                         password.data.website?.let { website ->
                             SheetButton(
                                 startIcon = Icons.Default.Web,
