@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,22 +14,27 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,10 +70,13 @@ import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 object HomeContent {
     private val TAG = this::class.simpleName
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun HomeContent(
         modifier: Modifier,
@@ -95,6 +104,20 @@ object HomeContent {
                 vaultSelectedName = null // TODO: change to actual name
             )
         } else {
+            val sheetState = rememberModalBottomSheetState()
+            val optionSheetIsVisible: MutableState<Password?> = remember { mutableStateOf(null) }
+            val coroutineScope = rememberCoroutineScope()
+            optionSheetIsVisible.value?.let {
+                PasswordOptionDrawer(
+                    password = it,
+                    sheetState = sheetState,
+                    dismissSheet = {
+                        coroutineScope
+                            .launch { sheetState.hide() }
+                            .invokeOnCompletion { optionSheetIsVisible.value = null }
+                    }
+                )
+            }
             LazyColumn(
                 modifier = modifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -115,7 +138,10 @@ object HomeContent {
                                 modifier = listItemModifier,
                                 password = it,
                                 viewPassword = { toViewPasswordScreen(it.id!!) },
-                                openOptions = { TODO() }
+                                openOptions = {
+                                    optionSheetIsVisible.value = it
+                                    coroutineScope.launch { sheetState.show() }
+                                }
                             )
                         }
                     )
@@ -341,6 +367,109 @@ object HomeContent {
             }
         )
     }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun PasswordOptionDrawer(
+        password: Password,
+        sheetState: SheetState,
+        dismissSheet: () -> Unit
+    ) {
+        ModalBottomSheet(
+//            dragHandle = null,
+            onDismissRequest = dismissSheet,
+            sheetState = sheetState,
+            content = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    content = {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    end = 16.dp,
+                                    start = 16.dp,
+                                    top = 8.dp,
+                                    bottom = 8.dp
+                                ),
+                            fontFamily = PassMarkFonts.font,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = PassMarkFonts.Headline.medium,
+                            text = password.data.title,
+                        )
+
+                        @Composable
+                        fun SheetButton(
+                            title: String,
+                            toCopy: String
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .setSizeLimitation()
+                                    .fillMaxWidth()
+                                    .clickable(
+                                        onClick = {
+                                            TODO("copy $title")
+                                            dismissSheet()
+                                        }
+                                    )
+                                    .padding(horizontal = 16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(
+                                    space = 8.dp,
+                                    alignment = Alignment.CenterHorizontally
+                                ),
+                                verticalAlignment = Alignment.CenterVertically,
+                                content = {
+                                    Icon(
+                                        imageVector = Icons.Default.ContentCopy,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Text(
+                                        modifier = Modifier.weight(weight = 1f),
+                                        fontFamily = PassMarkFonts.font,
+                                        fontSize = PassMarkFonts.Title.medium,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        text = title
+                                    )
+                                    Icon(
+                                        imageVector = Icons.Default.ContentCopy,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            )
+                        }
+                        password.data.website?.let { website ->
+                            SheetButton(
+                                title = "Copy website",
+                                toCopy = website
+                            )
+                        }
+                        password.data.email?.let { email ->
+                            SheetButton(
+                                title = "Copy email",
+                                toCopy = email
+                            )
+                        }
+                        password.data.userName?.let { userName ->
+                            SheetButton(
+                                title = "Copy user name",
+                                toCopy = userName
+                            )
+                        }
+                        SheetButton(
+                            title = "Copy password",
+                            toCopy = password.data.password
+                        )
+                    }
+                )
+            }
+        )
+    }
 }
 
 private val testBasePasswordData = PasswordData(
@@ -410,5 +539,32 @@ private fun EmptyState() {
     HomeContent.EmptyListUI(
         modifier = Modifier.fillMaxSize(),
         vaultSelectedName = "Banking"
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@MobilePreview
+private fun PasswordOptionDrawerPreview() {
+    val now = System.currentTimeMillis()
+    HomeContent.PasswordOptionDrawer(
+        password = Password(
+            data = PasswordData(
+                title = "Google",
+                email = "someone@gmail.com",
+                userName = "some_user",
+                password = "Some password",
+                website = "www.somewebsite.com",
+                useFingerPrint = true,
+                saveToLocalOnly = true,
+                notes = null
+            ),
+            created = now,
+            lastUsed = now,
+            lastModified = now,
+            usedCount = 0
+        ),
+        sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
+        dismissSheet = {}
     )
 }
