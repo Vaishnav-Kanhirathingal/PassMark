@@ -115,10 +115,12 @@ object HomeContent {
         val listItemModifier = Modifier
             .setSizeLimitation()
             .fillMaxWidth()
-        val passwordList = (mainViewModel.screenState.value as? ScreenState.Loaded)
+        val vaultId = homeViewModel.vaultIdSelected.collectAsState().value
+        val homeResult = (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
             ?.result
+        val passwordList = homeResult
             ?.getFilteredPasswordList(
-                vaultId = homeViewModel.vaultIdSelected.collectAsState().value,
+                vaultId = vaultId,
                 passwordSortingOptions = PasswordSortingOptions.NAME,
                 ascending = true
             )
@@ -128,7 +130,9 @@ object HomeContent {
         if (passwordList.isEmpty()) {
             EmptyListUI(
                 modifier = modifier,
-                vaultSelectedName = null // TODO: change to actual name
+                vaultSelectedName = homeResult?.vaultListState?.collectAsState()?.value
+                    ?.find { v->v.id==homeViewModel.vaultIdSelected.collectAsState().value }
+                    ?.name
             )
         } else {
             val sheetState = rememberModalBottomSheetState()
