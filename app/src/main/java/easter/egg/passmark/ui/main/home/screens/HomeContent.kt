@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,9 +20,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Web
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -376,7 +386,6 @@ object HomeContent {
         dismissSheet: () -> Unit
     ) {
         ModalBottomSheet(
-//            dragHandle = null,
             onDismissRequest = dismissSheet,
             sheetState = sheetState,
             content = {
@@ -385,36 +394,51 @@ object HomeContent {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     content = {
-                        Text(
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(
                                     end = 16.dp,
                                     start = 16.dp,
-                                    top = 8.dp,
                                     bottom = 8.dp
                                 ),
-                            fontFamily = PassMarkFonts.font,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = PassMarkFonts.Headline.medium,
-                            text = password.data.title,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            content = {
+                                Text(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    fontFamily = PassMarkFonts.font,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = PassMarkFonts.Headline.medium,
+                                    text = password.data.title,
+                                )
+                                password.data.getSubTitle()?.let {
+                                    Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        maxLines = 1,
+                                        fontFamily = PassMarkFonts.font,
+                                        fontSize = PassMarkFonts.Label.medium,
+                                        fontWeight = FontWeight.Normal,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        text = it
+                                    )
+                                }
+                            }
                         )
-
                         @Composable
-                        fun SheetButton(
+                        fun ColumnScope.SheetButton(
+                            startIcon: ImageVector,
                             title: String,
-                            toCopy: String
+                            onClick: () -> Unit,
+                            endIcon: ImageVector,
+                            useDivider: Boolean = true
                         ) {
                             Row(
                                 modifier = Modifier
                                     .setSizeLimitation()
                                     .fillMaxWidth()
-                                    .clickable(
-                                        onClick = {
-                                            TODO("copy $title")
-                                            dismissSheet()
-                                        }
-                                    )
+                                    .clickable(onClick = onClick)
                                     .padding(horizontal = 16.dp),
                                 horizontalArrangement = Arrangement.spacedBy(
                                     space = 8.dp,
@@ -423,47 +447,77 @@ object HomeContent {
                                 verticalAlignment = Alignment.CenterVertically,
                                 content = {
                                     Icon(
-                                        imageVector = Icons.Default.ContentCopy,
+                                        imageVector = startIcon,
                                         contentDescription = null,
                                         tint = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
                                         modifier = Modifier.weight(weight = 1f),
                                         fontFamily = PassMarkFonts.font,
-                                        fontSize = PassMarkFonts.Title.medium,
-                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = PassMarkFonts.Body.medium,
+                                        fontWeight = FontWeight.Medium,
                                         color = MaterialTheme.colorScheme.onSurface,
                                         text = title
                                     )
                                     Icon(
-                                        imageVector = Icons.Default.ContentCopy,
+                                        imageVector = endIcon,
                                         contentDescription = null,
                                         tint = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                             )
+                            if (useDivider) {
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                )
+                            }
+                        }
+
+                        fun copyToClipBoard(str: String) {
+                            TODO()
                         }
                         password.data.website?.let { website ->
                             SheetButton(
-                                title = "Copy website",
-                                toCopy = website
+                                startIcon = Icons.Default.Web,
+                                title = "Website",
+                                onClick = { copyToClipBoard(str = website) },
+                                endIcon = Icons.Default.ContentCopy,
                             )
                         }
                         password.data.email?.let { email ->
                             SheetButton(
+                                startIcon = Icons.Outlined.Email,
                                 title = "Copy email",
-                                toCopy = email
+                                onClick = { copyToClipBoard(str = email) },
+                                endIcon = Icons.Default.ContentCopy
                             )
                         }
                         password.data.userName?.let { userName ->
                             SheetButton(
+                                startIcon = Icons.Outlined.Person,
                                 title = "Copy user name",
-                                toCopy = userName
+                                onClick = { copyToClipBoard(str = userName) },
+                                endIcon = Icons.Default.ContentCopy,
                             )
                         }
                         SheetButton(
+                            startIcon = Icons.Default.Password,
                             title = "Copy password",
-                            toCopy = password.data.password
+                            onClick = {
+                                if (password.data.useFingerPrint) TODO()
+                                else copyToClipBoard(str = password.data.password)
+                            },
+                            endIcon =
+                                if (password.data.useFingerPrint) Icons.Default.Fingerprint
+                                else Icons.Default.ContentCopy,
+                        )
+
+                        SheetButton(
+                            startIcon = Icons.Default.Edit,
+                            title = "Edit Password",
+                            onClick = { TODO() },
+                            endIcon = Icons.AutoMirrored.Filled.ArrowRight,
+                            useDivider = false
                         )
                     }
                 )
