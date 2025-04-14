@@ -93,7 +93,7 @@ object HomeContent {
         mainViewModel: MainViewModel,
         homeViewModel: HomeViewModel,
         toViewPasswordScreen: (passwordId: Int) -> Unit,
-        toPasswordEditScreen: (passwordId: Int?) -> Unit
+        toPasswordEditScreen: (passwordId: Int) -> Unit,
     ) {
         val listItemModifier = Modifier
             .setSizeLimitation()
@@ -117,14 +117,22 @@ object HomeContent {
             val sheetState = rememberModalBottomSheetState()
             val optionSheetIsVisible: MutableState<Password?> = remember { mutableStateOf(null) }
             val coroutineScope = rememberCoroutineScope()
-            optionSheetIsVisible.value?.let {
+            optionSheetIsVisible.value?.let { password ->
                 PasswordOptionDrawer(
-                    password = it,
+                    password = password,
                     sheetState = sheetState,
                     dismissSheet = {
                         coroutineScope
                             .launch { sheetState.hide() }
                             .invokeOnCompletion { optionSheetIsVisible.value = null }
+                    },
+                    toPasswordEditScreen = {
+                        coroutineScope
+                            .launch { sheetState.hide() }
+                            .invokeOnCompletion {
+                                toPasswordEditScreen(password.id!!)
+                                optionSheetIsVisible.value = null
+                            }
                     }
                 )
             }
@@ -383,7 +391,8 @@ object HomeContent {
     fun PasswordOptionDrawer(
         password: Password,
         sheetState: SheetState,
-        dismissSheet: () -> Unit
+        dismissSheet: () -> Unit,
+        toPasswordEditScreen: () -> Unit,
     ) {
         ModalBottomSheet(
             onDismissRequest = dismissSheet,
@@ -515,7 +524,7 @@ object HomeContent {
                         SheetButton(
                             startIcon = Icons.Default.Edit,
                             title = "Edit Password",
-                            onClick = { TODO() },
+                            onClick = toPasswordEditScreen,
                             endIcon = Icons.AutoMirrored.Filled.ArrowRight,
                             useDivider = false
                         )
@@ -619,6 +628,7 @@ private fun PasswordOptionDrawerPreview() {
             usedCount = 0
         ),
         sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
-        dismissSheet = {}
+        dismissSheet = {},
+        toPasswordEditScreen = {}
     )
 }
