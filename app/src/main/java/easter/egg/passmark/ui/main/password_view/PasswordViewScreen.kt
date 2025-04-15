@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.main.password_view
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,6 +35,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Web
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -53,6 +55,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.Visibility
+import androidx.fragment.app.FragmentActivity
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -63,6 +67,7 @@ import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -183,6 +188,21 @@ object PasswordViewScreen {
                 alignment = Alignment.Top
             ),
             content = {
+                val biometricAuthenticated = remember { mutableStateOf(false) }
+                val context = LocalContext.current
+                fun showBiometricPrompt() {
+                    (context as? FragmentActivity)?.let {
+                        BiometricsHandler.performBiometricAuthentication(
+                            activity = it,
+                            onComplete = {},
+                            onSuccess = { biometricAuthenticated.value = true },
+                            showToast = { s ->
+                                Toast.makeText(context, s, Toast.LENGTH_SHORT).show()
+                            }
+                        )
+
+                    }
+                }
                 Heading(
                     modifier = Modifier.fillMaxWidth(),
                     password = password,
@@ -217,10 +237,14 @@ object PasswordViewScreen {
                             PasswordProperty(
                                 imageVector = Icons.Default.Password,
                                 title = "Password",
-                                field = password.data.password
+                                field =
+                                    if (biometricAuthenticated.value) password.data.password
+                                    else "************",
+                                isPassword = true
                             )
                         )
                     },
+                    showBiometricPrompt = ::showBiometricPrompt
                 )
 
                 password.data.website?.let { website ->
@@ -233,7 +257,7 @@ object PasswordViewScreen {
                                     imageVector = Icons.Default.Web,
                                     title = "Website",
                                     field = website
-                                )
+                                ),
                             )
                         }
                     )
@@ -266,7 +290,8 @@ object PasswordViewScreen {
                             title = "Fingerprint Authentication",
                             field = if (password.data.useFingerPrint) "Enabled" else "Disabled"
                         )
-                    )
+                    ),
+                    showBiometricPrompt = ::showBiometricPrompt
                 )
                 val deleteShape = RoundedCornerShape(size = 16.dp)
                 fun Long.formatToTime(): String {
@@ -300,7 +325,8 @@ object PasswordViewScreen {
                             title = "Last Used",
                             field = password.lastUsed.formatToTime()
                         )
-                    )
+                    ),
+                    showBiometricPrompt = ::showBiometricPrompt
                 )
                 Box(
                     modifier = Modifier
@@ -452,7 +478,8 @@ object PasswordViewScreen {
     @Composable
     private fun PropertyListCard(
         passwordPropertyList: List<PasswordProperty>,
-        modifier: Modifier
+        modifier: Modifier,
+        showBiometricPrompt: () -> Unit
     ) {
         DefaultCard(
             modifier = modifier,
@@ -466,7 +493,8 @@ object PasswordViewScreen {
                         passwordPropertyList.forEachIndexed { index, passwordProperty ->
                             DisplayFieldContent(
                                 modifier = contentModifier,
-                                passwordProperty = passwordProperty
+                                passwordProperty = passwordProperty,
+                                fingerPrintOnClick = if (passwordProperty.isPassword) showBiometricPrompt else null
                             )
                             if (index != passwordPropertyList.lastIndex) {
                                 HorizontalDivider(
@@ -504,14 +532,15 @@ object PasswordViewScreen {
     @Composable
     private fun DisplayFieldContent(
         modifier: Modifier,
-        passwordProperty: PasswordProperty
+        passwordProperty: PasswordProperty,
+        fingerPrintOnClick: (() -> Unit)? = null
     ) {
         ConstraintLayout(
             modifier = modifier
                 .setSizeLimitation()
                 .padding(horizontal = 24.dp, vertical = 12.dp),
             content = {
-                val (iconRef, titleRef, contentRef) = createRefs()
+                val (iconRef, titleRef, contentRef, endIcon) = createRefs()
                 Icon(
                     modifier = Modifier.constrainAs(
                         ref = iconRef,
@@ -532,7 +561,7 @@ object PasswordViewScreen {
                             this.top.linkTo(parent.top)
                             this.bottom.linkTo(contentRef.top)
                             this.start.linkTo(anchor = iconRef.end, margin = 24.dp)
-                            this.end.linkTo(parent.end)
+                            this.end.linkTo(endIcon.start)
                             width = Dimension.fillToConstraints
                         }
                     ),
@@ -551,7 +580,7 @@ object PasswordViewScreen {
                             this.top.linkTo(titleRef.bottom)
                             this.bottom.linkTo(parent.bottom)
                             this.start.linkTo(anchor = iconRef.end, margin = 24.dp)
-                            this.end.linkTo(parent.end)
+                            this.end.linkTo(endIcon.start)
                             width = Dimension.fillToConstraints
                         }
                     ),
@@ -562,6 +591,27 @@ object PasswordViewScreen {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     text = passwordProperty.field,
+                )
+                IconButton(
+                    modifier = Modifier
+                        .constrainAs(
+                            ref = endIcon,
+                            constrainBlock = {
+                                this.top.linkTo(parent.top)
+                                this.end.linkTo(parent.end)
+                                this.bottom.linkTo(parent.bottom)
+                                visibility =
+                                    if (fingerPrintOnClick == null) Visibility.Gone
+                                    else Visibility.Visible
+                            }
+                        ),
+                    onClick = { fingerPrintOnClick?.invoke() },
+                    content = {
+                        Icon(
+                            imageVector = Icons.Default.Fingerprint,
+                            contentDescription = null
+                        )
+                    }
                 )
                 createVerticalChain(titleRef, contentRef)
             }
@@ -600,5 +650,6 @@ private fun PasswordViewScreenPreview() {
 private class PasswordProperty(
     val imageVector: ImageVector,
     val title: String,
-    val field: String
+    val field: String,
+    val isPassword: Boolean = false
 )
