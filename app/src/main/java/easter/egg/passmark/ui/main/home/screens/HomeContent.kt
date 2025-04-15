@@ -532,25 +532,18 @@ object HomeContent {
 
                         val clipboardManager = LocalClipboardManager.current
                         val context = LocalContext.current
-                        fun copyToClipBoard(str: String) {
-                            clipboardManager.setText(AnnotatedString(text = str))
-                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Text copied to clipboard",
-                                        Toast.LENGTH_LONG
-                                    )
-                                    .show()
-                            } else {
-                                Log.d(TAG, "system has it's own toast")
-                            }
+                        fun copy(str: String) {
+                            copyToClipBoard(
+                                clipboardManager = clipboardManager,
+                                context = context,
+                                str = str
+                            )
                         }
                         password.data.website?.let { website ->
                             SheetButton(
                                 startIcon = Icons.Default.Web,
                                 title = "Website",
-                                onClick = { copyToClipBoard(str = website) },
+                                onClick = { copy(str = website) },
                                 endIcon = Icons.Default.ContentCopy,
                             )
                         }
@@ -558,7 +551,7 @@ object HomeContent {
                             SheetButton(
                                 startIcon = Icons.Outlined.Email,
                                 title = "Copy email",
-                                onClick = { copyToClipBoard(str = email) },
+                                onClick = { copy(str = email) },
                                 endIcon = Icons.Default.ContentCopy
                             )
                         }
@@ -566,7 +559,7 @@ object HomeContent {
                             SheetButton(
                                 startIcon = Icons.Outlined.Person,
                                 title = "Copy user name",
-                                onClick = { copyToClipBoard(str = userName) },
+                                onClick = { copy(str = userName) },
                                 endIcon = Icons.Default.ContentCopy,
                             )
                         }
@@ -605,7 +598,7 @@ object HomeContent {
                                         )
                                     }
                                 } else {
-                                    copyToClipBoard(str = password.data.password)
+                                    copy(str = password.data.password)
                                 }
                                 dismissSheet()
                             },
@@ -625,6 +618,25 @@ object HomeContent {
                 )
             }
         )
+    }
+
+    private fun copyToClipBoard(
+        clipboardManager: ClipboardManager,
+        context: Context,
+        str: String
+    ) {
+        clipboardManager.setText(AnnotatedString(text = str))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            Toast
+                .makeText(
+                    context,
+                    "Text copied to clipboard",
+                    Toast.LENGTH_LONG
+                )
+                .show()
+        } else {
+            Log.d(TAG, "system has it's own toast")
+        }
     }
 
     private fun getSecurityChoices(
