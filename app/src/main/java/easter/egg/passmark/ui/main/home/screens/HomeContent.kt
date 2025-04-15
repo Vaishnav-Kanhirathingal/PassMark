@@ -1,7 +1,6 @@
 package easter.egg.passmark.ui.main.home.screens
 
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -77,7 +76,6 @@ import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
@@ -164,26 +162,13 @@ object HomeContent {
             val clipboardManager = LocalClipboardManager.current
             val context = LocalContext.current
 
-            fun Context.findActivity(): FragmentActivity? {
-                var ctx = this
-                while (ctx is ContextWrapper) {
-                    if (ctx is FragmentActivity) return ctx
-                    ctx = ctx.baseContext
-                }
-                return null
-            }
-
             LaunchedEffect(
                 key1 = securityPromptState,
                 block = {
                     if (securityPromptState?.securityChoices == SecurityChoices.BIOMETRICS) {
-//                        (context as? FragmentActivity)!!.let {
-                        context.findActivity()!!.let {
+                        (context as? FragmentActivity)?.let {
                             BiometricPrompt(
-                                it,
-                                ContextCompat.getMainExecutor(context),
-                                object : BiometricPrompt.AuthenticationCallback() {
-
+                                it, object : BiometricPrompt.AuthenticationCallback() {
                                     fun resetState() {
                                         homeViewModel.securityPromptState.value = null
                                     }
@@ -195,6 +180,7 @@ object HomeContent {
                                             context = context,
                                             str = securityPromptState.password
                                         )
+                                        resetState()
                                     }
 
                                     override fun onAuthenticationFailed() {
@@ -204,6 +190,7 @@ object HomeContent {
                                             "Biometrics failed",
                                             Toast.LENGTH_SHORT
                                         ).show()
+                                        resetState()
                                     }
 
                                     override fun onAuthenticationError(
@@ -213,9 +200,10 @@ object HomeContent {
                                         super.onAuthenticationError(errorCode, errString)
                                         Toast.makeText(
                                             context,
-                                            "An authentication error has ocurred",
+                                            "An authentication error has occurred",
                                             Toast.LENGTH_SHORT
                                         ).show()
+                                        resetState()
                                     }
                                 }
                             ).authenticate(
