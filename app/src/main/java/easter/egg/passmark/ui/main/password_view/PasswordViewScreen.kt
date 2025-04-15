@@ -268,8 +268,13 @@ object PasswordViewScreen {
                                     fieldText =
                                         if (biometricAuthenticated.value) password.data.password
                                         else "************",
-                                    endIcon = Icons.Default.Fingerprint,
-                                    endIconOnClick = ::showBiometricPrompt
+                                    endIcon =
+                                        if (biometricAuthenticated.value) Icons.Default.ContentCopy
+                                        else Icons.Default.Fingerprint,
+                                    endIconOnClick = {
+                                        if (biometricAuthenticated.value) copy(str = password.data.password)
+                                        else showBiometricPrompt()
+                                    }
                                 )
                             }
                         )
