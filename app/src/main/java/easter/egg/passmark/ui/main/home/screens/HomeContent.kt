@@ -94,6 +94,7 @@ import easter.egg.passmark.ui.main.home.SecurityPromptState
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -167,52 +168,19 @@ object HomeContent {
                 block = {
                     if (securityPromptState?.securityChoices == SecurityChoices.BIOMETRICS) {
                         (context as? FragmentActivity)?.let {
-                            BiometricPrompt(
-                                it, object : BiometricPrompt.AuthenticationCallback() {
-                                    fun resetState() {
-                                        homeViewModel.securityPromptState.value = null
-                                    }
-
-                                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                                        super.onAuthenticationSucceeded(result)
-                                        copyToClipBoard(
-                                            clipboardManager = clipboardManager,
-                                            context = context,
-                                            str = securityPromptState.password
-                                        )
-                                        resetState()
-                                    }
-
-                                    override fun onAuthenticationFailed() {
-                                        super.onAuthenticationFailed()
-                                        Toast.makeText(
-                                            context,
-                                            "Biometrics failed",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                        resetState()
-                                    }
-
-                                    override fun onAuthenticationError(
-                                        errorCode: Int,
-                                        errString: CharSequence
-                                    ) {
-                                        super.onAuthenticationError(errorCode, errString)
-                                        Toast.makeText(
-                                            context,
-                                            "An authentication error has occurred",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                        resetState()
-                                    }
+                            BiometricsHandler.performBiometricAuthentication(
+                                activity = it,
+                                onComplete = { homeViewModel.securityPromptState.value = null },
+                                onSuccess = {
+                                    copyToClipBoard(
+                                        clipboardManager = clipboardManager,
+                                        context = context,
+                                        str = securityPromptState.password
+                                    )
+                                },
+                                showToast = { toastMessage ->
+                                    Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
                                 }
-                            ).authenticate(
-                                BiometricPrompt
-                                    .PromptInfo.Builder()
-                                    .setTitle("Authenticate")
-                                    .setSubtitle("Authenticate to copy password")
-                                    .setNegativeButtonText("Cancel")
-                                    .build()
                             )
                             Log.d(TAG, "showing prompt")
                         }
