@@ -1,5 +1,8 @@
 package easter.egg.passmark.ui.main.password_view
 
+import android.content.Context
+import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.EditNote
@@ -48,10 +52,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -66,7 +74,6 @@ import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
-import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
@@ -74,6 +81,8 @@ import easter.egg.passmark.utils.values.setSizeLimitation
 import java.time.ZoneId
 
 object PasswordViewScreen {
+    private val TAG = this::class.simpleName
+
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -200,7 +209,6 @@ object PasswordViewScreen {
                                 Toast.makeText(context, s, Toast.LENGTH_SHORT).show()
                             }
                         )
-
                     }
                 }
                 Heading(
@@ -211,40 +219,61 @@ object PasswordViewScreen {
                 val itemModifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
+                val displayFieldContentModifier = Modifier.fillMaxWidth()
+                val clipboardManager = LocalClipboardManager.current
+                fun copy(str: String) {
+                    copyToClipBoard(
+                        clipboardManager = clipboardManager,
+                        context = context,
+                        str = str
+                    )
+                }
                 PropertyListCard(
                     modifier = itemModifier,
-                    passwordPropertyList = mutableListOf<PasswordProperty>().apply {
-                        // TODO: email, username, password
+                    itemList = mutableListOf<@Composable () -> Unit>().apply {
                         password.data.email?.let { email ->
                             this.add(
-                                PasswordProperty(
-                                    imageVector = Icons.Default.Email,
-                                    title = "Email",
-                                    field = email
-                                )
+                                element = {
+                                    DisplayFieldContent(
+                                        modifier = displayFieldContentModifier,
+                                        startIcon = Icons.Default.Email,
+                                        titleText = "Email",
+                                        fieldText = email,
+                                        endIcon = Icons.Default.ContentCopy,
+                                        endIconOnClick = { copy(str = email) }
+                                    )
+                                }
                             )
                         }
                         password.data.userName?.let { username ->
                             this.add(
-                                PasswordProperty(
-                                    imageVector = Icons.Default.Person,
-                                    title = "Username",
-                                    field = username
-                                )
+                                element = {
+                                    DisplayFieldContent(
+                                        modifier = displayFieldContentModifier,
+                                        startIcon = Icons.Default.Person,
+                                        titleText = "Username",
+                                        fieldText = username,
+                                        endIcon = Icons.Default.ContentCopy,
+                                        endIconOnClick = { copy(str = username) }
+                                    )
+                                }
                             )
                         }
                         this.add(
-                            PasswordProperty(
-                                imageVector = Icons.Default.Password,
-                                title = "Password",
-                                field =
-                                    if (biometricAuthenticated.value) password.data.password
-                                    else "************",
-                                isPassword = true
-                            )
+                            element = {
+                                DisplayFieldContent(
+                                    modifier = displayFieldContentModifier,
+                                    startIcon = Icons.Default.Password,
+                                    titleText = "Password",
+                                    fieldText =
+                                        if (biometricAuthenticated.value) password.data.password
+                                        else "************",
+                                    endIcon = Icons.Default.Fingerprint,
+                                    endIconOnClick = ::showBiometricPrompt
+                                )
+                            }
                         )
                     },
-                    showBiometricPrompt = ::showBiometricPrompt
                 )
 
                 password.data.website?.let { website ->
@@ -253,11 +282,11 @@ object PasswordViewScreen {
                         content = {
                             DisplayFieldContent(
                                 modifier = Modifier.fillMaxWidth(),
-                                passwordProperty = PasswordProperty(
-                                    imageVector = Icons.Default.Web,
-                                    title = "Website",
-                                    field = website
-                                ),
+                                startIcon = Icons.Default.Web,
+                                titleText = "Website",
+                                fieldText = website,
+                                endIcon = Icons.Default.ContentCopy,
+                                endIconOnClick = { copy(str = website) }
                             )
                         }
                     )
@@ -268,30 +297,33 @@ object PasswordViewScreen {
                         content = {
                             DisplayFieldContent(
                                 modifier = Modifier.fillMaxWidth(),
-                                passwordProperty = PasswordProperty(
-                                    imageVector = Icons.Default.EditNote,
-                                    title = "Notes",
-                                    field = notes
-                                )
+                                startIcon = Icons.Default.EditNote,
+                                titleText = "Notes",
+                                fieldText = notes
                             )
                         }
                     )
                 }
                 PropertyListCard(
                     modifier = itemModifier,
-                    passwordPropertyList = listOf(
-                        PasswordProperty(
-                            imageVector = Icons.Default.Cloud,
-                            title = "Storage Type",
-                            field = if (password.data.saveToLocalOnly) "Saved to device only" else "Saved on the cloud"
-                        ),
-                        PasswordProperty(
-                            imageVector = Icons.Default.Fingerprint,
-                            title = "Fingerprint Authentication",
-                            field = if (password.data.useFingerPrint) "Enabled" else "Disabled"
-                        )
+                    itemList = listOf(
+                        {
+                            DisplayFieldContent(
+                                modifier = Modifier.fillMaxWidth(),
+                                startIcon = Icons.Default.Cloud,
+                                titleText = "Storage Type",
+                                fieldText = if (password.data.saveToLocalOnly) "Saved to device only" else "Saved on the cloud"
+                            )
+                        },
+                        {
+                            DisplayFieldContent(
+                                modifier = Modifier.fillMaxWidth(),
+                                startIcon = Icons.Default.Fingerprint,
+                                titleText = "Fingerprint Authentication",
+                                fieldText = if (password.data.useFingerPrint) "Enabled" else "Disabled"
+                            )
+                        }
                     ),
-                    showBiometricPrompt = ::showBiometricPrompt
                 )
                 val deleteShape = RoundedCornerShape(size = 16.dp)
                 fun Long.formatToTime(): String {
@@ -309,24 +341,38 @@ object PasswordViewScreen {
                 }
                 PropertyListCard(
                     modifier = itemModifier,
-                    passwordPropertyList = listOf(
-                        PasswordProperty(
-                            imageVector = Icons.Default.CalendarToday,
-                            title = "Created",
-                            field = password.created.formatToTime()
-                        ),
-                        PasswordProperty(
-                            imageVector = Icons.Default.EditCalendar,
-                            title = "Updated",
-                            field = password.lastModified.formatToTime()
-                        ),
-                        PasswordProperty(
-                            imageVector = Icons.Default.EventRepeat,
-                            title = "Last Used",
-                            field = password.lastUsed.formatToTime()
+                    itemList = mutableListOf<@Composable () -> Unit>().apply {
+                        this.add(
+                            element = {
+                                DisplayFieldContent(
+                                    modifier = displayFieldContentModifier,
+                                    startIcon = Icons.Default.CalendarToday,
+                                    titleText = "Created",
+                                    fieldText = password.created.formatToTime()
+                                )
+                            }
                         )
-                    ),
-                    showBiometricPrompt = ::showBiometricPrompt
+                        this.add(
+                            element = {
+                                DisplayFieldContent(
+                                    modifier = displayFieldContentModifier,
+                                    startIcon = Icons.Default.EditCalendar,
+                                    titleText = "Updated",
+                                    fieldText = password.lastModified.formatToTime()
+                                )
+                            }
+                        )
+                        this.add(
+                            element = {
+                                DisplayFieldContent(
+                                    modifier = displayFieldContentModifier,
+                                    startIcon = Icons.Default.EventRepeat,
+                                    titleText = "Last Used",
+                                    fieldText = password.lastUsed.formatToTime()
+                                )
+                            }
+                        )
+                    },
                 )
                 Box(
                     modifier = Modifier
@@ -477,9 +523,8 @@ object PasswordViewScreen {
 
     @Composable
     private fun PropertyListCard(
-        passwordPropertyList: List<PasswordProperty>,
+        itemList: List<@Composable () -> Unit>,
         modifier: Modifier,
-        showBiometricPrompt: () -> Unit
     ) {
         DefaultCard(
             modifier = modifier,
@@ -489,14 +534,9 @@ object PasswordViewScreen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top,
                     content = {
-                        val contentModifier = Modifier.fillMaxWidth()
-                        passwordPropertyList.forEachIndexed { index, passwordProperty ->
-                            DisplayFieldContent(
-                                modifier = contentModifier,
-                                passwordProperty = passwordProperty,
-                                fingerPrintOnClick = if (passwordProperty.isPassword) showBiometricPrompt else null
-                            )
-                            if (index != passwordPropertyList.lastIndex) {
+                        itemList.forEachIndexed { index, composable ->
+                            composable()
+                            if (index != itemList.lastIndex) {
                                 HorizontalDivider(
                                     modifier = Modifier.fillMaxWidth(),
                                     color = MaterialTheme.colorScheme.surfaceContainerHighest
@@ -529,28 +569,33 @@ object PasswordViewScreen {
         )
     }
 
+    /** make sure to have both [endIcon] and [endIconOnClick] as either null or non null
+     */
     @Composable
     private fun DisplayFieldContent(
         modifier: Modifier,
-        passwordProperty: PasswordProperty,
-        fingerPrintOnClick: (() -> Unit)? = null
+        startIcon: ImageVector,
+        titleText: String,
+        fieldText: String,
+        endIcon: ImageVector? = null,
+        endIconOnClick: (() -> Unit)? = null
     ) {
         ConstraintLayout(
             modifier = modifier
                 .setSizeLimitation()
                 .padding(horizontal = 24.dp, vertical = 12.dp),
             content = {
-                val (iconRef, titleRef, contentRef, endIcon) = createRefs()
+                val (startIconRef, titleRef, contentRef, endIconRef) = createRefs()
                 Icon(
                     modifier = Modifier.constrainAs(
-                        ref = iconRef,
+                        ref = startIconRef,
                         constrainBlock = {
                             this.top.linkTo(parent.top)
                             this.bottom.linkTo(parent.bottom)
                             this.start.linkTo(parent.start)
                         }
                     ),
-                    imageVector = passwordProperty.imageVector,
+                    imageVector = startIcon,
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null
                 )
@@ -560,8 +605,8 @@ object PasswordViewScreen {
                         constrainBlock = {
                             this.top.linkTo(parent.top)
                             this.bottom.linkTo(contentRef.top)
-                            this.start.linkTo(anchor = iconRef.end, margin = 24.dp)
-                            this.end.linkTo(endIcon.start)
+                            this.start.linkTo(anchor = startIconRef.end, margin = 24.dp)
+                            this.end.linkTo(endIconRef.start)
                             width = Dimension.fillToConstraints
                         }
                     ),
@@ -571,7 +616,7 @@ object PasswordViewScreen {
                     fontWeight = FontWeight.Normal,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    text = passwordProperty.title,
+                    text = titleText,
                 )
                 Text(
                     modifier = Modifier.constrainAs(
@@ -579,8 +624,8 @@ object PasswordViewScreen {
                         constrainBlock = {
                             this.top.linkTo(titleRef.bottom)
                             this.bottom.linkTo(parent.bottom)
-                            this.start.linkTo(anchor = iconRef.end, margin = 24.dp)
-                            this.end.linkTo(endIcon.start)
+                            this.start.linkTo(anchor = startIconRef.end, margin = 24.dp)
+                            this.end.linkTo(endIconRef.start)
                             width = Dimension.fillToConstraints
                         }
                     ),
@@ -590,37 +635,62 @@ object PasswordViewScreen {
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    text = passwordProperty.field,
+                    text = fieldText,
                 )
                 IconButton(
                     modifier = Modifier
                         .constrainAs(
-                            ref = endIcon,
+                            ref = endIconRef,
                             constrainBlock = {
                                 this.top.linkTo(parent.top)
                                 this.end.linkTo(parent.end)
                                 this.bottom.linkTo(parent.bottom)
                                 visibility =
-                                    if (fingerPrintOnClick == null) Visibility.Gone
+                                    if (endIcon == null) Visibility.Gone
                                     else Visibility.Visible
                             }
                         ),
-                    onClick = { fingerPrintOnClick?.invoke() },
+                    onClick = { endIconOnClick?.invoke() },
                     content = {
-                        Icon(
-                            imageVector = Icons.Default.Fingerprint,
-                            contentDescription = null
-                        )
+                        endIcon?.let {
+                            Icon(
+                                imageVector = it,
+                                contentDescription = null
+                            )
+                        }
                     }
                 )
                 createVerticalChain(titleRef, contentRef)
             }
         )
     }
+
+    private fun copyToClipBoard(
+        clipboardManager: ClipboardManager,
+        context: Context,
+        str: String
+    ) {
+        clipboardManager.setText(AnnotatedString(text = str))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            Toast
+                .makeText(
+                    context,
+                    "Text copied to clipboard",
+                    Toast.LENGTH_LONG
+                )
+                .show()
+        } else {
+            Log.d(TAG, "system has it's own toast")
+        }
+    }
 }
 
 @Composable
-@MobilePreview
+@Preview(
+    widthDp = 360,
+    heightDp = 900,
+    showBackground = true
+)
 @MobileHorizontalPreview
 private fun PasswordViewScreenPreview() {
     PasswordViewScreen.Screen(
@@ -631,8 +701,8 @@ private fun PasswordViewScreenPreview() {
                 email = "someEmail@gmail.com",
                 userName = "SomeUserName",
                 password = "SomePassword",
-                website = null, // "www.google.com",
-                notes = null, // "Some note",
+                website = "www.google.com",
+                notes = "Some note",
                 useFingerPrint = false,
                 saveToLocalOnly = false,
             ),
@@ -646,10 +716,3 @@ private fun PasswordViewScreenPreview() {
         associatedVault = null
     )
 }
-
-private class PasswordProperty(
-    val imageVector: ImageVector,
-    val title: String,
-    val field: String,
-    val isPassword: Boolean = false
-)
