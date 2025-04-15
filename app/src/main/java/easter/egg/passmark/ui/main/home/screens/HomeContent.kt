@@ -1,12 +1,12 @@
 package easter.egg.passmark.ui.main.home.screens
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.LocalActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
@@ -62,6 +62,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -76,6 +77,7 @@ import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
@@ -131,7 +133,7 @@ object HomeContent {
             EmptyListUI(
                 modifier = modifier,
                 vaultSelectedName = homeResult?.vaultListState?.collectAsState()?.value
-                    ?.find { v->v.id==homeViewModel.vaultIdSelected.collectAsState().value }
+                    ?.find { v -> v.id == homeViewModel.vaultIdSelected.collectAsState().value }
                     ?.name
             )
         } else {
@@ -159,22 +161,72 @@ object HomeContent {
                 )
             }
             val securityPromptState = homeViewModel.securityPromptState.collectAsState().value
-            val activity = LocalActivity.current as? FragmentActivity
+            val clipboardManager = LocalClipboardManager.current
+            val context = LocalContext.current
+
+            fun Context.findActivity(): FragmentActivity? {
+                var ctx = this
+                while (ctx is ContextWrapper) {
+                    if (ctx is FragmentActivity) return ctx
+                    ctx = ctx.baseContext
+                }
+                return null
+            }
+
             LaunchedEffect(
                 key1 = securityPromptState,
                 block = {
                     if (securityPromptState?.securityChoices == SecurityChoices.BIOMETRICS) {
-                        activity?.let {
+//                        (context as? FragmentActivity)!!.let {
+                        context.findActivity()!!.let {
                             BiometricPrompt(
-                                it, object : BiometricPrompt.AuthenticationCallback() {
+                                it,
+                                ContextCompat.getMainExecutor(context),
+                                object : BiometricPrompt.AuthenticationCallback() {
+
+                                    fun resetState() {
+                                        homeViewModel.securityPromptState.value = null
+                                    }
 
                                     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                                         super.onAuthenticationSucceeded(result)
-                                        TODO("copy password")
+                                        copyToClipBoard(
+                                            clipboardManager = clipboardManager,
+                                            context = context,
+                                            str = securityPromptState.password
+                                        )
+                                    }
+
+                                    override fun onAuthenticationFailed() {
+                                        super.onAuthenticationFailed()
+                                        Toast.makeText(
+                                            context,
+                                            "Biometrics failed",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+                                    override fun onAuthenticationError(
+                                        errorCode: Int,
+                                        errString: CharSequence
+                                    ) {
+                                        super.onAuthenticationError(errorCode, errString)
+                                        Toast.makeText(
+                                            context,
+                                            "An authentication error has ocurred",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
+                            ).authenticate(
+                                BiometricPrompt
+                                    .PromptInfo.Builder()
+                                    .setTitle("Authenticate")
+                                    .setSubtitle("Authenticate to copy password")
+                                    .setNegativeButtonText("Cancel")
+                                    .build()
                             )
-                            TODO("show biometrics")
+                            Log.d(TAG, "showing prompt")
                         }
                     }
                 }
