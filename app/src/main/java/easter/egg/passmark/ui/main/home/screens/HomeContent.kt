@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
-import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -127,12 +126,11 @@ object HomeContent {
             )
             ?.collectAsState(initial = listOf())
             ?.value
-            ?: listOf()
-        if (passwordList.isEmpty()) {
+        if (passwordList?.isEmpty() == true) {
             EmptyListUI(
                 modifier = modifier,
-                vaultSelectedName = homeResult?.vaultListState?.collectAsState()?.value
-                    ?.find { v -> v.id == homeViewModel.vaultIdSelected.collectAsState().value }
+                vaultSelectedName = homeResult.vaultListState.collectAsState().value
+                    .find { v -> v.id == homeViewModel.vaultIdSelected.collectAsState().value }
                     ?.name
             )
         } else {
@@ -204,7 +202,7 @@ object HomeContent {
                         .height(height = 8.dp)
                     item { Spacer(modifier = spacerModifier) }
                     items(
-                        items = passwordList,
+                        items = passwordList ?: listOf(),
                         key = { it.id!! },
                         itemContent = {
                             PasswordListItem(
