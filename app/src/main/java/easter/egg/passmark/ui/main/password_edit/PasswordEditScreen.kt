@@ -628,7 +628,8 @@ object PasswordEditScreen {
                             text = viewModel.notes.collectAsState().value,
                             onTextChange = { viewModel.notes.value = it },
                             isEnabled = !isLoading,
-                            inputOption = InputOption.NOTES
+                            inputOption = InputOption.NOTES,
+                            singleLine = false
                         )
                     }
                 )
@@ -662,16 +663,28 @@ object PasswordEditScreen {
     @Composable
     fun DefaultCard(
         modifier: Modifier,
-        content: @Composable ColumnScope.() -> Unit
+        content: @Composable ColumnScope.() -> Unit,
+        onClick: (() -> Unit)? = null,
+        isSelected: Boolean = false
     ) {
         val shape = RoundedCornerShape(size = 12.dp)
         Column(
             modifier = modifier
                 .clip(shape)
-                .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                .clickable(
+                    enabled = onClick != null,
+                    onClick = onClick ?: {}
+                )
+                .background(
+                    color =
+                        if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                        else MaterialTheme.colorScheme.surfaceContainer
+                )
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    color =
+                        if (isSelected) MaterialTheme.colorScheme.inversePrimary
+                        else MaterialTheme.colorScheme.surfaceContainerHighest,
                     shape = shape
                 ),
             content = content
@@ -691,6 +704,7 @@ object PasswordEditScreen {
         textStyle: TextStyle = LocalTextStyle.current,
         isEnabled: Boolean,
         inputOption: InputOption,
+        singleLine: Boolean = true
     ) {
         Box(
             modifier = modifier,
@@ -699,7 +713,10 @@ object PasswordEditScreen {
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
-                        autoCorrectEnabled = (inputOption !in listOf(InputOption.USERNAME, InputOption.PASSWORD)),
+                        autoCorrectEnabled = (inputOption !in listOf(
+                            InputOption.USERNAME,
+                            InputOption.PASSWORD
+                        )),
                         keyboardType = when (inputOption) {
                             InputOption.EMAIL -> KeyboardType.Email
                             InputOption.PASSWORD -> KeyboardType.Password
@@ -728,6 +745,7 @@ object PasswordEditScreen {
                         disabledContainerColor = Color.Transparent,
                         errorContainerColor = Color.Transparent
                     ),
+                    singleLine = singleLine,
                     value = text,
                     onValueChange = onTextChange,
                     textStyle = textStyle,
@@ -758,10 +776,11 @@ object PasswordEditScreen {
         isEnabled: Boolean
     ) {
         DefaultCard(
-            modifier = modifier.clickable(
-                enabled = isEnabled,
-                onClick = { onCheckedChange(!isChecked) }
-            ),
+            modifier = modifier,
+            onClick = {
+                onCheckedChange(!isChecked)
+            },
+            isSelected = isChecked,
             content = {
                 Row(
                     modifier = Modifier
@@ -777,7 +796,9 @@ object PasswordEditScreen {
                             fontSize = PassMarkFonts.Body.medium,
                             fontFamily = PassMarkFonts.font,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            color =
+                                if (isChecked) MaterialTheme.colorScheme.onPrimaryContainer
+                                else MaterialTheme.colorScheme.onSurface,
                             text = text
                         )
                         Switch(
