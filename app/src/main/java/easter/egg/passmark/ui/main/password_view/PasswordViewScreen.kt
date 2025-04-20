@@ -37,6 +37,9 @@ import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Web
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,6 +53,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ClipboardManager
@@ -670,6 +674,124 @@ object PasswordViewScreen {
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun DeleteDialog(
+        modifier: Modifier
+    ) {
+        BasicAlertDialog(
+            modifier = modifier,
+            onDismissRequest = { TODO() },
+            content = {
+                ConstraintLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(size = 16.dp)
+                        ),
+                    content = {
+                        val (title, subtitle, cancelButton, deleteButton) = createRefs()
+                        Text(
+                            modifier = Modifier.constrainAs(
+                                ref = title,
+                                constrainBlock = {
+                                    this.top.linkTo(anchor = parent.top, margin = 16.dp)
+                                    this.start.linkTo(anchor = parent.start, margin = 16.dp)
+                                    this.end.linkTo(anchor = parent.end, margin = 16.dp)
+                                    width = Dimension.fillToConstraints
+                                }
+                            ),
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Headline.medium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            text = "Delete?"
+                        )
+                        Text(
+                            modifier = Modifier.constrainAs(
+                                ref = subtitle,
+                                constrainBlock = {
+                                    this.top.linkTo(anchor = title.bottom, margin = 8.dp)
+                                    this.start.linkTo(title.start)
+                                    this.end.linkTo(title.end)
+                                    width = Dimension.fillToConstraints
+                                }
+                            ),
+                            text = "Note : Deleting this password is unrecoverable/irreversible. " +
+                                    "You can instead transfer this password to another vault if " +
+                                    "you wish so.",
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Body.medium,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        @Composable
+                        fun CustomButton(
+                            modifier: Modifier,
+                            text: String,
+                            isLoading: Boolean,
+                            color: Color
+                        ) {
+                            Box(
+                                modifier = modifier.setSizeLimitation(),
+                                contentAlignment = Alignment.Center,
+                                content = {
+                                    if (isLoading) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(size = 24.dp),
+                                            color = color,
+                                            strokeWidth = 2.dp
+                                        )
+                                    } else {
+                                        Text(
+                                            text = text,
+                                            fontFamily = PassMarkFonts.font,
+                                            fontSize = PassMarkFonts.Title.medium,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = color
+                                        )
+                                    }
+                                }
+                            )
+                        }
+//                        createHorizontalChain(cancelButton,deleteButton)
+                        CustomButton(
+                            modifier = Modifier.constrainAs(
+                                ref = cancelButton,
+                                constrainBlock = {
+                                    this.start.linkTo(parent.start)
+                                    this.end.linkTo(deleteButton.start)
+                                    this.top.linkTo(subtitle.bottom)
+                                    this.bottom.linkTo(parent.bottom)
+                                    width = Dimension.fillToConstraints
+                                }
+                            ),
+                            text = "Cancel",
+                            isLoading = false,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        CustomButton(
+                            modifier = Modifier.constrainAs(
+                                ref = deleteButton,
+                                constrainBlock = {
+                                    this.start.linkTo(cancelButton.end)
+                                    this.end.linkTo(parent.end)
+                                    this.top.linkTo(subtitle.bottom)
+                                    this.bottom.linkTo(parent.bottom)
+                                    width = Dimension.fillToConstraints
+                                }
+                            ),
+                            text = "Delete",
+                            isLoading = false,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                )
+            },
+        )
+    }
+
     private fun copyToClipBoard(
         clipboardManager: ClipboardManager,
         context: Context,
@@ -720,5 +842,15 @@ private fun PasswordViewScreenPreview() {
         navigateUp = {},
         toEditScreen = {},
         associatedVault = null
+    )
+}
+
+@Composable
+@MobilePreview
+private fun DeleteDialogPreview() {
+    PasswordViewScreen.DeleteDialog(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 28.dp)
     )
 }

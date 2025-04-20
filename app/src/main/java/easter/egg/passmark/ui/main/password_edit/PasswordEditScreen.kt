@@ -434,7 +434,7 @@ object PasswordEditScreen {
                                 this.width = Dimension.fillToConstraints
                             }
                         ),
-                        text = "$passwordCount passwords", // TODO:
+                        text = "$passwordCount passwords",
                         maxLines = 1,
                         fontFamily = PassMarkFonts.font,
                         lineHeight = PassMarkFonts.Label.medium,
