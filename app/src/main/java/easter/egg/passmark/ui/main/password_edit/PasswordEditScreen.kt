@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -65,6 +66,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -544,7 +546,8 @@ object PasswordEditScreen {
                             text = viewModel.title.collectAsState().value,
                             onTextChange = { viewModel.title.value = it },
                             textStyle = LocalTextStyle.current.copy(fontSize = PassMarkFonts.Title.large),
-                            isEnabled = !isLoading
+                            isEnabled = !isLoading,
+                            inputOption = InputOption.TITLE
                         )
                     }
                 )
@@ -560,7 +563,8 @@ object PasswordEditScreen {
                             placeHolder = "abc@def.xyz",
                             text = viewModel.email.collectAsState().value,
                             onTextChange = { viewModel.email.value = it },
-                            isEnabled = !isLoading
+                            isEnabled = !isLoading,
+                            inputOption = InputOption.EMAIL
                         )
                         HorizontalDivider(
                             thickness = 1.dp,
@@ -574,7 +578,8 @@ object PasswordEditScreen {
                             placeHolder = "John Doe",
                             text = viewModel.userName.collectAsState().value,
                             onTextChange = { viewModel.userName.value = it },
-                            isEnabled = !isLoading
+                            isEnabled = !isLoading,
+                            inputOption = InputOption.USERNAME
                         )
                         HorizontalDivider(
                             thickness = 1.dp,
@@ -588,7 +593,8 @@ object PasswordEditScreen {
                             placeHolder = "",
                             text = viewModel.password.collectAsState().value,
                             onTextChange = { viewModel.password.value = it },
-                            isEnabled = !isLoading
+                            isEnabled = !isLoading,
+                            inputOption = InputOption.PASSWORD
                         )
                     }
                 )
@@ -604,7 +610,8 @@ object PasswordEditScreen {
                             placeHolder = "www.abc.com",
                             text = viewModel.website.collectAsState().value,
                             onTextChange = { viewModel.website.value = it },
-                            isEnabled = !isLoading
+                            isEnabled = !isLoading,
+                            inputOption = InputOption.WEBSITE
                         )
                     }
                 )
@@ -621,6 +628,7 @@ object PasswordEditScreen {
                             text = viewModel.notes.collectAsState().value,
                             onTextChange = { viewModel.notes.value = it },
                             isEnabled = !isLoading,
+                            inputOption = InputOption.NOTES
                         )
                     }
                 )
@@ -670,8 +678,10 @@ object PasswordEditScreen {
         )
     }
 
+    private enum class InputOption { TITLE, EMAIL, USERNAME, PASSWORD, WEBSITE, NOTES }
+
     @Composable
-    fun CustomTextField(
+    private fun CustomTextField(
         modifier: Modifier,
         leadingIcon: ImageVector?,
         label: String,
@@ -679,7 +689,8 @@ object PasswordEditScreen {
         text: String,
         onTextChange: (String) -> Unit,
         textStyle: TextStyle = LocalTextStyle.current,
-        isEnabled: Boolean
+        isEnabled: Boolean,
+        inputOption: InputOption,
     ) {
         Box(
             modifier = modifier,
@@ -687,6 +698,15 @@ object PasswordEditScreen {
             content = {
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrectEnabled = (inputOption !in listOf(InputOption.USERNAME, InputOption.PASSWORD)),
+                        keyboardType = when (inputOption) {
+                            InputOption.EMAIL -> KeyboardType.Email
+                            InputOption.PASSWORD -> KeyboardType.Password
+                            InputOption.WEBSITE -> KeyboardType.Uri
+                            InputOption.USERNAME, InputOption.TITLE, InputOption.NOTES -> KeyboardType.Text
+                        },
+                    ),
                     enabled = isEnabled,
                     label = { Text(text = label) },
                     placeholder = { Text(text = placeHolder) },
@@ -774,7 +794,6 @@ object PasswordEditScreen {
 
 @Composable
 @MobilePreview
-//@MobileHorizontalPreview
 private fun PasswordEditScreenPreview() {
     PasswordEditScreen.Screen(
         modifier = Modifier.fillMaxSize(),
