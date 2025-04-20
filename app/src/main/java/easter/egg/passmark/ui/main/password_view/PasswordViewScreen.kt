@@ -74,6 +74,7 @@ import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
+import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
@@ -148,19 +149,18 @@ object PasswordViewScreen {
                 Spacer(modifier = Modifier.weight(weight = 1f))
                 Row(
                     modifier = Modifier
+                        .setSizeLimitation()
                         .height(height = barSize)
                         .widthIn(min = barSize)
                         .clip(shape = CircleShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
+                        .clickable(onClick = toEditScreen)
                         .padding(
-                            start = 24.dp,
-                            end = 24.dp,
-                            top = 8.dp,
-                            bottom = 8.dp
-                        )
-                        .clickable(onClick = toEditScreen),
+                            start = 20.dp,
+                            end = 24.dp
+                        ),
                     horizontalArrangement = Arrangement.spacedBy(
-                        space = 4.dp,
+                        space = 8.dp,
                         alignment = Alignment.CenterHorizontally
                     ),
                     verticalAlignment = Alignment.CenterVertically,
@@ -173,8 +173,8 @@ object PasswordViewScreen {
                         Text(
                             text = "Edit",
                             fontFamily = PassMarkFonts.font,
-                            fontSize = PassMarkFonts.Body.medium,
-                            fontWeight = FontWeight.Medium,
+                            fontSize = PassMarkFonts.Title.medium,
+                            fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
@@ -693,9 +693,10 @@ object PasswordViewScreen {
 @Composable
 @Preview(
     widthDp = 360,
-    heightDp = 900,
+    heightDp = 1000,
     showBackground = true
 )
+@MobilePreview
 @MobileHorizontalPreview
 private fun PasswordViewScreenPreview() {
     PasswordViewScreen.Screen(

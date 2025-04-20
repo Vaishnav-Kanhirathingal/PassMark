@@ -192,11 +192,11 @@ object PasswordEditScreen {
                 Box(
                     modifier = Modifier
                         .size(size = PassMarkDimensions.minTouchSize)
+                        .clip(shape = CircleShape)
                         .clickable(
                             enabled = !passwordEditViewModel.screenState.collectAsState().value.isLoading,
                             onClick = navigateBack
                         )
-                        .clip(shape = CircleShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center,
                     content = {
