@@ -97,15 +97,26 @@ object PasswordEditScreen {
         viewModel: PasswordEditViewModel,
         mainViewModel: MainViewModel,
         navigateBack: () -> Unit,
-        passwordToEdit: Password?
+        passwordToEdit: Password?,
+        defaultVaultId: Int?
     ) {
-        passwordToEdit?.let {
-            viewModel.loadForUpdating(
-                password = it,
-                vault = (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
-                    ?.result?.vaultListState?.collectAsState()?.value?.find { v -> v.id == it.vaultId }
-            )
-        }
+        LaunchedEffect(
+            key1 = Unit,
+            block = {
+                val vaultList = (mainViewModel.screenState.value as? ScreenState.Loaded)
+                    ?.result?.vaultListState?.value
+                if (passwordToEdit == null) {
+                    viewModel.loadInitialData(
+                        vault = vaultList?.find { v -> v.id == defaultVaultId }
+                    )
+                } else {
+                    viewModel.loadInitialData(
+                        password = passwordToEdit,
+                        vault = vaultList?.find { v -> v.id == passwordToEdit.vaultId }
+                    )
+                }
+            }
+        )
 
         val barModifier = Modifier
             .fillMaxWidth()
@@ -825,7 +836,8 @@ private fun PasswordEditScreenPreview() {
         ),
         navigateBack = {},
         mainViewModel = MainViewModel.getTestViewModel(),
-        passwordToEdit = null
+        passwordToEdit = null,
+        defaultVaultId = null
     )
 }
 

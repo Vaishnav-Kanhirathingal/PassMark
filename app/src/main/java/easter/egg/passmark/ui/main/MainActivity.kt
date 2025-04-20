@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.main.home.screens.HomeScreen
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.main.password_view.PasswordViewScreen
@@ -67,16 +68,22 @@ class MainActivity : FragmentActivity() {
                 val composableModifier = Modifier.fillMaxSize()
                 composable<MainScreens.Home>(
                     content = {
+                        val homeViewModel: HomeViewModel = hiltViewModel(viewModelStoreOwner = it)
                         HomeScreen.Screen(
                             modifier = composableModifier,
                             toPasswordEditScreen = { passwordId ->
-                                navController.navigate(route = MainScreens.PasswordEdit(passwordId = passwordId))
+                                navController.navigate(
+                                    route = MainScreens.PasswordEdit(
+                                        passwordId = passwordId,
+                                        defaultVaultId = homeViewModel.vaultIdSelected.value
+                                    )
+                                )
                             },
                             mainViewModel = mainViewModel,
                             toViewPasswordScreen = { passwordId ->
                                 navController.navigate(route = MainScreens.PasswordView(passwordId = passwordId))
                             },
-                            homeViewModel = hiltViewModel(viewModelStoreOwner = it)
+                            homeViewModel = homeViewModel
                         )
                     }
                 )
@@ -87,10 +94,13 @@ class MainActivity : FragmentActivity() {
                             viewModel = hiltViewModel(viewModelStoreOwner = it),
                             mainViewModel = mainViewModel,
                             navigateBack = { navController.navigateUp() },
-                            passwordToEdit = it.arguments!!
-                                .getInt(MainScreens.PasswordEdit::passwordId.name, -1)
-                                .takeUnless { id -> id == -1 }
-                                .let { id -> passwordList?.find { p -> p.id == id } }
+                            passwordToEdit = it.arguments
+                                ?.getInt(MainScreens.PasswordEdit::passwordId.name, -1)
+                                ?.takeUnless { id -> id == -1 }
+                                ?.let { id -> passwordList?.find { p -> p.id == id } },
+                            defaultVaultId = it.arguments
+                                ?.getInt(MainScreens.PasswordEdit::defaultVaultId.name, -1)
+                                ?.takeUnless { id -> id == -1 }
                         )
                     }
                 )
@@ -107,7 +117,10 @@ class MainActivity : FragmentActivity() {
                             navigateUp = { navController.navigateUp() },
                             toEditScreen = {
                                 navController.navigate(
-                                    route = MainScreens.PasswordEdit(passwordId = receivedId)
+                                    route = MainScreens.PasswordEdit(
+                                        passwordId = receivedId,
+                                        defaultVaultId = password.vaultId
+                                    )
                                 )
                             },
                             associatedVault = password.vaultId?.let { vid -> vaultList?.find { v -> v.id == vid } }
@@ -125,7 +138,8 @@ private sealed class MainScreens {
 
     @Serializable
     data class PasswordEdit(
-        val passwordId: Int?
+        val passwordId: Int?,
+        val defaultVaultId: Int?
     ) : MainScreens()
 
     @Serializable

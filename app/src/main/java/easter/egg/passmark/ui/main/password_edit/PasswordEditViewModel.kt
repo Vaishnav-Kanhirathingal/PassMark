@@ -50,7 +50,18 @@ class PasswordEditViewModel @Inject constructor(
     private var _oldPassword: Password? = null
     private var _loaded = false
 
-    fun loadForUpdating(
+    fun loadInitialData(
+        vault: Vault?
+    ) {
+        if (_loaded) {
+            Log.d(TAG, "vault already loaded")
+        } else {
+            this._selectedVault.value = vault
+            _loaded = true
+        }
+    }
+
+    fun loadInitialData(
         password: Password,
         vault: Vault?
     ) {
