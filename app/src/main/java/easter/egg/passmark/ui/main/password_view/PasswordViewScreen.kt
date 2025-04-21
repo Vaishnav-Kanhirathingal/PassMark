@@ -50,6 +50,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -301,18 +302,20 @@ object PasswordViewScreen {
                         }
                         this.add(
                             element = {
+                                val accessGranted =
+                                    derivedStateOf { biometricAuthenticated.value || !password.data.useFingerPrint }
                                 DisplayFieldContent(
                                     modifier = displayFieldContentModifier,
                                     startIcon = Icons.Default.Password,
                                     titleText = "Password",
                                     fieldText =
-                                        if (biometricAuthenticated.value) password.data.password
+                                        if (accessGranted.value) password.data.password
                                         else "************",
                                     endIcon =
-                                        if (biometricAuthenticated.value) Icons.Default.ContentCopy
+                                        if (accessGranted.value) Icons.Default.ContentCopy
                                         else Icons.Default.Fingerprint,
                                     endIconOnClick = {
-                                        if (biometricAuthenticated.value) copy(str = password.data.password)
+                                        if (accessGranted.value) copy(str = password.data.password)
                                         else showBiometricPrompt()
                                     }
                                 )
