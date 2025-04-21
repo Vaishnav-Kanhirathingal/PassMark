@@ -90,7 +90,6 @@ import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
-import kotlinx.coroutines.delay
 import java.time.ZoneId
 
 object PasswordViewScreen {

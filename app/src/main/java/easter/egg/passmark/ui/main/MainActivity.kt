@@ -116,7 +116,8 @@ class MainActivity : FragmentActivity() {
                             navBackStackEntry.arguments!!.getString(MainScreens.PasswordView::passwordJson.name)!!,
                             Password::class.java
                         )
-                        val password = passwordList?.find { p -> p.id == defaultPassword.id } ?: defaultPassword
+                        val password = passwordList?.find { p -> p.id == defaultPassword.id }
+                            ?: defaultPassword
                         PasswordViewScreen.Screen(
                             modifier = composableModifier,
                             password = password,
