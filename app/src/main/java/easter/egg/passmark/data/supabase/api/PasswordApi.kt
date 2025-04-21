@@ -25,4 +25,10 @@ class PasswordApi @Inject constructor(
             it.toPassword(passwordCryptographyHandler = passwordCryptographyHandler)
         }
     }
+
+    suspend fun deletePassword(
+        passwordId: Int
+    ) {
+        table.delete { filter { Password::id eq passwordId } }
+    }
 }
