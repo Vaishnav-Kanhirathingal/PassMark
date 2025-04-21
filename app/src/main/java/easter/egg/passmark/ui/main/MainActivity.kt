@@ -20,6 +20,7 @@ import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.main.home.screens.HomeScreen
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.main.password_view.PasswordViewScreen
+import easter.egg.passmark.ui.main.password_view.PasswordViewViewModel
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import easter.egg.passmark.utils.ScreenState
 import kotlinx.serialization.Serializable
@@ -110,7 +111,6 @@ class MainActivity : FragmentActivity() {
                             .getInt(MainScreens.PasswordView::passwordId.name, -1)
                             .takeUnless { it == -1 }
                         val password = passwordList!!.find { p -> p.id == receivedId }!!
-
                         PasswordViewScreen.Screen(
                             modifier = composableModifier,
                             password = password,
@@ -123,7 +123,9 @@ class MainActivity : FragmentActivity() {
                                     )
                                 )
                             },
-                            associatedVault = password.vaultId?.let { vid -> vaultList?.find { v -> v.id == vid } }
+                            associatedVault = password.vaultId?.let { vid -> vaultList?.find { v -> v.id == vid } },
+                            passwordViewViewModel = hiltViewModel(viewModelStoreOwner = navBackStackEntry),
+                            mainViewModel = mainViewModel
                         )
                     }
                 )

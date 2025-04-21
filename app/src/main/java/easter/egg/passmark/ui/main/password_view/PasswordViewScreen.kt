@@ -47,7 +47,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -77,6 +79,10 @@ import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
+import easter.egg.passmark.data.supabase.api.PasswordApi
+import easter.egg.passmark.di.supabase.SupabaseModule
+import easter.egg.passmark.ui.main.MainViewModel
+import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
@@ -94,7 +100,9 @@ object PasswordViewScreen {
         password: Password,
         navigateUp: () -> Unit,
         toEditScreen: () -> Unit,
-        associatedVault: Vault?
+        associatedVault: Vault?,
+        passwordViewViewModel: PasswordViewViewModel,
+        mainViewModel: MainViewModel
     ) {
         Scaffold(
             modifier = modifier,
@@ -106,12 +114,39 @@ object PasswordViewScreen {
                 )
             },
             content = {
+                val dialogState = passwordViewViewModel.deleteDialogState.collectAsState().value
+                if (passwordViewViewModel.deleteDialogVisibility.collectAsState().value) {
+                    DeleteDialog(
+                        modifier = Modifier.fillMaxWidth(),
+                        onCancelClicked = {
+                            passwordViewViewModel.setDeleteDialogVisibility(visibility = false)
+                        },
+                        onDeleteClicked = { passwordViewViewModel.delete(passwordId = password.id!!) },
+                        screenState = dialogState
+                    )
+                }
+
+                val context = LocalContext.current
+                LaunchedEffect(
+                    key1 = dialogState,
+                    block = {
+                        when (dialogState) {
+                            is ScreenState.PreCall, is ScreenState.Loading -> {}
+                            is ScreenState.ApiError -> dialogState.manageToastActions(context = context)
+                            is ScreenState.Loaded -> {
+                                TODO()
+                            }
+                        }
+                    }
+                )
+
                 PasswordViewContent(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues = it),
                     password = password,
-                    associatedVault = associatedVault
+                    associatedVault = associatedVault,
+                    showDialog = { passwordViewViewModel.setDeleteDialogVisibility(visibility = true) }
                 )
             }
         )
@@ -191,7 +226,8 @@ object PasswordViewScreen {
     private fun PasswordViewContent(
         modifier: Modifier,
         password: Password,
-        associatedVault: Vault?
+        associatedVault: Vault?,
+        showDialog: () -> Unit
     ) {
         Column(
             modifier = modifier.verticalScroll(state = rememberScrollState()),
@@ -390,7 +426,7 @@ object PasswordViewScreen {
                         .padding(horizontal = 16.dp)
                         .clip(shape = deleteShape)
                         .background(color = MaterialTheme.colorScheme.error)
-                        .clickable(onClick = { TODO() }),
+                        .clickable(onClick = showDialog),
                     contentAlignment = Alignment.Center,
                     content = {
                         Text(
@@ -677,18 +713,22 @@ object PasswordViewScreen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun DeleteDialog(
-        modifier: Modifier
+        modifier: Modifier,
+        onCancelClicked: () -> Unit,
+        onDeleteClicked: () -> Unit,
+        screenState: ScreenState<Unit>
     ) {
+        val context = LocalContext.current
         BasicAlertDialog(
             modifier = modifier,
-            onDismissRequest = { TODO() },
+            onDismissRequest = onCancelClicked,
             content = {
                 ConstraintLayout(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
-                            color = MaterialTheme.colorScheme.surface,
-                            shape = RoundedCornerShape(size = 16.dp)
+                            color = MaterialTheme.colorScheme.surfaceContainer,
+                            shape = RoundedCornerShape(size = PassMarkDimensions.dialogRadius)
                         ),
                     content = {
                         val (title, subtitle, cancelButton, deleteButton) = createRefs()
@@ -723,24 +763,36 @@ object PasswordViewScreen {
                                     "you wish so.",
                             fontFamily = PassMarkFonts.font,
                             fontSize = PassMarkFonts.Body.medium,
+                            lineHeight = PassMarkFonts.Body.medium,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
+                        val buttonSpacing = 8.dp
+
                         @Composable
                         fun CustomButton(
                             modifier: Modifier,
                             text: String,
                             isLoading: Boolean,
-                            color: Color
+                            containerColor: Color,
+                            onContainerColor: Color,
+                            onClick: () -> Unit
                         ) {
                             Box(
-                                modifier = modifier.setSizeLimitation(),
+                                modifier = modifier
+                                    .setSizeLimitation()
+                                    .clip(shape = RoundedCornerShape(size = PassMarkDimensions.dialogRadius - buttonSpacing))
+                                    .background(color = containerColor)
+                                    .clickable(
+                                        enabled = !screenState.isLoading,
+                                        onClick = onClick
+                                    ),
                                 contentAlignment = Alignment.Center,
                                 content = {
                                     if (isLoading) {
                                         CircularProgressIndicator(
                                             modifier = Modifier.size(size = 24.dp),
-                                            color = color,
+                                            color = onContainerColor,
                                             strokeWidth = 2.dp
                                         )
                                     } else {
@@ -749,42 +801,66 @@ object PasswordViewScreen {
                                             fontFamily = PassMarkFonts.font,
                                             fontSize = PassMarkFonts.Title.medium,
                                             fontWeight = FontWeight.SemiBold,
-                                            color = color
+                                            color = onContainerColor
                                         )
                                     }
                                 }
                             )
                         }
-//                        createHorizontalChain(cancelButton,deleteButton)
+
+
                         CustomButton(
-                            modifier = Modifier.constrainAs(
-                                ref = cancelButton,
-                                constrainBlock = {
-                                    this.start.linkTo(parent.start)
-                                    this.end.linkTo(deleteButton.start)
-                                    this.top.linkTo(subtitle.bottom)
-                                    this.bottom.linkTo(parent.bottom)
-                                    width = Dimension.fillToConstraints
-                                }
-                            ),
+                            modifier = Modifier
+                                .constrainAs(
+                                    ref = cancelButton,
+                                    constrainBlock = {
+                                        this.start.linkTo(
+                                            anchor = parent.start,
+                                            margin = buttonSpacing
+                                        )
+                                        this.end.linkTo(
+                                            anchor = deleteButton.start,
+                                            margin = (buttonSpacing / 2)
+                                        )
+                                        this.top.linkTo(
+                                            anchor = subtitle.bottom,
+                                            margin = buttonSpacing
+                                        )
+                                        this.bottom.linkTo(
+                                            anchor = parent.bottom,
+                                            margin = buttonSpacing
+                                        )
+                                        width = Dimension.fillToConstraints
+                                    }
+                                ),
                             text = "Cancel",
                             isLoading = false,
-                            color = MaterialTheme.colorScheme.onSurface
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            onContainerColor = MaterialTheme.colorScheme.onSurface,
+                            onClick = onCancelClicked
                         )
+
+
                         CustomButton(
-                            modifier = Modifier.constrainAs(
-                                ref = deleteButton,
-                                constrainBlock = {
-                                    this.start.linkTo(cancelButton.end)
-                                    this.end.linkTo(parent.end)
-                                    this.top.linkTo(subtitle.bottom)
-                                    this.bottom.linkTo(parent.bottom)
-                                    width = Dimension.fillToConstraints
-                                }
-                            ),
+                            modifier = Modifier
+                                .constrainAs(
+                                    ref = deleteButton,
+                                    constrainBlock = {
+                                        this.start.linkTo(
+                                            anchor = cancelButton.end,
+                                            margin = (buttonSpacing / 2)
+                                        )
+                                        this.end.linkTo(anchor = parent.end, margin = buttonSpacing)
+                                        this.top.linkTo(cancelButton.top)
+                                        this.bottom.linkTo(cancelButton.bottom)
+                                        width = Dimension.fillToConstraints
+                                    }
+                                ),
                             text = "Delete",
-                            isLoading = false,
-                            color = MaterialTheme.colorScheme.error
+                            isLoading = screenState.isLoading,
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            onContainerColor = MaterialTheme.colorScheme.onErrorContainer,
+                            onClick = onDeleteClicked
                         )
                     }
                 )
@@ -841,7 +917,9 @@ private fun PasswordViewScreenPreview() {
         ),
         navigateUp = {},
         toEditScreen = {},
-        associatedVault = null
+        associatedVault = null,
+        passwordViewViewModel = PasswordViewViewModel(passwordApi = PasswordApi(supabaseClient = SupabaseModule.mockClient)),
+        mainViewModel = MainViewModel.getTestViewModel()
     )
 }
 
@@ -851,6 +929,9 @@ private fun DeleteDialogPreview() {
     PasswordViewScreen.DeleteDialog(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 28.dp)
+            .padding(horizontal = 28.dp),
+        onCancelClicked = {},
+        onDeleteClicked = {},
+        screenState = ScreenState.PreCall()
     )
 }
