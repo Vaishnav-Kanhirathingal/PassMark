@@ -15,12 +15,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.main.home.screens.HomeScreen
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.main.password_view.PasswordViewScreen
-import easter.egg.passmark.ui.main.password_view.PasswordViewViewModel
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import easter.egg.passmark.utils.ScreenState
 import kotlinx.serialization.Serializable
@@ -81,8 +82,12 @@ class MainActivity : FragmentActivity() {
                                 )
                             },
                             mainViewModel = mainViewModel,
-                            toViewPasswordScreen = { passwordId ->
-                                navController.navigate(route = MainScreens.PasswordView(passwordId = passwordId))
+                            toViewPasswordScreen = { password: Password ->
+                                navController.navigate(
+                                    route = MainScreens.PasswordView(
+                                        passwordJson = Gson().toJson(password)
+                                    )
+                                )
                             },
                             homeViewModel = homeViewModel
                         )
@@ -107,10 +112,11 @@ class MainActivity : FragmentActivity() {
                 )
                 composable<MainScreens.PasswordView>(
                     content = { navBackStackEntry ->
-                        val receivedId = navBackStackEntry.arguments!!
-                            .getInt(MainScreens.PasswordView::passwordId.name, -1)
-                            .takeUnless { it == -1 }
-                        val password = passwordList!!.find { p -> p.id == receivedId }!!
+                        val defaultPassword = Gson().fromJson(
+                            navBackStackEntry.arguments!!.getString(MainScreens.PasswordView::passwordJson.name)!!,
+                            Password::class.java
+                        )
+                        val password = passwordList?.find { p -> p.id == defaultPassword.id } ?: defaultPassword
                         PasswordViewScreen.Screen(
                             modifier = composableModifier,
                             password = password,
@@ -118,7 +124,7 @@ class MainActivity : FragmentActivity() {
                             toEditScreen = {
                                 navController.navigate(
                                     route = MainScreens.PasswordEdit(
-                                        passwordId = receivedId,
+                                        passwordId = password.id,
                                         defaultVaultId = password.vaultId
                                     )
                                 )
@@ -146,6 +152,6 @@ private sealed class MainScreens {
 
     @Serializable
     data class PasswordView(
-        val passwordId: Int
+        val passwordJson: String
     ) : MainScreens()
 }

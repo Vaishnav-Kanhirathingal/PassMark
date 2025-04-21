@@ -174,4 +174,12 @@ class HomeListData(
         this._vaultListState.value =
             this._vaultListState.value.toMutableList().apply { add(vault) }
     }
+
+    fun deletePassword(
+        passwordId: Int
+    ) {
+        this._passwordListState.value =
+            this._passwordListState.value.toMutableList()
+                .apply { this.removeIf { it.id == passwordId } }
+    }
 }

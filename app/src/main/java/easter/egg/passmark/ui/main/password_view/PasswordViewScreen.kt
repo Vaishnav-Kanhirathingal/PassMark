@@ -90,6 +90,7 @@ import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
+import kotlinx.coroutines.delay
 import java.time.ZoneId
 
 object PasswordViewScreen {
@@ -135,7 +136,10 @@ object PasswordViewScreen {
                             is ScreenState.PreCall, is ScreenState.Loading -> {}
                             is ScreenState.ApiError -> dialogState.manageToastActions(context = context)
                             is ScreenState.Loaded -> {
-                                TODO()
+                                (mainViewModel.screenState.value as? ScreenState.Loaded)
+                                    ?.result?.deletePassword(passwordId = password.id!!)
+                                passwordViewViewModel.setDeleteDialogVisibility(visibility = false)
+                                navigateUp()
                             }
                         }
                     }

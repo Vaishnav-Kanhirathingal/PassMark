@@ -109,7 +109,7 @@ object HomeContent {
         modifier: Modifier,
         mainViewModel: MainViewModel,
         homeViewModel: HomeViewModel,
-        toViewPasswordScreen: (passwordId: Int) -> Unit,
+        toViewPasswordScreen: (password: Password) -> Unit,
         toPasswordEditScreen: (passwordId: Int) -> Unit,
     ) {
         val listItemModifier = Modifier
@@ -208,7 +208,7 @@ object HomeContent {
                             PasswordListItem(
                                 modifier = listItemModifier,
                                 password = it,
-                                viewPassword = { toViewPasswordScreen(it.id!!) },
+                                viewPassword = { toViewPasswordScreen(it) },
                                 openOptions = {
                                     optionSheetIsVisible.value = it
                                     coroutineScope.launch { sheetState.show() }

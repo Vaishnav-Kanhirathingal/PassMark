@@ -56,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.gson.GsonBuilder
 import easter.egg.passmark.R
+import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.HomeListData
@@ -78,7 +79,7 @@ object HomeScreen {
         modifier: Modifier,
         toPasswordEditScreen: (passwordId: Int?) -> Unit,
         mainViewModel: MainViewModel,
-        toViewPasswordScreen: (passwordId: Int) -> Unit,
+        toViewPasswordScreen: (password: Password) -> Unit,
         homeViewModel: HomeViewModel
     ) {
         val context = LocalContext.current
@@ -162,7 +163,7 @@ object HomeScreen {
         modifier: Modifier,
         toPasswordEditScreen: (passwordId: Int?) -> Unit,
         mainViewModel: MainViewModel,
-        toViewPasswordScreen: (passwordId: Int) -> Unit,
+        toViewPasswordScreen: (password: Password) -> Unit,
         homeViewModel: HomeViewModel
     ) {
         val coroutineScope = rememberCoroutineScope()
