@@ -38,7 +38,7 @@ sealed class ScreenState<T> {
         @Deprecated(
             message = "use ",
             replaceWith = ReplaceWith("this.manageToastActions()")
-        )
+        ) // TODO: remove this
         fun setErrorHasBeenDisplayed() {
             this.errorHasBeenDisplayed = true
         }

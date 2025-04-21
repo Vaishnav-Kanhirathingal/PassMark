@@ -6,6 +6,7 @@ import androidx.compose.ui.unit.dp
 
 object PassMarkDimensions {
     val minTouchSize = 48.dp
+    val dialogRadius = 16.dp
 }
 
 fun Modifier.setSizeLimitation(): Modifier {
