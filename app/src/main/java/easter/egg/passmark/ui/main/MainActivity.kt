@@ -22,6 +22,7 @@ import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.main.home.screens.HomeScreen
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.main.password_view.PasswordViewScreen
+import easter.egg.passmark.ui.main.settings.SettingsScreen
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import easter.egg.passmark.utils.ScreenState
 import kotlinx.serialization.Serializable
@@ -89,7 +90,8 @@ class MainActivity : FragmentActivity() {
                                     )
                                 )
                             },
-                            homeViewModel = homeViewModel
+                            homeViewModel = homeViewModel,
+                            toSettingsScreen = { navController.navigate(route = MainScreens.Settings) }
                         )
                     }
                 )
@@ -136,6 +138,14 @@ class MainActivity : FragmentActivity() {
                         )
                     }
                 )
+
+                composable<MainScreens.Settings>(
+                    content = {
+                        SettingsScreen.Screen(
+                            modifier = composableModifier
+                        )
+                    }
+                )
             }
         )
     }
@@ -155,4 +165,7 @@ private sealed class MainScreens {
     data class PasswordView(
         val passwordJson: String
     ) : MainScreens()
+
+    @Serializable
+    data object Settings : MainScreens()
 }

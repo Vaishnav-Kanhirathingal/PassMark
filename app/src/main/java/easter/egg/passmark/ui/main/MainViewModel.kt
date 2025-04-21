@@ -169,7 +169,6 @@ class HomeListData(
         this._passwordListState.value = newList
     }
 
-    // TODO: upsert
     fun addNewVault(vault: Vault) {
         this._vaultListState.value =
             this._vaultListState.value.toMutableList().apply { add(vault) }

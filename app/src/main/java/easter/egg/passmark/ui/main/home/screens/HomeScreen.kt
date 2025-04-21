@@ -80,7 +80,8 @@ object HomeScreen {
         toPasswordEditScreen: (passwordId: Int?) -> Unit,
         mainViewModel: MainViewModel,
         toViewPasswordScreen: (password: Password) -> Unit,
-        homeViewModel: HomeViewModel
+        homeViewModel: HomeViewModel,
+        toSettingsScreen: () -> Unit
     ) {
         val context = LocalContext.current
         when (val screenState = mainViewModel.screenState.collectAsState().value) {
@@ -99,7 +100,8 @@ object HomeScreen {
                     toPasswordEditScreen = toPasswordEditScreen,
                     mainViewModel = mainViewModel,
                     toViewPasswordScreen = toViewPasswordScreen,
-                    homeViewModel = homeViewModel
+                    homeViewModel = homeViewModel,
+                    toSettingsScreen = toSettingsScreen
                 )
             }
 
@@ -164,7 +166,8 @@ object HomeScreen {
         toPasswordEditScreen: (passwordId: Int?) -> Unit,
         mainViewModel: MainViewModel,
         toViewPasswordScreen: (password: Password) -> Unit,
-        homeViewModel: HomeViewModel
+        homeViewModel: HomeViewModel,
+        toSettingsScreen: () -> Unit
     ) {
         val coroutineScope = rememberCoroutineScope()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -182,7 +185,8 @@ object HomeScreen {
                     selectVault = {
                         homeViewModel.updateVaultIdSelected(id = it)
                         coroutineScope.launch { drawerState.close() }
-                    }
+                    },
+                    toSettingsScreen = toSettingsScreen
                 )
             },
             content = {
@@ -370,7 +374,8 @@ private fun HomeScreenPreview() {
         toViewPasswordScreen = {},
         homeViewModel = HomeViewModel(
             vaultApi = VaultApi(supabaseClient = SupabaseModule.mockClient)
-        )
+        ),
+        toSettingsScreen = {}
     )
 }
 

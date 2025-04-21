@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.main.home.screens
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +46,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -75,7 +77,8 @@ object HomeDrawer {
         modifier: Modifier,
         viewModel: HomeViewModel,
         mainViewModel: MainViewModel,
-        selectVault: (vaultId: Int?) -> Unit
+        selectVault: (vaultId: Int?) -> Unit,
+        toSettingsScreen: () -> Unit
     ) {
         val scrollState = rememberScrollState()
         Box(
@@ -181,17 +184,21 @@ object HomeDrawer {
                         DrawerButton(
                             text = "Settings",
                             icon = Icons.Default.Settings,
-                            onclick = { TODO() }
+                            onclick = toSettingsScreen
                         )
+                        val activity = LocalActivity.current
+                        val uriHandler = LocalUriHandler.current
                         DrawerButton(
                             text = "Documentation",
                             icon = Icons.Default.Info,
-                            onclick = { TODO() }
+                            onclick = {
+                                uriHandler.openUri(uri = "https://github.com/Vaishnav-Kanhirathingal/PassMark")
+                            }
                         )
                         DrawerButton(
                             text = "Exit",
                             icon = Icons.AutoMirrored.Filled.ExitToApp,
-                            onclick = { TODO() }
+                            onclick = { activity?.finishAffinity() }
                         )
                     }
                 )
@@ -396,7 +403,7 @@ object HomeDrawer {
         BasicAlertDialog(
             modifier = modifier
                 .clip(shape = RoundedCornerShape(size = 16.dp))
-                .background(color = MaterialTheme.colorScheme.surface),
+                .background(color = MaterialTheme.colorScheme.surfaceContainer),
             onDismissRequest = { homeViewModel.vaultDialogState.resetAndDismiss() },
             properties = (!screenState.isLoading).let { dismissAllowed ->
                 DialogProperties(
@@ -586,7 +593,8 @@ private fun HomeScreenDrawerPreview() {
             .fillMaxWidth(0.7f),
         viewModel = HomeViewModel(vaultApi = VaultApi(supabaseClient = SupabaseModule.mockClient)),
         mainViewModel = MainViewModel.getTestViewModel(),
-        selectVault = {}
+        selectVault = {},
+        toSettingsScreen = {}
     )
 }
 
