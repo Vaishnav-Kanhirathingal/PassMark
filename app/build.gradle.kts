@@ -114,4 +114,6 @@ dependencies {
     implementation(libs.coil.network.okhttp)
     //------------------------------------------------------------------------------------biometrics
     implementation(libs.androidx.biometric)
+    //------------------------------------------------------------------------------------------room
+    implementation("androidx.room:room-runtime:2.7.1")
 }
