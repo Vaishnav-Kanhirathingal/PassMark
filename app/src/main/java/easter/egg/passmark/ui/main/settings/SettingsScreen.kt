@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.storage.SettingsDataStore
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
@@ -295,9 +296,11 @@ object SettingsScreen {
     fun CustomStagedLoader(
         totalStages: Int,
         currentActiveStage: Int,
+        startSize: Dp = PassMarkDimensions.minTouchSize,
+        layerWidth: Dp = 4.dp,
+        layerGap: Dp = 2.dp
     ) {
         val loaderColor = MaterialTheme.colorScheme.primary
-        val loaderStrokeWidth = 4.dp
         val loaderTrackColor = MaterialTheme.colorScheme.surfaceContainerHighest
 
         Box(
@@ -307,19 +310,21 @@ object SettingsScreen {
                 repeat(
                     times = totalStages,
                     action = { stage ->
-                        val loaderModifier = Modifier.size(size = 48.dp + (12.dp * stage))
+                        val loaderModifier = Modifier.size(
+                            size = startSize + ((layerWidth + layerGap) * 2 * stage)
+                        )
                         if (stage == currentActiveStage) {
                             CircularProgressIndicator(
                                 modifier = loaderModifier,
                                 color = loaderColor,
-                                strokeWidth = loaderStrokeWidth,
+                                strokeWidth = layerWidth,
                                 trackColor = loaderTrackColor
                             )
                         } else {
                             CircularProgressIndicator(
                                 modifier = loaderModifier,
                                 color = loaderColor,
-                                strokeWidth = loaderStrokeWidth,
+                                strokeWidth = layerWidth,
                                 trackColor = loaderTrackColor,
                                 progress = { if (currentActiveStage > stage) 1f else 0f },
                             )
