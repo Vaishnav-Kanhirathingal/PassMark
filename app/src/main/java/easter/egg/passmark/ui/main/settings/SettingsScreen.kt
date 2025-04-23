@@ -34,7 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.storage.SettingsDataStore
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
@@ -246,7 +246,8 @@ object SettingsScreen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun DeleteProgressDialog(
-        modifier: Modifier
+        modifier: Modifier,
+        currentActiveStage: Int,
     ) {
         BasicAlertDialog(
             modifier = modifier
@@ -264,47 +265,64 @@ object SettingsScreen {
                         alignment = Alignment.CenterVertically
                     ),
                     content = {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Title.medium,
+                            fontWeight = FontWeight.SemiBold,
+                            textAlign = TextAlign.Center,
+                            text = "Deleting everything. Avoid closing the app to prevent data corruption."
+                        )
                         Box(
                             modifier = Modifier,
                             contentAlignment = Alignment.Center,
                             content = {
-                                @Composable
-                                fun CustomLoader(
-                                    stage: Int,
-                                    loaderStage: LoaderStage
-                                ) {
-                                    val loaderModifier =
-                                        Modifier.size(size = 24.dp + (6.dp * stage))
-
-                                    if (loaderStage == LoaderStage.ONGOING) {
-                                        CircularProgressIndicator(
-                                            modifier = loaderModifier,
-                                            color = MaterialTheme.colorScheme.primary,
-                                            strokeWidth = 2.dp,
-                                            trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                                        )
-                                    } else {
-                                        CircularProgressIndicator(
-                                            modifier = loaderModifier,
-                                            color = MaterialTheme.colorScheme.primary,
-                                            strokeWidth = 2.dp,
-                                            trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                            progress = { if (loaderStage == LoaderStage.DONE) 1f else 0f },
-                                        )
-                                    }
+                                DeletionStages.entries.indices.forEach { index ->
+                                    CustomLoader(
+                                        stage = index,
+                                        currentActiveStage = currentActiveStage
+                                    )
                                 }
-                                CustomLoader(stage = 5, loaderStage = LoaderStage.PENDING)
-                                CustomLoader(stage = 4, loaderStage = LoaderStage.PENDING)
-                                CustomLoader(stage = 3, loaderStage = LoaderStage.PENDING)
-                                CustomLoader(stage = 2, loaderStage = LoaderStage.ONGOING)
-                                CustomLoader(stage = 1, loaderStage = LoaderStage.DONE)
-                                CustomLoader(stage = 0, loaderStage = LoaderStage.DONE)
                             }
+                        )
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Body.medium,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center,
+                            text = "Currently at stage $currentActiveStage/${DeletionStages.entries.size}."
                         )
                     }
                 )
             }
         )
+    }
+
+    @Composable
+    fun CustomLoader(
+        stage: Int,
+        currentActiveStage: Int,
+    ) {
+        val loaderModifier =
+            Modifier.size(size = 48.dp + (12.dp * stage))
+
+        if (stage == currentActiveStage) {
+            CircularProgressIndicator(
+                modifier = loaderModifier,
+                color = MaterialTheme.colorScheme.primary,
+                strokeWidth = 4.dp,
+                trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
+            )
+        } else {
+            CircularProgressIndicator(
+                modifier = loaderModifier,
+                color = MaterialTheme.colorScheme.primary,
+                strokeWidth = 4.dp,
+                trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                progress = { if (currentActiveStage > stage) 1f else 0f },
+            )
+        }
     }
 }
 
@@ -322,12 +340,11 @@ private fun SettingsScreenPreview() {
 }
 
 @Composable
-@Preview(widthDp = 300, heightDp = 300, showBackground = true)
+@MobilePreview
 private fun DeleteProgressDialogPreview() {
     SettingsScreen.DeleteProgressDialog(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 40.dp)
+        modifier = Modifier.padding(horizontal = 40.dp),
+        currentActiveStage = 3
     )
 }
 
