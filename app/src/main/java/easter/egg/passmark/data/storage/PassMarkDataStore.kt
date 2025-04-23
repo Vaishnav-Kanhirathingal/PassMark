@@ -31,6 +31,10 @@ class PassMarkDataStore(
         }
     }
 
+    suspend fun resetPassword() {
+        context.datastore.edit { it.clear() }
+    }
+
     //-----------------------------------------------------------------------------------------fetch
     fun fetchPassword(): Flow<String?> {
         return context.datastore.data

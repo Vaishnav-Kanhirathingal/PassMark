@@ -12,4 +12,5 @@ class UserApi @Inject constructor(
 
     suspend fun getUser(): User? = table.select().decodeSingleOrNull<User>()
     suspend fun setUser(user: User) = table.upsert(value = user)
+    suspend fun deleteUser() = table.delete(request = {}) // TODO: test
 }
