@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.main.settings
 
+import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -54,6 +55,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 object SettingsScreen {
+    private val TAG = this::class.simpleName
+
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -76,15 +79,17 @@ object SettingsScreen {
                     settingsViewModel = settingsViewModel
                 )
                 val screenState = settingsViewModel.screenState.collectAsState().value
-                if (
-                    screenState is ScreenState.Loading || screenState is ScreenState.ApiError
-                ) {
+                val currentActiveStage = settingsViewModel.currentStage.collectAsState().value
+                if (screenState is ScreenState.Loading || screenState is ScreenState.ApiError) {
                     DeleteProgressDialog(
                         modifier = Modifier.fillMaxWidth(),
-                        currentActiveStage = settingsViewModel.currentStage.collectAsState().value.ordinal,
+                        currentActiveStage = currentActiveStage.ordinal,
                         totalStages = DeletionStages.entries.size,
-                        showCurrentStageError = (screenState is ScreenState.ApiError)
+                        showCurrentStageError = (screenState is ScreenState.ApiError),
+                        onGoingTaskMessage = currentActiveStage.onGoingTaskMessage
                     )
+                } else {
+                    Log.d(TAG, "not showing dialog")
                 }
                 val context = LocalContext.current
                 val activity = LocalActivity.current
@@ -284,7 +289,8 @@ object SettingsScreen {
         modifier: Modifier,
         currentActiveStage: Int,
         totalStages: Int,
-        showCurrentStageError: Boolean
+        showCurrentStageError: Boolean,
+        onGoingTaskMessage: String
     ) {
         BasicAlertDialog(
             modifier = modifier
@@ -308,6 +314,7 @@ object SettingsScreen {
                             fontSize = PassMarkFonts.Title.medium,
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurface,
                             text = "Deleting everything. Avoid closing the app to prevent data corruption."
                         )
                         CustomStagedLoader(
@@ -321,7 +328,8 @@ object SettingsScreen {
                             fontSize = PassMarkFonts.Body.medium,
                             fontWeight = FontWeight.Medium,
                             textAlign = TextAlign.Center,
-                            text = "Currently at stage $currentActiveStage/${DeletionStages.entries.size}."
+                            color = MaterialTheme.colorScheme.onSurface,
+                            text = "Currently at stage $currentActiveStage/${DeletionStages.entries.size},\n${onGoingTaskMessage}."
                         )
                     }
                 )
@@ -401,6 +409,7 @@ private fun DeleteProgressDialogPreview() {
         modifier = Modifier.padding(horizontal = 40.dp),
         currentActiveStage = 3,
         totalStages = 6,
-        showCurrentStageError = true
+        showCurrentStageError = true,
+        onGoingTaskMessage = DeletionStages.USER_TABLE_ITEM.onGoingTaskMessage
     )
 }
