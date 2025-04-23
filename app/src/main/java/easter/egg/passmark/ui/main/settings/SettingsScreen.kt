@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -39,11 +40,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.storage.SettingsDataStore
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
+import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 object SettingsScreen {
@@ -67,6 +70,32 @@ object SettingsScreen {
                         .padding(paddingValues = it)
                         .fillMaxSize(),
                     settingsViewModel = settingsViewModel
+                )
+                val screenState = settingsViewModel.screenState.collectAsState().value
+                if (
+                    screenState is ScreenState.Loading || screenState is ScreenState.ApiError
+                ) {
+                    DeleteProgressDialog(
+                        modifier = Modifier.fillMaxWidth(),
+                        currentActiveStage = settingsViewModel.currentStage.collectAsState().value.ordinal,
+                        totalStages = DeletionStages.entries.size,
+                        showCurrentStageError = (screenState is ScreenState.ApiError)
+                    )
+                }
+                val context = LocalContext.current
+                LaunchedEffect(
+                    key1 = screenState,
+                    block = {
+                        when (screenState) {
+                            is ScreenState.PreCall, is ScreenState.Loading -> {}
+                            is ScreenState.Loaded -> TODO("close app")
+                            is ScreenState.ApiError -> {
+                                delay(3_000L)
+                                screenState.manageToastActions(context = context)
+                                settingsViewModel.deleteEverything(silent = true)
+                            }
+                        }
+                    }
                 )
             }
         )
@@ -217,9 +246,7 @@ object SettingsScreen {
                                     color = MaterialTheme.colorScheme.outlineVariant,
                                     shape = RoundedCornerShape(size = 12.dp)
                                 )
-                                .clickable(
-                                    onClick = { TODO() }
-                                )
+                                .clickable(onClick = settingsViewModel::deleteEverything)
                                 .align(alignment = Alignment.End),
                             contentAlignment = Alignment.Center,
                             content = {
@@ -249,12 +276,14 @@ object SettingsScreen {
     fun DeleteProgressDialog(
         modifier: Modifier,
         currentActiveStage: Int,
+        totalStages: Int,
+        showCurrentStageError: Boolean
     ) {
         BasicAlertDialog(
             modifier = modifier
                 .clip(shape = RoundedCornerShape(size = PassMarkDimensions.dialogRadius))
                 .background(color = MaterialTheme.colorScheme.surfaceContainer),
-            onDismissRequest = { TODO() },
+            onDismissRequest = {},
             content = {
                 Column(
                     modifier = Modifier
@@ -275,8 +304,9 @@ object SettingsScreen {
                             text = "Deleting everything. Avoid closing the app to prevent data corruption."
                         )
                         CustomStagedLoader(
-                            totalStages = DeletionStages.entries.size,
-                            currentActiveStage = currentActiveStage
+                            currentActiveStage = currentActiveStage,
+                            totalStages = totalStages,
+                            showCurrentStageError = showCurrentStageError
                         )
                         Text(
                             modifier = Modifier.fillMaxWidth(),
@@ -294,11 +324,12 @@ object SettingsScreen {
 
     @Composable
     fun CustomStagedLoader(
-        totalStages: Int,
         currentActiveStage: Int,
+        totalStages: Int,
         startSize: Dp = PassMarkDimensions.minTouchSize,
         layerWidth: Dp = 4.dp,
-        layerGap: Dp = 2.dp
+        layerGap: Dp = 2.dp,
+        showCurrentStageError: Boolean
     ) {
         val loaderColor = MaterialTheme.colorScheme.primary
         val loaderTrackColor = MaterialTheme.colorScheme.surfaceContainerHighest
@@ -316,7 +347,9 @@ object SettingsScreen {
                         if (stage == currentActiveStage) {
                             CircularProgressIndicator(
                                 modifier = loaderModifier,
-                                color = loaderColor,
+                                color =
+                                    if (showCurrentStageError) MaterialTheme.colorScheme.error
+                                    else loaderColor,
                                 strokeWidth = layerWidth,
                                 trackColor = loaderTrackColor
                             )
@@ -355,6 +388,8 @@ private fun SettingsScreenPreview() {
 private fun DeleteProgressDialogPreview() {
     SettingsScreen.DeleteProgressDialog(
         modifier = Modifier.padding(horizontal = 40.dp),
-        currentActiveStage = 3
+        currentActiveStage = 3,
+        totalStages = 6,
+        showCurrentStageError = true
     )
 }
