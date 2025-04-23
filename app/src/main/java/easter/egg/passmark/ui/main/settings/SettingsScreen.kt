@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.main.settings
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,6 +40,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.storage.SettingsDataStore
+import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
+import easter.egg.passmark.data.supabase.api.UserApi
+import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -83,16 +87,19 @@ object SettingsScreen {
                     )
                 }
                 val context = LocalContext.current
+                val activity = LocalActivity.current
                 LaunchedEffect(
                     key1 = screenState,
                     block = {
                         when (screenState) {
                             is ScreenState.PreCall, is ScreenState.Loading -> {}
-                            is ScreenState.Loaded -> TODO("close app")
+                            is ScreenState.Loaded -> activity?.finishAffinity()
                             is ScreenState.ApiError -> {
                                 delay(3_000L)
                                 screenState.manageToastActions(context = context)
-                                settingsViewModel.deleteEverything(silent = true)
+                                settingsViewModel.deleteEverything(
+                                    silent = true
+                                )
                             }
                         }
                     }
@@ -246,7 +253,7 @@ object SettingsScreen {
                                     color = MaterialTheme.colorScheme.outlineVariant,
                                     shape = RoundedCornerShape(size = 12.dp)
                                 )
-                                .clickable(onClick = settingsViewModel::deleteEverything)
+                                .clickable(onClick = { settingsViewModel.deleteEverything(silent = false) })
                                 .align(alignment = Alignment.End),
                             contentAlignment = Alignment.Center,
                             content = {
@@ -374,10 +381,14 @@ object SettingsScreen {
 @MobilePreview
 @MobileHorizontalPreview
 private fun SettingsScreenPreview() {
+    val client = SupabaseModule.mockClient
     SettingsScreen.Screen(
         modifier = Modifier.fillMaxSize(),
         settingsViewModel = SettingsViewModel(
-            settingsDataStore = SettingsDataStore(context = LocalContext.current)
+            context = LocalContext.current,
+            settingsDataStore = SettingsDataStore(context = LocalActivity.current!!.applicationContext),
+            supabaseAccountHelper = SupabaseAccountHelper(supabaseClient = client),
+            userApi = UserApi(supabaseClient = client)
         ),
         navigateUp = {}
     )

@@ -1,11 +1,15 @@
 package easter.egg.passmark.ui.main.settings
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import easter.egg.passmark.data.storage.PassMarkDataStore
 import easter.egg.passmark.data.storage.SettingsDataStore
+import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
+import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.utils.ScreenState
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -13,7 +17,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    val settingsDataStore: SettingsDataStore
+    @ApplicationContext private val context: Context,
+    val settingsDataStore: SettingsDataStore,
+    private val supabaseAccountHelper: SupabaseAccountHelper,
+    private val userApi: UserApi
 ) : ViewModel() {
     private val _screenState: MutableStateFlow<ScreenState<Unit>> =
         MutableStateFlow(ScreenState.PreCall())
@@ -24,7 +31,7 @@ class SettingsViewModel @Inject constructor(
     val currentStage: StateFlow<DeletionStages> get() = _currentStage
 
     fun deleteEverything(
-        silent: Boolean = false
+        silent: Boolean
     ) {
         if (!silent) {
             _screenState.value = ScreenState.Loading()
@@ -38,12 +45,6 @@ class SettingsViewModel @Inject constructor(
                     )
                     .forEach {
                         this@SettingsViewModel._currentStage.value = it
-                        // TODO: -------------------------------------------------------------remove
-//                        delay(1_000L)
-//                        if (it.ordinal == 4) {
-//                            throw Exception("test")
-//                        }
-                        // TODO: -------------------------------------------------------------remove
                         performTask(deletionStages = it)
                     }
                 ScreenState.Loaded(Unit)
@@ -61,22 +62,43 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    private fun performTask(deletionStages: DeletionStages): Unit = when (deletionStages) {
-        DeletionStages.LOCAL_PASSWORDS -> TODO("delete local passwords")
-        DeletionStages.GLOBAL_PASSWORDS_WITH_VAULTS -> TODO("delete global passwords with vaults")
-        DeletionStages.USER_TABLE_ITEM -> TODO("delete user table entry")
-        DeletionStages.DELETE_PASSWORD -> TODO("delete password")
+    // TODO: test
+    private suspend fun performTask(
+        deletionStages: DeletionStages
+    ): Any = when (deletionStages) {
+        DeletionStages.LOCAL_PASSWORDS -> {
+            TODO("Clear room db")
+        }
+
+        DeletionStages.USER_TABLE_ITEM -> userApi.deleteUser()
+        DeletionStages.DELETE_MASTER_PASSWORD -> {
+            PassMarkDataStore(
+                context = context,
+                authId = supabaseAccountHelper.getId()
+            ).resetPassword()
+        }
+
         DeletionStages.SUPABASE_USER_DELETE -> TODO("supabase user account delete")
         DeletionStages.SUPABASE_LOGOUT -> TODO("supabase user logout")
     }
-
 }
 
 enum class DeletionStages {
-    LOCAL_PASSWORDS,
-    GLOBAL_PASSWORDS_WITH_VAULTS,
-    USER_TABLE_ITEM,
-    DELETE_PASSWORD,
-    SUPABASE_USER_DELETE,
-    SUPABASE_LOGOUT,
+    LOCAL_PASSWORDS {
+        override val onCompleteMessage: String get() = "Locally saved passwords deleted"
+    },
+    USER_TABLE_ITEM {
+        override val onCompleteMessage: String get() = "remote database deleted"
+    },
+    DELETE_MASTER_PASSWORD {
+        override val onCompleteMessage: String get() = "App Account data reset"
+    },
+    SUPABASE_USER_DELETE {
+        override val onCompleteMessage: String get() = "Remote account deleted"
+    },
+    SUPABASE_LOGOUT {
+        override val onCompleteMessage: String get() = "Logged out of app"
+    };
+
+    abstract val onCompleteMessage: String
 }
