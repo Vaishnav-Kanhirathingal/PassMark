@@ -18,46 +18,41 @@ class SettingsViewModel @Inject constructor(
         MutableStateFlow(ScreenState.PreCall())
     val screenState: StateFlow<ScreenState<Unit>> get() = _screenState
 
-    fun deleteEverything(
-        startPoint: DeletionStages
-    ) {
+    private var _currentStage: DeletionStages = DeletionStages.entries.first()
+    val currentStage: DeletionStages get() = _currentStage
+
+    fun deleteEverything() {
         _screenState.value = ScreenState.Loading()
         viewModelScope.launch {
             try {
-                fun check(deletionStages: DeletionStages): Boolean {
-                    return startPoint.ordinal <= deletionStages.ordinal
-                }
-                when {
-                    (startPoint.ordinal <= DeletionStages.LOCAL_PASSWORDS.ordinal) -> {
-                        TODO("delete local passwords")
+                DeletionStages.entries
+                    .subList(
+                        fromIndex = currentStage.ordinal,
+                        toIndex = DeletionStages.entries.lastIndex + 1
+                    )
+                    .forEach {
+                        this@SettingsViewModel._currentStage = it
+                        performTask(deletionStages = it)
                     }
-
-                    (startPoint.ordinal <= DeletionStages.GLOBAL_PASSWORDS_WITH_VAULTS.ordinal) -> {
-                        TODO("delete global passwords with vaults")
-                    }
-
-                    (startPoint.ordinal <= DeletionStages.USER_TABLE_ITEM.ordinal) -> {
-                        TODO("delete user table entry")
-                    }
-
-                    (startPoint.ordinal <= DeletionStages.SUPABASE_USER_DELETE.ordinal) -> {
-                        TODO("supabase user account delete")
-                    }
-
-                    (startPoint.ordinal <= DeletionStages.SUPABASE_LOGOUT.ordinal) -> {
-                        TODO("supabase user logout")
-                    }
-
-                    (startPoint.ordinal <= DeletionStages.FINISHED_PROCESS.ordinal) -> {
-                        TODO("success")
-                    }
-                }
-
+                ScreenState.Loaded(Unit)
             } catch (e: Exception) {
                 e.printStackTrace()
+                ScreenState.ApiError.fromException(e = e)
+            }.let { newState: ScreenState<Unit> ->
+                this@SettingsViewModel._screenState.value = newState
             }
         }
     }
+
+    private fun performTask(deletionStages: DeletionStages): Unit = when (deletionStages) {
+        DeletionStages.LOCAL_PASSWORDS -> TODO("delete local passwords")
+        DeletionStages.GLOBAL_PASSWORDS_WITH_VAULTS -> TODO("delete global passwords with vaults")
+        DeletionStages.USER_TABLE_ITEM -> TODO("delete user table entry")
+        DeletionStages.SUPABASE_USER_DELETE -> TODO("supabase user account delete")
+        DeletionStages.SUPABASE_LOGOUT -> TODO("supabase user logout")
+        DeletionStages.FINISHED_PROCESS -> TODO("success")
+    }
+
 }
 
 enum class DeletionStages {
@@ -66,5 +61,9 @@ enum class DeletionStages {
     USER_TABLE_ITEM,
     SUPABASE_USER_DELETE,
     SUPABASE_LOGOUT,
-    FINISHED_PROCESS
+    FINISHED_PROCESS,
+}
+
+fun main() {
+    println(listOf(1, 2, 3).subList(0, 3))
 }
