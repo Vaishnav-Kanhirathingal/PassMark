@@ -19,6 +19,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -31,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.storage.SettingsDataStore
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
@@ -238,6 +242,70 @@ object SettingsScreen {
             }
         )
     }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun DeleteProgressDialog(
+        modifier: Modifier
+    ) {
+        BasicAlertDialog(
+            modifier = modifier
+                .clip(shape = RoundedCornerShape(size = PassMarkDimensions.dialogRadius))
+                .background(color = MaterialTheme.colorScheme.surfaceContainer),
+            onDismissRequest = { TODO() },
+            content = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(all = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(
+                        space = 8.dp,
+                        alignment = Alignment.CenterVertically
+                    ),
+                    content = {
+                        Box(
+                            modifier = Modifier,
+                            contentAlignment = Alignment.Center,
+                            content = {
+                                @Composable
+                                fun CustomLoader(
+                                    stage: Int,
+                                    loaderStage: LoaderStage
+                                ) {
+                                    val loaderModifier =
+                                        Modifier.size(size = 24.dp + (6.dp * stage))
+
+                                    if (loaderStage == LoaderStage.ONGOING) {
+                                        CircularProgressIndicator(
+                                            modifier = loaderModifier,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            strokeWidth = 2.dp,
+                                            trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                                        )
+                                    } else {
+                                        CircularProgressIndicator(
+                                            modifier = loaderModifier,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            strokeWidth = 2.dp,
+                                            trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                            progress = { if (loaderStage == LoaderStage.DONE) 1f else 0f },
+                                        )
+                                    }
+                                }
+                                CustomLoader(stage = 5, loaderStage = LoaderStage.PENDING)
+                                CustomLoader(stage = 4, loaderStage = LoaderStage.PENDING)
+                                CustomLoader(stage = 3, loaderStage = LoaderStage.PENDING)
+                                CustomLoader(stage = 2, loaderStage = LoaderStage.ONGOING)
+                                CustomLoader(stage = 1, loaderStage = LoaderStage.DONE)
+                                CustomLoader(stage = 0, loaderStage = LoaderStage.DONE)
+                            }
+                        )
+                    }
+                )
+            }
+        )
+    }
 }
 
 @Composable
@@ -251,4 +319,18 @@ private fun SettingsScreenPreview() {
         ),
         navigateUp = {}
     )
+}
+
+@Composable
+@Preview(widthDp = 300, heightDp = 300, showBackground = true)
+private fun DeleteProgressDialogPreview() {
+    SettingsScreen.DeleteProgressDialog(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 40.dp)
+    )
+}
+
+enum class LoaderStage {
+    PENDING, ONGOING, DONE
 }
