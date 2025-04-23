@@ -48,9 +48,9 @@ class SettingsViewModel @Inject constructor(
         DeletionStages.LOCAL_PASSWORDS -> TODO("delete local passwords")
         DeletionStages.GLOBAL_PASSWORDS_WITH_VAULTS -> TODO("delete global passwords with vaults")
         DeletionStages.USER_TABLE_ITEM -> TODO("delete user table entry")
+        DeletionStages.DELETE_PASSWORD -> TODO("delete password")
         DeletionStages.SUPABASE_USER_DELETE -> TODO("supabase user account delete")
         DeletionStages.SUPABASE_LOGOUT -> TODO("supabase user logout")
-        DeletionStages.FINISHED_PROCESS -> TODO("success")
     }
 
 }
@@ -59,11 +59,7 @@ enum class DeletionStages {
     LOCAL_PASSWORDS,
     GLOBAL_PASSWORDS_WITH_VAULTS,
     USER_TABLE_ITEM,
+    DELETE_PASSWORD,
     SUPABASE_USER_DELETE,
     SUPABASE_LOGOUT,
-    FINISHED_PROCESS,
-}
-
-fun main() {
-    println(listOf(1, 2, 3).subList(0, 3))
 }
