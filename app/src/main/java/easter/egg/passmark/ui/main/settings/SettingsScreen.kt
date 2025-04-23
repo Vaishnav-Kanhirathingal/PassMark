@@ -273,17 +273,9 @@ object SettingsScreen {
                             textAlign = TextAlign.Center,
                             text = "Deleting everything. Avoid closing the app to prevent data corruption."
                         )
-                        Box(
-                            modifier = Modifier,
-                            contentAlignment = Alignment.Center,
-                            content = {
-                                DeletionStages.entries.indices.forEach { index ->
-                                    CustomLoader(
-                                        stage = index,
-                                        currentActiveStage = currentActiveStage
-                                    )
-                                }
-                            }
+                        CustomStagedLoader(
+                            totalStages = DeletionStages.entries.size,
+                            currentActiveStage = currentActiveStage
                         )
                         Text(
                             modifier = Modifier.fillMaxWidth(),
@@ -300,29 +292,43 @@ object SettingsScreen {
     }
 
     @Composable
-    fun CustomLoader(
-        stage: Int,
+    fun CustomStagedLoader(
+        totalStages: Int,
         currentActiveStage: Int,
     ) {
-        val loaderModifier =
-            Modifier.size(size = 48.dp + (12.dp * stage))
+        val loaderColor = MaterialTheme.colorScheme.primary
+        val loaderStrokeWidth = 4.dp
+        val loaderTrackColor = MaterialTheme.colorScheme.surfaceContainerHighest
 
-        if (stage == currentActiveStage) {
-            CircularProgressIndicator(
-                modifier = loaderModifier,
-                color = MaterialTheme.colorScheme.primary,
-                strokeWidth = 4.dp,
-                trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
-            )
-        } else {
-            CircularProgressIndicator(
-                modifier = loaderModifier,
-                color = MaterialTheme.colorScheme.primary,
-                strokeWidth = 4.dp,
-                trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                progress = { if (currentActiveStage > stage) 1f else 0f },
-            )
-        }
+        Box(
+            modifier = Modifier,
+            contentAlignment = Alignment.Center,
+            content = {
+                repeat(
+                    times = totalStages,
+                    action = { stage ->
+                        val loaderModifier = Modifier.size(size = 48.dp + (12.dp * stage))
+                        if (stage == currentActiveStage) {
+                            CircularProgressIndicator(
+                                modifier = loaderModifier,
+                                color = loaderColor,
+                                strokeWidth = loaderStrokeWidth,
+                                trackColor = loaderTrackColor
+                            )
+                        } else {
+                            CircularProgressIndicator(
+                                modifier = loaderModifier,
+                                color = loaderColor,
+                                strokeWidth = loaderStrokeWidth,
+                                trackColor = loaderTrackColor,
+                                progress = { if (currentActiveStage > stage) 1f else 0f },
+                            )
+                        }
+
+                    }
+                )
+            }
+        )
     }
 }
 
@@ -346,8 +352,4 @@ private fun DeleteProgressDialogPreview() {
         modifier = Modifier.padding(horizontal = 40.dp),
         currentActiveStage = 3
     )
-}
-
-enum class LoaderStage {
-    PENDING, ONGOING, DONE
 }
