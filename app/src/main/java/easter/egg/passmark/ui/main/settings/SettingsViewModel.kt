@@ -85,20 +85,20 @@ class SettingsViewModel @Inject constructor(
 
 enum class DeletionStages {
     LOCAL_PASSWORDS {
-        override val onCompleteMessage: String get() = "Locally saved passwords deleted"
+        override val onGoingTaskMessage: String get() = "Deleting Locally saved passwords"
     },
     USER_TABLE_ITEM {
-        override val onCompleteMessage: String get() = "remote database deleted"
+        override val onGoingTaskMessage: String get() = "Deleting remote database"
     },
     DELETE_MASTER_PASSWORD {
-        override val onCompleteMessage: String get() = "App Account data reset"
+        override val onGoingTaskMessage: String get() = "Deleting App Account data"
     },
     SUPABASE_USER_DELETE {
-        override val onCompleteMessage: String get() = "Remote account deleted"
+        override val onGoingTaskMessage: String get() = "Deleting Remote account"
     },
     SUPABASE_LOGOUT {
-        override val onCompleteMessage: String get() = "Logged out of app"
+        override val onGoingTaskMessage: String get() = "Logging out of app"
     };
 
-    abstract val onCompleteMessage: String
+    abstract val onGoingTaskMessage: String
 }
