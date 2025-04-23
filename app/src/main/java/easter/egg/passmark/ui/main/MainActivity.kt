@@ -142,7 +142,9 @@ class MainActivity : FragmentActivity() {
                 composable<MainScreens.Settings>(
                     content = {
                         SettingsScreen.Screen(
-                            modifier = composableModifier
+                            modifier = composableModifier,
+                            settingsViewModel = hiltViewModel(viewModelStoreOwner = it),
+                            navigateUp = { navController.navigateUp() }
                         )
                     }
                 )
