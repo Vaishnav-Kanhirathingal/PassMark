@@ -112,6 +112,6 @@ dependencies {
     //------------------------------------------------------------------------------------------coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
-    //------------------------------------------------------------------------------------------biometrics
-    implementation("androidx.biometric:biometric:1.4.0-alpha03")
+    //------------------------------------------------------------------------------------biometrics
+    implementation(libs.androidx.biometric)
 }
