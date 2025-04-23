@@ -1,5 +1,8 @@
 package easter.egg.passmark.data.models.content
 
+import androidx.room.ColumnInfo
+import androidx.room.PrimaryKey
+import easter.egg.passmark.data.models.content.password.PasswordData
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -27,28 +30,6 @@ data class Password(
         lastModified = lastModified,
         usedCount = usedCount
     )
-}
-
-/** sensitive content inside the password data */
-data class PasswordData(
-    val title: String,
-    val email: String?,
-    val userName: String?,
-    val password: String,
-    val website: String?,
-    val notes: String?,
-    val useFingerPrint: Boolean,
-    val saveToLocalOnly: Boolean
-) {
-    fun getSubTitle(): String? =
-        listOf(email, userName, website).firstOrNull { !it.isNullOrBlank() }
-
-    fun getShortName(): String = this.title
-        .split(" ")
-        .joinToString(separator = "", transform = { it.first().uppercase() })
-        .take(n = 2)
-
-    fun getFavicon(): String? = website?.let { "https://${it}/favicon.ico" }
 }
 
 //---------------------------------------------------------------------------------encrypted classes

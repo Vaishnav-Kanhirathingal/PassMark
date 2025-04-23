@@ -77,9 +77,9 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import easter.egg.passmark.data.models.content.Password
-import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
+import easter.egg.passmark.data.models.content.password.PasswordData
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel

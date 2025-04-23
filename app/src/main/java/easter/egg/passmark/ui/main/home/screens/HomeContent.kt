@@ -82,8 +82,8 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import easter.egg.passmark.R
 import easter.egg.passmark.data.models.content.Password
-import easter.egg.passmark.data.models.content.PasswordData
 import easter.egg.passmark.data.models.content.PasswordSortingOptions
+import easter.egg.passmark.data.models.content.password.PasswordData
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel
