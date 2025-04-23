@@ -197,7 +197,9 @@ object SettingsScreen {
                             fontWeight = FontWeight.Medium,
                             fontSize = PassMarkFonts.Body.medium,
                             color = MaterialTheme.colorScheme.onSurface,
-                            text = "Deleting your account is permanent and would delete all the Vaults and Passwords along with it. This process is unrecoverable."
+                            text = "Deleting your account is permanent and would delete all the " +
+                                    "Vaults and Passwords along with it (even offline ones). This " +
+                                    "process is unrecoverable."
                         )
                         Box(
                             modifier = Modifier
