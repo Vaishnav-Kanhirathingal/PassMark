@@ -698,6 +698,7 @@ object PasswordEditScreen {
                         else MaterialTheme.colorScheme.surfaceContainerHighest,
                     shape = shape
                 ),
+            horizontalAlignment = Alignment.Start,
             content = content
         )
     }
