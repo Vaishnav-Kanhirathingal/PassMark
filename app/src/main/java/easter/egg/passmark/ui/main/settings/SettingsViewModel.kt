@@ -84,21 +84,17 @@ class SettingsViewModel @Inject constructor(
 }
 
 enum class DeletionStages {
-    LOCAL_PASSWORDS {
-        override val onGoingTaskMessage: String get() = "Deleting Locally saved passwords"
-    },
-    USER_TABLE_ITEM {
-        override val onGoingTaskMessage: String get() = "Deleting remote database"
-    },
-    DELETE_MASTER_PASSWORD {
-        override val onGoingTaskMessage: String get() = "Deleting App Account data"
-    },
-    SUPABASE_USER_DELETE {
-        override val onGoingTaskMessage: String get() = "Deleting Remote account"
-    },
-    SUPABASE_LOGOUT {
-        override val onGoingTaskMessage: String get() = "Logging out of app"
-    };
+    LOCAL_PASSWORDS,
+    USER_TABLE_ITEM,
+    DELETE_MASTER_PASSWORD,
+    SUPABASE_USER_DELETE,
+    SUPABASE_LOGOUT;
 
-    abstract val onGoingTaskMessage: String
+    fun getTaskMessage(): String = when (this) {
+        LOCAL_PASSWORDS -> "Deleting Locally saved passwords"
+        USER_TABLE_ITEM -> "Deleting remote database"
+        DELETE_MASTER_PASSWORD -> "Deleting App Account data"
+        SUPABASE_USER_DELETE -> "Deleting Remote account"
+        SUPABASE_LOGOUT -> "Logging out of app"
+    }.let { "Currently at stage ${this.ordinal + 1}/${DeletionStages.entries.size},\n$it" }
 }
