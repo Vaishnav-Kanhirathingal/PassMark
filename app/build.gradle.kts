@@ -115,6 +115,6 @@ dependencies {
     //------------------------------------------------------------------------------------biometrics
     implementation(libs.androidx.biometric)
     //------------------------------------------------------------------------------------------room
-    implementation("androidx.room:room-runtime:2.7.1")
-    ksp("androidx.room:room-compiler:2.7.1")
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
 }

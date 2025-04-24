@@ -1,6 +1,5 @@
 package easter.egg.passmark.data.models.content.password
 
-
 /** sensitive content inside the password data */
 data class PasswordData(
     val title: String,
