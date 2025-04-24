@@ -2,6 +2,7 @@ package easter.egg.passmark.data.models.content
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import easter.egg.passmark.data.models.content.password.PasswordData
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
@@ -46,7 +47,7 @@ data class Password(
 data class PasswordCapsule(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(Keys.LOCAL_ID_KEY) @SerialName(value = Keys.LOCAL_ID_KEY) val localId: Int? = null,
 
-    @SerialName(value = Keys.SUPABASE_ID_KEY) val id: Int? = null,
+    @Ignore @SerialName(value = Keys.SUPABASE_ID_KEY) val id: Int? = null, // TODO: rename and change how it is used in code everywhere
 
     @ColumnInfo(Keys.VAULT_ID_KEY) @SerialName(value = Keys.VAULT_ID_KEY) val vaultId: Int?,
     @ColumnInfo(Keys.DATA_KEY) @SerialName(value = Keys.DATA_KEY) val data: String,
@@ -55,6 +56,25 @@ data class PasswordCapsule(
     @ColumnInfo(Keys.LAST_MODIFIED_KEY) @SerialName(value = Keys.LAST_MODIFIED_KEY) val lastModified: Long,
     @ColumnInfo(Keys.USED_COUNT_KEY) @SerialName(value = Keys.USED_COUNT_KEY) val usedCount: Int
 ) {
+    constructor(
+        localId: Int?,
+        vaultId: Int?,
+        data: String,
+        created: Long,
+        lastUsed: Long,
+        lastModified: Long,
+        usedCount: Int
+    ) : this(
+        id = null,
+        localId = localId,
+        vaultId = vaultId,
+        data = data,
+        created = created,
+        lastUsed = lastUsed,
+        lastModified = lastModified,
+        usedCount = usedCount,
+    )
+
     fun toPassword(
         passwordCryptographyHandler: PasswordCryptographyHandler
     ) = Password(

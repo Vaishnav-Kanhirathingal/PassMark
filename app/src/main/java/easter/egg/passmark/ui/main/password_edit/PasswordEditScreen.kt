@@ -76,8 +76,6 @@ import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
-import easter.egg.passmark.data.supabase.api.PasswordApi
-import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -830,11 +828,7 @@ object PasswordEditScreen {
 private fun PasswordEditScreenPreview() {
     PasswordEditScreen.Screen(
         modifier = Modifier.fillMaxSize(),
-        viewModel = PasswordEditViewModel(
-            passwordApi = PasswordApi(
-                supabaseClient = SupabaseModule.mockClient
-            )
-        ),
+        viewModel = PasswordEditViewModel.getTestViewModel(),
         navigateBack = {},
         mainViewModel = MainViewModel.getTestViewModel(),
         passwordToEdit = null,
@@ -856,6 +850,6 @@ private fun VaultSelectionBottomSheetPreview() {
         ),
         passwordList = listOf(),
         sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
-        passwordEditViewModel = PasswordEditViewModel(passwordApi = PasswordApi(SupabaseModule.mockClient))
+        passwordEditViewModel = PasswordEditViewModel.getTestViewModel()
     )
 }

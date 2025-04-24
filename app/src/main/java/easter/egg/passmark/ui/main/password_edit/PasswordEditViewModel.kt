@@ -1,13 +1,20 @@
 package easter.egg.passmark.ui.main.password_edit
 
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.Room
 import dagger.hilt.android.lifecycle.HiltViewModel
 import easter.egg.passmark.data.models.content.Password
+import easter.egg.passmark.data.models.content.PasswordCapsule
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.password.PasswordData
+import easter.egg.passmark.data.storage.database.PassMarkDatabase
+import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.PasswordApi
+import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.extensions.nullIfBlank
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
@@ -18,9 +25,24 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PasswordEditViewModel @Inject constructor(
-    val passwordApi: PasswordApi
+    val passwordApi: PasswordApi,
+    val passwordDao: PasswordDao
 ) : ViewModel() {
     private val TAG = this::class.simpleName
+
+    companion object {
+        @Composable
+        fun getTestViewModel() :PasswordEditViewModel{
+            return PasswordEditViewModel(
+                passwordApi = PasswordApi(supabaseClient = SupabaseModule.mockClient),
+                passwordDao = Room.databaseBuilder(
+                        context = LocalContext.current,
+                        name = "passmark_database",
+                        klass = PassMarkDatabase::class.java
+                    ).build().userDao()
+            )
+        }
+    }
 
     //-------------------------------------------------------------------------------------UI-States
     val title: MutableStateFlow<String> = MutableStateFlow("")
@@ -88,14 +110,18 @@ class PasswordEditViewModel @Inject constructor(
         MutableStateFlow(ScreenState.PreCall())
     val screenState: StateFlow<ScreenState<Password>> get() = _screenState
 
+    /** tracks if delete has been completed in case of failure to avoid further issues */
+    private var _deleteCompleted: Boolean = false
     fun savePassword(
         passwordCryptographyHandler: PasswordCryptographyHandler
     ) {
         _screenState.value = ScreenState.Loading()
         val now = System.currentTimeMillis()
-        val password = Password(
-            id = _oldPassword?.id,
-            localId = _oldPassword?.localId,
+        val saveToStorage = this.saveToLocalOnly.value
+
+        val passwordCapsuleToSave = Password(
+            id = if (saveToStorage) null else _oldPassword?.id,
+            localId = if (saveToStorage) _oldPassword?.localId else null,
             vaultId = selectedVault.value?.id,
             data = PasswordData(
                 title = title.value,
@@ -105,22 +131,42 @@ class PasswordEditViewModel @Inject constructor(
                 website = website.value.nullIfBlank(),
                 notes = notes.value.nullIfBlank(),
                 useFingerPrint = useFingerPrint.value,
-                saveToLocalOnly = saveToLocalOnly.value,
+                saveToLocalOnly = saveToStorage,
             ),
             lastUsed = _oldPassword?.lastUsed ?: now,
             created = _oldPassword?.created ?: now,
             lastModified = now,
             usedCount = 0,
-        )
+        ).toPasswordCapsule(passwordCryptographyHandler = passwordCryptographyHandler)
+
         viewModelScope.launch {
+            // TODO: test everything
             val newState: ScreenState<Password> = try {
-                val res = passwordApi
-                    .savePassword(
-                        passwordCapsule = password.toPasswordCapsule(
-                            passwordCryptographyHandler = passwordCryptographyHandler
-                        )
-                    )
-                    .toPassword(passwordCryptographyHandler = passwordCryptographyHandler)
+
+                val savedPasswordCapsule = if (saveToStorage) {
+                    _oldPassword?.id
+                        ?.takeUnless { _deleteCompleted }
+                        ?.let { id -> // deletes cloud version if switching to local
+                            passwordApi.deletePassword(passwordId = id)
+                            _deleteCompleted = true
+                        }
+
+                    val id = passwordDao.upsert(passwordCapsule = passwordCapsuleToSave).toInt()
+                    passwordDao.getById(id = id)
+                } else {
+                    _oldPassword?.localId
+                        ?.takeUnless { _deleteCompleted }
+                        ?.let { localId -> // deletes local version if switching to cloud
+                            passwordDao.deleteById(localId = localId)
+                            _deleteCompleted = true
+                        }
+                    passwordApi.savePassword(passwordCapsule = passwordCapsuleToSave)
+                }
+
+                val res = savedPasswordCapsule.toPassword(
+                    passwordCryptographyHandler = passwordCryptographyHandler
+                )
+                this@PasswordEditViewModel._deleteCompleted = false
                 ScreenState.Loaded(result = res)
             } catch (e: Exception) {
                 e.printStackTrace()
