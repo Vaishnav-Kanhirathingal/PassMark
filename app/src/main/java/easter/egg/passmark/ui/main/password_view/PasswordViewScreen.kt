@@ -906,6 +906,8 @@ private fun PasswordViewScreenPreview() {
     PasswordViewScreen.Screen(
         modifier = Modifier.fillMaxSize(),
         password = Password(
+            localId = null,
+            id = 0,
             data = PasswordData(
                 title = "Title",
                 email = "someEmail@gmail.com",

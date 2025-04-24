@@ -18,17 +18,13 @@ class PasswordApi @Inject constructor(
             .decodeSingle<PasswordCapsule>()
     }
 
-    suspend fun getPasswordList(
-        passwordCryptographyHandler: PasswordCryptographyHandler
-    ): List<Password> {
+    suspend fun getPasswordList(passwordCryptographyHandler: PasswordCryptographyHandler): List<Password> {
         return table.select().decodeList<PasswordCapsule>().map {
             it.toPassword(passwordCryptographyHandler = passwordCryptographyHandler)
         }
     }
 
-    suspend fun deletePassword(
-        passwordId: Int
-    ) {
+    suspend fun deletePassword(passwordId: Int) {
         table.delete { filter { Password::id eq passwordId } }
     }
 }

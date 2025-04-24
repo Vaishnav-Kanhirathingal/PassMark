@@ -670,6 +670,7 @@ private val testBasePasswordData = PasswordData(
 )
 private val testBasePassword = System.currentTimeMillis().let { now ->
     Password(
+        localId = 0,
         id = 0,
         data = testBasePasswordData.copy(),
         created = now,
@@ -735,6 +736,8 @@ private fun PasswordOptionDrawerPreview() {
     val now = System.currentTimeMillis()
     HomeContent.PasswordOptionDrawer(
         password = Password(
+            localId = 0,
+            id = 0,
             data = PasswordData(
                 title = "Google",
                 email = "someone@gmail.com",
@@ -748,7 +751,7 @@ private fun PasswordOptionDrawerPreview() {
             created = now,
             lastUsed = now,
             lastModified = now,
-            usedCount = 0
+            usedCount = 0,
         ),
         sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
         dismissSheet = {},

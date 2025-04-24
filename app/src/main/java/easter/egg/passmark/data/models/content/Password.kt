@@ -1,6 +1,7 @@
 package easter.egg.passmark.data.models.content
 
 import androidx.room.ColumnInfo
+import androidx.room.Entity
 import androidx.room.PrimaryKey
 import easter.egg.passmark.data.models.content.password.PasswordData
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
@@ -10,7 +11,8 @@ import kotlinx.serialization.Serializable
 //------------------------------------------------------------------------------classes used with UI
 /** to be used to display stuff and only to be stored in memory */
 data class Password(
-    val id: Int? = null,
+    val localId: Int?,
+    val id: Int?,
     val vaultId: Int? = null,
     val data: PasswordData,
 
@@ -20,16 +22,19 @@ data class Password(
     val usedCount: Int
 ) {
     fun toPasswordCapsule(
-        passwordCryptographyHandler: PasswordCryptographyHandler
-    ): PasswordCapsule = PasswordCapsule(
-        id = id,
-        vaultId = vaultId,
-        data = passwordCryptographyHandler.encryptPasswordData(passwordData = data),
-        created = created,
-        lastUsed = lastUsed,
-        lastModified = lastModified,
-        usedCount = usedCount
-    )
+        passwordCryptographyHandler: PasswordCryptographyHandler,
+    ): PasswordCapsule {
+        return PasswordCapsule(
+            localId = localId,
+            id = id,
+            vaultId = vaultId,
+            data = passwordCryptographyHandler.encryptPasswordData(passwordData = data),
+            created = created,
+            lastUsed = lastUsed,
+            lastModified = lastModified,
+            usedCount = usedCount
+        )
+    }
 }
 
 //---------------------------------------------------------------------------------encrypted classes
@@ -37,26 +42,42 @@ data class Password(
  * @param data is an encrypted json of [PasswordData]
  */
 @Serializable
+@Entity(tableName = "local_password_capsules")
 data class PasswordCapsule(
-    @SerialName(value = "id") val id: Int? = null,
-    @SerialName(value = "vault_id") val vaultId: Int?,
-    @SerialName(value = "data") val data: String,
-    @SerialName(value = "created") val created: Long,
-    @SerialName(value = "last_used") val lastUsed: Long,
-    @SerialName(value = "last_modified") val lastModified: Long,
-    @SerialName(value = "used_count") val usedCount: Int
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(Keys.LOCAL_ID_KEY) @SerialName(value = Keys.LOCAL_ID_KEY) val localId: Int? = null,
+
+    @SerialName(value = Keys.SUPABASE_ID_KEY) val id: Int? = null,
+
+    @ColumnInfo(Keys.VAULT_ID_KEY) @SerialName(value = Keys.VAULT_ID_KEY) val vaultId: Int?,
+    @ColumnInfo(Keys.DATA_KEY) @SerialName(value = Keys.DATA_KEY) val data: String,
+    @ColumnInfo(Keys.CREATED_KEY) @SerialName(value = Keys.CREATED_KEY) val created: Long,
+    @ColumnInfo(Keys.LAST_USED_KEY) @SerialName(value = Keys.LAST_USED_KEY) val lastUsed: Long,
+    @ColumnInfo(Keys.LAST_MODIFIED_KEY) @SerialName(value = Keys.LAST_MODIFIED_KEY) val lastModified: Long,
+    @ColumnInfo(Keys.USED_COUNT_KEY) @SerialName(value = Keys.USED_COUNT_KEY) val usedCount: Int
 ) {
     fun toPassword(
         passwordCryptographyHandler: PasswordCryptographyHandler
     ) = Password(
+        localId = localId,
         id = id,
         vaultId = vaultId,
         data = passwordCryptographyHandler.decryptPasswordData(passwordData = this.data),
         created = created,
         lastUsed = lastUsed,
         lastModified = lastModified,
-        usedCount = usedCount
+        usedCount = usedCount,
     )
+}
+
+private object Keys {
+    const val LOCAL_ID_KEY = "local_id"
+    const val SUPABASE_ID_KEY = "id"
+    const val VAULT_ID_KEY = "vault_id"
+    const val DATA_KEY = "data"
+    const val CREATED_KEY = "created"
+    const val LAST_USED_KEY = "last_used"
+    const val LAST_MODIFIED_KEY = "last_modified"
+    const val USED_COUNT_KEY = "used_count"
 }
 
 enum class PasswordSortingOptions { NAME, USAGE, LAST_USED, CREATED }

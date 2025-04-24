@@ -95,6 +95,7 @@ class PasswordEditViewModel @Inject constructor(
         val now = System.currentTimeMillis()
         val password = Password(
             id = _oldPassword?.id,
+            localId = _oldPassword?.localId,
             vaultId = selectedVault.value?.id,
             data = PasswordData(
                 title = title.value,
@@ -109,16 +110,18 @@ class PasswordEditViewModel @Inject constructor(
             lastUsed = _oldPassword?.lastUsed ?: now,
             created = _oldPassword?.created ?: now,
             lastModified = now,
-            usedCount = 0
+            usedCount = 0,
         )
         viewModelScope.launch {
             val newState: ScreenState<Password> = try {
-                val res = passwordApi.savePassword(
-                    passwordCapsule = password.toPasswordCapsule(
-                        passwordCryptographyHandler = passwordCryptographyHandler
+                val res = passwordApi
+                    .savePassword(
+                        passwordCapsule = password.toPasswordCapsule(
+                            passwordCryptographyHandler = passwordCryptographyHandler
+                        )
                     )
-                )
-                ScreenState.Loaded(result = res.toPassword(passwordCryptographyHandler = passwordCryptographyHandler))
+                    .toPassword(passwordCryptographyHandler = passwordCryptographyHandler)
+                ScreenState.Loaded(result = res)
             } catch (e: Exception) {
                 e.printStackTrace()
                 ScreenState.ApiError.fromException(e = e)
