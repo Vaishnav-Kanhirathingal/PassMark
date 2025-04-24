@@ -89,7 +89,7 @@ class PasswordEditViewModel @Inject constructor(
             this.website.value = password.data.website ?: ""
             this.notes.value = password.data.notes ?: ""
             this.useFingerPrint.value = password.data.useFingerPrint
-            this.saveToLocalOnly.value = password.data.saveToLocalOnly
+            this.saveToLocalOnly.value = password.localId != null
             this._selectedVault.value = vault
             this._oldPassword = password
             _loaded = true
@@ -123,7 +123,6 @@ class PasswordEditViewModel @Inject constructor(
                 website = website.value.nullIfBlank(),
                 notes = notes.value.nullIfBlank(),
                 useFingerPrint = useFingerPrint.value,
-                saveToLocalOnly = saveToStorage,
             ),
             lastUsed = _oldPassword?.lastUsed ?: now,
             created = _oldPassword?.created ?: now,
@@ -139,6 +138,7 @@ class PasswordEditViewModel @Inject constructor(
                     _oldPassword?.cloudId
                         ?.takeUnless { _deleteCompleted }
                         ?.let { id -> // deletes cloud version if switching to local
+                            Log.d(TAG, "deleting cloud version")
                             passwordApi.deletePassword(passwordId = id)
                             _deleteCompleted = true
                         }

@@ -665,7 +665,6 @@ private val testBasePasswordData = PasswordData(
     website = "",
     notes = "",
     useFingerPrint = true,
-    saveToLocalOnly = false
 )
 private val testBasePassword = System.currentTimeMillis().let { now ->
     Password(
@@ -744,7 +743,6 @@ private fun PasswordOptionDrawerPreview() {
                 password = "Some password",
                 website = "www.somewebsite.com",
                 useFingerPrint = true,
-                saveToLocalOnly = true,
                 notes = null
             ),
             created = now,

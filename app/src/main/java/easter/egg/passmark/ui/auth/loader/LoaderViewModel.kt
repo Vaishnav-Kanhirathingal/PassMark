@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoaderViewModel @Inject constructor(
-    val supabaseAccountHelper: SupabaseAccountHelper, // TODO: use this instead
+    val supabaseAccountHelper: SupabaseAccountHelper,
     val userApi: UserApi,
     @ApplicationContext val applicationContext: Context
 ) : ViewModel() {

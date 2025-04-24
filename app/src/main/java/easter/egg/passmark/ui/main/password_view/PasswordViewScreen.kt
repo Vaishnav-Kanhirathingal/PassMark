@@ -364,7 +364,7 @@ object PasswordViewScreen {
                                 modifier = Modifier.fillMaxWidth(),
                                 startIcon = Icons.Default.Cloud,
                                 titleText = "Storage Type",
-                                fieldText = if (password.data.saveToLocalOnly) "Saved to device only" else "Saved on the cloud"
+                                fieldText = if (password.localId != null) "Saved to device only" else "Saved on the cloud"
                             )
                         },
                         {
@@ -917,7 +917,6 @@ private fun PasswordViewScreenPreview() {
                 website = "www.google.com",
                 notes = "Some note",
                 useFingerPrint = false,
-                saveToLocalOnly = false,
             ),
             created = 0L,
             lastUsed = 0L,

@@ -8,8 +8,7 @@ data class PasswordData(
     val password: String,
     val website: String?,
     val notes: String?,
-    val useFingerPrint: Boolean,
-    val saveToLocalOnly: Boolean
+    val useFingerPrint: Boolean
 ) {
     fun getSubTitle(): String? =
         listOf(email, userName, website).firstOrNull { !it.isNullOrBlank() }
