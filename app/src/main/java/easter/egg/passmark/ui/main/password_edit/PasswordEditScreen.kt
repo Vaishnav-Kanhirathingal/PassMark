@@ -136,9 +136,17 @@ object PasswordEditScreen {
                 when (val state = viewModel.screenState.value) {
                     is ScreenState.PreCall, is ScreenState.Loading -> {}
                     is ScreenState.Loaded -> {
-                        (mainViewModel.screenState.value as? ScreenState.Loaded)
-                            ?.result
-                            ?.upsertPassword(password = state.result)
+                        val result =
+                            (mainViewModel.screenState.value as? ScreenState.Loaded)?.result
+
+                        passwordToEdit?.let {
+                            if (passwordToEdit.localId != state.result.localId || passwordToEdit.cloudId != state.result.cloudId) {
+                                result?.deletePassword(password = it)
+                            }
+                        }
+                        result?.upsertPassword(password = state.result)
+
+
                         navigateBack()
                     }
 
