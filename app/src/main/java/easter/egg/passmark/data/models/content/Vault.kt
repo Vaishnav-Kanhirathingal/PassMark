@@ -68,7 +68,7 @@ data class Vault(
     heightDp = 400,
     showBackground = true
 )
-private fun IconList() {
+private fun IconListPreview() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
