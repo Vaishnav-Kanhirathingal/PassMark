@@ -1,9 +1,12 @@
 package easter.egg.passmark.data.storage.database
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Room
 import easter.egg.passmark.data.models.content.PasswordCapsule
 
 @Dao
@@ -19,4 +22,16 @@ interface PasswordDao {
 
     @Query("Delete from local_password_capsules where local_id = :localId")
     suspend fun deleteById(localId: Int)
+
+    companion object {
+        @Composable
+        fun getDao(): PasswordDao = Room
+            .databaseBuilder(
+                context = LocalContext.current,
+                name = "sample",
+                klass = PassMarkDatabase::class.java
+            )
+            .build()
+            .passwordDao()
+    }
 }

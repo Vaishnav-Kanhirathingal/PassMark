@@ -32,14 +32,10 @@ class PasswordEditViewModel @Inject constructor(
 
     companion object {
         @Composable
-        fun getTestViewModel() :PasswordEditViewModel{
+        fun getTestViewModel(): PasswordEditViewModel {
             return PasswordEditViewModel(
                 passwordApi = PasswordApi(supabaseClient = SupabaseModule.mockClient),
-                passwordDao = Room.databaseBuilder(
-                        context = LocalContext.current,
-                        name = "passmark_database",
-                        klass = PassMarkDatabase::class.java
-                    ).build().userDao()
+                passwordDao = PasswordDao.getDao()
             )
         }
     }

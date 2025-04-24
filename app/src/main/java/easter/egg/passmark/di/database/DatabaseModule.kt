@@ -29,6 +29,6 @@ class DatabaseModule {
     @Provides
     @Singleton
     fun providesPasswordDao(passMarkDatabase: PassMarkDatabase): PasswordDao {
-        return passMarkDatabase.userDao()
+        return passMarkDatabase.passwordDao()
     }
 }

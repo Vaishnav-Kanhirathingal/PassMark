@@ -6,5 +6,5 @@ import easter.egg.passmark.data.models.content.PasswordCapsule
 
 @Database(entities = [PasswordCapsule::class], version = 1)
 abstract class PassMarkDatabase : RoomDatabase() {
-    abstract fun userDao(): PasswordDao
+    abstract fun passwordDao(): PasswordDao
 }
