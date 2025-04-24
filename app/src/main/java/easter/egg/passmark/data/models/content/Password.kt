@@ -47,7 +47,7 @@ data class Password(
 data class PasswordCapsule(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(Keys.LOCAL_ID_KEY) @SerialName(value = Keys.LOCAL_ID_KEY) val localId: Int? = null,
 
-    @Ignore @SerialName(value = Keys.SUPABASE_ID_KEY) val cloudId: Int? = null, // TODO: rename and change how it is used in code everywhere
+    @Ignore @SerialName(value = Keys.SUPABASE_ID_KEY) val cloudId: Int? = null,
 
     @ColumnInfo(Keys.VAULT_ID_KEY) @SerialName(value = Keys.VAULT_ID_KEY) val vaultId: Int?,
     @ColumnInfo(Keys.DATA_KEY) @SerialName(value = Keys.DATA_KEY) val data: String,
@@ -87,17 +87,19 @@ data class PasswordCapsule(
         lastModified = lastModified,
         usedCount = usedCount,
     )
-}
 
-private object Keys {
-    const val LOCAL_ID_KEY = "local_id"
-    const val SUPABASE_ID_KEY = "id"
-    const val VAULT_ID_KEY = "vault_id"
-    const val DATA_KEY = "data"
-    const val CREATED_KEY = "created"
-    const val LAST_USED_KEY = "last_used"
-    const val LAST_MODIFIED_KEY = "last_modified"
-    const val USED_COUNT_KEY = "used_count"
+    companion object {
+        object Keys {
+            const val LOCAL_ID_KEY = "local_id"
+            const val SUPABASE_ID_KEY = "id"
+            const val VAULT_ID_KEY = "vault_id"
+            const val DATA_KEY = "data"
+            const val CREATED_KEY = "created"
+            const val LAST_USED_KEY = "last_used"
+            const val LAST_MODIFIED_KEY = "last_modified"
+            const val USED_COUNT_KEY = "used_count"
+        }
+    }
 }
 
 enum class PasswordSortingOptions { NAME, USAGE, LAST_USED, CREATED }

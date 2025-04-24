@@ -25,6 +25,13 @@ class PasswordApi @Inject constructor(
     }
 
     suspend fun deletePassword(passwordId: Int) {
-        table.delete { filter { Password::cloudId eq passwordId } }
+        table.delete {
+            filter {
+                eq(
+                    column = PasswordCapsule.Companion.Keys.SUPABASE_ID_KEY,
+                    value = passwordId
+                )
+            }
+        }
     }
 }
