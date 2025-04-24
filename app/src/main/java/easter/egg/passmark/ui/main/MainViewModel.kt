@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import easter.egg.passmark.data.models.content.Password
@@ -85,13 +84,22 @@ class MainViewModel @Inject constructor(
 
                 this@MainViewModel.passwordCryptographyHandler = passwordCryptographyHandler
 
-                val vaultListDeferred = async { vaultApi.getVaultList() }
-                val passwordListDeferred =
-                    async { passwordApi.getPasswordList(passwordCryptographyHandler = passwordCryptographyHandler) }
+                val vaultListDeferred = async {
+                    vaultApi.getVaultList()
+                }
+                val passwordListDeferred: Deferred<List<Password>> = async {
+                    passwordApi.getPasswordList(passwordCryptographyHandler = passwordCryptographyHandler)
+                }
+                val localPasswordFetcher: Deferred<List<Password>> = async {
+                    passwordDao.getAll().map { passwordCapsule ->
+                        passwordCapsule.toPassword(passwordCryptographyHandler = passwordCryptographyHandler)
+                    }
+                }
                 ScreenState.Loaded(
                     result = HomeListData(
                         vaultList = vaultListDeferred.await().toMutableList(),
                         passwordList = passwordListDeferred.await().toMutableList()
+                            .apply { this.addAll(elements = localPasswordFetcher.await()) }
                     )
                 )
             } catch (e: Exception) {
