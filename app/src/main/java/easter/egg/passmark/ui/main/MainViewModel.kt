@@ -199,14 +199,17 @@ class HomeListData(
         password: Password
     ) {
         val useCloudId = password.cloudId != null
+        val useLocalId = password.localId != null
         this._passwordListState.value = this._passwordListState.value
             .toMutableList()
             .apply {
                 this.removeIf {
                     if (useCloudId) {
                         it.cloudId == password.cloudId
-                    } else {
+                    } else if (useLocalId) {
                         it.localId == password.localId
+                    } else {
+                        false
                     }
                 }
             }
