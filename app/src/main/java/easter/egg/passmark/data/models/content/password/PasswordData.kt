@@ -15,7 +15,7 @@ data class PasswordData(
     fun getSubTitle(): String? =
         listOf(email, userName, website).firstOrNull { !it.isNullOrBlank() }
 
-    fun getShortName(): String = this.title
+    fun getShortName(): String = this.title.trim()
         .split(" ")
         .joinToString(separator = "", transform = { it.first().uppercase() })
         .take(n = 2)
