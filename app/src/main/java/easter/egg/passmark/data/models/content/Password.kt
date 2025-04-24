@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 /** to be used to display stuff and only to be stored in memory */
 data class Password(
     val localId: Int?,
-    val id: Int?,
+    val cloudId: Int?,
     val vaultId: Int? = null,
     val data: PasswordData,
 
@@ -27,7 +27,7 @@ data class Password(
     ): PasswordCapsule {
         return PasswordCapsule(
             localId = localId,
-            id = id,
+            cloudId = cloudId,
             vaultId = vaultId,
             data = passwordCryptographyHandler.encryptPasswordData(passwordData = data),
             created = created,
@@ -47,7 +47,7 @@ data class Password(
 data class PasswordCapsule(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(Keys.LOCAL_ID_KEY) @SerialName(value = Keys.LOCAL_ID_KEY) val localId: Int? = null,
 
-    @Ignore @SerialName(value = Keys.SUPABASE_ID_KEY) val id: Int? = null, // TODO: rename and change how it is used in code everywhere
+    @Ignore @SerialName(value = Keys.SUPABASE_ID_KEY) val cloudId: Int? = null, // TODO: rename and change how it is used in code everywhere
 
     @ColumnInfo(Keys.VAULT_ID_KEY) @SerialName(value = Keys.VAULT_ID_KEY) val vaultId: Int?,
     @ColumnInfo(Keys.DATA_KEY) @SerialName(value = Keys.DATA_KEY) val data: String,
@@ -65,7 +65,7 @@ data class PasswordCapsule(
         lastModified: Long,
         usedCount: Int
     ) : this(
-        id = null,
+        cloudId = null,
         localId = localId,
         vaultId = vaultId,
         data = data,
@@ -79,7 +79,7 @@ data class PasswordCapsule(
         passwordCryptographyHandler: PasswordCryptographyHandler
     ) = Password(
         localId = localId,
-        id = id,
+        cloudId = cloudId,
         vaultId = vaultId,
         data = passwordCryptographyHandler.decryptPasswordData(passwordData = this.data),
         created = created,

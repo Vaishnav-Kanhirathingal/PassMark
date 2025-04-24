@@ -80,6 +80,7 @@ import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.data.models.content.password.PasswordData
+import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel
@@ -122,7 +123,7 @@ object PasswordViewScreen {
                         onCancelClicked = {
                             passwordViewViewModel.setDeleteDialogVisibility(visibility = false)
                         },
-                        onDeleteClicked = { passwordViewViewModel.delete(passwordId = password.id!!) },
+                        onDeleteClicked = { passwordViewViewModel.delete(password = password) },
                         screenState = dialogState
                     )
                 }
@@ -136,7 +137,7 @@ object PasswordViewScreen {
                             is ScreenState.ApiError -> dialogState.manageToastActions(context = context)
                             is ScreenState.Loaded -> {
                                 (mainViewModel.screenState.value as? ScreenState.Loaded)
-                                    ?.result?.deletePassword(passwordId = password.id!!)
+                                    ?.result?.deletePassword(password = password)
                                 passwordViewViewModel.setDeleteDialogVisibility(visibility = false)
                                 navigateUp()
                             }
@@ -907,7 +908,7 @@ private fun PasswordViewScreenPreview() {
         modifier = Modifier.fillMaxSize(),
         password = Password(
             localId = null,
-            id = 0,
+            cloudId = 0,
             data = PasswordData(
                 title = "Title",
                 email = "someEmail@gmail.com",
@@ -926,7 +927,10 @@ private fun PasswordViewScreenPreview() {
         navigateUp = {},
         toEditScreen = {},
         associatedVault = null,
-        passwordViewViewModel = PasswordViewViewModel(passwordApi = PasswordApi(supabaseClient = SupabaseModule.mockClient)),
+        passwordViewViewModel = PasswordViewViewModel(
+            passwordApi = PasswordApi(supabaseClient = SupabaseModule.mockClient),
+            passwordDao = PasswordDao.getDao()
+        ),
         mainViewModel = MainViewModel.getTestViewModel()
     )
 }

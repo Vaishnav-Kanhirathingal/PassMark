@@ -77,7 +77,7 @@ object HomeScreen {
     @Composable
     fun Screen(
         modifier: Modifier,
-        toPasswordEditScreen: (passwordId: Int?) -> Unit,
+        toPasswordEditScreen: (password: Password?) -> Unit,
         mainViewModel: MainViewModel,
         toViewPasswordScreen: (password: Password) -> Unit,
         homeViewModel: HomeViewModel,
@@ -163,7 +163,7 @@ object HomeScreen {
     @Composable
     private fun MainScreen(
         modifier: Modifier,
-        toPasswordEditScreen: (passwordId: Int?) -> Unit,
+        toPasswordEditScreen: (password: Password?) -> Unit,
         mainViewModel: MainViewModel,
         toViewPasswordScreen: (password: Password) -> Unit,
         homeViewModel: HomeViewModel,

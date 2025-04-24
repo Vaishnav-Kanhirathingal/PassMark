@@ -6,12 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.PasswordSortingOptions
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.storage.PassMarkDataStore
+import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.data.supabase.api.UserApi
@@ -19,6 +21,7 @@ import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +37,8 @@ class MainViewModel @Inject constructor(
     private val supabaseAccountHelper: SupabaseAccountHelper,
     private val userApi: UserApi,
     private val vaultApi: VaultApi,
-    private val passwordApi: PasswordApi
+    private val passwordApi: PasswordApi,
+    private val passwordDao: PasswordDao
 ) : ViewModel() {
     private val TAG = this::class.simpleName
 
@@ -47,7 +51,8 @@ class MainViewModel @Inject constructor(
                 supabaseAccountHelper = SupabaseAccountHelper(supabaseClient),
                 userApi = UserApi(supabaseClient),
                 vaultApi = VaultApi(supabaseClient),
-                passwordApi = PasswordApi(supabaseClient)
+                passwordApi = PasswordApi(supabaseClient),
+                passwordDao = PasswordDao.getDao()
             )
         }
     }
@@ -154,8 +159,16 @@ class HomeListData(
 
     fun upsertPassword(password: Password) {
         val newList = this._passwordListState.value.toMutableList()
+
+        val useCloudId = password.cloudId != null
         newList
-            .indexOfLast { p -> p.id == password.id }
+            .indexOfLast { p ->
+                if (useCloudId) {
+                    p.cloudId == password.cloudId
+                } else {
+                    p.localId == password.localId
+                }
+            }
             .takeUnless { it == -1 }
             .let {
                 if (it == null) {
@@ -175,10 +188,19 @@ class HomeListData(
     }
 
     fun deletePassword(
-        passwordId: Int
+        password: Password
     ) {
-        this._passwordListState.value =
-            this._passwordListState.value.toMutableList()
-                .apply { this.removeIf { it.id == passwordId } }
+        val useCloudId = password.cloudId != null
+        this._passwordListState.value = this._passwordListState.value
+            .toMutableList()
+            .apply {
+                this.removeIf {
+                    if (useCloudId) {
+                        it.cloudId == password.cloudId
+                    } else {
+                        it.localId == password.localId
+                    }
+                }
+            }
     }
 }

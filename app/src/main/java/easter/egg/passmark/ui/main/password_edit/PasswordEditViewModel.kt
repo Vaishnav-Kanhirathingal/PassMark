@@ -2,16 +2,12 @@ package easter.egg.passmark.ui.main.password_edit
 
 import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.Room
 import dagger.hilt.android.lifecycle.HiltViewModel
 import easter.egg.passmark.data.models.content.Password
-import easter.egg.passmark.data.models.content.PasswordCapsule
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.password.PasswordData
-import easter.egg.passmark.data.storage.database.PassMarkDatabase
 import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.di.supabase.SupabaseModule
@@ -116,7 +112,7 @@ class PasswordEditViewModel @Inject constructor(
         val saveToStorage = this.saveToLocalOnly.value
 
         val passwordCapsuleToSave = Password(
-            id = if (saveToStorage) null else _oldPassword?.id,
+            cloudId = if (saveToStorage) null else _oldPassword?.cloudId,
             localId = if (saveToStorage) _oldPassword?.localId else null,
             vaultId = selectedVault.value?.id,
             data = PasswordData(
@@ -140,7 +136,7 @@ class PasswordEditViewModel @Inject constructor(
             val newState: ScreenState<Password> = try {
 
                 val savedPasswordCapsule = if (saveToStorage) {
-                    _oldPassword?.id
+                    _oldPassword?.cloudId
                         ?.takeUnless { _deleteCompleted }
                         ?.let { id -> // deletes cloud version if switching to local
                             passwordApi.deletePassword(passwordId = id)

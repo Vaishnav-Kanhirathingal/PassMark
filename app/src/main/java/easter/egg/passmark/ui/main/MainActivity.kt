@@ -25,6 +25,7 @@ import easter.egg.passmark.ui.main.password_view.PasswordViewScreen
 import easter.egg.passmark.ui.main.settings.SettingsScreen
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.extensions.findPassword
 import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
@@ -74,10 +75,11 @@ class MainActivity : FragmentActivity() {
                         val homeViewModel: HomeViewModel = hiltViewModel(viewModelStoreOwner = it)
                         HomeScreen.Screen(
                             modifier = composableModifier,
-                            toPasswordEditScreen = { passwordId ->
+                            toPasswordEditScreen = { password: Password? ->
                                 navController.navigate(
                                     route = MainScreens.PasswordEdit(
-                                        passwordId = passwordId,
+                                        localId = password?.localId,
+                                        cloudId = password?.cloudId,
                                         defaultVaultId = homeViewModel.vaultIdSelected.value
                                     )
                                 )
@@ -102,10 +104,16 @@ class MainActivity : FragmentActivity() {
                             viewModel = hiltViewModel(viewModelStoreOwner = it),
                             mainViewModel = mainViewModel,
                             navigateBack = { navController.navigateUp() },
-                            passwordToEdit = it.arguments
-                                ?.getInt(MainScreens.PasswordEdit::passwordId.name, -1)
-                                ?.takeUnless { id -> id == -1 }
-                                ?.let { id -> passwordList?.find { p -> p.id == id } },
+                            passwordToEdit = it.arguments?.let { args ->
+                                passwordList?.findPassword(
+                                    cloudId = args
+                                        .getInt(MainScreens.PasswordEdit::cloudId.name, -1)
+                                        .takeUnless { id -> id == -1 },
+                                    localId = args
+                                        .getInt(MainScreens.PasswordEdit::localId.name, -1)
+                                        .takeUnless { id -> id == -1 }
+                                )
+                            },
                             defaultVaultId = it.arguments
                                 ?.getInt(MainScreens.PasswordEdit::defaultVaultId.name, -1)
                                 ?.takeUnless { id -> id == -1 }
@@ -118,8 +126,10 @@ class MainActivity : FragmentActivity() {
                             navBackStackEntry.arguments!!.getString(MainScreens.PasswordView::passwordJson.name)!!,
                             Password::class.java
                         )
-                        val password = passwordList?.find { p -> p.id == defaultPassword.id }
-                            ?: defaultPassword
+                        val password = passwordList?.findPassword(
+                            localId = defaultPassword.localId,
+                            cloudId = defaultPassword.cloudId
+                        ) ?: defaultPassword
                         PasswordViewScreen.Screen(
                             modifier = composableModifier,
                             password = password,
@@ -127,7 +137,8 @@ class MainActivity : FragmentActivity() {
                             toEditScreen = {
                                 navController.navigate(
                                     route = MainScreens.PasswordEdit(
-                                        passwordId = password.id,
+                                        localId = password.localId,
+                                        cloudId = password.cloudId,
                                         defaultVaultId = password.vaultId
                                     )
                                 )
@@ -159,7 +170,8 @@ private sealed class MainScreens {
 
     @Serializable
     data class PasswordEdit(
-        val passwordId: Int?,
+        val localId: Int?,
+        val cloudId: Int?,
         val defaultVaultId: Int?
     ) : MainScreens()
 

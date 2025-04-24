@@ -110,7 +110,7 @@ object HomeContent {
         mainViewModel: MainViewModel,
         homeViewModel: HomeViewModel,
         toViewPasswordScreen: (password: Password) -> Unit,
-        toPasswordEditScreen: (passwordId: Int) -> Unit,
+        toPasswordEditScreen: (password: Password?) -> Unit,
     ) {
         val listItemModifier = Modifier
             .setSizeLimitation()
@@ -150,7 +150,7 @@ object HomeContent {
                         coroutineScope
                             .launch { sheetState.hide() }
                             .invokeOnCompletion {
-                                toPasswordEditScreen(password.id!!)
+                                toPasswordEditScreen(password)
                                 optionSheetIsVisible.value = null
                             }
                     },
@@ -203,7 +203,6 @@ object HomeContent {
                     item { Spacer(modifier = spacerModifier) }
                     items(
                         items = passwordList ?: listOf(),
-                        key = { it.id!! },
                         itemContent = {
                             PasswordListItem(
                                 modifier = listItemModifier,
@@ -671,7 +670,7 @@ private val testBasePasswordData = PasswordData(
 private val testBasePassword = System.currentTimeMillis().let { now ->
     Password(
         localId = 0,
-        id = 0,
+        cloudId = 0,
         data = testBasePasswordData.copy(),
         created = now,
         lastUsed = now,
@@ -737,7 +736,7 @@ private fun PasswordOptionDrawerPreview() {
     HomeContent.PasswordOptionDrawer(
         password = Password(
             localId = 0,
-            id = 0,
+            cloudId = 0,
             data = PasswordData(
                 title = "Google",
                 email = "someone@gmail.com",
