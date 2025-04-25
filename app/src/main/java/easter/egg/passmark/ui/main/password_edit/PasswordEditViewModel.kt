@@ -31,7 +31,7 @@ class PasswordEditViewModel @Inject constructor(
         fun getTestViewModel(): PasswordEditViewModel {
             return PasswordEditViewModel(
                 passwordApi = PasswordApi(supabaseClient = SupabaseModule.mockClient),
-                passwordDao = PasswordDao.getDao()
+                passwordDao = PasswordDao.getTestingDao()
             )
         }
     }

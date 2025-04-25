@@ -928,7 +928,7 @@ private fun PasswordViewScreenPreview() {
         associatedVault = null,
         passwordViewViewModel = PasswordViewViewModel(
             passwordApi = PasswordApi(supabaseClient = SupabaseModule.mockClient),
-            passwordDao = PasswordDao.getDao()
+            passwordDao = PasswordDao.getTestingDao()
         ),
         mainViewModel = MainViewModel.getTestViewModel()
     )

@@ -25,7 +25,7 @@ interface PasswordDao {
 
     companion object {
         @Composable
-        fun getDao(): PasswordDao = Room
+        fun getTestingDao(): PasswordDao = Room
             .databaseBuilder(
                 context = LocalContext.current,
                 name = "sample",

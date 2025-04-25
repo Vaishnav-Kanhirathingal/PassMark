@@ -51,7 +51,7 @@ class MainViewModel @Inject constructor(
                 userApi = UserApi(supabaseClient),
                 vaultApi = VaultApi(supabaseClient),
                 passwordApi = PasswordApi(supabaseClient),
-                passwordDao = PasswordDao.getDao()
+                passwordDao = PasswordDao.getTestingDao()
             )
         }
     }
