@@ -1,15 +1,18 @@
 package easter.egg.passmark.ui.main.settings
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import easter.egg.passmark.data.storage.PassMarkDataStore
 import easter.egg.passmark.data.storage.SettingsDataStore
+import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.utils.ScreenState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -20,8 +23,11 @@ class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     val settingsDataStore: SettingsDataStore,
     private val supabaseAccountHelper: SupabaseAccountHelper,
-    private val userApi: UserApi
+    private val userApi: UserApi,
+    private val passwordDao: PasswordDao
 ) : ViewModel() {
+    private val TAG = this::class.simpleName
+
     private val _screenState: MutableStateFlow<ScreenState<Unit>> =
         MutableStateFlow(ScreenState.PreCall())
     val screenState: StateFlow<ScreenState<Unit>> get() = _screenState
@@ -45,6 +51,8 @@ class SettingsViewModel @Inject constructor(
                     )
                     .forEach {
                         this@SettingsViewModel._currentStage.value = it
+                        delay(timeMillis = 500L)
+                        Log.d(TAG, "about to perform ${it.name}")
                         performTask(deletionStages = it)
                     }
                 ScreenState.Loaded(Unit)
@@ -66,11 +74,8 @@ class SettingsViewModel @Inject constructor(
     private suspend fun performTask(
         deletionStages: DeletionStages
     ): Any = when (deletionStages) {
-        DeletionStages.LOCAL_PASSWORDS -> {
-            TODO("Clear room db")
-        }
-
-        DeletionStages.USER_TABLE_ITEM -> userApi.deleteUser()
+        DeletionStages.LOCAL_PASSWORDS -> passwordDao.deleteAll()
+        DeletionStages.USER_TABLE_ITEM -> userApi.deleteUser(uid = supabaseAccountHelper.getId())
         DeletionStages.DELETE_MASTER_PASSWORD -> {
             PassMarkDataStore(
                 context = context,
@@ -78,8 +83,10 @@ class SettingsViewModel @Inject constructor(
             ).resetPassword()
         }
 
-        DeletionStages.SUPABASE_USER_DELETE -> TODO("supabase user account delete")
-        DeletionStages.SUPABASE_LOGOUT -> TODO("supabase user logout")
+        DeletionStages.SUPABASE_USER_DELETE -> supabaseAccountHelper.deleteAccount()
+        DeletionStages.SUPABASE_LOGOUT -> {
+//            TODO("supabase user logout")
+        }
     }
 }
 

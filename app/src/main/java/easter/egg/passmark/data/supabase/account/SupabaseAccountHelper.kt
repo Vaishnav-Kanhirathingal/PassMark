@@ -12,4 +12,9 @@ class SupabaseAccountHelper @Inject constructor(
     }
 
     fun getSessionStatus() = supabaseClient.auth.sessionStatus
+
+    suspend fun deleteAccount() { // TODO: pending
+//        supabaseClient.auth.importAuthToken(accessToken =)
+        supabaseClient.auth.admin.deleteUser(uid = getId())
+    }
 }
