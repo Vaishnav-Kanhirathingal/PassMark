@@ -274,7 +274,6 @@ object HomeScreen {
                             .padding(horizontal = 8.dp)
                             .clip(shape = RoundedCornerShape(size = 16.dp))
                             .background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
-                            .padding(horizontal = 12.dp)
                             .clickable {
                                 onSearch("")
                                 coroutineScope.launch {
@@ -286,7 +285,8 @@ object HomeScreen {
                                         e.printStackTrace()
                                     }
                                 }
-                            },
+                            }
+                            .padding(horizontal = 12.dp),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
                         content = {
@@ -301,16 +301,18 @@ object HomeScreen {
                         }
                     )
                 } else {
-                    IconButton(
-                        modifier = Modifier.size(
-                            width = componentHeight,
-                            height = componentHeight
-                        ),
-                        onClick = { onSearch(null) },
+                    Box(
+                        modifier = Modifier
+                            .size(size = componentHeight)
+                            .clip(shape = CircleShape)
+                            .background(color = MaterialTheme.colorScheme.primaryContainer)
+                            .clickable(onClick = { onSearch(null) }),
+                        contentAlignment = Alignment.Center,
                         content = {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
                     )
@@ -330,7 +332,7 @@ object HomeScreen {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .heightIn(min = PassMarkDimensions.minTouchSize)
-                                    .padding(horizontal = 8.dp),
+                                    .padding(horizontal = 16.dp),
                                 contentAlignment = Alignment.CenterStart,
                                 content = {
                                     if (searchText.isEmpty()) {
@@ -350,7 +352,9 @@ object HomeScreen {
                         width = PassMarkDimensions.minTouchSize,
                         height = componentHeight
                     ),
-                    onClick = { TODO() },
+                    onClick = {
+                        TODO()
+                    },
                     content = {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
