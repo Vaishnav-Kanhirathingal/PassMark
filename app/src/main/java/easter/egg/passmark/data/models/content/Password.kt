@@ -102,4 +102,15 @@ data class PasswordCapsule(
     }
 }
 
-enum class PasswordSortingOptions { NAME, USAGE, LAST_USED, CREATED }
+// TODO: handle (usage amount, last used) in code
+/** used for sorting for passwords */
+enum class PasswordSortingOptions {
+    NAME, USAGE, LAST_USED, CREATED;
+
+    fun getMenuDisplayText(): String = when (this) {
+        NAME -> "Name (asc)"
+        USAGE -> "Usage"
+        LAST_USED -> "Last Used"
+        CREATED -> "Created time"
+    }
+}
