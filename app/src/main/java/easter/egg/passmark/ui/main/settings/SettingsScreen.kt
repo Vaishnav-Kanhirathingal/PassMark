@@ -237,7 +237,7 @@ object SettingsScreen {
                             fontWeight = FontWeight.SemiBold,
                             fontSize = PassMarkFonts.Title.medium,
                             color = MaterialTheme.colorScheme.onSurface,
-                            text = "Delete account?"
+                            text = "Reset account?"
                         )
                         Text(
                             modifier = Modifier
@@ -247,9 +247,9 @@ object SettingsScreen {
                             fontWeight = FontWeight.Medium,
                             fontSize = PassMarkFonts.Body.medium,
                             color = MaterialTheme.colorScheme.onSurface,
-                            text = "Deleting your account is permanent and would delete all the " +
-                                    "Vaults and Passwords along with it (even offline ones). This " +
-                                    "process is unrecoverable."
+                            text = "Resetting your account is permanent and would delete all the " +
+                                    "Vaults and Passwords (even offline ones) along with all your " +
+                                    "data. This process is unrecoverable."
                         )
                         Box(
                             modifier = Modifier
@@ -268,7 +268,7 @@ object SettingsScreen {
                             content = {
                                 Text(
                                     modifier = Modifier.padding(horizontal = 16.dp),
-                                    text = "Delete Account",
+                                    text = "Reset Account",
                                     fontFamily = PassMarkFonts.font,
                                     fontSize = PassMarkFonts.Body.medium,
                                     fontWeight = FontWeight.Medium,
@@ -278,6 +278,9 @@ object SettingsScreen {
                         )
                     }
                 )
+
+                // TODO: change password UI
+
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -298,7 +301,7 @@ private fun SettingsScreenPreview() {
         modifier = Modifier.fillMaxSize(),
         settingsViewModel = SettingsViewModel(
             context = LocalContext.current,
-            settingsDataStore = SettingsDataStore(context = LocalActivity.current!!.applicationContext),
+            settingsDataStore = SettingsDataStore(context = LocalContext.current),
             supabaseAccountHelper = SupabaseAccountHelper(supabaseClient = client),
             userApi = UserApi(supabaseClient = client),
             passwordDao = PasswordDao.getTestingDao()
