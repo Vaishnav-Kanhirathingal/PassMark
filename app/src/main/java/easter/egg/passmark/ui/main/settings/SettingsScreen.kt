@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.main.settings
 
+import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
@@ -40,6 +41,7 @@ import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.di.supabase.SupabaseModule
+import easter.egg.passmark.ui.auth.AuthActivity
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
@@ -96,7 +98,11 @@ object SettingsScreen {
                     block = {
                         when (screenState) {
                             is ScreenState.PreCall, is ScreenState.Loading -> {}
-                            is ScreenState.Loaded -> activity?.finishAffinity()
+                            is ScreenState.Loaded -> {
+                                context.startActivity(Intent(context, AuthActivity::class.java))
+                                activity?.finish()
+                            }
+
                             is ScreenState.ApiError -> {
                                 delay(3_000L)
                                 screenState.manageToastActions(context = context)

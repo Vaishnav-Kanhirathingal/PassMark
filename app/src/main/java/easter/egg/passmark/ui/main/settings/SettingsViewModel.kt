@@ -51,8 +51,8 @@ class SettingsViewModel @Inject constructor(
                     )
                     .forEach {
                         this@SettingsViewModel._currentStage.value = it
-                        delay(timeMillis = 500L)
                         Log.d(TAG, "about to perform ${it.name}")
+                        delay(timeMillis = 800L)
                         performTask(deletionStages = it)
                     }
                 ScreenState.Loaded(Unit)
@@ -70,7 +70,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    // TODO: test
     private suspend fun performTask(
         deletionStages: DeletionStages
     ): Any = when (deletionStages) {
@@ -83,10 +82,7 @@ class SettingsViewModel @Inject constructor(
             ).resetPassword()
         }
 
-        DeletionStages.SUPABASE_USER_DELETE -> supabaseAccountHelper.deleteAccount()
-        DeletionStages.SUPABASE_LOGOUT -> {
-//            TODO("supabase user logout")
-        }
+        DeletionStages.SUPABASE_LOGOUT -> supabaseAccountHelper.logout()
     }
 }
 
@@ -94,14 +90,15 @@ enum class DeletionStages {
     LOCAL_PASSWORDS,
     USER_TABLE_ITEM,
     DELETE_MASTER_PASSWORD,
-    SUPABASE_USER_DELETE,
     SUPABASE_LOGOUT;
 
-    fun getTaskMessage(): String = when (this) {
-        LOCAL_PASSWORDS -> "Deleting Locally saved passwords"
-        USER_TABLE_ITEM -> "Deleting remote database"
-        DELETE_MASTER_PASSWORD -> "Deleting App Account data"
-        SUPABASE_USER_DELETE -> "Deleting Remote account"
-        SUPABASE_LOGOUT -> "Logging out of app"
-    }.let { "Currently at stage ${this.ordinal + 1}/${DeletionStages.entries.size},\n$it" }
+    fun getTaskMessage(): String {
+        val mainMessage = when (this) {
+            LOCAL_PASSWORDS -> "Deleting Locally saved passwords"
+            USER_TABLE_ITEM -> "Deleting remote database"
+            DELETE_MASTER_PASSWORD -> "Deleting App Account data"
+            SUPABASE_LOGOUT -> "Logging out of app"
+        }
+        return "Currently at stage ${this.ordinal + 1}/${DeletionStages.entries.size},\n$mainMessage"
+    }
 }

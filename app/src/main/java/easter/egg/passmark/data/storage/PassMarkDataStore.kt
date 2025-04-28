@@ -32,7 +32,10 @@ class PassMarkDataStore(
     }
 
     suspend fun resetPassword() {
-        context.datastore.edit { it.clear() }
+        context.datastore.edit {
+            it.remove(passwordKey)
+            it.remove(initializationVectorKey)
+        }
     }
 
     //-----------------------------------------------------------------------------------------fetch
