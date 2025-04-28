@@ -14,7 +14,7 @@ class SupabaseAccountHelper @Inject constructor(
 
     fun getSessionStatus() = supabaseClient.auth.sessionStatus
 
-    suspend fun logout(){
+    suspend fun logout() {
         supabaseClient.auth.signOut(scope = SignOutScope.LOCAL)
     }
 }
