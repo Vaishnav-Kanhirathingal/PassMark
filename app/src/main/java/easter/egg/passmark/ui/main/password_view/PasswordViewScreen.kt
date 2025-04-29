@@ -351,7 +351,8 @@ object PasswordViewScreen {
                                 modifier = Modifier.fillMaxWidth(),
                                 startIcon = Icons.Default.EditNote,
                                 titleText = "Notes",
-                                fieldText = notes
+                                fieldText = notes,
+                                singleLine = false
                             )
                         }
                     )
@@ -630,7 +631,8 @@ object PasswordViewScreen {
         titleText: String,
         fieldText: String,
         endIcon: ImageVector? = null,
-        endIconOnClick: (() -> Unit)? = null
+        endIconOnClick: (() -> Unit)? = null,
+        singleLine: Boolean = true
     ) {
         ConstraintLayout(
             modifier = modifier
@@ -685,7 +687,7 @@ object PasswordViewScreen {
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Title.medium,
                     fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
+                    maxLines = if (singleLine) 1 else Int.MAX_VALUE,
                     overflow = TextOverflow.Ellipsis,
                     text = fieldText,
                 )

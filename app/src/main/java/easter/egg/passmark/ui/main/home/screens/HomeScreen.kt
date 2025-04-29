@@ -424,9 +424,7 @@ object HomeScreen {
                                     verticalAlignment = Alignment.CenterVertically,
                                     content = {
                                         @Composable
-                                        fun SortButton(
-                                            forAscending: Boolean,
-                                        ) {
+                                        fun SortButton(forAscending: Boolean) {
                                             Box(
                                                 modifier = Modifier
                                                     .setSizeLimitation()
