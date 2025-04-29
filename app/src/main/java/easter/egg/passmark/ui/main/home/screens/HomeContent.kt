@@ -133,7 +133,8 @@ object HomeContent {
                 modifier = modifier,
                 vaultSelectedName = homeResult.vaultListState.collectAsState().value
                     .find { v -> v.id == homeViewModel.vaultIdSelected.collectAsState().value }
-                    ?.name
+                    ?.name,
+                searchUsed = (homeViewModel.searchText.collectAsState().value != null)
             )
         } else {
             val sheetState = rememberModalBottomSheetState()
@@ -226,7 +227,8 @@ object HomeContent {
     @Composable
     fun EmptyListUI(
         modifier: Modifier,
-        vaultSelectedName: String?
+        vaultSelectedName: String?,
+        searchUsed: Boolean
     ) {
         Column(
             modifier = modifier.padding(all = 16.dp),
@@ -241,13 +243,10 @@ object HomeContent {
                     .fillMaxWidth(fraction = 0.5f)
                 Text(
                     modifier = contentModifier,
-                    text = vaultSelectedName.let {
-                        if (it == null) {
-                            "You do not have any saved passwords"
-                        } else {
-                            "Vault '$vaultSelectedName' does not have any saved passwords"
-                        }
-                    },
+                    text =
+                        if (searchUsed) "No password matches the given criterion"
+                        else if (vaultSelectedName == null) "You do not have any saved passwords"
+                        else "Vault '$vaultSelectedName' does not have any saved passwords",
                     textAlign = TextAlign.Center,
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Body.medium,
@@ -784,7 +783,8 @@ fun PasswordListItemPreview() {
 private fun EmptyState() {
     HomeContent.EmptyListUI(
         modifier = Modifier.fillMaxSize(),
-        vaultSelectedName = "Banking"
+        vaultSelectedName = "Banking",
+        searchUsed = true
     )
 }
 
