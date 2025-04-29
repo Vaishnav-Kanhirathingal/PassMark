@@ -1,6 +1,7 @@
 package easter.egg.passmark.ui.main.home.screens
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -90,6 +91,10 @@ object HomeScreen {
         homeViewModel: HomeViewModel,
         toSettingsScreen: () -> Unit
     ) {
+        BackHandler(
+            enabled = homeViewModel.searchText.collectAsState().value != null,
+            onBack = { homeViewModel.updateSearchText(str = null) }
+        )
         val context = LocalContext.current
         when (val screenState = mainViewModel.screenState.collectAsState().value) {
             is ScreenState.PreCall, is ScreenState.Loading -> Box(
