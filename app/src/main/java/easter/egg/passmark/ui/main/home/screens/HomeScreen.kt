@@ -51,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
@@ -250,6 +251,11 @@ object HomeScreen {
         isAscending: Boolean,
         setAscending: (Boolean) -> Unit
     ) {
+        fun getSortingIcon(isAsc: Boolean) =
+            if (isAsc) Icons.Default.KeyboardArrowDown
+            else Icons.Default.KeyboardArrowUp
+
+
         Row(
             modifier = modifier.padding(
                 top = 8.dp,
@@ -395,16 +401,58 @@ object HomeScreen {
                                         this.bottom.linkTo(mainIcon.bottom)
                                     }
                                 ),
-                            imageVector =
-                                if (isAscending) Icons.Default.KeyboardArrowDown
-                                else Icons.Default.KeyboardArrowUp,
+                            imageVector = getSortingIcon(isAsc = isAscending),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                         DropdownMenu(
                             expanded = showSortMenu.value,
                             onDismissRequest = { showSortMenu.value = false },
+                            shape = RoundedCornerShape(size = 12.dp),
                             content = {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(
+                                            start = 8.dp,
+                                            end = 8.dp,
+                                            bottom = 8.dp
+                                        )
+                                        .clip(RoundedCornerShape(size = 8.dp))
+                                        .background(color = MaterialTheme.colorScheme.surfaceContainerHigh),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    content = {
+                                        @Composable
+                                        fun SortButton(
+                                            forAscending: Boolean,
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .setSizeLimitation()
+                                                    .weight(1f)
+                                                    .background(
+                                                        color =
+                                                            if (isAscending == forAscending) MaterialTheme.colorScheme.primaryContainer
+                                                            else Color.Transparent
+                                                    )
+                                                    .clickable(onClick = { setAscending(forAscending) }),
+                                                contentAlignment = Alignment.Center,
+                                                content = {
+                                                    Icon(
+                                                        imageVector = getSortingIcon(isAsc = forAscending),
+                                                        contentDescription = null,
+                                                        tint =
+                                                            if (isAscending == forAscending) MaterialTheme.colorScheme.onPrimaryContainer
+                                                            else MaterialTheme.colorScheme.onSurface
+                                                    )
+                                                }
+                                            )
+                                        }
+                                        SortButton(forAscending = true)
+                                        SortButton(forAscending = false)
+                                    }
+                                )
                                 @Composable
                                 fun CustomDropdownMenuItem(passwordSortingOptions: PasswordSortingOptions) {
                                     DropdownMenuItem(
