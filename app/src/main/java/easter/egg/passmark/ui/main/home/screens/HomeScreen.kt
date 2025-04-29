@@ -449,8 +449,8 @@ object HomeScreen {
                                                 }
                                             )
                                         }
-                                        SortButton(forAscending = true)
                                         SortButton(forAscending = false)
+                                        SortButton(forAscending = true)
                                     }
                                 )
                                 @Composable

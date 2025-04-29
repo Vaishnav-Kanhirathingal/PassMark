@@ -153,13 +153,13 @@ class HomeListData(
 
                         PasswordSortingOptions.CREATED -> {
                             val selector = { password: Password -> password.created }
-                            if (ascending) passList.sortedBy(selector = selector)
+                            if (!ascending) passList.sortedBy(selector = selector)
                             else passList.sortedByDescending(selector)
                         }
 
                         PasswordSortingOptions.LAST_USED -> {
                             val selector = { password: Password -> password.lastUsed }
-                            if (ascending) passList.sortedBy(selector = selector)
+                            if (!ascending) passList.sortedBy(selector = selector)
                             else passList.sortedByDescending(selector)
                         }
                     }
