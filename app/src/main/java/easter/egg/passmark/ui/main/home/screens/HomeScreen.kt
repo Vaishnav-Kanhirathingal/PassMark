@@ -434,7 +434,12 @@ object HomeScreen {
                                                             if (isAscending == forAscending) MaterialTheme.colorScheme.primaryContainer
                                                             else Color.Transparent
                                                     )
-                                                    .clickable(onClick = { setAscending(forAscending) }),
+                                                    .clickable(
+                                                        onClick = {
+                                                            setAscending(forAscending)
+                                                            showSortMenu.value = false
+                                                        }
+                                                    ),
                                                 contentAlignment = Alignment.Center,
                                                 content = {
                                                     Icon(
@@ -451,8 +456,7 @@ object HomeScreen {
                                         SortButton(forAscending = true)
                                     }
                                 )
-                                @Composable
-                                fun CustomDropdownMenuItem(passwordSortingOptions: PasswordSortingOptions) {
+                                PasswordSortingOptions.entries.forEach { passwordSortingOptions: PasswordSortingOptions ->
                                     DropdownMenuItem(
                                         text = { Text(text = passwordSortingOptions.getMenuDisplayText()) },
                                         onClick = {
@@ -468,9 +472,6 @@ object HomeScreen {
                                             )
                                         }
                                     )
-                                }
-                                PasswordSortingOptions.entries.forEach {
-                                    CustomDropdownMenuItem(passwordSortingOptions = it)
                                 }
                             }
                         )

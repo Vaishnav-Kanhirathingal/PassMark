@@ -82,7 +82,7 @@ fun StagedLoaderDialog(
 }
 
 @Composable
-fun CustomStagedLoader(
+private fun CustomStagedLoader(
     currentActiveStage: Int,
     totalStages: Int,
     startSize: Dp = PassMarkDimensions.minTouchSize,
