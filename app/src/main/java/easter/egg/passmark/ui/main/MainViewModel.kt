@@ -135,7 +135,9 @@ class HomeListData(
             list
                 .filter { p ->
                     (vaultId?.let { v -> v == p.vaultId } ?: true) &&
-                            (searchString?.let { s -> p.data.title.contains(s) } ?: true)
+                            (searchString?.let { s ->
+                                p.data.title.contains(other = s, ignoreCase = true)
+                            } ?: true)
                 }
                 .let { passList ->
                     when (passwordSortingOptions) {
