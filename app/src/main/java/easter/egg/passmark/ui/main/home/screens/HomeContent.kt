@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,17 +25,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Web
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Person
@@ -488,6 +493,99 @@ object HomeContent {
                                 }
                             }
                         )
+
+                        @Composable
+                        fun RowScope.SheetButton(
+                            mainIcon: ImageVector,
+                            text: String,
+                            actionIcon: ImageVector,
+                            onClick: () -> Unit,
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .setSizeLimitation()
+                                    .weight(weight = 1f),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                content = {
+                                    ConstraintLayout(
+                                        modifier = Modifier
+                                            .clip(shape = CircleShape)
+                                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                                            .clickable(onClick = onClick),
+                                        content = {
+                                            val (mainIconRef, secondaryIconRef) = createRefs()
+
+
+                                            Icon(
+                                                modifier = Modifier
+                                                    .size(size = PassMarkDimensions.minTouchSize)
+                                                    .constrainAs(
+                                                        ref = mainIconRef,
+                                                        constrainBlock = {
+                                                            val margin = 12.dp
+                                                            this.top.linkTo(
+                                                                anchor = parent.top,
+                                                                margin = margin
+                                                            )
+                                                            this.bottom.linkTo(
+                                                                anchor = parent.bottom,
+                                                                margin = margin
+                                                            )
+                                                            this.start.linkTo(
+                                                                anchor = parent.start,
+                                                                margin = margin
+                                                            )
+                                                            this.end.linkTo(
+                                                                anchor = parent.end,
+                                                                margin = margin
+                                                            )
+                                                        }
+                                                    )
+                                                    .padding(all = 6.dp),
+                                                imageVector = mainIcon,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+
+                                            Icon(
+                                                modifier = Modifier
+                                                    .size(size = 24.dp)
+                                                    .clip(shape = CircleShape)
+                                                    .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                                                    .padding(all = 4.dp)
+                                                    .constrainAs(
+                                                        ref = secondaryIconRef,
+                                                        constrainBlock = {
+                                                            this.top.linkTo(mainIconRef.bottom)
+                                                            this.bottom.linkTo(mainIconRef.bottom)
+                                                            this.start.linkTo(mainIconRef.end)
+                                                            this.end.linkTo(mainIconRef.end)
+                                                        }
+                                                    ),
+                                                imageVector = actionIcon,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    )
+                                    Text(
+                                        modifier = Modifier
+                                            .setSizeLimitation()
+                                            .widthIn(max = PassMarkDimensions.minTouchSize * 2),
+                                        text = text,
+                                        fontFamily = PassMarkFonts.font,
+                                        fontSize = PassMarkFonts.Body.medium,
+                                        fontWeight = FontWeight.Medium,
+                                        maxLines = 2,
+                                        minLines = 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            )
+                        }
+
                         @Composable
                         fun ColumnScope.SheetButton(
                             startIcon: ImageVector,
