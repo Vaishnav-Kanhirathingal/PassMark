@@ -32,10 +32,10 @@ class HomeViewModel @Inject constructor(
     }
 
     //-------------------------------------------------------------------------------------ascending
-    private val _ascending:MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _ascending:MutableStateFlow<Boolean> = MutableStateFlow(true)
     val ascending:StateFlow<Boolean> get() = _ascending
-    fun flipAscendingStatus(){
-        this._ascending.value = !this._ascending.value
+    fun updateAscending(asc:Boolean){
+        this._ascending.value = asc
     }
 
     //-----------------------------------------------------------------------------------search-text

@@ -21,23 +21,27 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.RadioButtonChecked
+import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,9 +58,11 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.gson.GsonBuilder
 import easter.egg.passmark.R
 import easter.egg.passmark.data.models.content.Password
+import easter.egg.passmark.data.models.content.PasswordSortingOptions
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.HomeListData
@@ -190,7 +196,6 @@ object HomeScreen {
                 )
             },
             content = {
-                val searchText: MutableState<String?> = remember { mutableStateOf(null) }
                 Scaffold(
                     modifier = modifier,
                     topBar = {
@@ -198,9 +203,13 @@ object HomeScreen {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(min = PassMarkDimensions.minTouchSize),
-                            searchText = searchText.value,
-                            onSearch = { searchText.value = it },
-                            openNavigationDrawer = { coroutineScope.launch { drawerState.open() } }
+                            searchText = homeViewModel.searchText.collectAsState().value,
+                            onSearch = homeViewModel::updateSearchText,
+                            openNavigationDrawer = { coroutineScope.launch { drawerState.open() } },
+                            sortingOptionsSelected = homeViewModel.passwordSortingOption.collectAsState().value,
+                            selectPasswordSortingOption = homeViewModel::updatePasswordSortingOption,
+                            isAscending = homeViewModel.ascending.collectAsState().value,
+                            setAscending = homeViewModel::updateAscending
                         )
                     },
                     content = {
@@ -235,7 +244,11 @@ object HomeScreen {
         modifier: Modifier,
         searchText: String?,
         onSearch: (String?) -> Unit,
-        openNavigationDrawer: () -> Unit
+        openNavigationDrawer: () -> Unit,
+        sortingOptionsSelected: PasswordSortingOptions,
+        selectPasswordSortingOption: (PasswordSortingOptions) -> Unit,
+        isAscending: Boolean,
+        setAscending: (Boolean) -> Unit
     ) {
         Row(
             modifier = modifier.padding(
@@ -347,18 +360,73 @@ object HomeScreen {
                         }
                     )
                 }
-                IconButton(
-                    modifier = Modifier.size(
-                        width = PassMarkDimensions.minTouchSize,
-                        height = componentHeight
-                    ),
-                    onClick = {
-                        TODO()
-                    },
+
+                val showSortMenu = remember { mutableStateOf(false) }
+
+                ConstraintLayout(
+                    modifier = Modifier
+                        .size(size = componentHeight)
+                        .clip(shape = CircleShape)
+                        .clickable(onClick = { showSortMenu.value = true }),
                     content = {
+                        val (mainIcon, statusIcon) = createRefs()
+
                         Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = null
+                            modifier = Modifier.constrainAs(
+                                ref = mainIcon,
+                                constrainBlock = {
+                                    this.top.linkTo(parent.top)
+                                    this.bottom.linkTo(parent.bottom)
+                                    this.start.linkTo(parent.start)
+                                    this.end.linkTo(parent.end)
+                                }
+                            ),
+                            imageVector = Icons.AutoMirrored.Filled.Sort,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                        Icon(
+                            modifier = Modifier
+                                .size(size = 12.dp)
+                                .constrainAs(
+                                    ref = statusIcon,
+                                    constrainBlock = {
+                                        this.end.linkTo(mainIcon.end)
+                                        this.bottom.linkTo(mainIcon.bottom)
+                                    }
+                                ),
+                            imageVector =
+                                if (isAscending) Icons.Default.KeyboardArrowDown
+                                else Icons.Default.KeyboardArrowUp,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                        DropdownMenu(
+                            expanded = showSortMenu.value,
+                            onDismissRequest = { showSortMenu.value = false },
+                            content = {
+                                @Composable
+                                fun CustomDropdownMenuItem(passwordSortingOptions: PasswordSortingOptions) {
+                                    DropdownMenuItem(
+                                        text = { Text(text = passwordSortingOptions.getMenuDisplayText()) },
+                                        onClick = {
+                                            selectPasswordSortingOption(passwordSortingOptions)
+                                            showSortMenu.value = false
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector =
+                                                    if (passwordSortingOptions == sortingOptionsSelected) Icons.Default.RadioButtonChecked
+                                                    else Icons.Default.RadioButtonUnchecked,
+                                                contentDescription = null
+                                            )
+                                        }
+                                    )
+                                }
+                                PasswordSortingOptions.entries.forEach {
+                                    CustomDropdownMenuItem(passwordSortingOptions = it)
+                                }
+                            }
                         )
                     }
                 )
