@@ -3,6 +3,7 @@ package easter.egg.passmark.ui.main.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import easter.egg.passmark.data.models.content.PasswordSortingOptions
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.utils.ScreenState
@@ -15,10 +16,33 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val vaultApi: VaultApi
 ) : ViewModel() {
+    //-----------------------------------------------------------------------------vault-id-selected
     private val _vaultIdSelected: MutableStateFlow<Int?> = MutableStateFlow(null)
     val vaultIdSelected: StateFlow<Int?> get() = _vaultIdSelected
     fun updateVaultIdSelected(id: Int?) {
         this._vaultIdSelected.value = id
+    }
+
+    //---------------------------------------------------------------------------------pass-sort-opt
+    private val _passwordSortingOption: MutableStateFlow<PasswordSortingOptions> =
+        MutableStateFlow(PasswordSortingOptions.CREATED)
+    val passwordSortingOption: StateFlow<PasswordSortingOptions> = _passwordSortingOption
+    fun updatePasswordSortingOption(passwordSortingOptions: PasswordSortingOptions) {
+        this._passwordSortingOption.value = passwordSortingOptions
+    }
+
+    //-------------------------------------------------------------------------------------ascending
+    private val _ascending:MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val ascending:StateFlow<Boolean> get() = _ascending
+    fun flipAscendingStatus(){
+        this._ascending.value = !this._ascending.value
+    }
+
+    //-----------------------------------------------------------------------------------search-text
+    private val _searchText: MutableStateFlow<String?> = MutableStateFlow(null)
+    val searchText: StateFlow<String?> get() = _searchText
+    fun updateSearchText(str: String?) {
+        this._searchText.value = str
     }
 
     val vaultDialogState: VaultDialogState = VaultDialogState(
