@@ -12,12 +12,11 @@ import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,10 +24,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -41,10 +41,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Web
-import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -495,7 +492,7 @@ object HomeContent {
                         )
 
                         @Composable
-                        fun RowScope.SheetButton(
+                        fun SheetButton(
                             mainIcon: ImageVector,
                             text: String,
                             actionIcon: ImageVector,
@@ -503,15 +500,14 @@ object HomeContent {
                         ) {
                             Column(
                                 modifier = Modifier
-                                    .setSizeLimitation()
-                                    .weight(weight = 1f),
+                                    .width(width = PassMarkDimensions.minTouchSize * 2),
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 content = {
                                     ConstraintLayout(
                                         modifier = Modifier
                                             .clip(shape = CircleShape)
-                                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                                            .background(MaterialTheme.colorScheme.primaryContainer)
                                             .clickable(onClick = onClick),
                                         content = {
                                             val (mainIconRef, secondaryIconRef) = createRefs()
@@ -519,11 +515,11 @@ object HomeContent {
 
                                             Icon(
                                                 modifier = Modifier
-                                                    .size(size = PassMarkDimensions.minTouchSize)
+                                                    .size(size = 36.dp)
                                                     .constrainAs(
                                                         ref = mainIconRef,
                                                         constrainBlock = {
-                                                            val margin = 12.dp
+                                                            val margin = 16.dp
                                                             this.top.linkTo(
                                                                 anchor = parent.top,
                                                                 margin = margin
@@ -541,18 +537,17 @@ object HomeContent {
                                                                 margin = margin
                                                             )
                                                         }
-                                                    )
-                                                    .padding(all = 6.dp),
+                                                    ),
                                                 imageVector = mainIcon,
                                                 contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                tint = MaterialTheme.colorScheme.onPrimaryContainer
                                             )
 
                                             Icon(
                                                 modifier = Modifier
                                                     .size(size = 24.dp)
                                                     .clip(shape = CircleShape)
-                                                    .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                                                    .background(color = MaterialTheme.colorScheme.primaryContainer)
                                                     .padding(all = 4.dp)
                                                     .constrainAs(
                                                         ref = secondaryIconRef,
@@ -565,72 +560,27 @@ object HomeContent {
                                                     ),
                                                 imageVector = actionIcon,
                                                 contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                tint = MaterialTheme.colorScheme.onPrimaryContainer
                                             )
                                         }
                                     )
                                     Text(
                                         modifier = Modifier
                                             .setSizeLimitation()
-                                            .widthIn(max = PassMarkDimensions.minTouchSize * 2),
+                                            .padding(horizontal = 4.dp),
                                         text = text,
                                         fontFamily = PassMarkFonts.font,
                                         fontSize = PassMarkFonts.Body.medium,
+                                        lineHeight = PassMarkFonts.Body.medium,
                                         fontWeight = FontWeight.Medium,
                                         maxLines = 2,
                                         minLines = 2,
                                         overflow = TextOverflow.Ellipsis,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                }
-                            )
-                        }
-
-                        @Composable
-                        fun ColumnScope.SheetButton(
-                            startIcon: ImageVector,
-                            title: String,
-                            onClick: () -> Unit,
-                            endIcon: ImageVector,
-                            useDivider: Boolean = true
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .setSizeLimitation()
-                                    .fillMaxWidth()
-                                    .clickable(onClick = onClick)
-                                    .padding(horizontal = 16.dp),
-                                horizontalArrangement = Arrangement.spacedBy(
-                                    space = 8.dp,
-                                    alignment = Alignment.CenterHorizontally
-                                ),
-                                verticalAlignment = Alignment.CenterVertically,
-                                content = {
-                                    Icon(
-                                        imageVector = startIcon,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSurface
-                                    )
-                                    Text(
-                                        modifier = Modifier.weight(weight = 1f),
-                                        fontFamily = PassMarkFonts.font,
-                                        fontSize = PassMarkFonts.Body.medium,
-                                        fontWeight = FontWeight.Medium,
                                         color = MaterialTheme.colorScheme.onSurface,
-                                        text = title
-                                    )
-                                    Icon(
-                                        imageVector = endIcon,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSurface
+                                        textAlign = TextAlign.Center
                                     )
                                 }
                             )
-                            if (useDivider) {
-                                HorizontalDivider(
-                                    modifier = Modifier.padding(horizontal = 16.dp)
-                                )
-                            }
                         }
 
                         val clipboardManager = LocalClipboardManager.current
@@ -642,80 +592,93 @@ object HomeContent {
                                 str = str
                             )
                         }
-                        password.data.website?.let { website ->
-                            SheetButton(
-                                startIcon = Icons.Default.Web,
-                                title = "Website",
-                                onClick = { copy(str = website) },
-                                endIcon = Icons.Default.ContentCopy,
-                            )
-                        }
-                        password.data.email?.let { email ->
-                            SheetButton(
-                                startIcon = Icons.Outlined.Email,
-                                title = "Copy email",
-                                onClick = { copy(str = email) },
-                                endIcon = Icons.Default.ContentCopy
-                            )
-                        }
-                        password.data.userName?.let { userName ->
-                            SheetButton(
-                                startIcon = Icons.Outlined.Person,
-                                title = "Copy user name",
-                                onClick = { copy(str = userName) },
-                                endIcon = Icons.Default.ContentCopy,
-                            )
-                        }
-                        SheetButton(
-                            startIcon = Icons.Default.Password,
-                            title = "Copy password",
-                            onClick = {
-                                if (password.data.useFingerPrint) {
-                                    val securityChoice = getSecurityChoices(context = context)
-                                    if (securityChoice == null) { // show toast or open settings
-                                        if (Build.VERSION.SDK_INT > 29) {
-                                            try {
-                                                val enrollIntent =
-                                                    Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
-                                                        putExtra(
-                                                            Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
-                                                            BIOMETRIC_STRONG or DEVICE_CREDENTIAL
-                                                        )
-                                                    }
-                                                context.startActivity(enrollIntent)
-                                            } catch (e: Exception) {
-                                                e.printStackTrace()
-                                            }
-                                        }
-                                        Toast.makeText(
-                                            context,
-                                            "Biometrics not enabled on device. Go to Settings -> Security -> Fingerprint -> set fingerprint",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        setPromptState(
-                                            SecurityPromptState(
-                                                password = password.data.password,
-                                                securityChoices = securityChoice
-                                            )
-                                        )
-                                    }
-                                } else {
-                                    copy(str = password.data.password)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(state = rememberScrollState())
+                                .padding(
+                                    top = 8.dp,
+                                    bottom = 16.dp
+                                ),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = {
+                                password.data.website?.let { website ->
+                                    SheetButton(
+                                        mainIcon = Icons.Default.Web,
+                                        text = "Website",
+                                        onClick = { copy(str = website) },
+                                        actionIcon = Icons.Default.ContentCopy,
+                                    )
                                 }
-                                dismissSheet()
-                            },
-                            endIcon =
-                                if (password.data.useFingerPrint) Icons.Default.Fingerprint
-                                else Icons.Default.ContentCopy,
-                        )
+                                password.data.email?.let { email ->
+                                    SheetButton(
+                                        mainIcon = Icons.Default.Email,
+                                        text = "Copy email",
+                                        onClick = { copy(str = email) },
+                                        actionIcon = Icons.Default.ContentCopy
+                                    )
+                                }
+                                password.data.userName?.let { userName ->
+                                    SheetButton(
+                                        mainIcon = Icons.Default.Person,
+                                        text = "Copy user name",
+                                        onClick = { copy(str = userName) },
+                                        actionIcon = Icons.Default.ContentCopy,
+                                    )
+                                }
+                                SheetButton(
+                                    mainIcon = Icons.Default.Password,
+                                    text = "Copy password",
+                                    onClick = {
+                                        if (password.data.useFingerPrint) {
+                                            val securityChoice =
+                                                getSecurityChoices(context = context)
+                                            if (securityChoice == null) { // show toast or open settings
+                                                if (Build.VERSION.SDK_INT > 29) {
+                                                    try {
+                                                        val enrollIntent =
+                                                            Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
+                                                                putExtra(
+                                                                    Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
+                                                                    BIOMETRIC_STRONG or DEVICE_CREDENTIAL
+                                                                )
+                                                            }
+                                                        context.startActivity(enrollIntent)
+                                                    } catch (e: Exception) {
+                                                        e.printStackTrace()
+                                                    }
+                                                }
+                                                Toast.makeText(
+                                                    context,
+                                                    "Biometrics not enabled on device. Go to Settings -> Security -> Fingerprint -> set fingerprint",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            } else {
+                                                setPromptState(
+                                                    SecurityPromptState(
+                                                        password = password.data.password,
+                                                        securityChoices = securityChoice
+                                                    )
+                                                )
+                                            }
+                                        } else {
+                                            copy(str = password.data.password)
+                                        }
+                                        dismissSheet()
+                                    },
+                                    actionIcon =
+                                        if (password.data.useFingerPrint) Icons.Default.Fingerprint
+                                        else Icons.Default.ContentCopy,
+                                )
 
-                        SheetButton(
-                            startIcon = Icons.Default.Edit,
-                            title = "Edit Password",
-                            onClick = toPasswordEditScreen,
-                            endIcon = Icons.AutoMirrored.Filled.ArrowRight,
-                            useDivider = false
+                                SheetButton(
+                                    mainIcon = Icons.Default.Edit,
+                                    text = "Edit Password",
+                                    onClick = toPasswordEditScreen,
+                                    actionIcon = Icons.AutoMirrored.Filled.ArrowRight
+                                )
+                            }
                         )
                     }
                 )
@@ -828,6 +791,11 @@ private fun EmptyState() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @MobilePreview
+@Preview(
+    widthDp = 600,
+    heightDp = 800,
+    showBackground = true
+)
 private fun PasswordOptionDrawerPreview() {
     val now = System.currentTimeMillis()
     HomeContent.PasswordOptionDrawer(
