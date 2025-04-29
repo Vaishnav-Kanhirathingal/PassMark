@@ -68,6 +68,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility
@@ -637,7 +638,7 @@ object PasswordViewScreen {
         ConstraintLayout(
             modifier = modifier
                 .setSizeLimitation()
-                .padding(horizontal = 24.dp, vertical = 12.dp),
+                .padding(all = 12.dp),
             content = {
                 val (startIconRef, titleRef, contentRef, endIconRef) = createRefs()
                 Icon(
@@ -646,7 +647,7 @@ object PasswordViewScreen {
                         constrainBlock = {
                             this.top.linkTo(parent.top)
                             this.bottom.linkTo(parent.bottom)
-                            this.start.linkTo(parent.start)
+                            this.start.linkTo(anchor = parent.start, margin = 12.dp) // TODO:
                         }
                     ),
                     imageVector = startIcon,
@@ -660,7 +661,11 @@ object PasswordViewScreen {
                             this.top.linkTo(parent.top)
                             this.bottom.linkTo(contentRef.top)
                             this.start.linkTo(anchor = startIconRef.end, margin = 24.dp)
-                            this.end.linkTo(endIconRef.start)
+                            this.end.linkTo(
+                                anchor = endIconRef.start,
+                                margin = 12.dp,
+                                goneMargin = 12.dp
+                            )
                             width = Dimension.fillToConstraints
                         }
                     ),
@@ -679,7 +684,11 @@ object PasswordViewScreen {
                             this.top.linkTo(titleRef.bottom)
                             this.bottom.linkTo(parent.bottom)
                             this.start.linkTo(anchor = startIconRef.end, margin = 24.dp)
-                            this.end.linkTo(endIconRef.start)
+                            this.end.linkTo(
+                                anchor = endIconRef.start,
+                                margin = 12.dp,
+                                goneMargin = 12.dp
+                            )
                             width = Dimension.fillToConstraints
                         }
                     ),
@@ -691,19 +700,19 @@ object PasswordViewScreen {
                     overflow = TextOverflow.Ellipsis,
                     text = fieldText,
                 )
+                createVerticalChain(titleRef, contentRef, chainStyle = ChainStyle.Packed)
                 IconButton(
-                    modifier = Modifier
-                        .constrainAs(
-                            ref = endIconRef,
-                            constrainBlock = {
-                                this.top.linkTo(parent.top)
-                                this.end.linkTo(parent.end)
-                                this.bottom.linkTo(parent.bottom)
-                                visibility =
-                                    if (endIcon == null) Visibility.Gone
-                                    else Visibility.Visible
-                            }
-                        ),
+                    modifier = Modifier.constrainAs(
+                        ref = endIconRef,
+                        constrainBlock = {
+                            this.top.linkTo(parent.top)
+                            this.end.linkTo(anchor = parent.end, margin = 4.dp)
+                            this.bottom.linkTo(parent.bottom)
+                            visibility =
+                                if (endIcon == null) Visibility.Gone
+                                else Visibility.Visible
+                        }
+                    ),
                     onClick = { endIconOnClick?.invoke() },
                     content = {
                         endIcon?.let {
@@ -917,7 +926,7 @@ private fun PasswordViewScreenPreview() {
                 userName = "SomeUserName",
                 password = "SomePassword",
                 website = "www.google.com",
-                notes = "Some note",
+                notes = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
                 useFingerPrint = false,
             ),
             created = 0L,
