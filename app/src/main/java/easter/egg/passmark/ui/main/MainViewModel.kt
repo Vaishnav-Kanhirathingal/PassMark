@@ -127,13 +127,15 @@ class HomeListData(
 
     fun getFilteredPasswordList(
         vaultId: Int?,
+        searchString: String?,
         passwordSortingOptions: PasswordSortingOptions,
         ascending: Boolean
     ): Flow<List<Password>> {
         return this._passwordListState.map { list ->
             list
-                .filter { password: Password ->
-                    vaultId?.let { v -> v == password.vaultId } ?: true
+                .filter { p ->
+                    (vaultId?.let { v -> v == p.vaultId } ?: true) &&
+                            (searchString?.let { s -> p.data.title.contains(s) } ?: true)
                 }
                 .let { passList ->
                     when (passwordSortingOptions) {

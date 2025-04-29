@@ -82,7 +82,6 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import easter.egg.passmark.R
 import easter.egg.passmark.data.models.content.Password
-import easter.egg.passmark.data.models.content.PasswordSortingOptions
 import easter.egg.passmark.data.models.content.password.PasswordData
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
@@ -121,8 +120,9 @@ object HomeContent {
         val passwordList = homeResult
             ?.getFilteredPasswordList(
                 vaultId = vaultId,
-                passwordSortingOptions = PasswordSortingOptions.NAME,
-                ascending = true
+                searchString = homeViewModel.searchText.collectAsState().value,
+                passwordSortingOptions = homeViewModel.passwordSortingOption.collectAsState().value,
+                ascending = homeViewModel.ascending.collectAsState().value
             )
             ?.collectAsState(initial = listOf())
             ?.value
