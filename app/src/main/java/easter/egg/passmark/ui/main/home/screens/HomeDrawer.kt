@@ -49,6 +49,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -423,12 +424,20 @@ object HomeDrawer {
         handleResult: (VaultDialogResult) -> Unit,
     ) {
         val screenState = homeViewModel.vaultDialogState.apiCallState.collectAsState().value
+        val context = LocalContext.current
         LaunchedEffect(
             key1 = screenState,
             block = {
-                if (screenState is ScreenState.Loaded) {
-                    handleResult(screenState.result)
-                    homeViewModel.vaultDialogState.resetAndDismiss()
+                when (screenState) {
+                    is ScreenState.PreCall, is ScreenState.Loading -> {}
+                    is ScreenState.Loaded -> {
+                        handleResult(screenState.result)
+                        homeViewModel.vaultDialogState.resetAndDismiss()
+                    }
+
+                    is ScreenState.ApiError -> {
+                        screenState.manageToastActions(context = context)
+                    }
                 }
             }
         )
@@ -553,6 +562,9 @@ object HomeDrawer {
                             ),
                             verticalAlignment = Alignment.CenterVertically,
                             content = {
+                                val loaderSelected =
+                                    homeViewModel.loaderSelected.collectAsState().value
+
                                 if (isSavedAlready) {
                                     Box(
                                         modifier = Modifier
@@ -560,6 +572,7 @@ object HomeDrawer {
                                             .clip(shape = CircleShape)
                                             .background(color = MaterialTheme.colorScheme.errorContainer)
                                             .clickable(
+                                                enabled = !screenState.isLoading,
                                                 onClick = {
                                                     homeViewModel.performVaultAction(
                                                         action = VaultDialogActionOptions.DELETE
@@ -568,11 +581,19 @@ object HomeDrawer {
                                             ),
                                         contentAlignment = Alignment.Center,
                                         content = {
-                                            Icon(
-                                                imageVector = Icons.Default.Delete,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onErrorContainer
-                                            )
+                                            if (loaderSelected == VaultDialogActionOptions.DELETE && screenState.isLoading) {
+                                                CircularProgressIndicator(
+                                                    modifier = Modifier.size(size = 24.dp),
+                                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                                    strokeWidth = 2.dp
+                                                )
+                                            } else {
+                                                Icon(
+                                                    imageVector = Icons.Default.Delete,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onErrorContainer
+                                                )
+                                            }
                                         }
                                     )
                                 }
@@ -629,7 +650,7 @@ object HomeDrawer {
                                     text = if (isSavedAlready) "Update" else "Create",
                                     enabled = (!screenState.isLoading && (dialogText.isNotBlank())),
                                     onClick = { homeViewModel.performVaultAction(action = VaultDialogActionOptions.UPDATE) },
-                                    isLoading = screenState.isLoading
+                                    isLoading = screenState.isLoading && (loaderSelected==VaultDialogActionOptions.UPDATE)
                                 )
                             }
                         )
