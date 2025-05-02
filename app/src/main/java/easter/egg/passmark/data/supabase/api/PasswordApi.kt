@@ -34,4 +34,26 @@ class PasswordApi @Inject constructor(
             }
         }
     }
+
+    suspend fun updateUsageStat(
+        lastUsed: Long,
+        usedCount: Int,
+        cloudId: Int
+    ) :PasswordCapsule= table
+        .update(
+            update = {
+                set(column = PasswordCapsule.Companion.Keys.LAST_USED_KEY, value = lastUsed)
+                set(column = PasswordCapsule.Companion.Keys.USED_COUNT_KEY, value = usedCount)
+            },
+            request = {
+                select()
+                filter {
+                    eq(
+                        column = PasswordCapsule.Companion.Keys.SUPABASE_ID_KEY,
+                        value = cloudId
+                    )
+                }
+            }
+        )
+        .decodeSingle<PasswordCapsule>()
 }

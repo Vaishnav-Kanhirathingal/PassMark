@@ -29,6 +29,13 @@ interface PasswordDao {
     @Query("DELETE FROM local_password_capsules")
     suspend fun deleteAll()
 
+    @Query("UPDATE local_password_capsules SET last_used = :lastUsed, used_count = :usedCount WHERE local_id = :localId")
+    suspend fun updateUsageStat(
+        lastUsed: Long,
+        usedCount: Int,
+        localId: Int
+    )
+
     companion object {
         @Composable
         fun getTestingDao(): PasswordDao = Room
