@@ -218,4 +218,14 @@ class HomeListData(
                 }
             }
     }
+
+    /** deletes the vault and associated passwords from cache */
+    fun deleteVaultAndAssociates(vaultId: Int) {
+        this._passwordListState.value = this._passwordListState.value
+            .toMutableList()
+            .apply { removeAll { it.vaultId == vaultId } }
+        this._vaultListState.value = this._vaultListState.value
+            .toMutableList()
+            .apply { removeAll { it.id == vaultId } }
+    }
 }
