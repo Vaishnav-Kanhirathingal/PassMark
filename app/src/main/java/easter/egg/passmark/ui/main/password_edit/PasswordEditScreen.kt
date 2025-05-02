@@ -141,8 +141,6 @@ object PasswordEditScreen {
                             }
                         }
                         result?.upsertPassword(password = state.result)
-
-
                         navigateBack()
                     }
 

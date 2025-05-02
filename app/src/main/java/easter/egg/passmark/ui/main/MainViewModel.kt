@@ -3,6 +3,7 @@ package easter.egg.passmark.ui.main
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -126,6 +127,11 @@ class HomeListData(
     private val _passwordListState: MutableStateFlow<List<Password>> =
         MutableStateFlow(passwordList)
     val passwordListState: StateFlow<List<Password>> get() = _passwordListState
+
+    @Composable
+    fun getVaultById(vaultId: Int): Vault? {
+        return this._vaultListState.collectAsState().value.find { vault: Vault -> vault.id == vaultId }
+    }
 
     fun getFilteredPasswordList(
         vaultId: Int?,

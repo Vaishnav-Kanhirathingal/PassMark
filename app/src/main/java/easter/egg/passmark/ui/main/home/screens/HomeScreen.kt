@@ -207,6 +207,11 @@ object HomeScreen {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(min = PassMarkDimensions.minTouchSize),
+                            searchingVaultName = homeViewModel.vaultIdSelected.collectAsState().value?.let {
+                                (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
+                                    ?.result?.getVaultById(it)
+                                    ?.name
+                            },
                             searchText = homeViewModel.searchText.collectAsState().value,
                             onSearch = homeViewModel::updateSearchText,
                             openNavigationDrawer = { coroutineScope.launch { drawerState.open() } },
@@ -247,6 +252,7 @@ object HomeScreen {
     private fun HomeTopBar(
         modifier: Modifier,
         searchText: String?,
+        searchingVaultName: String?,
         onSearch: (String?) -> Unit,
         openNavigationDrawer: () -> Unit,
         sortingOptionsSelected: PasswordSortingOptions,
@@ -358,8 +364,9 @@ object HomeScreen {
                                 contentAlignment = Alignment.CenterStart,
                                 content = {
                                     if (searchText.isEmpty()) {
+
                                         Text(
-                                            text = "Search in all items...",
+                                            text = "Search in ${searchingVaultName ?: "all items"}...",
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
