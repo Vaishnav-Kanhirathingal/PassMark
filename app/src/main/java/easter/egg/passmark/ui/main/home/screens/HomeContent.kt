@@ -747,9 +747,7 @@ fun HomeContentPreview() {
         mainViewModel = MainViewModel.getTestViewModel(),
         toViewPasswordScreen = {},
         toPasswordEditScreen = {},
-        homeViewModel = HomeViewModel(
-            vaultApi = VaultApi(SupabaseModule.mockClient)
-        )
+        homeViewModel = HomeViewModel.getTestViewModel()
     )
 }
 

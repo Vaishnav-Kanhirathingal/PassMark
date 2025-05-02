@@ -1,8 +1,10 @@
 package easter.egg.passmark.ui.main.home.screens
 
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +28,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BasicAlertDialog
@@ -60,10 +63,10 @@ import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.R
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
-import easter.egg.passmark.data.supabase.api.VaultApi
-import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
+import easter.egg.passmark.ui.main.home.VaultDialogActionOptions
+import easter.egg.passmark.ui.main.home.VaultDialogResult
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -244,7 +247,12 @@ object HomeDrawer {
                         passwordsInVault = size,
                         isSelected = vaultIdSelected == vault?.id,
                         cornerSize = cornerSize,
-                        onClick = { selectVault(vault?.id) }
+                        onClick = { selectVault(vault?.id) },
+                        onLongPressed = {
+                            vault?.let { v ->
+                                homeViewModel.vaultDialogState.showDialog(vault = v)
+                            }
+                        }
                     )
                 }
                 if (vaultList.size < 5) {
@@ -261,7 +269,11 @@ object HomeDrawer {
                                     bottomEnd = cornerSize
                                 )
                             )
-                            .clickable(onClick = { homeViewModel.vaultDialogState.showDialog() })
+                            .clickable(
+                                onClick = {
+                                    homeViewModel.vaultDialogState.showDialog(vault = null)
+                                }
+                            )
                             .background(color = MaterialTheme.colorScheme.primaryContainer)
                             .align(alignment = Alignment.End),
                         contentAlignment = Alignment.Center,
@@ -279,10 +291,24 @@ object HomeDrawer {
                     VaultDialog(
                         modifier = Modifier.fillMaxWidth(),
                         homeViewModel = homeViewModel,
-                        cacheVault = {
-                            (mainViewModel.screenState.value as? ScreenState.Loaded)?.result?.addNewVault(
-                                vault = it
-                            )
+                        handleResult = {
+                            val homeListResult =
+                                (mainViewModel.screenState.value as? ScreenState.Loaded)
+                                    ?.result
+                            try {
+                                when (it.action) {
+                                    VaultDialogActionOptions.UPDATE -> homeListResult?.upsertNewVault(
+                                        vault = it.vault
+                                    )
+
+                                    VaultDialogActionOptions.DELETE -> homeListResult?.deleteVaultAndAssociates(
+                                        vaultId = it.vault.id!!
+                                    )
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                mainViewModel.refreshHomeList(silentReload = true)
+                            }
                         }
                     )
                 }
@@ -291,6 +317,7 @@ object HomeDrawer {
         )
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun VaultSelectable(
         modifier: Modifier,
@@ -299,10 +326,12 @@ object HomeDrawer {
         passwordsInVault: Int,
         isSelected: Boolean,
         cornerSize: Dp,
-        onClick: () -> Unit
+        onClick: () -> Unit,
+        onLongPressed: () -> Unit
     ) {
-        val onContainerColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
-        else MaterialTheme.colorScheme.onSurface
+        val onContainerColor =
+            if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
+            else MaterialTheme.colorScheme.onSurface
         ConstraintLayout(
             modifier = modifier
                 .setSizeLimitation()
@@ -313,7 +342,10 @@ object HomeDrawer {
                         if (isSelected) MaterialTheme.colorScheme.primaryContainer
                         else MaterialTheme.colorScheme.surfaceContainer,
                 )
-                .clickable(onClick = onClick)
+                .combinedClickable(
+                    onLongClick = onLongPressed,
+                    onClick = onClick
+                )
                 .padding(horizontal = 16.dp, vertical = 16.dp),
             content = {
                 val (icon, title, subTitle) = createRefs()
@@ -388,14 +420,14 @@ object HomeDrawer {
     fun VaultDialog(
         modifier: Modifier,
         homeViewModel: HomeViewModel,
-        cacheVault: (Vault) -> Unit,
+        handleResult: (VaultDialogResult) -> Unit,
     ) {
         val screenState = homeViewModel.vaultDialogState.apiCallState.collectAsState().value
         LaunchedEffect(
             key1 = screenState,
             block = {
                 if (screenState is ScreenState.Loaded) {
-                    cacheVault(screenState.result)
+                    handleResult(screenState.result)
                     homeViewModel.vaultDialogState.resetAndDismiss()
                 }
             }
@@ -422,7 +454,8 @@ object HomeDrawer {
                     content = {
                         val iconSelected =
                             homeViewModel.vaultDialogState.iconChoice.collectAsState().value
-
+                        val isSavedAlready =
+                            homeViewModel.vaultDialogState.isAlreadyAVault.collectAsState(initial = false).value
 
                         Text(
                             modifier = Modifier
@@ -433,7 +466,7 @@ object HomeDrawer {
                                     end = 16.dp,
                                     bottom = 8.dp
                                 ),
-                            text = "Name your vault",
+                            text = if (isSavedAlready) "Edit your vault" else "Create a new vault",
                             fontFamily = PassMarkFonts.font,
                             fontSize = PassMarkFonts.Title.medium,
                             fontWeight = FontWeight.SemiBold
@@ -516,10 +549,34 @@ object HomeDrawer {
                                 ),
                             horizontalArrangement = Arrangement.spacedBy(
                                 space = 4.dp,
-                                alignment = Alignment.End
+                                alignment = Alignment.CenterHorizontally
                             ),
                             verticalAlignment = Alignment.CenterVertically,
                             content = {
+                                if (isSavedAlready) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(size = PassMarkDimensions.minTouchSize)
+                                            .clip(shape = CircleShape)
+                                            .background(color = MaterialTheme.colorScheme.errorContainer)
+                                            .clickable(
+                                                onClick = {
+                                                    homeViewModel.performVaultAction(
+                                                        action = VaultDialogActionOptions.DELETE
+                                                    )
+                                                }
+                                            ),
+                                        contentAlignment = Alignment.Center,
+                                        content = {
+                                            Icon(
+                                                imageVector = Icons.Default.Delete,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onErrorContainer
+                                            )
+                                        }
+                                    )
+                                }
+                                Spacer(modifier = Modifier.weight(weight = 1f))
                                 @Composable
                                 fun CustomTextButton(
                                     modifier: Modifier,
@@ -564,14 +621,14 @@ object HomeDrawer {
                                     modifier = Modifier.setSizeLimitation(),
                                     text = "Cancel",
                                     enabled = !screenState.isLoading,
-                                    onClick = { homeViewModel.vaultDialogState.resetAndDismiss() },
+                                    onClick = homeViewModel.vaultDialogState::resetAndDismiss,
                                     isLoading = false
                                 )
                                 CustomTextButton(
                                     modifier = Modifier.setSizeLimitation(),
-                                    text = "Create",
+                                    text = if (isSavedAlready) "Update" else "Create",
                                     enabled = (!screenState.isLoading && (dialogText.isNotBlank())),
-                                    onClick = { homeViewModel.createNewVault() },
+                                    onClick = { homeViewModel.performVaultAction(action = VaultDialogActionOptions.UPDATE) },
                                     isLoading = screenState.isLoading
                                 )
                             }
@@ -591,7 +648,7 @@ private fun HomeScreenDrawerPreview() {
         modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth(0.7f),
-        viewModel = HomeViewModel(vaultApi = VaultApi(supabaseClient = SupabaseModule.mockClient)),
+        viewModel = HomeViewModel.getTestViewModel(),
         mainViewModel = MainViewModel.getTestViewModel(),
         selectVault = {},
         toSettingsScreen = {}
@@ -603,7 +660,7 @@ private fun HomeScreenDrawerPreview() {
 fun VaultDialogPreview() {
     HomeDrawer.VaultDialog(
         modifier = Modifier.fillMaxWidth(),
-        homeViewModel = HomeViewModel(vaultApi = VaultApi(supabaseClient = SupabaseModule.mockClient)),
-        cacheVault = {}
+        homeViewModel = HomeViewModel.getTestViewModel(),
+        handleResult = {}
     )
 }

@@ -65,8 +65,6 @@ import com.google.gson.GsonBuilder
 import easter.egg.passmark.R
 import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.PasswordSortingOptions
-import easter.egg.passmark.data.supabase.api.VaultApi
-import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.HomeListData
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
@@ -496,9 +494,7 @@ private fun HomeScreenPreview() {
         toPasswordEditScreen = {},
         mainViewModel = MainViewModel.getTestViewModel(),
         toViewPasswordScreen = {},
-        homeViewModel = HomeViewModel(
-            vaultApi = VaultApi(supabaseClient = SupabaseModule.mockClient)
-        ),
+        homeViewModel = HomeViewModel.getTestViewModel(),
         toSettingsScreen = {}
     )
 }

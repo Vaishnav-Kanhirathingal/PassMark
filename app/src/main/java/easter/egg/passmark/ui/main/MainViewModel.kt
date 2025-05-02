@@ -67,8 +67,10 @@ class MainViewModel @Inject constructor(
         refreshHomeList()
     }
 
-    fun refreshHomeList() {
-        this._screenState.value = ScreenState.Loading()
+    fun refreshHomeList(silentReload: Boolean = false) {
+        if (!silentReload) {
+            this._screenState.value = ScreenState.Loading()
+        }
         viewModelScope.launch {
             try {
                 val user = userApi.getUser()!!
@@ -194,9 +196,14 @@ class HomeListData(
         this._passwordListState.value = newList
     }
 
-    fun addNewVault(vault: Vault) {
-        this._vaultListState.value =
-            this._vaultListState.value.toMutableList().apply { add(vault) }
+    fun upsertNewVault(vault: Vault) {
+        val tempList = this._vaultListState.value.toMutableList()
+        val indexOfPresent = tempList.indexOfFirst { v -> v.id == vault.id }.takeUnless { it == -1 }
+
+        if (indexOfPresent == null) tempList.add(element = vault)
+        else tempList.set(index = indexOfPresent, element = vault)
+
+        this._vaultListState.value = tempList
     }
 
     fun deletePassword(
