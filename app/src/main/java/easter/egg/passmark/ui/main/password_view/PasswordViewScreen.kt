@@ -107,6 +107,20 @@ object PasswordViewScreen {
         passwordViewViewModel: PasswordViewViewModel,
         mainViewModel: MainViewModel
     ) {
+        LaunchedEffect(
+            key1 = Unit,
+            block = {
+                passwordViewViewModel.updateUsageStats(
+                    password = password,
+                    passwordCryptographyHandler = mainViewModel.passwordCryptographyHandler,
+                    onComplete = {
+                        (mainViewModel.screenState.value as? ScreenState.Loaded)
+                            ?.result
+                            ?.upsertPassword(it)
+                    }
+                )
+            }
+        )
         Scaffold(
             modifier = modifier,
             topBar = {
@@ -315,7 +329,7 @@ object PasswordViewScreen {
                                     titleText = "Password",
                                     fieldText =
                                         if (accessGranted.value) password.data.password
-                                        else "************",
+                                        else "************", // TODO: switch to automation for starring
                                     endIcon =
                                         if (accessGranted.value) Icons.Default.ContentCopy
                                         else Icons.Default.Fingerprint,
