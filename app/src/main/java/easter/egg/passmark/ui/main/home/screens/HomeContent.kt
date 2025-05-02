@@ -122,7 +122,7 @@ object HomeContent {
                 vaultId = vaultId,
                 searchString = homeViewModel.searchText.collectAsState().value,
                 passwordSortingOptions = homeViewModel.passwordSortingOption.collectAsState().value,
-                ascending = homeViewModel.ascending.collectAsState().value
+                increasingOrder = homeViewModel.increasingOrder.collectAsState().value
             )
             ?.collectAsState(initial = listOf())
             ?.value

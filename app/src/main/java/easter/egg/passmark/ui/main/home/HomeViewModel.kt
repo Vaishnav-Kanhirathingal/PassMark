@@ -24,6 +24,7 @@ class HomeViewModel @Inject constructor(
     private val vaultApi: VaultApi,
     private val passwordDao: PasswordDao
 ) : ViewModel() {
+    // TODO: store sorting preferences
     companion object {
         @Composable
         fun getTestViewModel(): HomeViewModel =
@@ -51,10 +52,10 @@ class HomeViewModel @Inject constructor(
     }
 
     //-------------------------------------------------------------------------------------ascending
-    private val _ascending: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    val ascending: StateFlow<Boolean> get() = _ascending
-    fun updateAscending(asc: Boolean) {
-        this._ascending.value = asc
+    private val _increasingOrder: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val increasingOrder: StateFlow<Boolean> get() = _increasingOrder
+    fun updateIncreasingOrder(asc: Boolean) {
+        this._increasingOrder.value = asc
     }
 
     //-----------------------------------------------------------------------------------search-text

@@ -137,7 +137,7 @@ class HomeListData(
         vaultId: Int?,
         searchString: String?,
         passwordSortingOptions: PasswordSortingOptions,
-        ascending: Boolean
+        increasingOrder: Boolean
     ): Flow<List<Password>> {
         return this._passwordListState.map { list ->
             list
@@ -150,26 +150,26 @@ class HomeListData(
                 .let { passList ->
                     when (passwordSortingOptions) {
                         PasswordSortingOptions.NAME -> {
-                            val selector = { password: Password -> password.data.title }
-                            if (ascending) passList.sortedBy(selector = selector)
+                            val selector = { password: Password -> password.data.title.lowercase() }
+                            if (increasingOrder) passList.sortedBy(selector = selector)
                             else passList.sortedByDescending(selector)
                         }
 
                         PasswordSortingOptions.USAGE -> {
                             val selector = { password: Password -> password.usedCount }
-                            if (ascending) passList.sortedBy(selector = selector)
+                            if (!increasingOrder) passList.sortedBy(selector = selector)
                             else passList.sortedByDescending(selector)
                         }
 
                         PasswordSortingOptions.CREATED -> {
                             val selector = { password: Password -> password.created }
-                            if (!ascending) passList.sortedBy(selector = selector)
+                            if (!increasingOrder) passList.sortedBy(selector = selector)
                             else passList.sortedByDescending(selector)
                         }
 
                         PasswordSortingOptions.LAST_USED -> {
                             val selector = { password: Password -> password.lastUsed }
-                            if (!ascending) passList.sortedBy(selector = selector)
+                            if (!increasingOrder) passList.sortedBy(selector = selector)
                             else passList.sortedByDescending(selector)
                         }
                     }

@@ -185,7 +185,6 @@ object HomeScreen {
             modifier = modifier,
             drawerState = drawerState,
             drawerContent = {
-                // TODO: fix the width limitation problem
                 HomeDrawer.DrawerContent(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -217,8 +216,8 @@ object HomeScreen {
                             openNavigationDrawer = { coroutineScope.launch { drawerState.open() } },
                             sortingOptionsSelected = homeViewModel.passwordSortingOption.collectAsState().value,
                             selectPasswordSortingOption = homeViewModel::updatePasswordSortingOption,
-                            isAscending = homeViewModel.ascending.collectAsState().value,
-                            setAscending = homeViewModel::updateAscending
+                            isIncreasing = homeViewModel.increasingOrder.collectAsState().value,
+                            setIncreasing = homeViewModel::updateIncreasingOrder
                         )
                     },
                     content = {
@@ -257,11 +256,11 @@ object HomeScreen {
         openNavigationDrawer: () -> Unit,
         sortingOptionsSelected: PasswordSortingOptions,
         selectPasswordSortingOption: (PasswordSortingOptions) -> Unit,
-        isAscending: Boolean,
-        setAscending: (Boolean) -> Unit
+        isIncreasing: Boolean,
+        setIncreasing: (Boolean) -> Unit
     ) {
-        fun getSortingIcon(isAsc: Boolean) =
-            if (isAsc) Icons.Default.KeyboardArrowDown
+        fun getSortingIcon(isInc: Boolean) =
+            if (isInc) Icons.Default.KeyboardArrowDown
             else Icons.Default.KeyboardArrowUp
 
 
@@ -411,7 +410,7 @@ object HomeScreen {
                                         this.bottom.linkTo(mainIcon.bottom)
                                     }
                                 ),
-                            imageVector = getSortingIcon(isAsc = isAscending),
+                            imageVector = getSortingIcon(isInc = isIncreasing),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurface
                         )
@@ -441,22 +440,22 @@ object HomeScreen {
                                                     .weight(1f)
                                                     .background(
                                                         color =
-                                                            if (isAscending == forAscending) MaterialTheme.colorScheme.primaryContainer
+                                                            if (isIncreasing == forAscending) MaterialTheme.colorScheme.primaryContainer
                                                             else Color.Transparent
                                                     )
                                                     .clickable(
                                                         onClick = {
-                                                            setAscending(forAscending)
+                                                            setIncreasing(forAscending)
                                                             showSortMenu.value = false
                                                         }
                                                     ),
                                                 contentAlignment = Alignment.Center,
                                                 content = {
                                                     Icon(
-                                                        imageVector = getSortingIcon(isAsc = forAscending),
+                                                        imageVector = getSortingIcon(isInc = forAscending),
                                                         contentDescription = null,
                                                         tint =
-                                                            if (isAscending == forAscending) MaterialTheme.colorScheme.onPrimaryContainer
+                                                            if (isIncreasing == forAscending) MaterialTheme.colorScheme.onPrimaryContainer
                                                             else MaterialTheme.colorScheme.onSurface
                                                     )
                                                 }
