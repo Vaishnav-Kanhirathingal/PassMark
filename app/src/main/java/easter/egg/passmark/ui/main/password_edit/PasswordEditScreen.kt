@@ -103,16 +103,12 @@ object PasswordEditScreen {
             block = {
                 val vaultList = (mainViewModel.screenState.value as? ScreenState.Loaded)
                     ?.result?.vaultListState?.value
-                if (passwordToEdit == null) {
-                    viewModel.loadInitialData(
-                        vault = vaultList?.find { v -> v.id == defaultVaultId }
-                    )
-                } else {
-                    viewModel.loadInitialData(
-                        password = passwordToEdit,
-                        vault = vaultList?.find { v -> v.id == passwordToEdit.vaultId }
-                    )
-                }
+                viewModel.loadInitialData(
+                    password = passwordToEdit,
+                    vault = vaultList?.find { v ->
+                        v.id == (if (passwordToEdit == null) defaultVaultId else passwordToEdit.vaultId)
+                    }
+                )
             }
         )
 
@@ -812,6 +808,7 @@ object PasswordEditScreen {
                         Text(
                             modifier = Modifier.weight(1f),
                             fontSize = PassMarkFonts.Body.medium,
+                            lineHeight = PassMarkFonts.Body.medium,
                             fontFamily = PassMarkFonts.font,
                             fontWeight = FontWeight.Medium,
                             color =

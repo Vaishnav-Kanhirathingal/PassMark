@@ -2,12 +2,14 @@ package easter.egg.passmark.ui.main.password_edit
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.password.PasswordData
+import easter.egg.passmark.data.storage.SettingsDataStore
 import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.di.supabase.SupabaseModule
@@ -16,13 +18,15 @@ import easter.egg.passmark.utils.extensions.nullIfBlank
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PasswordEditViewModel @Inject constructor(
-    val passwordApi: PasswordApi,
-    val passwordDao: PasswordDao
+    private val passwordApi: PasswordApi,
+    private val passwordDao: PasswordDao,
+    private val dataStore: SettingsDataStore
 ) : ViewModel() {
     private val TAG = this::class.simpleName
 
@@ -31,7 +35,8 @@ class PasswordEditViewModel @Inject constructor(
         fun getTestViewModel(): PasswordEditViewModel {
             return PasswordEditViewModel(
                 passwordApi = PasswordApi(supabaseClient = SupabaseModule.mockClient),
-                passwordDao = PasswordDao.getTestingDao()
+                passwordDao = PasswordDao.getTestingDao(),
+                dataStore = SettingsDataStore(LocalContext.current)
             )
         }
     }
@@ -65,33 +70,31 @@ class PasswordEditViewModel @Inject constructor(
     private var _loaded = false
 
     fun loadInitialData(
-        vault: Vault?
-    ) {
-        if (_loaded) {
-            Log.d(TAG, "vault already loaded")
-        } else {
-            this._selectedVault.value = vault
-            _loaded = true
-        }
-    }
-
-    fun loadInitialData(
-        password: Password,
+        password: Password?,
         vault: Vault?
     ) {
         if (_loaded) {
             Log.d(TAG, "password already loaded")
         } else {
-            this.title.value = password.data.title
-            this.email.value = password.data.email ?: ""
-            this.userName.value = password.data.userName ?: ""
-            this.password.value = password.data.password
-            this.website.value = password.data.website ?: ""
-            this.notes.value = password.data.notes ?: ""
-            this.useFingerPrint.value = password.data.useFingerPrint
-            this.saveToLocalOnly.value = password.localId != null
+            if (password == null) {
+                viewModelScope.launch {
+                    this@PasswordEditViewModel.useFingerPrint.value =
+                        dataStore.getBiometricEnabledFlow().first()
+                    this@PasswordEditViewModel.saveToLocalOnly.value =
+                        dataStore.getOfflineStorageFlow().first()
+                }
+            } else {
+                this.title.value = password.data.title
+                this.email.value = password.data.email ?: ""
+                this.userName.value = password.data.userName ?: ""
+                this.password.value = password.data.password
+                this.website.value = password.data.website ?: ""
+                this.notes.value = password.data.notes ?: ""
+                this.useFingerPrint.value = password.data.useFingerPrint
+                this.saveToLocalOnly.value = password.localId != null
+                this._oldPassword = password
+            }
             this._selectedVault.value = vault
-            this._oldPassword = password
             _loaded = true
         }
     }

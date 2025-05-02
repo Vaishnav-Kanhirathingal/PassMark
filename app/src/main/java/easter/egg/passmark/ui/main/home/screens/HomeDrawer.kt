@@ -650,7 +650,7 @@ object HomeDrawer {
                                     text = if (isSavedAlready) "Update" else "Create",
                                     enabled = (!screenState.isLoading && (dialogText.isNotBlank())),
                                     onClick = { homeViewModel.performVaultAction(action = VaultDialogActionOptions.UPDATE) },
-                                    isLoading = screenState.isLoading && (loaderSelected==VaultDialogActionOptions.UPDATE)
+                                    isLoading = screenState.isLoading && (loaderSelected == VaultDialogActionOptions.UPDATE)
                                 )
                             }
                         )
