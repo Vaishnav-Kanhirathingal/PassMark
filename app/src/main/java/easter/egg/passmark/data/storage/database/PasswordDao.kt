@@ -23,6 +23,9 @@ interface PasswordDao {
     @Query("Delete from local_password_capsules where local_id = :localId")
     suspend fun deleteById(localId: Int)
 
+    @Query("Delete from local_password_capsules where vault_id = :vaultId")
+    suspend fun deleteByVaultId(vaultId: Int)
+
     @Query("DELETE FROM local_password_capsules")
     suspend fun deleteAll()
 

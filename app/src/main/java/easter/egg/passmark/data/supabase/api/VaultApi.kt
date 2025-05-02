@@ -12,7 +12,16 @@ class VaultApi @Inject constructor(
 
     suspend fun getVaultList(): List<Vault> = table.select().decodeList<Vault>()
 
-    suspend fun upsert(vault: Vault) = table
+    suspend fun upsert(vault: Vault): Vault = table
         .upsert(value = vault, request = { select() })
+        .decodeSingle<Vault>()
+
+    suspend fun delete(vault: Vault): Vault = table
+        .delete(
+            request = {
+                select()
+                filter { Vault::id eq vault.id!! }
+            }
+        )
         .decodeSingle<Vault>()
 }
