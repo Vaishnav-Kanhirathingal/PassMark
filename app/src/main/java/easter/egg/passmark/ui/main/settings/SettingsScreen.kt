@@ -206,7 +206,7 @@ object SettingsScreen {
 
                 PasswordEditScreen.CustomSwitch(
                     modifier = switchModifier,
-                    text = "Enable fingerprint by default",
+                    text = "Enable Offline Storage for Passwords by default",
                     isEnabled = true,
                     isChecked = offlineEnabled,
                     onCheckedChange = {
