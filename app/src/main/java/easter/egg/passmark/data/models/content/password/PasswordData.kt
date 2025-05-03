@@ -18,5 +18,7 @@ data class PasswordData(
         .joinToString(separator = "", transform = { it.first().uppercase() })
         .take(n = 2)
 
-    fun getFavicon(): String? = website?.let { "https://${it}/favicon.ico" }
+    fun getFavicon(): String? = website
+        ?.takeUnless { it.isBlank() }
+        ?.let { "https://${it}/favicon.ico" }
 }
