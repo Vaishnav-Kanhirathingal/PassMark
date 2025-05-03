@@ -163,6 +163,9 @@ object SettingsScreen {
         modifier: Modifier,
         settingsViewModel: SettingsViewModel
     ) {
+        val resetDescription = "Resetting your account is permanent and would delete all the " +
+                "Vaults and Passwords (even offline ones) along with all your data. This " +
+                "process is unrecoverable."
         Column(
             modifier = modifier.verticalScroll(
                 state = rememberScrollState()
@@ -218,88 +221,14 @@ object SettingsScreen {
                         }
                     }
                 )
-                PasswordEditScreen.DefaultCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    content = {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
-                            fontFamily = PassMarkFonts.font,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = PassMarkFonts.Title.medium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            text = "Reset account?"
-                        )
-                        val resetDescription = "Resetting your account is permanent and would " +
-                                "delete all the Vaults and Passwords (even offline ones) " +
-                                "along with all your data. This process is unrecoverable."
 
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 4.dp),
-                            fontFamily = PassMarkFonts.font,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = PassMarkFonts.Body.medium,
-                            lineHeight = PassMarkFonts.Body.large,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            text = resetDescription
-                        )
-                        if (settingsViewModel.resetConfirmationDialogState.collectAsState().value) {
-                            ConfirmationDialog(
-                                modifier = Modifier.fillMaxWidth(),
-                                titleText = "Confirm resetting account?",
-                                contentText = resetDescription,
-                                negativeButtonText = "Cancel",
-                                onNegativeClicked = {
-                                    settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
-                                },
-                                positiveButtonText = "Reset",
-                                onPositiveClicked = {
-                                    settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
-                                    settingsViewModel.deleteEverything(silent = false)
-                                },
-                                screenState = ScreenState.PreCall()
-                            )
-                        } else {
-                            Log.d(TAG, "reset confirmation dialog invisible")
-                        }
-                        Box(
-                            modifier = Modifier
-                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                                .setSizeLimitation()
-                                .clip(shape = RoundedCornerShape(size = 12.dp))
-                                .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
-                                .border(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.outlineVariant,
-                                    shape = RoundedCornerShape(size = 12.dp)
-                                )
-                                .clickable(
-                                    onClick = {
-                                        settingsViewModel.setResetConfirmationDialogVisibility(
-                                            visible = true
-                                        )
-                                    }
-                                )
-                                .align(alignment = Alignment.End),
-                            contentAlignment = Alignment.Center,
-                            content = {
-                                Text(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                    text = "Reset Account",
-                                    fontFamily = PassMarkFonts.font,
-                                    fontSize = PassMarkFonts.Body.medium,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        )
-                    }
+                ActionCard(
+                    titleText = "Reset account?",
+                    contentText = resetDescription,
+                    buttonText = "Reset account",
+                    onClick = { settingsViewModel.setResetConfirmationDialogVisibility(visible = true) }
                 )
+
                 // TODO: change password UI
 
                 Spacer(
@@ -309,8 +238,90 @@ object SettingsScreen {
                 )
             }
         )
+
+        if (settingsViewModel.resetConfirmationDialogState.collectAsState().value) {
+            ConfirmationDialog(
+                modifier = Modifier.fillMaxWidth(),
+                titleText = "Confirm resetting account?",
+                contentText = resetDescription,
+                negativeButtonText = "Cancel",
+                onNegativeClicked = {
+                    settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
+                },
+                positiveButtonText = "Reset",
+                onPositiveClicked = {
+                    settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
+                    settingsViewModel.deleteEverything(silent = false)
+                },
+                screenState = ScreenState.PreCall()
+            )
+        } else {
+            Log.d(TAG, "reset confirmation dialog invisible")
+        }
+
     }
 
+    @Composable
+    fun ActionCard(
+        titleText: String,
+        contentText: String,
+        buttonText: String,
+        onClick: () -> Unit
+    ) {
+        PasswordEditScreen.DefaultCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            content = {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                    fontFamily = PassMarkFonts.font,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = PassMarkFonts.Title.medium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    text = titleText
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    fontFamily = PassMarkFonts.font,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = PassMarkFonts.Body.medium,
+                    lineHeight = PassMarkFonts.Body.large,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    text = contentText
+                )
+                Box(
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .setSizeLimitation()
+                        .clip(shape = RoundedCornerShape(size = 12.dp))
+                        .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outlineVariant,
+                            shape = RoundedCornerShape(size = 12.dp)
+                        )
+                        .clickable(onClick = onClick)
+                        .align(alignment = Alignment.End),
+                    contentAlignment = Alignment.Center,
+                    content = {
+                        Text(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            text = buttonText,
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Body.medium,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                )
+            }
+        )
+    }
 }
 
 @Composable
