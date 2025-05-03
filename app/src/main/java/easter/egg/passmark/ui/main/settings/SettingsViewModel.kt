@@ -29,17 +29,14 @@ class SettingsViewModel @Inject constructor(
     private val TAG = this::class.simpleName
 
     //----------------------------------------------------------------------------------------------deletion-state
-    //----------------------------------------------------------------------------------------dialog
-    private val _resetConfirmationDialogState: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val resetConfirmationDialogState: StateFlow<Boolean> get() = _resetConfirmationDialogState
-    fun setResetConfirmationDialogVisibility(visible: Boolean) {
-        _resetConfirmationDialogState.value = visible
-    }
-
     //----------------------------------------------------------------------------------screen-state
-    private val _deletionScreenState: MutableStateFlow<ScreenState<Unit>> =
-        MutableStateFlow(ScreenState.PreCall())
-    val deletionScreenState: StateFlow<ScreenState<Unit>> get() = _deletionScreenState
+    private val _deletionScreenState: MutableStateFlow<ScreenState<Unit>?> =
+        MutableStateFlow(null)
+    val deletionScreenState: StateFlow<ScreenState<Unit>?> get() = _deletionScreenState
+
+    fun setResetConfirmationDialogVisibility(visible: Boolean) {
+        _deletionScreenState.value = ScreenState.PreCall<Unit>().takeIf { visible }
+    }
 
     //-----------------------------------------------------------------------------------------stage
     private val _currentStage: MutableStateFlow<DeletionStages> =
@@ -109,8 +106,6 @@ class SettingsViewModel @Inject constructor(
     val oldPassword: MutableStateFlow<String> = MutableStateFlow("")
     val newPassword: MutableStateFlow<String> = MutableStateFlow("")
     val newPasswordRepeated: MutableStateFlow<String> = MutableStateFlow("")
-
-
 
     fun changePassword() {
         TODO()

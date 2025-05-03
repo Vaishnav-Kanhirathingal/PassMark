@@ -1,7 +1,6 @@
 package easter.egg.passmark.ui.main.settings
 
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -206,26 +205,6 @@ object SettingsScreen {
                 )
             }
         )
-
-        if (settingsViewModel.resetConfirmationDialogState.collectAsState().value) {
-            ConfirmationDialog(
-                modifier = Modifier.fillMaxWidth(),
-                titleText = "Confirm resetting account?",
-                contentText = RESET_DESCRIPTION,
-                negativeButtonText = "Cancel",
-                onNegativeClicked = {
-                    settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
-                },
-                positiveButtonText = "Reset",
-                onPositiveClicked = {
-                    settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
-                    settingsViewModel.deleteEverything(silent = false)
-                },
-                screenState = ScreenState.PreCall()
-            )
-        } else {
-            Log.d(TAG, "reset confirmation dialog invisible")
-        }
     }
 
     @Composable
@@ -240,49 +219,52 @@ object SettingsScreen {
         }
 
         //--------------------------------------------------------------------------------reset-user
-        if (settingsViewModel.resetConfirmationDialogState.collectAsState().value) {
-            ConfirmationDialog(
-                modifier = Modifier.fillMaxWidth(),
-                titleText = "Confirm resetting account?",
-                contentText = RESET_DESCRIPTION,
-                negativeButtonText = "Cancel",
-                onNegativeClicked = {
-                    settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
-                },
-                positiveButtonText = "Reset",
-                onPositiveClicked = {
-                    settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
-                    settingsViewModel.deleteEverything(silent = false)
-                },
-                screenState = ScreenState.PreCall()
-            )
-        } else {
-            Log.d(TAG, "reset confirmation dialog invisible")
-        }
-        val deletionApiState = settingsViewModel.deletionScreenState.collectAsState().value
+        val resetUserApiState = settingsViewModel.deletionScreenState.collectAsState().value
         val currentActiveStage = settingsViewModel.currentStage.collectAsState().value
-        if (deletionApiState is ScreenState.Loading || deletionApiState is ScreenState.ApiError) {
-            StagedLoaderDialog(
-                modifier = Modifier.fillMaxWidth(),
-                currentActiveStage = currentActiveStage.ordinal,
-                totalStages = DeletionStages.entries.size,
-                showCurrentStageError = (deletionApiState is ScreenState.ApiError),
-                title = "Deleting everything. Avoid closing the app to prevent data corruption.",
-                subtitle = currentActiveStage.getTaskMessage()
-            )
-        } else {
-            Log.d(TAG, "not showing dialog")
+
+        when (resetUserApiState) {
+            null -> {}
+            is ScreenState.PreCall -> {
+                ConfirmationDialog(
+                    modifier = Modifier.fillMaxWidth(),
+                    titleText = "Confirm resetting account?",
+                    contentText = RESET_DESCRIPTION,
+                    negativeButtonText = "Cancel",
+                    onNegativeClicked = {
+                        settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
+                    },
+                    positiveButtonText = "Reset",
+                    onPositiveClicked = {
+                        settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
+                        settingsViewModel.deleteEverything(silent = false)
+                    },
+                    screenState = ScreenState.PreCall()
+                )
+            }
+
+            is ScreenState.Loading, is ScreenState.ApiError -> {
+                StagedLoaderDialog(
+                    modifier = Modifier.fillMaxWidth(),
+                    currentActiveStage = currentActiveStage.ordinal,
+                    totalStages = DeletionStages.entries.size,
+                    showCurrentStageError = (resetUserApiState is ScreenState.ApiError),
+                    title = "Deleting everything. Avoid closing the app to prevent data corruption.",
+                    subtitle = currentActiveStage.getTaskMessage()
+                )
+            }
+
+            is ScreenState.Loaded -> {}
         }
 
         LaunchedEffect(
-            key1 = deletionApiState,
+            key1 = resetUserApiState,
             block = {
-                when (deletionApiState) {
-                    is ScreenState.PreCall, is ScreenState.Loading -> {}
+                when (resetUserApiState) {
+                    null, is ScreenState.PreCall, is ScreenState.Loading -> {}
                     is ScreenState.Loaded -> toAuthActivity()
                     is ScreenState.ApiError -> {
                         delay(3_000L)
-                        deletionApiState.manageToastActions(context = context)
+                        resetUserApiState.manageToastActions(context = context)
                         settingsViewModel.deleteEverything(silent = true)
                     }
                 }
