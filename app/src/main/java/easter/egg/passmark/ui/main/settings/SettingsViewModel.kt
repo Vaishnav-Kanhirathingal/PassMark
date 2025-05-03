@@ -96,7 +96,7 @@ class SettingsViewModel @Inject constructor(
     //----------------------------------------------------------------------------------------------password-state
 
     private val _changePasswordCallState: MutableStateFlow<ScreenState<Unit>?> =
-        MutableStateFlow(ScreenState.PreCall())
+        MutableStateFlow(null)
     val changePasswordCallState: StateFlow<ScreenState<Unit>?> get() = _changePasswordCallState
     fun setChangePasswordDialogVisibility(visible: Boolean) {
         _changePasswordCallState.value = ScreenState.PreCall<Unit>().takeIf { visible }

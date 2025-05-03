@@ -1,6 +1,7 @@
 package easter.egg.passmark.ui.main.settings
 
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -196,7 +197,7 @@ object SettingsScreen {
                     titleText = "Change password?",
                     contentText = CHANGE_PASSWORD_DESCRIPTION,
                     buttonText = "Change Password",
-                    onClick = { TODO() }
+                    onClick = { settingsViewModel.setChangePasswordDialogVisibility(visible = true) }
                 )
                 Spacer(
                     modifier = Modifier
@@ -223,7 +224,6 @@ object SettingsScreen {
         val currentActiveStage = settingsViewModel.currentStage.collectAsState().value
 
         when (resetUserApiState) {
-            null -> {}
             is ScreenState.PreCall -> {
                 ConfirmationDialog(
                     modifier = Modifier.fillMaxWidth(),
@@ -253,7 +253,7 @@ object SettingsScreen {
                 )
             }
 
-            is ScreenState.Loaded -> {}
+            null, is ScreenState.Loaded -> {}
         }
 
         LaunchedEffect(
@@ -279,7 +279,7 @@ object SettingsScreen {
                 when (changePasswordState) {
                     null, is ScreenState.PreCall, is ScreenState.Loading -> {}
                     is ScreenState.Loaded -> {
-                        TODO("sign out -> to Auth loader screen")
+//                        TODO("sign out -> to Auth loader screen")
                     }
 
                     is ScreenState.ApiError -> {
@@ -291,7 +291,7 @@ object SettingsScreen {
     }
 
     @Composable
-    fun ActionCard(
+    private fun ActionCard(
         titleText: String,
         contentText: String,
         buttonText: String,
