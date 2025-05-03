@@ -78,14 +78,14 @@ object SettingsScreen {
                         .fillMaxSize(),
                     settingsViewModel = settingsViewModel
                 )
-                val screenState = settingsViewModel.deletionScreenState.collectAsState().value
+                val deletionApiState = settingsViewModel.deletionScreenState.collectAsState().value
                 val currentActiveStage = settingsViewModel.currentStage.collectAsState().value
-                if (screenState is ScreenState.Loading || screenState is ScreenState.ApiError) {
+                if (deletionApiState is ScreenState.Loading || deletionApiState is ScreenState.ApiError) {
                     StagedLoaderDialog(
                         modifier = Modifier.fillMaxWidth(),
                         currentActiveStage = currentActiveStage.ordinal,
                         totalStages = DeletionStages.entries.size,
-                        showCurrentStageError = (screenState is ScreenState.ApiError),
+                        showCurrentStageError = (deletionApiState is ScreenState.ApiError),
                         title = "Deleting everything. Avoid closing the app to prevent data corruption.",
                         subtitle = currentActiveStage.getTaskMessage()
                     )
@@ -94,19 +94,19 @@ object SettingsScreen {
                 }
                 val context = LocalContext.current
                 val activity = LocalActivity.current
+                fun toLoginScreen() {
+                    context.startActivity(Intent(context, AuthActivity::class.java))
+                    activity?.finish()
+                }
                 LaunchedEffect(
-                    key1 = screenState,
+                    key1 = deletionApiState,
                     block = {
-                        when (screenState) {
+                        when (deletionApiState) {
                             is ScreenState.PreCall, is ScreenState.Loading -> {}
-                            is ScreenState.Loaded -> {
-                                context.startActivity(Intent(context, AuthActivity::class.java))
-                                activity?.finish()
-                            }
-
+                            is ScreenState.Loaded -> toLoginScreen()
                             is ScreenState.ApiError -> {
                                 delay(3_000L)
-                                screenState.manageToastActions(context = context)
+                                deletionApiState.manageToastActions(context = context)
                                 settingsViewModel.deleteEverything(
                                     silent = true
                                 )
@@ -259,7 +259,6 @@ object SettingsScreen {
         } else {
             Log.d(TAG, "reset confirmation dialog invisible")
         }
-
     }
 
     @Composable
