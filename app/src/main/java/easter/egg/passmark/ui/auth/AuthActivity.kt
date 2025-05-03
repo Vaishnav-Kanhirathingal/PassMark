@@ -21,7 +21,7 @@ import easter.egg.passmark.ui.auth.loader.LoaderViewModel
 import easter.egg.passmark.ui.auth.login.LoginScreen
 import easter.egg.passmark.ui.auth.login.LoginViewModel
 import easter.egg.passmark.ui.auth.master_key.MasterKeyScreen
-import easter.egg.passmark.ui.auth.master_key.UserEditViewModel
+import easter.egg.passmark.ui.auth.master_key.MasterKeyViewModel
 import easter.egg.passmark.ui.main.MainActivity
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import kotlinx.serialization.Serializable
@@ -113,7 +113,7 @@ class AuthActivity : ComponentActivity() {
                 )
                 composable<AuthScreens.MasterKey>(
                     content = {
-                        val viewModel: UserEditViewModel = hiltViewModel(viewModelStoreOwner = it)
+                        val viewModel: MasterKeyViewModel = hiltViewModel(viewModelStoreOwner = it)
                         val isNewUser =
                             it.arguments!!.getBoolean(AuthScreens.MasterKey::isNewUser.name)
                         MasterKeyScreen.Screen(

@@ -52,7 +52,7 @@ object MasterKeyScreen {
     @Composable
     fun Screen(
         modifier: Modifier,
-        viewModel: UserEditViewModel,
+        viewModel: MasterKeyViewModel,
         isNewUser: Boolean,
         toLoaderScreen: () -> Unit
     ) {
@@ -194,7 +194,7 @@ private fun UserEditScreenPreview() {
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
-            viewModel = UserEditViewModel(
+            viewModel = MasterKeyViewModel(
                 supabaseAccountHelper = SupabaseAccountHelper(supabaseClient = SupabaseModule.mockClient),
                 userApi = UserApi(supabaseClient = SupabaseModule.mockClient)
             ),
@@ -205,7 +205,7 @@ private fun UserEditScreenPreview() {
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
-            viewModel = UserEditViewModel(
+            viewModel = MasterKeyViewModel(
                 supabaseAccountHelper = SupabaseAccountHelper(supabaseClient = SupabaseModule.mockClient),
                 userApi = UserApi(supabaseClient = SupabaseModule.mockClient)
             ),

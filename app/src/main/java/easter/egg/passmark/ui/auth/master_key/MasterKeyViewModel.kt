@@ -17,8 +17,9 @@ import kotlinx.coroutines.launch
 import java.security.SecureRandom
 import javax.inject.Inject
 
+// TODO: rename
 @HiltViewModel
-class UserEditViewModel @Inject constructor(
+class MasterKeyViewModel @Inject constructor(
     private val supabaseAccountHelper: SupabaseAccountHelper,
     private val userApi: UserApi
 ) : ViewModel() {
@@ -52,12 +53,12 @@ class UserEditViewModel @Inject constructor(
     ) {
         _screenState.value = ScreenState.Loading()
         viewModelScope.launch {
-            val password = this@UserEditViewModel.masterPasswordText.value
+            val password = this@MasterKeyViewModel.masterPasswordText.value
             Log.d(TAG, "password = $password")
 
             val newState: ScreenState<Unit> =
                 try {
-                    val authId = this@UserEditViewModel.supabaseAccountHelper.getId()
+                    val authId = this@MasterKeyViewModel.supabaseAccountHelper.getId()
                     val dataStoreHandler = PassMarkDataStore(context = context, authId = authId)
                     if (isNewUser) {
                         setUpNewUser(
@@ -75,7 +76,7 @@ class UserEditViewModel @Inject constructor(
                     e.printStackTrace()
                     ScreenState.ApiError.fromException(e = e)
                 }
-            this@UserEditViewModel._screenState.value = newState
+            this@MasterKeyViewModel._screenState.value = newState
         }
     }
 
