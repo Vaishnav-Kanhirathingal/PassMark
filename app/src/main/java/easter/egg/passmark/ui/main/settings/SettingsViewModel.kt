@@ -2,6 +2,8 @@ package easter.egg.passmark.ui.main.settings
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,6 +13,7 @@ import easter.egg.passmark.data.storage.SettingsDataStore
 import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
+import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +30,20 @@ class SettingsViewModel @Inject constructor(
     private val passwordDao: PasswordDao
 ) : ViewModel() {
     private val TAG = this::class.simpleName
+
+    companion object {
+        @Composable
+        fun getTestViewModel(): SettingsViewModel {
+            val client = SupabaseModule.mockClient
+            return SettingsViewModel(
+                context = LocalContext.current,
+                settingsDataStore = SettingsDataStore(context = LocalContext.current),
+                supabaseAccountHelper = SupabaseAccountHelper(supabaseClient = client),
+                userApi = UserApi(supabaseClient = client),
+                passwordDao = PasswordDao.getTestingDao()
+            )
+        }
+    }
 
     //----------------------------------------------------------------------------------------------deletion-state
     //----------------------------------------------------------------------------------screen-state
