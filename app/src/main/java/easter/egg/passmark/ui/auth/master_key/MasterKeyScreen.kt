@@ -104,14 +104,9 @@ object MasterKeyScreen {
                     lineHeight = PassMarkFonts.Body.medium,
                     fontWeight = FontWeight.Medium
                 )
-                val errorText: String? =
-                    viewModel.masterPasswordText.collectAsState().value.length.let {
-                        when {
-                            it >= 32 -> "Password should be less than 32 in length"
-                            it <= 8 -> "Password should be more than 8 in length"
-                            else -> null
-                        }
-                    }
+                val passwordTextState: PasswordTextState = PasswordTextState.getEState(
+                    password = viewModel.masterPasswordText.collectAsState().value
+                )
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !isLoading,
@@ -119,8 +114,8 @@ object MasterKeyScreen {
                     onValueChange = viewModel::updateMasterPasswordText,
                     label = { Text(text = "Master Password") },
                     placeholder = { Text(text = "Secure Password") },
-                    isError = (viewModel.showError.collectAsState().value && (errorText != null)),
-                    supportingText = { Text(text = errorText ?: "Password is of correct length") },
+                    isError = (viewModel.showError.collectAsState().value && (passwordTextState != PasswordTextState.OK_LENGTH)),
+                    supportingText = { Text(text = passwordTextState.getMessage()) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Password,
@@ -156,7 +151,7 @@ object MasterKeyScreen {
                         .align(Alignment.End),
                     enabled = !isLoading,
                     onClick = {
-                        if (errorText == null) {
+                        if (passwordTextState==PasswordTextState.OK_LENGTH) {
                             viewModel.onButtonPress(
                                 isNewUser = isNewUser,
                                 context = applicationContext

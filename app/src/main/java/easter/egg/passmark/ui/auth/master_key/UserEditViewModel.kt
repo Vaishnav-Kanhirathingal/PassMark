@@ -120,3 +120,26 @@ class UserEditViewModel @Inject constructor(
         }
     }
 }
+
+enum class PasswordTextState {
+    TOO_SMALL, OK_LENGTH, TOO_LARGE;
+
+    fun getMessage(): String = when (this) {
+        TOO_SMALL -> "Password should be more than 8 in length"
+        OK_LENGTH -> "Password is of correct length"
+        TOO_LARGE -> "Password should be less than 32 in length"
+    }
+
+    companion object {
+
+        fun getEState(password: String): PasswordTextState {
+            return password.length.let {
+                when {
+                    it >= 32 -> TOO_LARGE
+                    it <= 8 -> TOO_SMALL
+                    else -> OK_LENGTH
+                }
+            }
+        }
+    }
+}
