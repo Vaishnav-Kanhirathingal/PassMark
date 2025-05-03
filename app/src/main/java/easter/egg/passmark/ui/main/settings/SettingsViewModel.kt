@@ -28,21 +28,25 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
     private val TAG = this::class.simpleName
 
-    //--------------------------------------------------------------------------------deletion-state
+    //----------------------------------------------------------------------------------------------deletion-state
+    //----------------------------------------------------------------------------------------dialog
     private val _resetConfirmationDialogState: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val resetConfirmationDialogState: StateFlow<Boolean> get() = _resetConfirmationDialogState
     fun setResetConfirmationDialogVisibility(visible: Boolean) {
         _resetConfirmationDialogState.value = visible
     }
 
+    //----------------------------------------------------------------------------------screen-state
     private val _deletionScreenState: MutableStateFlow<ScreenState<Unit>> =
         MutableStateFlow(ScreenState.PreCall())
     val deletionScreenState: StateFlow<ScreenState<Unit>> get() = _deletionScreenState
 
+    //-----------------------------------------------------------------------------------------stage
     private val _currentStage: MutableStateFlow<DeletionStages> =
         MutableStateFlow(DeletionStages.entries.first())
     val currentStage: StateFlow<DeletionStages> get() = _currentStage
 
+    //------------------------------------------------------------------------------------------call
     fun deleteEverything(
         silent: Boolean
     ) {
@@ -91,6 +95,22 @@ class SettingsViewModel @Inject constructor(
 
         DeletionStages.SUPABASE_LOGOUT -> supabaseAccountHelper.logout()
     }
+
+    //----------------------------------------------------------------------------------------------password-state
+
+    private val _changePasswordCallState: MutableStateFlow<ScreenState<Unit>?> =
+        MutableStateFlow(ScreenState.PreCall())
+    val changePasswordCallState: StateFlow<ScreenState<Unit>?> get() = _changePasswordCallState
+    fun setChangePasswordDialogVisibility(visible: Boolean) {
+        _changePasswordCallState.value = ScreenState.PreCall<Unit>().takeIf { visible }
+    }
+
+    //---------------------------------------------------------------------------------dialog-states
+    val oldPassword: MutableStateFlow<String> = MutableStateFlow("")
+    val newPassword: MutableStateFlow<String> = MutableStateFlow("")
+    val newPasswordRepeated: MutableStateFlow<String> = MutableStateFlow("")
+
+
 
     fun changePassword() {
         TODO()

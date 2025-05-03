@@ -57,6 +57,16 @@ import kotlinx.coroutines.launch
 object SettingsScreen {
     private val TAG = this::class.simpleName
 
+    private val resetDescription = "Resetting your account is permanent and would delete all the " +
+            "Vaults and Passwords (even offline ones) along with all your data. This " +
+            "process is unrecoverable."
+    private val changePasswordDescription =
+        "Changing the password is a multi-layered process which " +
+                "re-encrypts all passwords with a new cryptographic key. Make sure you have " +
+                "a stable internet connection to perform this task. Re-login will be required " +
+                "at the end for user confirmation and background syncing"
+
+    // TODO: use userId for local database while fetching
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -78,42 +88,7 @@ object SettingsScreen {
                         .fillMaxSize(),
                     settingsViewModel = settingsViewModel
                 )
-                val deletionApiState = settingsViewModel.deletionScreenState.collectAsState().value
-                val currentActiveStage = settingsViewModel.currentStage.collectAsState().value
-                if (deletionApiState is ScreenState.Loading || deletionApiState is ScreenState.ApiError) {
-                    StagedLoaderDialog(
-                        modifier = Modifier.fillMaxWidth(),
-                        currentActiveStage = currentActiveStage.ordinal,
-                        totalStages = DeletionStages.entries.size,
-                        showCurrentStageError = (deletionApiState is ScreenState.ApiError),
-                        title = "Deleting everything. Avoid closing the app to prevent data corruption.",
-                        subtitle = currentActiveStage.getTaskMessage()
-                    )
-                } else {
-                    Log.d(TAG, "not showing dialog")
-                }
-                val context = LocalContext.current
-                val activity = LocalActivity.current
-                fun toLoginScreen() {
-                    context.startActivity(Intent(context, AuthActivity::class.java))
-                    activity?.finish()
-                }
-                LaunchedEffect(
-                    key1 = deletionApiState,
-                    block = {
-                        when (deletionApiState) {
-                            is ScreenState.PreCall, is ScreenState.Loading -> {}
-                            is ScreenState.Loaded -> toLoginScreen()
-                            is ScreenState.ApiError -> {
-                                delay(3_000L)
-                                deletionApiState.manageToastActions(context = context)
-                                settingsViewModel.deleteEverything(
-                                    silent = true
-                                )
-                            }
-                        }
-                    }
-                )
+                DialogContent(settingsViewModel = settingsViewModel)
             }
         )
     }
@@ -163,13 +138,6 @@ object SettingsScreen {
         modifier: Modifier,
         settingsViewModel: SettingsViewModel
     ) {
-        val resetDescription = "Resetting your account is permanent and would delete all the " +
-                "Vaults and Passwords (even offline ones) along with all your data. This " +
-                "process is unrecoverable."
-        val changePasswordDescription = "Changing the password is a multi-layered process which " +
-                "re-encrypts all passwords with a new cryptographic key. Make sure you have " +
-                "a stable internet connection to perform this task. Re-login will be required " +
-                "at the end for user confirmation and background syncing"
         Column(
             modifier = modifier.verticalScroll(
                 state = rememberScrollState()
@@ -259,6 +227,86 @@ object SettingsScreen {
         } else {
             Log.d(TAG, "reset confirmation dialog invisible")
         }
+    }
+
+    @Composable
+    fun DialogContent(
+        settingsViewModel: SettingsViewModel
+    ) {
+        val context = LocalContext.current
+        val activity = LocalActivity.current
+        fun toAuthActivity() {
+            context.startActivity(Intent(context, AuthActivity::class.java))
+            activity?.finish()
+        }
+
+        //--------------------------------------------------------------------------------reset-user
+        if (settingsViewModel.resetConfirmationDialogState.collectAsState().value) {
+            ConfirmationDialog(
+                modifier = Modifier.fillMaxWidth(),
+                titleText = "Confirm resetting account?",
+                contentText = resetDescription,
+                negativeButtonText = "Cancel",
+                onNegativeClicked = {
+                    settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
+                },
+                positiveButtonText = "Reset",
+                onPositiveClicked = {
+                    settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
+                    settingsViewModel.deleteEverything(silent = false)
+                },
+                screenState = ScreenState.PreCall()
+            )
+        } else {
+            Log.d(TAG, "reset confirmation dialog invisible")
+        }
+        val deletionApiState = settingsViewModel.deletionScreenState.collectAsState().value
+        val currentActiveStage = settingsViewModel.currentStage.collectAsState().value
+        if (deletionApiState is ScreenState.Loading || deletionApiState is ScreenState.ApiError) {
+            StagedLoaderDialog(
+                modifier = Modifier.fillMaxWidth(),
+                currentActiveStage = currentActiveStage.ordinal,
+                totalStages = DeletionStages.entries.size,
+                showCurrentStageError = (deletionApiState is ScreenState.ApiError),
+                title = "Deleting everything. Avoid closing the app to prevent data corruption.",
+                subtitle = currentActiveStage.getTaskMessage()
+            )
+        } else {
+            Log.d(TAG, "not showing dialog")
+        }
+
+        LaunchedEffect(
+            key1 = deletionApiState,
+            block = {
+                when (deletionApiState) {
+                    is ScreenState.PreCall, is ScreenState.Loading -> {}
+                    is ScreenState.Loaded -> toAuthActivity()
+                    is ScreenState.ApiError -> {
+                        delay(3_000L)
+                        deletionApiState.manageToastActions(context = context)
+                        settingsViewModel.deleteEverything(silent = true)
+                    }
+                }
+            }
+        )
+
+        //---------------------------------------------------------------------------change-password
+        val changePasswordState = settingsViewModel.changePasswordCallState.collectAsState().value
+        LaunchedEffect(
+            key1 = changePasswordState,
+            block = {
+                when (changePasswordState) {
+                    null, is ScreenState.PreCall, is ScreenState.Loading -> {}
+                    is ScreenState.Loaded -> {
+                        TODO("sign out -> to Auth loader screen")
+                    }
+
+                    is ScreenState.ApiError -> {
+                        changePasswordState.manageToastActions(context = context)
+                    }
+                }
+            }
+        )
     }
 
     @Composable
