@@ -77,7 +77,7 @@ object SettingsScreen {
                         .fillMaxSize(),
                     settingsViewModel = settingsViewModel
                 )
-                val screenState = settingsViewModel.screenState.collectAsState().value
+                val screenState = settingsViewModel.deletionScreenState.collectAsState().value
                 val currentActiveStage = settingsViewModel.currentStage.collectAsState().value
                 if (screenState is ScreenState.Loading || screenState is ScreenState.ApiError) {
                     StagedLoaderDialog(

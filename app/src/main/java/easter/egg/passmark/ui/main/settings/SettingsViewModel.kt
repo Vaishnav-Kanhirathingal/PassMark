@@ -28,9 +28,9 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
     private val TAG = this::class.simpleName
 
-    private val _screenState: MutableStateFlow<ScreenState<Unit>> =
+    private val _deletionScreenState: MutableStateFlow<ScreenState<Unit>> =
         MutableStateFlow(ScreenState.PreCall())
-    val screenState: StateFlow<ScreenState<Unit>> get() = _screenState
+    val deletionScreenState: StateFlow<ScreenState<Unit>> get() = _deletionScreenState
 
     private val _currentStage: MutableStateFlow<DeletionStages> =
         MutableStateFlow(DeletionStages.entries.first())
@@ -40,7 +40,7 @@ class SettingsViewModel @Inject constructor(
         silent: Boolean
     ) {
         if (!silent) {
-            _screenState.value = ScreenState.Loading()
+            _deletionScreenState.value = ScreenState.Loading()
         }
         viewModelScope.launch {
             try {
@@ -53,7 +53,7 @@ class SettingsViewModel @Inject constructor(
                         this@SettingsViewModel._currentStage.value = it
                         Log.d(TAG, "about to perform ${it.name}")
                         delay(timeMillis = 800L)
-                        performTask(deletionStages = it)
+                        performDeletionTask(deletionStages = it)
                     }
                 ScreenState.Loaded(Unit)
             } catch (e: Exception) {
@@ -65,12 +65,12 @@ class SettingsViewModel @Inject constructor(
                     }
                 )
             }.let { newState: ScreenState<Unit> ->
-                this@SettingsViewModel._screenState.value = newState
+                this@SettingsViewModel._deletionScreenState.value = newState
             }
         }
     }
 
-    private suspend fun performTask(
+    private suspend fun performDeletionTask(
         deletionStages: DeletionStages
     ): Any = when (deletionStages) {
         DeletionStages.LOCAL_PASSWORDS -> passwordDao.deleteAll()
