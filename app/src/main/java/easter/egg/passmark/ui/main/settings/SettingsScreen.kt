@@ -22,6 +22,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -273,6 +275,28 @@ object SettingsScreen {
 
         //---------------------------------------------------------------------------change-password
         val changePasswordState = settingsViewModel.changePasswordCallState.collectAsState().value
+
+        when (changePasswordState) {
+            is ScreenState.PreCall -> {
+                ChangePasswordDialog(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = changePasswordState,
+                    onDismiss = { settingsViewModel.setChangePasswordDialogVisibility(visible = false) },
+                    onConfirm = settingsViewModel::changePassword
+                )
+            }
+
+            is ScreenState.Loading, is ScreenState.ApiError -> {
+                if (changePasswordState is ScreenState.ApiError) {
+                    changePasswordState.manageToastActions(context = context)
+                }
+                // TODO: staged loader
+            }
+
+            null, is ScreenState.Loaded -> {}
+        }
+
+
         LaunchedEffect(
             key1 = changePasswordState,
             block = {
@@ -351,6 +375,103 @@ object SettingsScreen {
             }
         )
     }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun ChangePasswordDialog(
+        modifier: Modifier,
+        state: ScreenState<Unit>,
+        onDismiss: () -> Unit,
+        onConfirm: () -> Unit
+    ) {
+        BasicAlertDialog(
+            modifier = modifier,
+            onDismissRequest = {
+                if (state.isLoading) {
+                    Log.d(TAG, "dismiss rejected")
+                } else {
+                    onDismiss()
+                }
+            },
+            content = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(shape = RoundedCornerShape(size = PassMarkDimensions.dialogRadius))
+                        .background(color = MaterialTheme.colorScheme.surfaceContainer),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(
+                        space = 8.dp,
+                        alignment = Alignment.CenterVertically
+                    ),
+                    content = {
+                        @Composable
+                        fun PasswordTextField() {
+                            // TODO:
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(
+                                space = 8.dp,
+                                alignment = Alignment.End
+                            ),
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = {
+                                @Composable
+                                fun CustomButton(
+                                    isPrimary: Boolean,
+                                    text: String,
+                                    onClick: () -> Unit
+                                ) {
+                                    val shape =
+                                        RoundedCornerShape(size = PassMarkDimensions.dialogRadius)
+                                    Box(
+                                        modifier = Modifier
+                                            .setSizeLimitation()
+                                            .clip(shape = shape)
+                                            .background(
+                                                color =
+                                                    if (isPrimary) MaterialTheme.colorScheme.primaryContainer
+                                                    else MaterialTheme.colorScheme.surfaceContainerHighest
+                                            )
+                                            .clickable(onClick = onClick),
+                                        contentAlignment = Alignment.Center,
+                                        content = {
+                                            Text(
+                                                modifier = Modifier.padding(
+                                                    horizontal = 16.dp,
+                                                    vertical = 4.dp
+                                                ),
+                                                text = text,
+                                                fontFamily = PassMarkFonts.font,
+                                                fontSize = PassMarkFonts.Body.medium,
+                                                fontWeight = FontWeight.Medium,
+                                                color =
+                                                    if (isPrimary) MaterialTheme.colorScheme.onPrimaryContainer
+                                                    else MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    )
+                                }
+
+                                CustomButton(
+                                    isPrimary = false,
+                                    text = "Cancel",
+                                    onClick = onDismiss
+                                )
+                                CustomButton(
+                                    isPrimary = true,
+                                    text = "Confirm",
+                                    onClick = onConfirm
+                                )
+                            }
+                        )
+                    }
+                )
+            }
+        )
+    }
 }
 
 @Composable
@@ -368,5 +489,18 @@ private fun SettingsScreenPreview() {
             passwordDao = PasswordDao.getTestingDao()
         ),
         navigateUp = {}
+    )
+}
+
+@Composable
+@MobilePreview
+private fun ChangePasswordPreview() {
+    SettingsScreen.ChangePasswordDialog(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 30.dp),
+        state = ScreenState.PreCall(),
+        onDismiss = {},
+        onConfirm = {}
     )
 }
