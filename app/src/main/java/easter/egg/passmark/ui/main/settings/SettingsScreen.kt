@@ -57,14 +57,13 @@ import kotlinx.coroutines.launch
 object SettingsScreen {
     private val TAG = this::class.simpleName
 
-    private val resetDescription = "Resetting your account is permanent and would delete all the " +
-            "Vaults and Passwords (even offline ones) along with all your data. This " +
+    private const val RESET_DESCRIPTION = "Resetting your account is permanent and would delete " +
+            "all the Vaults and Passwords (even offline ones) along with all your data. This " +
             "process is unrecoverable."
-    private val changePasswordDescription =
-        "Changing the password is a multi-layered process which " +
-                "re-encrypts all passwords with a new cryptographic key. Make sure you have " +
-                "a stable internet connection to perform this task. Re-login will be required " +
-                "at the end for user confirmation and background syncing"
+    private const val CHANGE_PASSWORD_DESCRIPTION = "Changing the password is a multi-layered " +
+            "process which re-encrypts all passwords with a new cryptographic key. Make sure " +
+            "you have a stable internet connection to perform this task. Re-login will be " +
+            "required at the end for user confirmation and background syncing"
 
     // TODO: use userId for local database while fetching
     @Composable
@@ -190,13 +189,13 @@ object SettingsScreen {
                 )
                 ActionCard(
                     titleText = "Reset account?",
-                    contentText = resetDescription,
+                    contentText = RESET_DESCRIPTION,
                     buttonText = "Reset account",
                     onClick = { settingsViewModel.setResetConfirmationDialogVisibility(visible = true) }
                 )
                 ActionCard(
                     titleText = "Change password?",
-                    contentText = changePasswordDescription,
+                    contentText = CHANGE_PASSWORD_DESCRIPTION,
                     buttonText = "Change Password",
                     onClick = { TODO() }
                 )
@@ -212,7 +211,7 @@ object SettingsScreen {
             ConfirmationDialog(
                 modifier = Modifier.fillMaxWidth(),
                 titleText = "Confirm resetting account?",
-                contentText = resetDescription,
+                contentText = RESET_DESCRIPTION,
                 negativeButtonText = "Cancel",
                 onNegativeClicked = {
                     settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
@@ -245,7 +244,7 @@ object SettingsScreen {
             ConfirmationDialog(
                 modifier = Modifier.fillMaxWidth(),
                 titleText = "Confirm resetting account?",
-                contentText = resetDescription,
+                contentText = RESET_DESCRIPTION,
                 negativeButtonText = "Cancel",
                 onNegativeClicked = {
                     settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
