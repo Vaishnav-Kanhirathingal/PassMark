@@ -43,6 +43,7 @@ import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.auth.AuthActivity
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
+import easter.egg.passmark.ui.shared_components.ConfirmationDialog
 import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -239,6 +240,10 @@ object SettingsScreen {
                             color = MaterialTheme.colorScheme.onSurface,
                             text = "Reset account?"
                         )
+                        val resetDescription = "Resetting your account is permanent and would " +
+                                "delete all the Vaults and Passwords (even offline ones) " +
+                                "along with all your data. This process is unrecoverable."
+
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -247,10 +252,27 @@ object SettingsScreen {
                             fontWeight = FontWeight.Medium,
                             fontSize = PassMarkFonts.Body.medium,
                             color = MaterialTheme.colorScheme.onSurface,
-                            text = "Resetting your account is permanent and would delete all the " +
-                                    "Vaults and Passwords (even offline ones) along with all your " +
-                                    "data. This process is unrecoverable."
+                            text = resetDescription
                         )
+                        if (settingsViewModel.resetConfirmationDialogState.collectAsState().value) {
+                            ConfirmationDialog(
+                                modifier = Modifier.fillMaxWidth(),
+                                titleText = "Confirm resetting account?",
+                                contentText = resetDescription,
+                                negativeButtonText = "Cancel",
+                                onNegativeClicked = {
+                                    settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
+                                },
+                                positiveButtonText = "Reset",
+                                onPositiveClicked = {
+                                    settingsViewModel.setResetConfirmationDialogVisibility(visible = false)
+                                    settingsViewModel.deleteEverything(silent = false)
+                                },
+                                screenState = ScreenState.PreCall()
+                            )
+                        } else {
+                            Log.d(TAG, "reset confirmation dialog invisible")
+                        }
                         Box(
                             modifier = Modifier
                                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
@@ -262,7 +284,13 @@ object SettingsScreen {
                                     color = MaterialTheme.colorScheme.outlineVariant,
                                     shape = RoundedCornerShape(size = 12.dp)
                                 )
-                                .clickable(onClick = { settingsViewModel.deleteEverything(silent = false) })
+                                .clickable(
+                                    onClick = {
+                                        settingsViewModel.setResetConfirmationDialogVisibility(
+                                            visible = true
+                                        )
+                                    }
+                                )
                                 .align(alignment = Alignment.End),
                             contentAlignment = Alignment.Center,
                             content = {

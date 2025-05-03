@@ -28,6 +28,13 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
     private val TAG = this::class.simpleName
 
+    //--------------------------------------------------------------------------------deletion-state
+    private val _resetConfirmationDialogState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val resetConfirmationDialogState: StateFlow<Boolean> get() = _resetConfirmationDialogState
+    fun setResetConfirmationDialogVisibility(visible: Boolean) {
+        _resetConfirmationDialogState.value = visible
+    }
+
     private val _deletionScreenState: MutableStateFlow<ScreenState<Unit>> =
         MutableStateFlow(ScreenState.PreCall())
     val deletionScreenState: StateFlow<ScreenState<Unit>> get() = _deletionScreenState
@@ -83,6 +90,10 @@ class SettingsViewModel @Inject constructor(
         }
 
         DeletionStages.SUPABASE_LOGOUT -> supabaseAccountHelper.logout()
+    }
+
+    fun changePassword() {
+        TODO()
     }
 }
 
