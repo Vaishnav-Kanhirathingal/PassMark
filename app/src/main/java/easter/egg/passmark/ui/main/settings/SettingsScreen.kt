@@ -218,17 +218,10 @@ object SettingsScreen {
                         }
                     }
                 )
-                Column(
+                PasswordEditScreen.DefaultCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .clip(shape = RoundedCornerShape(size = 12.dp))
-                        .background(color = MaterialTheme.colorScheme.surfaceContainer)
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                            shape = RoundedCornerShape(size = 12.dp)
-                        ),
+                        .padding(horizontal = 16.dp),
                     content = {
                         Text(
                             modifier = Modifier
@@ -251,6 +244,7 @@ object SettingsScreen {
                             fontFamily = PassMarkFonts.font,
                             fontWeight = FontWeight.Medium,
                             fontSize = PassMarkFonts.Body.medium,
+                            lineHeight = PassMarkFonts.Body.large,
                             color = MaterialTheme.colorScheme.onSurface,
                             text = resetDescription
                         )
@@ -306,7 +300,6 @@ object SettingsScreen {
                         )
                     }
                 )
-
                 // TODO: change password UI
 
                 Spacer(
