@@ -25,10 +25,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -68,7 +70,7 @@ object SettingsScreen {
     private const val CHANGE_PASSWORD_DESCRIPTION = "Changing the password is a multi-layered " +
             "process which re-encrypts all passwords with a new cryptographic key. Make sure " +
             "you have a stable internet connection to perform this task. Re-login will be " +
-            "required at the end for user confirmation and background syncing"
+            "required at the end for user confirmation and background syncing."
 
     // TODO: use userId for local database while fetching
     @Composable
@@ -395,6 +397,7 @@ object SettingsScreen {
             },
             content = {
                 val spacing = 12.dp
+                val corners = 12.dp
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -436,6 +439,21 @@ object SettingsScreen {
                                             disabledContainerColor = Color.Transparent,
                                             errorContainerColor = Color.Transparent
                                         ),
+                                        trailingIcon = if (text.isEmpty()) {
+                                            null
+                                        } else {
+                                            {
+                                                IconButton(
+                                                    onClick = { onTextChanged("") },
+                                                    content = {
+                                                        Icon(
+                                                            imageVector = Icons.Default.Clear,
+                                                            contentDescription = null
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        },
                                         singleLine = true,
                                         value = text,
                                         onValueChange = onTextChanged
@@ -445,7 +463,8 @@ object SettingsScreen {
                         }
 
                         Text(
-                            text = "Change Password",
+                            modifier = Modifier.fillMaxWidth(),
+                            text = "Change Password?",
                             fontFamily = PassMarkFonts.font,
                             fontSize = PassMarkFonts.Headline.medium,
                             lineHeight = PassMarkFonts.Headline.medium,
@@ -454,6 +473,7 @@ object SettingsScreen {
                         )
 
                         Text(
+                            modifier = Modifier.fillMaxWidth(),
                             text = CHANGE_PASSWORD_DESCRIPTION,
                             fontFamily = PassMarkFonts.font,
                             fontSize = PassMarkFonts.Label.medium,
@@ -462,7 +482,7 @@ object SettingsScreen {
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
-                        val cardShape = RoundedCornerShape(size = 12.dp)
+                        val cardShape = RoundedCornerShape(size = corners)
                         val cardModifier = Modifier
                             .fillMaxWidth()
                             .clip(shape = cardShape)
@@ -523,14 +543,11 @@ object SettingsScreen {
                                     text: String,
                                     onClick: () -> Unit
                                 ) {
-                                    val shape =
-                                        RoundedCornerShape(size = 12.dp)
                                     Box(
                                         modifier = Modifier
                                             .setSizeLimitation()
-                                            .heightIn(min = 60.dp)
                                             .weight(weight = 1f)
-                                            .clip(shape = shape)
+                                            .clip(shape = RoundedCornerShape(size = corners))
                                             .background(
                                                 color =
                                                     if (isPrimary) MaterialTheme.colorScheme.primaryContainer
