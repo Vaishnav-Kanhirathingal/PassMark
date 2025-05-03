@@ -166,6 +166,10 @@ object SettingsScreen {
         val resetDescription = "Resetting your account is permanent and would delete all the " +
                 "Vaults and Passwords (even offline ones) along with all your data. This " +
                 "process is unrecoverable."
+        val changePasswordDescription = "Changing the password is a multi-layered process which " +
+                "re-encrypts all passwords with a new cryptographic key. Make sure you have " +
+                "a stable internet connection to perform this task. Re-login will be required " +
+                "at the end for user confirmation and background syncing"
         Column(
             modifier = modifier.verticalScroll(
                 state = rememberScrollState()
@@ -179,16 +183,13 @@ object SettingsScreen {
                         .height(height = 8.dp)
                 )
                 val scope = rememberCoroutineScope()
-
                 val switchModifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-
                 val biometricsEnabled = settingsViewModel.settingsDataStore
                     .getBiometricEnabledFlow()
                     .collectAsState(initial = false)
                     .value
-
                 PasswordEditScreen.CustomSwitch(
                     modifier = switchModifier,
                     text = "Enable fingerprint by default",
@@ -202,12 +203,10 @@ object SettingsScreen {
                         }
                     }
                 )
-
                 val offlineEnabled = settingsViewModel.settingsDataStore
                     .getOfflineStorageFlow()
                     .collectAsState(initial = false)
                     .value
-
                 PasswordEditScreen.CustomSwitch(
                     modifier = switchModifier,
                     text = "Enable Offline Storage for Passwords by default",
@@ -221,16 +220,18 @@ object SettingsScreen {
                         }
                     }
                 )
-
                 ActionCard(
                     titleText = "Reset account?",
                     contentText = resetDescription,
                     buttonText = "Reset account",
                     onClick = { settingsViewModel.setResetConfirmationDialogVisibility(visible = true) }
                 )
-
-                // TODO: change password UI
-
+                ActionCard(
+                    titleText = "Change password?",
+                    contentText = changePasswordDescription,
+                    buttonText = "Change Password",
+                    onClick = { TODO() }
+                )
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
