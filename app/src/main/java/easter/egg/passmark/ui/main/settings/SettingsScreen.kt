@@ -10,24 +10,30 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,14 +41,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import easter.egg.passmark.data.storage.SettingsDataStore
-import easter.egg.passmark.data.storage.database.PasswordDao
-import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
-import easter.egg.passmark.data.supabase.api.UserApi
-import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.auth.AuthActivity
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.shared_components.ConfirmationDialog
@@ -280,9 +283,7 @@ object SettingsScreen {
             is ScreenState.PreCall -> {
                 ChangePasswordDialog(
                     modifier = Modifier.fillMaxWidth(),
-                    state = changePasswordState,
-                    onDismiss = { settingsViewModel.setChangePasswordDialogVisibility(visible = false) },
-                    onConfirm = settingsViewModel::changePassword
+                    settingsViewModel = settingsViewModel
                 )
             }
 
@@ -380,55 +381,155 @@ object SettingsScreen {
     @Composable
     fun ChangePasswordDialog(
         modifier: Modifier,
-        state: ScreenState<Unit>,
-        onDismiss: () -> Unit,
-        onConfirm: () -> Unit
+        settingsViewModel: SettingsViewModel
     ) {
+        val state = settingsViewModel.changePasswordCallState.collectAsState().value
         BasicAlertDialog(
             modifier = modifier,
             onDismissRequest = {
-                if (state.isLoading) {
+                if (state?.isLoading == true) {
                     Log.d(TAG, "dismiss rejected")
                 } else {
-                    onDismiss()
+                    settingsViewModel.setChangePasswordDialogVisibility(visible = false)
                 }
             },
             content = {
+                val spacing = 12.dp
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(shape = RoundedCornerShape(size = PassMarkDimensions.dialogRadius))
-                        .background(color = MaterialTheme.colorScheme.surfaceContainer),
+                        .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                        .padding(all = 12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(
-                        space = 8.dp,
+                        space = spacing,
                         alignment = Alignment.CenterVertically
                     ),
                     content = {
                         @Composable
-                        fun PasswordTextField() {
-                            // TODO:
+                        fun PasswordTextField(
+                            label: String,
+                            text: String,
+                            onTextChanged: (String) -> Unit
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(min = 60.dp),
+                                contentAlignment = Alignment.Center,
+                                content = {
+                                    TextField(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        keyboardOptions = KeyboardOptions(
+                                            autoCorrectEnabled = false,
+                                            keyboardType = KeyboardType.Password
+                                        ),
+                                        label = { Text(text = label) },
+                                        colors = TextFieldDefaults.colors(
+                                            focusedIndicatorColor = Color.Transparent,
+                                            unfocusedIndicatorColor = Color.Transparent,
+                                            disabledIndicatorColor = Color.Transparent,
+                                            errorIndicatorColor = Color.Transparent,
+                                            focusedContainerColor = Color.Transparent,
+                                            unfocusedContainerColor = Color.Transparent,
+                                            disabledContainerColor = Color.Transparent,
+                                            errorContainerColor = Color.Transparent
+                                        ),
+                                        singleLine = true,
+                                        value = text,
+                                        onValueChange = onTextChanged
+                                    )
+                                }
+                            )
                         }
+
+                        Text(
+                            text = "Change Password",
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Headline.medium,
+                            lineHeight = PassMarkFonts.Headline.medium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+
+                        Text(
+                            text = CHANGE_PASSWORD_DESCRIPTION,
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Label.medium,
+                            lineHeight = PassMarkFonts.Label.medium,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        val cardShape = RoundedCornerShape(size = 12.dp)
+                        val cardModifier = Modifier
+                            .fillMaxWidth()
+                            .clip(shape = cardShape)
+                            .background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                shape = cardShape
+                            )
+                        Column(
+                            modifier = cardModifier,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            content = {
+                                PasswordTextField(
+                                    label = "Enter current password",
+                                    text = settingsViewModel.oldPassword.collectAsState().value,
+                                    onTextChanged = { settingsViewModel.oldPassword.value = it }
+                                )
+                            }
+                        )
+                        Column(
+                            modifier = cardModifier,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            content = {
+                                PasswordTextField(
+                                    label = "Enter new password",
+                                    text = settingsViewModel.newPassword.collectAsState().value,
+                                    onTextChanged = { settingsViewModel.newPassword.value = it }
+                                )
+                                HorizontalDivider(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    thickness = 1.dp,
+                                    color = MaterialTheme.colorScheme.surfaceContainerHighest
+                                )
+                                PasswordTextField(
+                                    label = "Repeat new password",
+                                    text = settingsViewModel.newPasswordRepeated.collectAsState().value,
+                                    onTextChanged = {
+                                        settingsViewModel.newPasswordRepeated.value = it
+                                    }
+                                )
+                            }
+                        )
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(
-                                space = 8.dp,
-                                alignment = Alignment.End
+                                space = spacing,
+                                alignment = Alignment.CenterHorizontally
                             ),
                             verticalAlignment = Alignment.CenterVertically,
                             content = {
                                 @Composable
-                                fun CustomButton(
+                                fun RowScope.CustomButton(
                                     isPrimary: Boolean,
                                     text: String,
                                     onClick: () -> Unit
                                 ) {
                                     val shape =
-                                        RoundedCornerShape(size = PassMarkDimensions.dialogRadius)
+                                        RoundedCornerShape(size = 12.dp)
                                     Box(
                                         modifier = Modifier
                                             .setSizeLimitation()
+                                            .heightIn(min = 60.dp)
+                                            .weight(weight = 1f)
                                             .clip(shape = shape)
                                             .background(
                                                 color =
@@ -445,8 +546,8 @@ object SettingsScreen {
                                                 ),
                                                 text = text,
                                                 fontFamily = PassMarkFonts.font,
-                                                fontSize = PassMarkFonts.Body.medium,
-                                                fontWeight = FontWeight.Medium,
+                                                fontSize = PassMarkFonts.Title.medium,
+                                                fontWeight = FontWeight.SemiBold,
                                                 color =
                                                     if (isPrimary) MaterialTheme.colorScheme.onPrimaryContainer
                                                     else MaterialTheme.colorScheme.onSurfaceVariant
@@ -458,12 +559,17 @@ object SettingsScreen {
                                 CustomButton(
                                     isPrimary = false,
                                     text = "Cancel",
-                                    onClick = onDismiss
+                                    onClick = {
+                                        settingsViewModel.setChangePasswordDialogVisibility(
+                                            visible = false
+                                        )
+                                    }
                                 )
                                 CustomButton(
                                     isPrimary = true,
                                     text = "Confirm",
-                                    onClick = onConfirm
+                                    onClick = settingsViewModel::changePassword
+
                                 )
                             }
                         )
@@ -478,16 +584,9 @@ object SettingsScreen {
 @MobilePreview
 @MobileHorizontalPreview
 private fun SettingsScreenPreview() {
-    val client = SupabaseModule.mockClient
     SettingsScreen.Screen(
         modifier = Modifier.fillMaxSize(),
-        settingsViewModel = SettingsViewModel(
-            context = LocalContext.current,
-            settingsDataStore = SettingsDataStore(context = LocalContext.current),
-            supabaseAccountHelper = SupabaseAccountHelper(supabaseClient = client),
-            userApi = UserApi(supabaseClient = client),
-            passwordDao = PasswordDao.getTestingDao()
-        ),
+        settingsViewModel = SettingsViewModel.getTestViewModel(),
         navigateUp = {}
     )
 }
@@ -499,8 +598,6 @@ private fun ChangePasswordPreview() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 30.dp),
-        state = ScreenState.PreCall(),
-        onDismiss = {},
-        onConfirm = {}
+        settingsViewModel = SettingsViewModel.getTestViewModel(),
     )
 }
