@@ -24,7 +24,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -88,167 +87,161 @@ object ChangePasswordScreen {
 
         val spacing = 12.dp
         val corners = 12.dp
-        Scaffold(
-            modifier = modifier,
+
+        Column(
+            modifier = modifier
+                .padding(horizontal = 16.dp)
+                .verticalScroll(state = rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(
+                space = spacing,
+                alignment = Alignment.CenterVertically
+            ),
             content = {
-                Column(
+                Box(
                     modifier = Modifier
-                        .padding(paddingValues = it)
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp)
-                        .verticalScroll(state = rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(
-                        space = spacing,
-                        alignment = Alignment.CenterVertically
-                    ),
+                        .size(size = 100.dp)
+                        .clip(shape = RoundedCornerShape(size = 16.dp))
+                        .background(color = MaterialTheme.colorScheme.primaryContainer),
+                    contentAlignment = Alignment.Center,
                     content = {
-                        Box(
-                            modifier = Modifier
-                                .size(size = 100.dp)
-                                .clip(shape = RoundedCornerShape(size = 16.dp))
-                                .background(color = MaterialTheme.colorScheme.primaryContainer),
-                            contentAlignment = Alignment.Center,
-                            content = {
-                                Image(
-                                    modifier = Modifier.size(size = 60.dp),
-                                    painter = painterResource(R.drawable.ic_launcher_uncropped),
-                                    contentDescription = null,
-                                    colorFilter = ColorFilter.tint(
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                )
-                            }
-                        )
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = "Change Password?",
-                            fontFamily = PassMarkFonts.font,
-                            fontSize = PassMarkFonts.Headline.medium,
-                            lineHeight = PassMarkFonts.Headline.medium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            textAlign = TextAlign.Center
-                        )
-
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = SettingsScreen.CHANGE_PASSWORD_DESCRIPTION,
-                            fontFamily = PassMarkFonts.font,
-                            fontSize = PassMarkFonts.Label.medium,
-                            lineHeight = PassMarkFonts.Label.medium,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            textAlign = TextAlign.Center
-                        )
-
-                        val cardShape = RoundedCornerShape(size = corners)
-                        val cardModifier = Modifier
-                            .fillMaxWidth()
-                            .clip(shape = cardShape)
-                            .background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
-                            .border(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                shape = cardShape
+                        Image(
+                            modifier = Modifier.size(size = 60.dp),
+                            painter = painterResource(R.drawable.ic_launcher_uncropped),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
-                        Column(
-                            modifier = cardModifier,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            content = {
-                                PasswordTextField(
-                                    label = "Enter current password",
-                                    text = changePasswordViewModel.oldPassword.collectAsState().value,
-                                    onTextChanged = {
-                                        changePasswordViewModel.oldPassword.value = it
-                                    }
-                                )
-                            }
                         )
-                        Column(
-                            modifier = cardModifier,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            content = {
-                                PasswordTextField(
-                                    label = "Enter new password",
-                                    text = changePasswordViewModel.newPassword.collectAsState().value,
-                                    onTextChanged = {
-                                        changePasswordViewModel.newPassword.value = it
-                                    }
-                                )
-                                HorizontalDivider(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    thickness = 1.dp,
-                                    color = MaterialTheme.colorScheme.surfaceContainerHighest
-                                )
-                                PasswordTextField(
-                                    label = "Repeat new password",
-                                    text = changePasswordViewModel.newPasswordRepeated.collectAsState().value,
-                                    onTextChanged = {
-                                        changePasswordViewModel.newPasswordRepeated.value = it
-                                    }
-                                )
-                            }
-                        )
+                    }
+                )
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "Change Password?",
+                    fontFamily = PassMarkFonts.font,
+                    fontSize = PassMarkFonts.Headline.medium,
+                    lineHeight = PassMarkFonts.Headline.medium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center
+                )
 
-                        Row(
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = SettingsScreen.CHANGE_PASSWORD_DESCRIPTION,
+                    fontFamily = PassMarkFonts.font,
+                    fontSize = PassMarkFonts.Label.medium,
+                    lineHeight = PassMarkFonts.Label.medium,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+
+                val cardShape = RoundedCornerShape(size = corners)
+                val cardModifier = Modifier
+                    .fillMaxWidth()
+                    .clip(shape = cardShape)
+                    .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        shape = cardShape
+                    )
+                Column(
+                    modifier = cardModifier,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    content = {
+                        PasswordTextField(
+                            label = "Enter current password",
+                            text = changePasswordViewModel.oldPassword.collectAsState().value,
+                            onTextChanged = {
+                                changePasswordViewModel.oldPassword.value = it
+                            }
+                        )
+                    }
+                )
+                Column(
+                    modifier = cardModifier,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    content = {
+                        PasswordTextField(
+                            label = "Enter new password",
+                            text = changePasswordViewModel.newPassword.collectAsState().value,
+                            onTextChanged = {
+                                changePasswordViewModel.newPassword.value = it
+                            }
+                        )
+                        HorizontalDivider(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                space = spacing,
-                                alignment = Alignment.CenterHorizontally
-                            ),
-                            verticalAlignment = Alignment.CenterVertically,
-                            content = {
-                                @Composable
-                                fun RowScope.CustomButton(
-                                    isPrimary: Boolean,
-                                    text: String,
-                                    onClick: () -> Unit
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .setSizeLimitation()
-                                            .weight(weight = 1f)
-                                            .clip(shape = RoundedCornerShape(size = corners))
-                                            .background(
-                                                color =
-                                                    if (isPrimary) MaterialTheme.colorScheme.primaryContainer
-                                                    else MaterialTheme.colorScheme.surfaceContainerHighest
-                                            )
-                                            .clickable(onClick = onClick),
-                                        contentAlignment = Alignment.Center,
-                                        content = {
-                                            Text(
-                                                modifier = Modifier.padding(
-                                                    horizontal = 16.dp,
-                                                    vertical = 4.dp
-                                                ),
-                                                text = text,
-                                                fontFamily = PassMarkFonts.font,
-                                                fontSize = PassMarkFonts.Title.medium,
-                                                fontWeight = FontWeight.SemiBold,
-                                                color =
-                                                    if (isPrimary) MaterialTheme.colorScheme.onPrimaryContainer
-                                                    else MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                        }
+                            thickness = 1.dp,
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest
+                        )
+                        PasswordTextField(
+                            label = "Repeat new password",
+                            text = changePasswordViewModel.newPasswordRepeated.collectAsState().value,
+                            onTextChanged = {
+                                changePasswordViewModel.newPasswordRepeated.value = it
+                            }
+                        )
+                    }
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = spacing,
+                        alignment = Alignment.CenterHorizontally
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    content = {
+                        @Composable
+                        fun RowScope.CustomButton(
+                            isPrimary: Boolean,
+                            text: String,
+                            onClick: () -> Unit
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .setSizeLimitation()
+                                    .weight(weight = 1f)
+                                    .clip(shape = RoundedCornerShape(size = corners))
+                                    .background(
+                                        color =
+                                            if (isPrimary) MaterialTheme.colorScheme.primaryContainer
+                                            else MaterialTheme.colorScheme.surfaceContainer
+                                    )
+                                    .clickable(onClick = onClick),
+                                contentAlignment = Alignment.Center,
+                                content = {
+                                    Text(
+                                        modifier = Modifier.padding(
+                                            horizontal = 16.dp,
+                                            vertical = 4.dp
+                                        ),
+                                        text = text,
+                                        fontFamily = PassMarkFonts.font,
+                                        fontSize = PassMarkFonts.Title.medium,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color =
+                                            if (isPrimary) MaterialTheme.colorScheme.onPrimaryContainer
+                                            else MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
+                            )
+                        }
 
-                                CustomButton(
-                                    isPrimary = false,
-                                    text = "Cancel",
-                                    onClick = { TODO("nav back") }
-                                )
-                                CustomButton(
-                                    isPrimary = true,
-                                    text = "Confirm",
-                                    onClick = changePasswordViewModel::changePassword
+                        CustomButton(
+                            isPrimary = false,
+                            text = "Cancel",
+                            onClick = { TODO("nav back") }
+                        )
+                        CustomButton(
+                            isPrimary = true,
+                            text = "Confirm",
+                            onClick = changePasswordViewModel::changePassword
 
-                                )
-                            }
                         )
                     }
                 )
