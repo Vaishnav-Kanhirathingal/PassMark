@@ -109,24 +109,6 @@ class SettingsViewModel @Inject constructor(
 
         DeletionStages.SUPABASE_LOGOUT -> supabaseAccountHelper.logout()
     }
-
-    //----------------------------------------------------------------------------------------------password-state
-
-    private val _changePasswordCallState: MutableStateFlow<ScreenState<Unit>?> =
-        MutableStateFlow(null)
-    val changePasswordCallState: StateFlow<ScreenState<Unit>?> get() = _changePasswordCallState
-    fun setChangePasswordDialogVisibility(visible: Boolean) {
-        _changePasswordCallState.value = ScreenState.PreCall<Unit>().takeIf { visible }
-    }
-
-    //---------------------------------------------------------------------------------dialog-states
-    val oldPassword: MutableStateFlow<String> = MutableStateFlow("")
-    val newPassword: MutableStateFlow<String> = MutableStateFlow("")
-    val newPasswordRepeated: MutableStateFlow<String> = MutableStateFlow("")
-
-    fun changePassword() {
-        TODO()
-    }
 }
 
 enum class DeletionStages {

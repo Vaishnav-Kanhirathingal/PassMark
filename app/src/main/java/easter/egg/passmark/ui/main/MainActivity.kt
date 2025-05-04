@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import easter.egg.passmark.data.models.content.Password
+import easter.egg.passmark.ui.main.change_password.ChangePasswordScreen
 import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.main.home.screens.HomeScreen
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
@@ -155,7 +156,21 @@ class MainActivity : FragmentActivity() {
                         SettingsScreen.Screen(
                             modifier = composableModifier,
                             settingsViewModel = hiltViewModel(viewModelStoreOwner = it),
-                            navigateUp = { navController.navigateUp() }
+                            navigateUp = { navController.navigateUp() },
+                            toChangePasswordScreen = {
+                                navController.navigate(
+                                    route = MainScreens.ChangePassword
+                                )
+                            }
+                        )
+                    }
+                )
+
+                composable<MainScreens.ChangePassword>(
+                    content = {
+                        ChangePasswordScreen.Screen(
+                            modifier = composableModifier,
+                            changePasswordViewModel = hiltViewModel(viewModelStoreOwner = it)
                         )
                     }
                 )
@@ -182,4 +197,8 @@ private sealed class MainScreens {
 
     @Serializable
     data object Settings : MainScreens()
+
+    // TODO: rename to change user password
+    @Serializable
+    data object ChangePassword : MainScreens()
 }
