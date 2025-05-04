@@ -151,7 +151,7 @@ object MasterKeyScreen {
                         .align(Alignment.End),
                     enabled = !isLoading,
                     onClick = {
-                        if (passwordTextState==PasswordTextState.OK_LENGTH) {
+                        if (passwordTextState == PasswordTextState.OK_LENGTH) {
                             viewModel.onButtonPress(
                                 isNewUser = isNewUser,
                                 context = applicationContext

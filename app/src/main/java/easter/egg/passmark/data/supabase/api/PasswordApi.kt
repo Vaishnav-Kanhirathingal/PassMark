@@ -39,7 +39,7 @@ class PasswordApi @Inject constructor(
         lastUsed: Long,
         usedCount: Int,
         cloudId: Int
-    ) :PasswordCapsule= table
+    ): PasswordCapsule = table
         .update(
             update = {
                 set(column = PasswordCapsule.Companion.Keys.LAST_USED_KEY, value = lastUsed)
