@@ -104,7 +104,7 @@ class MainActivity : FragmentActivity() {
                             modifier = composableModifier,
                             viewModel = hiltViewModel(viewModelStoreOwner = it),
                             mainViewModel = mainViewModel,
-                            navigateBack = { navController.navigateUp() },
+                            navigateBack = navController::navigateUp,
                             passwordToEdit = it.arguments?.let { args ->
                                 passwordList?.findPassword(
                                     cloudId = args
@@ -134,7 +134,7 @@ class MainActivity : FragmentActivity() {
                         PasswordViewScreen.Screen(
                             modifier = composableModifier,
                             password = password,
-                            navigateUp = { navController.navigateUp() },
+                            navigateUp = navController::navigateUp,
                             toEditScreen = {
                                 navController.navigate(
                                     route = MainScreens.PasswordEdit(
@@ -156,7 +156,7 @@ class MainActivity : FragmentActivity() {
                         SettingsScreen.Screen(
                             modifier = composableModifier,
                             settingsViewModel = hiltViewModel(viewModelStoreOwner = it),
-                            navigateUp = { navController.navigateUp() },
+                            navigateUp = navController::navigateUp,
                             toChangePasswordScreen = {
                                 navController.navigate(
                                     route = MainScreens.ChangePassword
@@ -170,7 +170,8 @@ class MainActivity : FragmentActivity() {
                     content = {
                         ChangePasswordScreen.Screen(
                             modifier = composableModifier,
-                            changePasswordViewModel = hiltViewModel(viewModelStoreOwner = it)
+                            changePasswordViewModel = hiltViewModel(viewModelStoreOwner = it),
+                            navigateUp = navController::navigateUp
                         )
                     }
                 )

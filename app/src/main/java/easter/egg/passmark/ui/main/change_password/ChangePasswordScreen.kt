@@ -54,7 +54,8 @@ object ChangePasswordScreen {
     @Composable
     fun Screen(
         modifier: Modifier,
-        changePasswordViewModel: ChangePasswordViewModel
+        changePasswordViewModel: ChangePasswordViewModel,
+        navigateUp: () -> Unit
     ) {
         // TODO: make back button a shared composable
         val changePasswordState =
@@ -157,7 +158,8 @@ object ChangePasswordScreen {
                             text = changePasswordViewModel.oldPassword.collectAsState().value,
                             onTextChanged = {
                                 changePasswordViewModel.oldPassword.value = it
-                            }
+                            },
+                            isEnabled = !changePasswordState.isLoading
                         )
                     }
                 )
@@ -171,7 +173,8 @@ object ChangePasswordScreen {
                             text = changePasswordViewModel.newPassword.collectAsState().value,
                             onTextChanged = {
                                 changePasswordViewModel.newPassword.value = it
-                            }
+                            },
+                            isEnabled = !changePasswordState.isLoading
                         )
                         HorizontalDivider(
                             modifier = Modifier.fillMaxWidth(),
@@ -183,7 +186,8 @@ object ChangePasswordScreen {
                             text = changePasswordViewModel.newPasswordRepeated.collectAsState().value,
                             onTextChanged = {
                                 changePasswordViewModel.newPasswordRepeated.value = it
-                            }
+                            },
+                            isEnabled = !changePasswordState.isLoading
                         )
                     }
                 )
@@ -212,7 +216,10 @@ object ChangePasswordScreen {
                                             if (isPrimary) MaterialTheme.colorScheme.primaryContainer
                                             else MaterialTheme.colorScheme.surfaceContainer
                                     )
-                                    .clickable(onClick = onClick),
+                                    .clickable(
+                                        enabled = !changePasswordState.isLoading,
+                                        onClick = onClick
+                                    ),
                                 contentAlignment = Alignment.Center,
                                 content = {
                                     Text(
@@ -235,7 +242,7 @@ object ChangePasswordScreen {
                         CustomButton(
                             isPrimary = false,
                             text = "Cancel",
-                            onClick = { TODO("nav back") }
+                            onClick = navigateUp
                         )
                         CustomButton(
                             isPrimary = true,
@@ -253,7 +260,8 @@ object ChangePasswordScreen {
     private fun PasswordTextField(
         label: String,
         text: String,
-        onTextChanged: (String) -> Unit
+        onTextChanged: (String) -> Unit,
+        isEnabled: Boolean
     ) {
         Box(
             modifier = Modifier
@@ -295,7 +303,8 @@ object ChangePasswordScreen {
                     },
                     singleLine = true,
                     value = text,
-                    onValueChange = onTextChanged
+                    onValueChange = onTextChanged,
+                    enabled = isEnabled
                 )
             }
         )
@@ -309,6 +318,7 @@ fun ChangePasswordScreenPreview() {
         modifier = Modifier.fillMaxSize(),
         changePasswordViewModel = ChangePasswordViewModel(
             vaultApi = VaultApi(supabaseClient = SupabaseModule.mockClient)
-        )
+        ),
+        navigateUp = {}
     )
 }

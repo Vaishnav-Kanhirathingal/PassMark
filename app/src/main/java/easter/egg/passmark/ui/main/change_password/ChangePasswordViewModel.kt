@@ -18,7 +18,7 @@ class ChangePasswordViewModel @Inject constructor(
 
     private val _changePasswordCallState: MutableStateFlow<ScreenState<Unit>> =
         MutableStateFlow(ScreenState.PreCall())
-    val changePasswordCallState: StateFlow<ScreenState<Unit>?> get() = _changePasswordCallState
+    val changePasswordCallState: StateFlow<ScreenState<Unit>> get() = _changePasswordCallState
 
 
     fun changePassword() {
