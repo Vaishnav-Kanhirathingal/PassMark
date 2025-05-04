@@ -45,10 +45,12 @@ import easter.egg.passmark.R
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.settings.SettingsScreen
+import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
+import kotlinx.coroutines.delay
 
 object ChangePasswordScreen {
     @Composable
@@ -58,29 +60,40 @@ object ChangePasswordScreen {
         navigateUp: () -> Unit
     ) {
         // TODO: make back button a shared composable
-        val changePasswordState =
-            changePasswordViewModel.changePasswordCallState.collectAsState().value
+        val screenState =
+            changePasswordViewModel.screenState.collectAsState().value
 
-        when (changePasswordState) {
+        when (screenState) {
             is ScreenState.Loading, is ScreenState.ApiError -> {
-                // TODO: staged loader
+                val currentActiveStage =
+                    changePasswordViewModel.currentReEncryptionStates.collectAsState().value
+                StagedLoaderDialog(
+                    modifier = Modifier.fillMaxWidth(),
+                    currentActiveStage = currentActiveStage.ordinal,
+                    totalStages = ReEncryptionStates.entries.size,
+                    showCurrentStageError = (screenState is ScreenState.ApiError<Unit>),
+                    title = "Re-encrypting files",
+                    subtitle = currentActiveStage.getSubtitle()
+                )
             }
 
-            is ScreenState.PreCall, is ScreenState.Loaded, null -> {}
+            is ScreenState.PreCall, is ScreenState.Loaded -> {}
         }
 
         val context = LocalContext.current
         LaunchedEffect(
-            key1 = changePasswordState,
+            key1 = screenState,
             block = {
-                when (changePasswordState) {
-                    null, is ScreenState.PreCall, is ScreenState.Loading -> {}
+                when (screenState) {
+                    is ScreenState.PreCall, is ScreenState.Loading -> {}
                     is ScreenState.Loaded -> {
                         TODO("sign out -> to Auth loader screen")
                     }
 
                     is ScreenState.ApiError -> {
-                        changePasswordState.manageToastActions(context = context)
+                        screenState.manageToastActions(context = context)
+                        delay(timeMillis = 1_000L)
+                        changePasswordViewModel.changePassword(isSilent = true)
                     }
                 }
             }
@@ -159,7 +172,7 @@ object ChangePasswordScreen {
                             onTextChanged = {
                                 changePasswordViewModel.oldPassword.value = it
                             },
-                            isEnabled = !changePasswordState.isLoading
+                            isEnabled = !screenState.isLoading
                         )
                     }
                 )
@@ -174,7 +187,7 @@ object ChangePasswordScreen {
                             onTextChanged = {
                                 changePasswordViewModel.newPassword.value = it
                             },
-                            isEnabled = !changePasswordState.isLoading
+                            isEnabled = !screenState.isLoading
                         )
                         HorizontalDivider(
                             modifier = Modifier.fillMaxWidth(),
@@ -187,7 +200,7 @@ object ChangePasswordScreen {
                             onTextChanged = {
                                 changePasswordViewModel.newPasswordRepeated.value = it
                             },
-                            isEnabled = !changePasswordState.isLoading
+                            isEnabled = !screenState.isLoading
                         )
                     }
                 )
@@ -217,7 +230,7 @@ object ChangePasswordScreen {
                                             else MaterialTheme.colorScheme.surfaceContainer
                                     )
                                     .clickable(
-                                        enabled = !changePasswordState.isLoading,
+                                        enabled = !screenState.isLoading,
                                         onClick = onClick
                                     ),
                                 contentAlignment = Alignment.Center,
@@ -247,7 +260,7 @@ object ChangePasswordScreen {
                         CustomButton(
                             isPrimary = true,
                             text = "Confirm",
-                            onClick = changePasswordViewModel::changePassword
+                            onClick = { changePasswordViewModel.changePassword(isSilent = false) }
 
                         )
                     }
