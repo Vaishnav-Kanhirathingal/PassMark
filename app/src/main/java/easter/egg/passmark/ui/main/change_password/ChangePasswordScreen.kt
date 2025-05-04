@@ -1,5 +1,11 @@
 package easter.egg.passmark.ui.main.change_password
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,6 +36,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import easter.egg.passmark.R
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
+import easter.egg.passmark.ui.auth.master_key.PasswordTextState
 import easter.egg.passmark.ui.main.settings.SettingsScreen
 import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
@@ -161,6 +170,21 @@ object ChangePasswordScreen {
                         color = MaterialTheme.colorScheme.surfaceContainerHighest,
                         shape = cardShape
                     )
+
+                val oldPass = changePasswordViewModel.oldPassword.collectAsState()
+                val newPass = changePasswordViewModel.newPassword.collectAsState()
+                val newPassRepeat = changePasswordViewModel.newPasswordRepeated.collectAsState()
+                val errorText = remember {
+                    derivedStateOf {
+                        val e1 = PasswordTextState
+                            .getEState(password = newPass.value)
+                            .takeUnless { it == PasswordTextState.OK_LENGTH }
+                            ?.getMessage()
+                        val e2 = "New and repeated passwords do not match"
+                            .takeUnless { newPass.value == newPassRepeat.value }
+                        e1 ?: e2
+                    }
+                }
                 Column(
                     modifier = cardModifier,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -168,11 +192,44 @@ object ChangePasswordScreen {
                     content = {
                         PasswordTextField(
                             label = "Enter current password",
-                            text = changePasswordViewModel.oldPassword.collectAsState().value,
+                            text = oldPass.value,
                             onTextChanged = {
                                 changePasswordViewModel.oldPassword.value = it
                             },
                             isEnabled = !screenState.isLoading
+                        )
+                    }
+                )
+                val duration = 150
+                AnimatedVisibility(
+                    visible = errorText.value != null,
+                    enter = scaleIn(
+                        animationSpec = tween(delayMillis = duration)
+                    ) + expandVertically(
+                        animationSpec = tween(durationMillis = duration)
+                    ),
+                    exit = scaleOut(
+                        animationSpec = tween(durationMillis = duration)
+                    ) + shrinkVertically(
+                        animationSpec = tween(delayMillis = duration)
+                    ),
+                    content = {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(shape = RoundedCornerShape(size = 16.dp))
+                                .background(color = MaterialTheme.colorScheme.errorContainer)
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    shape = RoundedCornerShape(size = 16.dp)
+                                )
+                                .padding(all = 16.dp),
+                            text = errorText.value ?: "",
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Body.medium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onErrorContainer,
                         )
                     }
                 )
@@ -183,7 +240,7 @@ object ChangePasswordScreen {
                     content = {
                         PasswordTextField(
                             label = "Enter new password",
-                            text = changePasswordViewModel.newPassword.collectAsState().value,
+                            text = newPass.value,
                             onTextChanged = {
                                 changePasswordViewModel.newPassword.value = it
                             },
@@ -196,7 +253,7 @@ object ChangePasswordScreen {
                         )
                         PasswordTextField(
                             label = "Repeat new password",
-                            text = changePasswordViewModel.newPasswordRepeated.collectAsState().value,
+                            text = newPassRepeat.value,
                             onTextChanged = {
                                 changePasswordViewModel.newPasswordRepeated.value = it
                             },
@@ -204,7 +261,6 @@ object ChangePasswordScreen {
                         )
                     }
                 )
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(
