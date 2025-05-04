@@ -67,7 +67,7 @@ object SettingsScreen {
     private const val RESET_DESCRIPTION = "Resetting your account is permanent and would delete " +
             "all the Vaults and Passwords (even offline ones) along with all your data. This " +
             "process is unrecoverable."
-    private const val CHANGE_PASSWORD_DESCRIPTION = "Changing the password is a multi-layered " +
+    const val CHANGE_PASSWORD_DESCRIPTION = "Changing the password is a multi-layered " +
             "process which re-encrypts all passwords with a new cryptographic key. Make sure " +
             "you have a stable internet connection to perform this task. Re-login will be " +
             "required at the end for user confirmation and background syncing."
