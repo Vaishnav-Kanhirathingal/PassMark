@@ -48,7 +48,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.R
-import easter.egg.passmark.data.supabase.api.VaultApi
+import easter.egg.passmark.data.storage.database.PasswordDao
+import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
+import easter.egg.passmark.data.supabase.api.PasswordApi
+import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.auth.master_key.PasswordTextState
 import easter.egg.passmark.ui.main.settings.SettingsScreen
@@ -179,6 +182,19 @@ object ChangePasswordScreen {
                 val oldPass = changePasswordViewModel.oldPassword.collectAsState()
                 val newPass = changePasswordViewModel.newPassword.collectAsState()
                 val newPassRepeat = changePasswordViewModel.newPasswordRepeated.collectAsState()
+
+                AnimatedVisibility(
+                    visible = changePasswordViewModel.showWrongPasswordError.collectAsState().value,
+                    content = {
+                        Text(
+                            text = "Password entered previously was wrong",
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Body.medium,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                )
 
                 Box(
                     modifier = cardModifier,
@@ -402,10 +418,15 @@ object ChangePasswordScreen {
 @Composable
 @MobilePreview
 fun ChangePasswordScreenPreview() {
+    val client = SupabaseModule.mockClient
     ChangePasswordScreen.Screen(
         modifier = Modifier.fillMaxSize(),
         changePasswordViewModel = ChangePasswordViewModel(
-            vaultApi = VaultApi(supabaseClient = SupabaseModule.mockClient)
+            context = LocalContext.current,
+            userApi = UserApi(client),
+            passwordApi = PasswordApi(client),
+            passwordDao = PasswordDao.getTestingDao(),
+            supabaseAccountHelper = SupabaseAccountHelper(client)
         ),
         navigateUp = {}
     )
