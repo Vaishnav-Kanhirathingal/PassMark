@@ -1,8 +1,5 @@
 package easter.egg.passmark.ui.auth.login
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.credentials.GetCredentialResponse
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +12,8 @@ import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.exceptions.HttpRequestException
 import io.ktor.client.plugins.HttpRequestTimeoutException
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,9 +23,9 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel() {
     private val TAG = this::class.simpleName
 
-    private val _screenState: MutableState<ScreenState<Unit>> =
-        mutableStateOf(ScreenState.PreCall())
-    val screenState: State<ScreenState<Unit>> get() = _screenState
+    private val _screenState: MutableStateFlow<ScreenState<Unit>> =
+        MutableStateFlow(ScreenState.PreCall())
+    val screenState: StateFlow<ScreenState<Unit>> get() = _screenState
 
     fun login(credentialResponse: GetCredentialResponse) {
         this@LoginViewModel._screenState.value = ScreenState.Loading()
