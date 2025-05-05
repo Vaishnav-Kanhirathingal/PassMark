@@ -179,10 +179,9 @@ object ChangePasswordScreen {
                 val newPass = changePasswordViewModel.newPassword.collectAsState()
                 val newPassRepeat = changePasswordViewModel.newPasswordRepeated.collectAsState()
 
-                Column(
+                Box(
                     modifier = cardModifier,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
+                    contentAlignment = Alignment.Center,
                     content = {
                         PasswordTextField(
                             label = "Enter current password",
@@ -194,7 +193,6 @@ object ChangePasswordScreen {
                         )
                     }
                 )
-                CustomSpacer()
 
                 @Composable
                 fun ErrorText(
@@ -203,7 +201,7 @@ object ChangePasswordScreen {
                 ) {
                     AnimatedVisibility(
                         modifier = Modifier.fillMaxWidth(),
-                        visible = visible,
+                        visible = visible && changePasswordViewModel.showError.collectAsState().value,
                         content = {
                             Text(
                                 modifier = Modifier
@@ -222,19 +220,26 @@ object ChangePasswordScreen {
                 val lengthCheckState = remember {
                     derivedStateOf { PasswordTextState.getEState(password = newPass.value) }
                 }
-                ErrorText(
-                    text = lengthCheckState.value.getMessage(),
-                    visible = lengthCheckState.value != PasswordTextState.OK_LENGTH
-                )
-
                 val passwordsMatchState = remember {
                     derivedStateOf { newPass.value == newPassRepeat.value }
                 }
-                ErrorText(
-                    text = "New and repeated passwords do not match",
-                    visible = !passwordsMatchState.value
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = (spacing / 2)),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Center,
+                    content = {
+                        ErrorText(
+                            text = lengthCheckState.value.getMessage(),
+                            visible = lengthCheckState.value != PasswordTextState.OK_LENGTH
+                        )
+                        ErrorText(
+                            text = "New and repeated passwords do not match",
+                            visible = !passwordsMatchState.value
+                        )
+                    }
                 )
-                CustomSpacer()
                 Column(
                     modifier = cardModifier,
                     horizontalAlignment = Alignment.CenterHorizontally,
