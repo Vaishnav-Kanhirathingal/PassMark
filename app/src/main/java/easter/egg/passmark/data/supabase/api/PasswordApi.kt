@@ -56,4 +56,22 @@ class PasswordApi @Inject constructor(
             }
         )
         .decodeSingle<PasswordCapsule>()
+
+    // TODO: test 
+    suspend fun reEncryptAllPasswords(
+        oldPasswordCryptographyHandler: PasswordCryptographyHandler,
+        newPasswordCryptographyHandler: PasswordCryptographyHandler
+    ) {
+        val oldList = table.select().decodeList<PasswordCapsule>()
+        val newList = oldList.map {
+            it.copy(
+                data = newPasswordCryptographyHandler.encryptPasswordData(
+                    passwordData = oldPasswordCryptographyHandler.decryptPasswordData(
+                        passwordData = it.data
+                    )
+                )
+            )
+        }
+        table.upsert(values = newList)
+    }
 }
