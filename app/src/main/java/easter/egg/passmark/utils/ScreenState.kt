@@ -32,16 +32,7 @@ sealed class ScreenState<T> {
 
         private val TAG = this::class.simpleName
 
-        var errorHasBeenDisplayed: Boolean = false
-            private set
-
-        @Deprecated(
-            message = "use ",
-            replaceWith = ReplaceWith("this.manageToastActions()")
-        ) // TODO: remove this
-        fun setErrorHasBeenDisplayed() {
-            this.errorHasBeenDisplayed = true
-        }
+        private var errorHasBeenDisplayed: Boolean = false
 
         /** this function manages whether we have to display a toast. It internally handles one time
          * execution of a toast

@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,28 +60,26 @@ object LoginScreen {
         viewModel: LoginViewModel,
         toLoaderScreen: () -> Unit
     ) {
-        when (val state = viewModel.screenState.value) {
-            is ScreenState.Loading -> LoaderUi(modifier = modifier)
-            is ScreenState.Loaded -> LaunchedEffect(
-                key1 = Unit,
-                block = { withContext(Dispatchers.Main) { toLoaderScreen() } }
-            )
-
-            is ScreenState.ApiError, is ScreenState.PreCall -> {
-                LoginUi(
-                    modifier = modifier,
-                    viewModel = viewModel
-                )
-
-                if ((state is ScreenState.ApiError) && !state.errorHasBeenDisplayed) {
-                    state.setErrorHasBeenDisplayed()
-                    Toast.makeText(
-                        LocalContext.current,
-                        state.generalToastMessage,
-                        Toast.LENGTH_SHORT
-                    ).show()
+        val state = viewModel.screenState.collectAsState().value
+        val context = LocalContext.current
+        LaunchedEffect(
+            key1 = state,
+            block = {
+                when (state) {
+                    is ScreenState.PreCall -> {}
+                    is ScreenState.Loading -> {}
+                    is ScreenState.Loaded -> toLoaderScreen()
+                    is ScreenState.ApiError -> state.manageToastActions(context = context)
                 }
             }
+        )
+        when (state) {
+            is ScreenState.Loading -> LoaderUi(modifier = modifier)
+            is ScreenState.Loaded -> {}
+            is ScreenState.ApiError, is ScreenState.PreCall -> LoginUi(
+                modifier = modifier,
+                viewModel = viewModel
+            )
         }
     }
 
