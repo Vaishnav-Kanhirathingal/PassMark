@@ -14,7 +14,6 @@ import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.security.SecureRandom
 import javax.inject.Inject
 
 // TODO: rename
@@ -87,7 +86,7 @@ class MasterKeyViewModel @Inject constructor(
     ): ScreenState.Loaded<Unit> {
         val passwordCryptographyHandler = PasswordCryptographyHandler(
             password = password,
-            initializationVector = ByteArray(size = 16).also { SecureRandom().nextBytes(it) }
+            initializationVector = PasswordCryptographyHandler.getNewInitializationVector()
         )
         userApi.setUser(
             user = User(

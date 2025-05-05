@@ -6,6 +6,7 @@ import easter.egg.passmark.data.models.content.password.PasswordData
 import io.ktor.util.decodeBase64Bytes
 import io.ktor.util.encodeBase64
 import java.security.MessageDigest
+import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -34,6 +35,11 @@ class PasswordCryptographyHandler private constructor(
         ),
         ivSpec = IvParameterSpec(initializationVector)
     )
+
+    companion object {
+        fun getNewInitializationVector(): ByteArray =
+            ByteArray(size = 16).also { SecureRandom().nextBytes(it) }
+    }
 
     val initializationVectorAsString: String get() = ivSpec.iv.encodeBase64()
 
