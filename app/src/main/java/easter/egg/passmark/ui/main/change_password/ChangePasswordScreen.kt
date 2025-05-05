@@ -1,11 +1,6 @@
 package easter.egg.passmark.ui.main.change_password
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,8 +10,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -116,11 +113,17 @@ object ChangePasswordScreen {
                 .padding(horizontal = 16.dp)
                 .verticalScroll(state = rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(
-                space = spacing,
-                alignment = Alignment.CenterVertically
-            ),
+            verticalArrangement = Arrangement.Center,
             content = {
+                @Composable
+                fun CustomSpacer() {
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(height = spacing)
+
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .size(size = 100.dp)
@@ -138,6 +141,7 @@ object ChangePasswordScreen {
                         )
                     }
                 )
+                CustomSpacer()
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = "Change Password?",
@@ -148,6 +152,7 @@ object ChangePasswordScreen {
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center
                 )
+                CustomSpacer()
 
                 Text(
                     modifier = Modifier.fillMaxWidth(),
@@ -159,6 +164,7 @@ object ChangePasswordScreen {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
                 )
+                CustomSpacer()
 
                 val cardShape = RoundedCornerShape(size = corners)
                 val cardModifier = Modifier
@@ -200,39 +206,23 @@ object ChangePasswordScreen {
                         )
                     }
                 )
-                val duration = 150
+                CustomSpacer()
                 AnimatedVisibility(
                     visible = errorText.value != null,
-                    enter = scaleIn(
-                        animationSpec = tween(delayMillis = duration)
-                    ) + expandVertically(
-                        animationSpec = tween(durationMillis = duration)
-                    ),
-                    exit = scaleOut(
-                        animationSpec = tween(durationMillis = duration)
-                    ) + shrinkVertically(
-                        animationSpec = tween(delayMillis = duration)
-                    ),
                     content = {
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(shape = RoundedCornerShape(size = 16.dp))
-                                .background(color = MaterialTheme.colorScheme.errorContainer)
-                                .border(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.onErrorContainer,
-                                    shape = RoundedCornerShape(size = 16.dp)
-                                )
-                                .padding(all = 16.dp),
+                                .padding(horizontal = 8.dp),
                             text = errorText.value ?: "",
                             fontFamily = PassMarkFonts.font,
                             fontSize = PassMarkFonts.Body.medium,
                             fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            color = MaterialTheme.colorScheme.error,
                         )
                     }
                 )
+                CustomSpacer()
                 Column(
                     modifier = cardModifier,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -261,6 +251,7 @@ object ChangePasswordScreen {
                         )
                     }
                 )
+                CustomSpacer()
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(
@@ -316,8 +307,13 @@ object ChangePasswordScreen {
                         CustomButton(
                             isPrimary = true,
                             text = "Confirm",
-                            onClick = { changePasswordViewModel.changePassword(isSilent = false) }
-
+                            onClick = {
+                                if (errorText.value == null) {
+                                    changePasswordViewModel.changePassword(isSilent = false)
+                                } else {
+                                    changePasswordViewModel.triggerErrorFlag()
+                                }
+                            }
                         )
                     }
                 )
