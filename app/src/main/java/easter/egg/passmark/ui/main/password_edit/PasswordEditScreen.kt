@@ -89,7 +89,6 @@ import kotlinx.coroutines.runBlocking
 object PasswordEditScreen {
     private val TAG = this::class.simpleName
 
-    // TODO: create a top bar modifier extension function
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -444,6 +443,7 @@ object PasswordEditScreen {
                     fontSize = PassMarkFonts.Headline.medium,
                     fontWeight = FontWeight.SemiBold
                 )
+                // TODO: show toast if vault list is empty?
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -452,16 +452,17 @@ object PasswordEditScreen {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top,
                     content = {
+                        val tempVaultList = vaultList
+                            .toMutableList<Vault?>()
+                            .also { it.add(index = 0, element = null) }
                         items(
-                            items = vaultList.toMutableList<Vault?>().apply {
-                                this.add(index = 0, element = null)
-                            },
+                            items = tempVaultList,
                             itemContent = {
                                 Selectable(
                                     modifier = Modifier.fillMaxWidth(),
                                     vault = it
                                 )
-                                if (it != vaultList.last()) {
+                                if (it != tempVaultList.last()) {
                                     HorizontalDivider(
                                         modifier = Modifier.fillMaxWidth(),
                                         thickness = 1.dp,
