@@ -332,7 +332,7 @@ object PasswordViewScreen {
                                     titleText = "Password",
                                     fieldText =
                                         if (accessGranted.value) password.data.password
-                                        else "************", // TODO: switch to automation for starring
+                                        else "*".repeat(n = 12),
                                     endIcon =
                                         if (accessGranted.value) Icons.Default.ContentCopy
                                         else Icons.Default.Fingerprint,
@@ -664,7 +664,7 @@ object PasswordViewScreen {
                         constrainBlock = {
                             this.top.linkTo(parent.top)
                             this.bottom.linkTo(parent.bottom)
-                            this.start.linkTo(anchor = parent.start, margin = 12.dp) // TODO:
+                            this.start.linkTo(anchor = parent.start, margin = 12.dp)
                         }
                     ),
                     imageVector = startIcon,

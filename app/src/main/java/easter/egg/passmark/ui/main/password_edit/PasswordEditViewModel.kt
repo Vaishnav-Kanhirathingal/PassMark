@@ -134,7 +134,6 @@ class PasswordEditViewModel @Inject constructor(
         ).toPasswordCapsule(passwordCryptographyHandler = passwordCryptographyHandler)
 
         viewModelScope.launch {
-            // TODO: test everything
             val newState: ScreenState<Password> = try {
 
                 val savedPasswordCapsule = if (saveToStorage) {

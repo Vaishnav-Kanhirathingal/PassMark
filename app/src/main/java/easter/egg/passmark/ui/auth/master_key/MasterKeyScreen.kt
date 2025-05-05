@@ -45,7 +45,6 @@ import easter.egg.passmark.utils.values.setSizeLimitation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-// TODO: change name to master-key screen
 object MasterKeyScreen {
     private val TAG = this::class.simpleName
 

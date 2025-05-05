@@ -102,7 +102,6 @@ data class PasswordCapsule(
     }
 }
 
-// TODO: handle (usage amount, last used) in code
 /** used for sorting for passwords */
 enum class PasswordSortingOptions {
     NAME, USAGE, LAST_USED, CREATED;

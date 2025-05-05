@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// TODO: rename
 @HiltViewModel
 class MasterKeyViewModel @Inject constructor(
     private val supabaseAccountHelper: SupabaseAccountHelper,

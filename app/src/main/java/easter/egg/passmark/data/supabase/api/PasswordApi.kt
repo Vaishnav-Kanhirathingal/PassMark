@@ -57,7 +57,6 @@ class PasswordApi @Inject constructor(
         )
         .decodeSingle<PasswordCapsule>()
 
-    // TODO: test 
     suspend fun reEncryptAllPasswords(
         oldPasswordCryptographyHandler: PasswordCryptographyHandler,
         newPasswordCryptographyHandler: PasswordCryptographyHandler

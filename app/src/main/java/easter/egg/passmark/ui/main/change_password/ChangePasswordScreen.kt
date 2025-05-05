@@ -72,7 +72,6 @@ object ChangePasswordScreen {
         changePasswordViewModel: ChangePasswordViewModel,
         navigateUp: () -> Unit
     ) {
-        // TODO: make back button a shared composable
         val screenState =
             changePasswordViewModel.screenState.collectAsState().value
 
