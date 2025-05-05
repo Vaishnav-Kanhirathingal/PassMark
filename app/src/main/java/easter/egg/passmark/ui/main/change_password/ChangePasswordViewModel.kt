@@ -19,6 +19,12 @@ class ChangePasswordViewModel @Inject constructor(
     val newPassword: MutableStateFlow<String> = MutableStateFlow("")
     val newPasswordRepeated: MutableStateFlow<String> = MutableStateFlow("")
 
+    private val _showError: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val showError: StateFlow<Boolean> get() = _showError
+    fun triggerErrorFlag() {
+        this._showError.value = true
+    }
+
     private val _screenState: MutableStateFlow<ScreenState<Unit>> =
         MutableStateFlow(ScreenState.PreCall())
     val screenState: StateFlow<ScreenState<Unit>> get() = _screenState
