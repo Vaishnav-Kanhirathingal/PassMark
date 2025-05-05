@@ -1,6 +1,5 @@
 package easter.egg.passmark.ui.auth.loader
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -47,14 +46,7 @@ object LoaderScreen {
                     }
 
                     is ScreenState.PreCall, is ScreenState.Loading -> {}
-                    is ScreenState.ApiError -> {
-                        Toast.makeText(
-                            context,
-                            state.generalToastMessage,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        state.setErrorHasBeenDisplayed()
-                    }
+                    is ScreenState.ApiError -> state.manageToastActions(context = context)
                 }
             }
         )

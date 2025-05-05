@@ -144,16 +144,7 @@ object PasswordEditScreen {
                         navigateBack()
                     }
 
-                    is ScreenState.ApiError -> {
-                        if (!state.errorHasBeenDisplayed) {
-                            Toast.makeText(
-                                context,
-                                state.generalToastMessage,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            state.setErrorHasBeenDisplayed()
-                        }
-                    }
+                    is ScreenState.ApiError -> state.manageToastActions(context = context)
                 }
             }
         )
