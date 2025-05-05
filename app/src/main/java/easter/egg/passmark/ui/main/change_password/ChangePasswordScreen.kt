@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.main.change_password
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -329,6 +330,11 @@ object ChangePasswordScreen {
                                     changePasswordViewModel.changePassword(isSilent = false)
                                 } else {
                                     changePasswordViewModel.triggerErrorFlag()
+                                    Toast.makeText(
+                                        context,
+                                        "Password does not meet the required criteria",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         )

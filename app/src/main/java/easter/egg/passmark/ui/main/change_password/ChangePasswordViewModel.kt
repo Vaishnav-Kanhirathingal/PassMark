@@ -15,6 +15,10 @@ import javax.inject.Inject
 class ChangePasswordViewModel @Inject constructor(
     val vaultApi: VaultApi
 ) : ViewModel() {
+    companion object {
+        const val INCORRECT_PASSWORD_ERROR_MESSAGE = "INCORRECT_PASSWORD_ERROR_MESSAGE"
+    }
+
     val oldPassword: MutableStateFlow<String> = MutableStateFlow("")
     val newPassword: MutableStateFlow<String> = MutableStateFlow("")
     val newPasswordRepeated: MutableStateFlow<String> = MutableStateFlow("")
@@ -81,11 +85,11 @@ enum class ReEncryptionStates {
 
     fun getSubtitle(): String {
         return when (this) {
-            VERIFYING_PASSWORD -> "Verifying your current password"
+            VERIFYING_PASSWORD -> "Verifying the password entered"
             REMOTE_PASSWORD_DATABASE -> "Re-encrypting local password database"
             LOCAL_PASSWORD_DATABASE -> "Re-encrypting remote password database"
-            USER_PUZZLE -> "Removing old password details"
-            LOCAL_PASSWORD_PURGING -> "Making additional changes"
+            USER_PUZZLE -> "Making additional changes"
+            LOCAL_PASSWORD_PURGING -> "Removing old password details"
         }
     }
 }
