@@ -65,20 +65,20 @@ import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 import kotlinx.coroutines.delay
 
-object ChangePasswordScreen {
+object ChangeMasterPasswordScreen {
     @Composable
     fun Screen(
         modifier: Modifier,
-        changePasswordViewModel: ChangePasswordViewModel,
+        changeMasterPasswordViewModel: ChangeMasterPasswordViewModel,
         navigateUp: () -> Unit
     ) {
         val screenState =
-            changePasswordViewModel.screenState.collectAsState().value
+            changeMasterPasswordViewModel.screenState.collectAsState().value
 
         when (screenState) {
             is ScreenState.Loading, is ScreenState.ApiError -> {
                 val currentActiveStage =
-                    changePasswordViewModel.currentReEncryptionStates.collectAsState().value
+                    changeMasterPasswordViewModel.currentReEncryptionStates.collectAsState().value
                 StagedLoaderDialog(
                     modifier = Modifier.fillMaxWidth(),
                     currentActiveStage = currentActiveStage.ordinal,
@@ -112,7 +112,7 @@ object ChangePasswordScreen {
                     is ScreenState.ApiError -> {
                         screenState.manageToastActions(context = context)
                         delay(timeMillis = 1_000L)
-                        changePasswordViewModel.changePassword(isSilent = true)
+                        changeMasterPasswordViewModel.changePassword(isSilent = true)
                     }
                 }
             }
@@ -188,12 +188,12 @@ object ChangePasswordScreen {
                         shape = cardShape
                     )
 
-                val oldPass = changePasswordViewModel.oldPassword.collectAsState()
-                val newPass = changePasswordViewModel.newPassword.collectAsState()
-                val newPassRepeat = changePasswordViewModel.newPasswordRepeated.collectAsState()
+                val oldPass = changeMasterPasswordViewModel.oldPassword.collectAsState()
+                val newPass = changeMasterPasswordViewModel.newPassword.collectAsState()
+                val newPassRepeat = changeMasterPasswordViewModel.newPasswordRepeated.collectAsState()
 
                 AnimatedVisibility(
-                    visible = changePasswordViewModel.showWrongPasswordError.collectAsState().value,
+                    visible = changeMasterPasswordViewModel.showWrongPasswordError.collectAsState().value,
                     content = {
                         Text(
                             text = "Password entered previously was wrong",
@@ -213,7 +213,7 @@ object ChangePasswordScreen {
                             label = "Enter current password",
                             text = oldPass.value,
                             onTextChanged = {
-                                changePasswordViewModel.oldPassword.value = it
+                                changeMasterPasswordViewModel.oldPassword.value = it
                             },
                             isEnabled = !screenState.isLoading
                         )
@@ -227,7 +227,7 @@ object ChangePasswordScreen {
                 ) {
                     AnimatedVisibility(
                         modifier = Modifier.fillMaxWidth(),
-                        visible = visible && changePasswordViewModel.showError.collectAsState().value,
+                        visible = visible && changeMasterPasswordViewModel.showError.collectAsState().value,
                         content = {
                             Text(
                                 modifier = Modifier
@@ -275,7 +275,7 @@ object ChangePasswordScreen {
                             label = "Enter new password",
                             text = newPass.value,
                             onTextChanged = {
-                                changePasswordViewModel.newPassword.value = it
+                                changeMasterPasswordViewModel.newPassword.value = it
                             },
                             isEnabled = !screenState.isLoading
                         )
@@ -288,7 +288,7 @@ object ChangePasswordScreen {
                             label = "Repeat new password",
                             text = newPassRepeat.value,
                             onTextChanged = {
-                                changePasswordViewModel.newPasswordRepeated.value = it
+                                changeMasterPasswordViewModel.newPasswordRepeated.value = it
                             },
                             isEnabled = !screenState.isLoading
                         )
@@ -352,9 +352,9 @@ object ChangePasswordScreen {
                             text = "Confirm",
                             onClick = {
                                 if ((lengthCheckState.value == PasswordTextState.OK_LENGTH) && passwordsMatchState.value) {
-                                    changePasswordViewModel.changePassword(isSilent = false)
+                                    changeMasterPasswordViewModel.changePassword(isSilent = false)
                                 } else {
-                                    changePasswordViewModel.triggerErrorFlag()
+                                    changeMasterPasswordViewModel.triggerErrorFlag()
                                     Toast.makeText(
                                         context,
                                         "Password does not meet the required criteria",
@@ -428,9 +428,9 @@ object ChangePasswordScreen {
 @MobilePreview
 fun ChangePasswordScreenPreview() {
     val client = SupabaseModule.mockClient
-    ChangePasswordScreen.Screen(
+    ChangeMasterPasswordScreen.Screen(
         modifier = Modifier.fillMaxSize(),
-        changePasswordViewModel = ChangePasswordViewModel(
+        changeMasterPasswordViewModel = ChangeMasterPasswordViewModel(
             context = LocalContext.current,
             userApi = UserApi(client),
             passwordApi = PasswordApi(client),

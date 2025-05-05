@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChangePasswordViewModel @Inject constructor(
+class ChangeMasterPasswordViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val userApi: UserApi,
     private val passwordApi: PasswordApi,
@@ -65,7 +65,7 @@ class ChangePasswordViewModel @Inject constructor(
                         toIndex = ReEncryptionStates.entries.lastIndex + 1
                     )
                     .forEach { currentState: ReEncryptionStates ->
-                        this@ChangePasswordViewModel._currentReEncryptionStates.value = currentState
+                        this@ChangeMasterPasswordViewModel._currentReEncryptionStates.value = currentState
                         delay(timeMillis = 1_000L)
                         performAction(currentState)
                     }
@@ -73,15 +73,15 @@ class ChangePasswordViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.printStackTrace()
                 if (e.message == INCORRECT_PASSWORD_ERROR_MESSAGE) {
-                    this@ChangePasswordViewModel._currentReEncryptionStates.value =
+                    this@ChangeMasterPasswordViewModel._currentReEncryptionStates.value =
                         ReEncryptionStates.entries.first()
-                    this@ChangePasswordViewModel._showWrongPasswordError.value = true
+                    this@ChangeMasterPasswordViewModel._showWrongPasswordError.value = true
                     ScreenState.PreCall()
                 } else {
                     ScreenState.ApiError.fromException(e = e)
                 }
             }
-            this@ChangePasswordViewModel._screenState.value = newState
+            this@ChangeMasterPasswordViewModel._screenState.value = newState
         }
     }
 
