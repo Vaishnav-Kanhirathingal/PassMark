@@ -1,6 +1,8 @@
 package easter.egg.passmark.ui.main.change_password
 
+import android.content.Intent
 import android.widget.Toast
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -53,6 +55,7 @@ import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.di.supabase.SupabaseModule
+import easter.egg.passmark.ui.auth.AuthActivity
 import easter.egg.passmark.ui.auth.master_key.PasswordTextState
 import easter.egg.passmark.ui.main.settings.SettingsScreen
 import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
@@ -91,13 +94,19 @@ object ChangePasswordScreen {
         }
 
         val context = LocalContext.current
+        val activity = LocalActivity.current
         LaunchedEffect(
             key1 = screenState,
             block = {
                 when (screenState) {
                     is ScreenState.PreCall, is ScreenState.Loading -> {}
                     is ScreenState.Loaded -> {
-                        TODO("sign out -> to Auth loader screen")
+                        activity?.startActivity(
+                            Intent(
+                                context, AuthActivity::class.java
+                            )
+                        )
+                        activity?.finish()
                     }
 
                     is ScreenState.ApiError -> {
