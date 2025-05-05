@@ -85,6 +85,7 @@ import easter.egg.passmark.ui.shared_components.ConfirmationDialog
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.extensions.customTopBarModifier
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
@@ -122,7 +123,7 @@ object PasswordViewScreen {
             modifier = modifier,
             topBar = {
                 PasswordViewTopBar(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.customTopBarModifier(),
                     navigateUp = navigateUp,
                     toEditScreen = toEditScreen,
                 )
@@ -183,10 +184,7 @@ object PasswordViewScreen {
     ) {
         val barSize = PassMarkDimensions.minTouchSize
         Row(
-            modifier = modifier.padding(
-                horizontal = 16.dp,
-                vertical = 8.dp
-            ),
+            modifier = modifier,
             horizontalArrangement = Arrangement.spacedBy(
                 space = 8.dp,
                 alignment = Alignment.Start

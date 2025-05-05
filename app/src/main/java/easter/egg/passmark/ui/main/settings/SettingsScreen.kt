@@ -42,6 +42,7 @@ import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.extensions.customTopBarModifier
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -71,7 +72,7 @@ object SettingsScreen {
             modifier = modifier,
             topBar = {
                 SettingTopBar(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.customTopBarModifier(),
                     navigateUp = navigateUp
                 )
             },
@@ -94,7 +95,7 @@ object SettingsScreen {
         navigateUp: () -> Unit
     ) {
         Row(
-            modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
                 space = 16.dp,

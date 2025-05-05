@@ -205,7 +205,7 @@ object HomeScreen {
                         HomeTopBar(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(min = PassMarkDimensions.minTouchSize),
+                                .setSizeLimitation(),
                             searchingVaultName = homeViewModel.vaultIdSelected.collectAsState().value?.let {
                                 (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
                                     ?.result?.getVaultById(it)

@@ -78,6 +78,7 @@ import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.extensions.customTopBarModifier
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -149,9 +150,7 @@ object PasswordEditScreen {
             modifier = modifier,
             topBar = {
                 EditTopBar(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = PassMarkDimensions.minTouchSize),
+                    modifier = Modifier.customTopBarModifier(),
                     navigateBack = navigateBack,
                     passwordEditViewModel = viewModel,
                     passwordRequirementsMet = passwordRequirementsMet.value,
@@ -180,10 +179,7 @@ object PasswordEditScreen {
         mainViewModel: MainViewModel
     ) {
         Row(
-            modifier = modifier.padding(
-                horizontal = 16.dp,
-                vertical = 8.dp
-            ),
+            modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
                 space = 8.dp,
