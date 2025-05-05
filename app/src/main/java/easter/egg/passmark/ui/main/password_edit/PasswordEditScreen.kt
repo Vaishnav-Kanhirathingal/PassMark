@@ -1,7 +1,6 @@
 package easter.egg.passmark.ui.main.password_edit
 
 import android.util.Patterns
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -89,6 +88,7 @@ import kotlinx.coroutines.runBlocking
 object PasswordEditScreen {
     private val TAG = this::class.simpleName
 
+    // TODO: create a top bar modifier extension function
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -112,19 +112,6 @@ object PasswordEditScreen {
             }
         )
 
-        val barModifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = PassMarkDimensions.minTouchSize)
-        val passwordRequirementsMet = combine(
-            viewModel.title,
-            viewModel.password,
-            viewModel.email,
-            transform = { title, password, email ->
-                title.isNotEmpty() &&
-                        password.isNotEmpty() &&
-                        email.let { it.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(it).matches() }
-            }
-        ).collectAsState(initial = false)
         val context = LocalContext.current
         LaunchedEffect(
             key1 = viewModel.screenState.collectAsState().value,
@@ -148,11 +135,23 @@ object PasswordEditScreen {
                 }
             }
         )
+        val passwordRequirementsMet = combine(
+            viewModel.title,
+            viewModel.password,
+            viewModel.email,
+            transform = { title, password, email ->
+                title.isNotEmpty() &&
+                        password.isNotEmpty() &&
+                        email.let { it.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(it).matches() }
+            }
+        ).collectAsState(initial = false)
         Scaffold(
             modifier = modifier,
             topBar = {
                 EditTopBar(
-                    modifier = barModifier,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = PassMarkDimensions.minTouchSize),
                     navigateBack = navigateBack,
                     passwordEditViewModel = viewModel,
                     passwordRequirementsMet = passwordRequirementsMet.value,
