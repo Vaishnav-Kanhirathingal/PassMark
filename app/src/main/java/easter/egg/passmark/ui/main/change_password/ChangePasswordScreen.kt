@@ -85,7 +85,8 @@ object ChangePasswordScreen {
                     currentActiveStage = currentActiveStage.ordinal,
                     totalStages = ReEncryptionStates.entries.size,
                     showCurrentStageError = (screenState is ScreenState.ApiError<Unit>),
-                    title = "Re-encrypting files",
+                    title = "Re-encrypting files. This process ensures repeated retry on " +
+                            "failure. Do not exit this Screen or close the app.",
                     subtitle = currentActiveStage.getSubtitle()
                 )
             }

@@ -172,6 +172,6 @@ enum class ReEncryptionStates {
             LOCAL_PASSWORD_DATABASE -> "Re-encrypting remote password database"
             USER_PUZZLE_AND_IV -> "Making additional changes"
             LOCAL_PASSWORD_PURGING -> "Removing old password details"
-        }
+        }.let { "(${this.ordinal + 1}/${entries.size}) : $it" }
     }
 }
