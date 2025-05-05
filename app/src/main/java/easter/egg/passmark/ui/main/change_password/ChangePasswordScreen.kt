@@ -153,7 +153,6 @@ object ChangePasswordScreen {
                     textAlign = TextAlign.Center
                 )
                 CustomSpacer()
-
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = SettingsScreen.CHANGE_PASSWORD_DESCRIPTION,
@@ -165,7 +164,6 @@ object ChangePasswordScreen {
                     textAlign = TextAlign.Center
                 )
                 CustomSpacer()
-
                 val cardShape = RoundedCornerShape(size = corners)
                 val cardModifier = Modifier
                     .fillMaxWidth()
@@ -180,17 +178,7 @@ object ChangePasswordScreen {
                 val oldPass = changePasswordViewModel.oldPassword.collectAsState()
                 val newPass = changePasswordViewModel.newPassword.collectAsState()
                 val newPassRepeat = changePasswordViewModel.newPasswordRepeated.collectAsState()
-                val errorText = remember {
-                    derivedStateOf {
-                        val e1 = PasswordTextState
-                            .getEState(password = newPass.value)
-                            .takeUnless { it == PasswordTextState.OK_LENGTH }
-                            ?.getMessage()
-                        val e2 = "New and repeated passwords do not match"
-                            .takeUnless { newPass.value == newPassRepeat.value }
-                        e1 ?: e2
-                    }
-                }
+
                 Column(
                     modifier = cardModifier,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -207,20 +195,44 @@ object ChangePasswordScreen {
                     }
                 )
                 CustomSpacer()
-                AnimatedVisibility(
-                    visible = errorText.value != null,
-                    content = {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp),
-                            text = errorText.value ?: "",
-                            fontFamily = PassMarkFonts.font,
-                            fontSize = PassMarkFonts.Body.medium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.error,
-                        )
-                    }
+
+                @Composable
+                fun ErrorText(
+                    text: String,
+                    visible: Boolean
+                ) {
+                    AnimatedVisibility(
+                        modifier = Modifier.fillMaxWidth(),
+                        visible = visible,
+                        content = {
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp),
+                                text = text,
+                                fontFamily = PassMarkFonts.font,
+                                fontSize = PassMarkFonts.Body.medium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.error,
+                            )
+                        }
+                    )
+                }
+
+                val lengthCheckState = remember {
+                    derivedStateOf { PasswordTextState.getEState(password = newPass.value) }
+                }
+                ErrorText(
+                    text = lengthCheckState.value.getMessage(),
+                    visible = lengthCheckState.value != PasswordTextState.OK_LENGTH
+                )
+
+                val passwordsMatchState = remember {
+                    derivedStateOf { newPass.value == newPassRepeat.value }
+                }
+                ErrorText(
+                    text = "New and repeated passwords do not match",
+                    visible = !passwordsMatchState.value
                 )
                 CustomSpacer()
                 Column(
@@ -308,7 +320,7 @@ object ChangePasswordScreen {
                             isPrimary = true,
                             text = "Confirm",
                             onClick = {
-                                if (errorText.value == null) {
+                                if ((lengthCheckState.value == PasswordTextState.OK_LENGTH) && passwordsMatchState.value) {
                                     changePasswordViewModel.changePassword(isSilent = false)
                                 } else {
                                     changePasswordViewModel.triggerErrorFlag()
