@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Web
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Person
@@ -264,7 +265,6 @@ object PasswordEditScreen {
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                         if (sheetIsVisible.value) {
-
                             val passwordList =
                                 (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
                                     ?.result?.passwordListState?.collectAsState()?.value
@@ -472,6 +472,49 @@ object PasswordEditScreen {
                         )
                     }
                 )
+
+                if (vaultList.isEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 16.dp
+                            )
+                            .clip(shape = RoundedCornerShape(size = 16.dp))
+                            .background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                shape = RoundedCornerShape(size = 16.dp)
+                            )
+                            .padding(
+                                horizontal = 16.dp,
+                                vertical = 8.dp
+                            ),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            space = 12.dp,
+                            alignment = Alignment.CenterHorizontally
+                        ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        content = {
+                            Icon(
+                                imageVector = Icons.Default.Warning,
+                                contentDescription = null
+                            )
+                            Text(
+                                modifier = Modifier.weight(weight = 1f),
+                                text = "No custom Vaults detected. Create a new Vault to add passwords to.",
+                                fontFamily = PassMarkFonts.font,
+                                fontSize = PassMarkFonts.Label.medium,
+                                lineHeight = PassMarkFonts.Label.medium,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    )
+                }
             }
         )
     }
@@ -834,7 +877,6 @@ private fun VaultSelectionBottomSheetPreview() {
         dismissDropDown = {},
         vaultList = listOf(
             Vault(id = 1, name = "Banking", iconChoice = 5),
-            Vault(id = 2, name = "Websites", iconChoice = 3),
             Vault(id = 3, name = "Shopping", iconChoice = 8),
             Vault(id = 4, name = "OTT", iconChoice = 11),
         ),
