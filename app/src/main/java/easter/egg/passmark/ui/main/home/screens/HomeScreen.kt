@@ -31,7 +31,6 @@ import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -68,6 +67,7 @@ import easter.egg.passmark.data.models.content.PasswordSortingOptions
 import easter.egg.passmark.ui.main.HomeListData
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
+import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -80,6 +80,8 @@ import kotlinx.coroutines.launch
 object HomeScreen {
     private val TAG = this::class.simpleName
 
+    // TODO: fingerprint screen
+    // TODO: pull to refresh
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -98,9 +100,7 @@ object HomeScreen {
             is ScreenState.PreCall, is ScreenState.Loading -> Box(
                 modifier = modifier,
                 contentAlignment = Alignment.Center,
-                content = {
-                    CircularProgressIndicator(modifier = Modifier.setSizeLimitation())
-                }
+                content = { CustomLoader(modifier = Modifier) }
             )
 
             is ScreenState.Loaded -> {

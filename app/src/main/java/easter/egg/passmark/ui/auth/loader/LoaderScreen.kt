@@ -2,9 +2,7 @@ package easter.egg.passmark.ui.auth.loader
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,10 +13,10 @@ import androidx.compose.ui.platform.LocalContext
 import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.di.supabase.SupabaseModule
+import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
-import easter.egg.passmark.utils.values.PassMarkDimensions
 
 object LoaderScreen {
     private val TAG = this::class.simpleName
@@ -60,9 +58,7 @@ object LoaderScreen {
                         content = { Text(text = "Retry") }
                     )
                 } else {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(size = PassMarkDimensions.minTouchSize)
-                    )
+                    CustomLoader(modifier = Modifier)
                 }
             }
         )

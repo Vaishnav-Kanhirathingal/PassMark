@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -43,6 +42,7 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import easter.egg.passmark.BuildConfig
 import easter.egg.passmark.R
 import easter.egg.passmark.di.supabase.SupabaseModule
+import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.values.PassMarkDimensions
@@ -208,7 +208,7 @@ object LoginScreen {
                 alignment = Alignment.CenterVertically
             ),
             content = {
-                CircularProgressIndicator(modifier = Modifier.size(size = PassMarkDimensions.minTouchSize))
+                CustomLoader(modifier = Modifier)
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = "Logging in via Google...",

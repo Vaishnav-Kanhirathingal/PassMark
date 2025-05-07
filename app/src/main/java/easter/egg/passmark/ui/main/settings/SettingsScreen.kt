@@ -60,6 +60,7 @@ object SettingsScreen {
             "you have a stable internet connection to perform this task. Re-login will be " +
             "required at the end for user confirmation and background syncing."
 
+    // TODO: reset user requires password
     // TODO: use userId for local database while fetching
     @Composable
     fun Screen(
