@@ -54,6 +54,7 @@ class LoaderViewModel @Inject constructor(
     }
 
     fun forceVerify() {
+        this@LoaderViewModel._screenState.value = ScreenState.Loading()
         viewModelScope.launch { verifyKeyState() }
     }
 
