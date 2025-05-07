@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -29,10 +30,20 @@ import kotlin.math.absoluteValue
 fun CustomLoader(
     modifier: Modifier,
 ) {
+    val config = object {
+        val spacing = 1.dp
+        val barWidth = 10.dp
+        val mainBarPadding = 3.dp
+        val midBarMinSize = 4f
+        val midBarMaxSize = ((barWidth * 5) + (spacing * 4) - (mainBarPadding * 2)).value
+    }
     Row(
-        modifier = modifier,
+        modifier = modifier.sizeIn(
+            minWidth = config.midBarMaxSize.dp,
+            minHeight = config.midBarMaxSize.dp,
+        ),
         horizontalArrangement = Arrangement.spacedBy(
-            space = 1.dp,
+            space = config.spacing,
             alignment = Alignment.CenterHorizontally
         ),
         verticalAlignment = Alignment.CenterVertically,
@@ -46,8 +57,8 @@ fun CustomLoader(
                     val springValue = rememberInfiniteTransition(
                         label = "verticalBar [$index]"
                     ).animateFloat(
-                        initialValue = 4f,
-                        targetValue = 50f,
+                        initialValue = config.midBarMinSize,
+                        targetValue = config.midBarMaxSize,
                         animationSpec = infiniteRepeatable(
                             animation = tween(
                                 durationMillis = 1000,
@@ -76,10 +87,10 @@ fun CustomLoader(
 
                     Box(
                         modifier = Modifier
-                            .width(width = 10.dp)
+                            .width(width = config.barWidth)
                             .clip(shape = RoundedCornerShape(size = 4.dp))
                             .background(color = containerColor)
-                            .padding(3.dp)
+                            .padding(all = config.mainBarPadding)
                             .background(
                                 color = mainColor,
                                 shape = RoundedCornerShape(
