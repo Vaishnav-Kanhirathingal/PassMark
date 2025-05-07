@@ -65,7 +65,8 @@ class ChangeMasterPasswordViewModel @Inject constructor(
                         toIndex = ReEncryptionStates.entries.lastIndex + 1
                     )
                     .forEach { currentState: ReEncryptionStates ->
-                        this@ChangeMasterPasswordViewModel._currentReEncryptionStates.value = currentState
+                        this@ChangeMasterPasswordViewModel._currentReEncryptionStates.value =
+                            currentState
                         delay(timeMillis = 1_000L)
                         performAction(currentState)
                     }

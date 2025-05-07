@@ -190,7 +190,8 @@ object ChangeMasterPasswordScreen {
 
                 val oldPass = changeMasterPasswordViewModel.oldPassword.collectAsState()
                 val newPass = changeMasterPasswordViewModel.newPassword.collectAsState()
-                val newPassRepeat = changeMasterPasswordViewModel.newPasswordRepeated.collectAsState()
+                val newPassRepeat =
+                    changeMasterPasswordViewModel.newPasswordRepeated.collectAsState()
 
                 AnimatedVisibility(
                     visible = changeMasterPasswordViewModel.showWrongPasswordError.collectAsState().value,
