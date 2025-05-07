@@ -11,6 +11,7 @@ import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -59,6 +60,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -324,6 +326,11 @@ object HomeContent {
                         .size(size = iconSize)
                         .clip(shape = RoundedCornerShape(size = 12.dp))
                         .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                        .border(
+                            width = 1.dp,
+                            color = if (password.localId == null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHighest,
+                            shape = RoundedCornerShape(size = 12.dp)
+                        )
                         .constrainAs(
                             ref = startIcon,
                             constrainBlock = {
