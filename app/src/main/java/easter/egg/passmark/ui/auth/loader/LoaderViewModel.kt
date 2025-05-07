@@ -53,6 +53,10 @@ class LoaderViewModel @Inject constructor(
         }
     }
 
+    fun forceVerify() {
+        viewModelScope.launch { verifyKeyState() }
+    }
+
     private suspend fun verifyKeyState() {
         this@LoaderViewModel._screenState.value = try {
             val user = userApi.getUser()
@@ -81,6 +85,7 @@ class LoaderViewModel @Inject constructor(
             Log.d(TAG, "user state = ${userState.name}")
             ScreenState.Loaded(userState)
         } catch (e: Exception) {
+            e.printStackTrace()
             ScreenState.ApiError.fromException(e = e)
         }
     }

@@ -54,7 +54,7 @@ object LoaderScreen {
             content = {
                 if (viewModel.screenState.collectAsState().value is ScreenState.ApiError) {
                     Button(
-                        onClick = { TODO() },
+                        onClick = viewModel::forceVerify,
                         content = { Text(text = "Retry") }
                     )
                 } else {
