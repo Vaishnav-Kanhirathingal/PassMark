@@ -34,14 +34,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -81,7 +84,6 @@ object HomeScreen {
     private val TAG = this::class.simpleName
 
     // TODO: fingerprint screen
-    // TODO: pull to refresh
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -170,6 +172,7 @@ object HomeScreen {
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun MainScreen(
         modifier: Modifier,
@@ -181,6 +184,7 @@ object HomeScreen {
     ) {
         val coroutineScope = rememberCoroutineScope()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        val mainResultState = mainViewModel.screenState.collectAsState()
         ModalNavigationDrawer(
             modifier = modifier,
             drawerState = drawerState,
@@ -207,7 +211,7 @@ object HomeScreen {
                                 .fillMaxWidth()
                                 .setSizeLimitation(),
                             searchingVaultName = homeViewModel.vaultIdSelected.collectAsState().value?.let {
-                                (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
+                                (mainResultState.value as? ScreenState.Loaded)
                                     ?.result?.getVaultById(it)
                                     ?.name
                             },
@@ -221,14 +225,34 @@ object HomeScreen {
                         )
                     },
                     content = {
-                        HomeContent.HomeContent(
+                        val isRefreshing = remember { mutableStateOf(false) }
+                        LaunchedEffect(
+                            key1 = mainResultState.value,
+                            block = {
+                                if (mainResultState.value is ScreenState.Loaded) {
+                                    isRefreshing.value = false
+                                }
+                            }
+                        )
+                        PullToRefreshBox(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(paddingValues = it),
-                            mainViewModel = mainViewModel,
-                            homeViewModel = homeViewModel,
-                            toViewPasswordScreen = toViewPasswordScreen,
-                            toPasswordEditScreen = toPasswordEditScreen
+                            isRefreshing = isRefreshing.value,
+                            onRefresh = {
+                                isRefreshing.value = true
+                                mainViewModel.refreshHomeList(silentReload = true)
+                            },
+                            content = {
+                                HomeContent.HomeContent(
+                                    modifier = Modifier
+                                        .fillMaxSize(),
+                                    mainViewModel = mainViewModel,
+                                    homeViewModel = homeViewModel,
+                                    toViewPasswordScreen = toViewPasswordScreen,
+                                    toPasswordEditScreen = toPasswordEditScreen
+                                )
+                            }
                         )
                     },
                     floatingActionButton = {
