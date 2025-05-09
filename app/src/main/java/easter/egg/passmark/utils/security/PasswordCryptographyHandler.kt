@@ -11,7 +11,6 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-// TODO: rename to password data encryption handler
 class PasswordCryptographyHandler private constructor(
     private val secretKeySpec: SecretKeySpec,
     private val ivSpec: IvParameterSpec

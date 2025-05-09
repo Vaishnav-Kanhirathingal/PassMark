@@ -89,7 +89,6 @@ class ChangeMasterPasswordViewModel @Inject constructor(
     private var _oldCryptoHandler: PasswordCryptographyHandler? = null
     private var _newCryptoHandler: PasswordCryptographyHandler? = null
 
-    // TODO: test entirely
     private suspend fun performAction(
         reEncryptionStates: ReEncryptionStates
     ) {

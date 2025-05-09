@@ -443,7 +443,6 @@ object PasswordEditScreen {
                     fontSize = PassMarkFonts.Headline.medium,
                     fontWeight = FontWeight.SemiBold
                 )
-                // TODO: show toast if vault list is empty?
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
