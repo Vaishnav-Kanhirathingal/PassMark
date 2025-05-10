@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,16 +30,14 @@ fun CustomLoader(
     modifier: Modifier,
 ) {
     val config = object {
-        val spacing = 1.dp
+        val spacing = 2.dp
         val barWidth = 10.dp
-        val mainBarPadding = 3.dp
-        val midBarMinSize = 4f
-        val midBarMaxSize = ((barWidth * 5) + (spacing * 4) - (mainBarPadding * 2)).value
+        val fullWidth = (barWidth * 5) + (spacing * 4)
     }
     Row(
         modifier = modifier.sizeIn(
-            minWidth = config.midBarMaxSize.dp,
-            minHeight = config.midBarMaxSize.dp,
+            minWidth = config.fullWidth,
+            minHeight = config.fullWidth,
         ),
         horizontalArrangement = Arrangement.spacedBy(
             space = config.spacing,
@@ -57,8 +54,8 @@ fun CustomLoader(
                     val springValue = rememberInfiniteTransition(
                         label = "verticalBar [$index]"
                     ).animateFloat(
-                        initialValue = config.midBarMinSize,
-                        targetValue = config.midBarMaxSize,
+                        initialValue = config.barWidth.value,
+                        targetValue = config.fullWidth.value,
                         animationSpec = infiniteRepeatable(
                             animation = tween(
                                 durationMillis = 1000,
@@ -66,36 +63,22 @@ fun CustomLoader(
                                 delayMillis = 200
                             ),
                             initialStartOffset = StartOffset(
-                                offsetMillis = (200 * impliedIndex)
+                                offsetMillis = (300 * impliedIndex)
                             ),
                             repeatMode = RepeatMode.Reverse
                         )
                     )
-
-                    val mainColor = when (impliedIndex % 3) {
-                        0 -> MaterialTheme.colorScheme.primary
-                        1 -> MaterialTheme.colorScheme.secondary
-                        2 -> MaterialTheme.colorScheme.tertiary
-                        else -> throw IllegalStateException()
-                    }
-                    val containerColor = when (impliedIndex % 3) {
-                        0 -> MaterialTheme.colorScheme.primaryContainer
-                        1 -> MaterialTheme.colorScheme.secondaryContainer
-                        2 -> MaterialTheme.colorScheme.tertiaryContainer
-                        else -> throw IllegalStateException()
-                    }
-
                     Box(
                         modifier = Modifier
                             .width(width = config.barWidth)
                             .clip(shape = RoundedCornerShape(size = 4.dp))
-                            .background(color = containerColor)
-                            .padding(all = config.mainBarPadding)
                             .background(
-                                color = mainColor,
-                                shape = RoundedCornerShape(
-                                    size = 2.dp
-                                )
+                                color = when (impliedIndex % 3) {
+                                    0 -> MaterialTheme.colorScheme.primary
+                                    1 -> MaterialTheme.colorScheme.secondary
+                                    2 -> MaterialTheme.colorScheme.tertiary
+                                    else -> throw IllegalStateException()
+                                }
                             )
                             .height(height = springValue.value.dp),
                     )
