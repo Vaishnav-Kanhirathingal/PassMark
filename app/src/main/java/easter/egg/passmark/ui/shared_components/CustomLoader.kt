@@ -13,14 +13,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlin.math.absoluteValue
@@ -88,10 +91,92 @@ object CustomLoader {
             }
         )
     }
+
+    @Composable
+    fun ButtonLoader(
+        modifier: Modifier,
+        color: Color
+    ) {
+        val config = object {
+            val barWidth = 4.dp
+            val spacing = 1.dp
+            val totalBarCount = 5
+        }
+
+        val totalSizeMin = config.run {
+            (barWidth * totalBarCount) + (spacing * (totalBarCount - 1))
+        }
+        Row(
+            modifier = modifier.sizeIn(
+                minWidth = totalSizeMin,
+                minHeight = totalSizeMin
+            ),
+            horizontalArrangement = Arrangement.spacedBy(
+                space = config.spacing,
+                alignment = Alignment.CenterHorizontally
+            ),
+            verticalAlignment = Alignment.CenterVertically,
+            content = {
+                repeat(
+                    times = config.totalBarCount,
+                    action = { index ->
+                        val height = rememberInfiniteTransition()
+                            .animateFloat(
+                                initialValue = config.barWidth.value,
+                                targetValue = totalSizeMin.value,
+                                animationSpec = infiniteRepeatable(
+                                    animation = tween(
+                                        durationMillis = 800,
+                                        delayMillis = 0,
+                                        easing = FastOutSlowInEasing
+                                    ),
+                                    repeatMode = RepeatMode.Reverse,
+                                    initialStartOffset = StartOffset(
+                                        offsetMillis = (150 * index),
+                                    )
+                                )
+                            )
+                        Box(
+                            modifier = Modifier
+                                .size(
+                                    width = config.barWidth,
+                                    height = height.value.dp
+                                )
+                                .background(
+                                    color = color,
+                                    shape = CircleShape
+                                )
+                        )
+                    }
+                )
+            }
+        )
+    }
 }
 
 @Composable
 @Preview(widthDp = 100, heightDp = 100, showBackground = true)
-private fun CustomLoaderPreview() {
+private fun FullScreenLoaderPreview() {
     CustomLoader.FullScreenLoader(modifier = Modifier.fillMaxSize())
+}
+
+@Composable
+@Preview(widthDp = 200, heightDp = 48, showBackground = true)
+private fun CustomLoaderPreview() {
+    Box(
+        modifier = Modifier
+            .background(
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(
+                    size = 16.dp
+                )
+            ),
+        contentAlignment = Alignment.Center,
+        content = {
+            CustomLoader.ButtonLoader(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+    )
 }
