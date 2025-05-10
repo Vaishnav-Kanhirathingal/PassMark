@@ -25,71 +25,73 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlin.math.absoluteValue
 
-@Composable
-fun CustomLoader(
-    modifier: Modifier,
-) {
-    val config = object {
-        val spacing = 2.dp
-        val barWidth = 10.dp
-        val fullWidth = (barWidth * 5) + (spacing * 4)
-    }
-    Row(
-        modifier = modifier.sizeIn(
-            minWidth = config.fullWidth,
-            minHeight = config.fullWidth,
-        ),
-        horizontalArrangement = Arrangement.spacedBy(
-            space = config.spacing,
-            alignment = Alignment.CenterHorizontally
-        ),
-        verticalAlignment = Alignment.CenterVertically,
-        content = {
-            val onSide = 2
-            repeat(
-                times = (onSide * 2) + 1,
-                action = { index ->
-                    val impliedIndex = (index - onSide).absoluteValue
-
-                    val springValue = rememberInfiniteTransition(
-                        label = "verticalBar [$index]"
-                    ).animateFloat(
-                        initialValue = config.barWidth.value,
-                        targetValue = config.fullWidth.value,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(
-                                durationMillis = 1000,
-                                easing = FastOutSlowInEasing,
-                                delayMillis = 200
-                            ),
-                            initialStartOffset = StartOffset(
-                                offsetMillis = (300 * impliedIndex)
-                            ),
-                            repeatMode = RepeatMode.Reverse
-                        )
-                    )
-                    Box(
-                        modifier = Modifier
-                            .width(width = config.barWidth)
-                            .clip(shape = RoundedCornerShape(size = 4.dp))
-                            .background(
-                                color = when (impliedIndex % 3) {
-                                    0 -> MaterialTheme.colorScheme.primary
-                                    1 -> MaterialTheme.colorScheme.secondary
-                                    2 -> MaterialTheme.colorScheme.tertiary
-                                    else -> throw IllegalStateException()
-                                }
-                            )
-                            .height(height = springValue.value.dp),
-                    )
-                }
-            )
+object CustomLoader {
+    @Composable
+    fun FullScreenLoader(
+        modifier: Modifier,
+    ) {
+        val config = object {
+            val spacing = 2.dp
+            val barWidth = 10.dp
+            val fullWidth = (barWidth * 5) + (spacing * 4)
         }
-    )
+        Row(
+            modifier = modifier.sizeIn(
+                minWidth = config.fullWidth,
+                minHeight = config.fullWidth,
+            ),
+            horizontalArrangement = Arrangement.spacedBy(
+                space = config.spacing,
+                alignment = Alignment.CenterHorizontally
+            ),
+            verticalAlignment = Alignment.CenterVertically,
+            content = {
+                val onSide = 2
+                repeat(
+                    times = (onSide * 2) + 1,
+                    action = { index ->
+                        val impliedIndex = (index - onSide).absoluteValue
+
+                        val springValue = rememberInfiniteTransition(
+                            label = "verticalBar [$index]"
+                        ).animateFloat(
+                            initialValue = config.barWidth.value,
+                            targetValue = config.fullWidth.value,
+                            animationSpec = infiniteRepeatable(
+                                animation = tween(
+                                    durationMillis = 1000,
+                                    easing = FastOutSlowInEasing,
+                                    delayMillis = 200
+                                ),
+                                initialStartOffset = StartOffset(
+                                    offsetMillis = (300 * impliedIndex)
+                                ),
+                                repeatMode = RepeatMode.Reverse
+                            )
+                        )
+                        Box(
+                            modifier = Modifier
+                                .width(width = config.barWidth)
+                                .clip(shape = RoundedCornerShape(size = 4.dp))
+                                .background(
+                                    color = when (impliedIndex % 3) {
+                                        0 -> MaterialTheme.colorScheme.primary
+                                        1 -> MaterialTheme.colorScheme.secondary
+                                        2 -> MaterialTheme.colorScheme.tertiary
+                                        else -> throw IllegalStateException()
+                                    }
+                                )
+                                .height(height = springValue.value.dp),
+                        )
+                    }
+                )
+            }
+        )
+    }
 }
 
 @Composable
 @Preview(widthDp = 100, heightDp = 100, showBackground = true)
-fun CustomLoaderPreview() {
-    CustomLoader(modifier = Modifier.fillMaxSize())
+private fun CustomLoaderPreview() {
+    CustomLoader.FullScreenLoader(modifier = Modifier.fillMaxSize())
 }

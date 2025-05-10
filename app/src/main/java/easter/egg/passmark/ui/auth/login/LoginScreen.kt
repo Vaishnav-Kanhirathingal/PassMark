@@ -208,7 +208,7 @@ object LoginScreen {
                 alignment = Alignment.CenterVertically
             ),
             content = {
-                CustomLoader(modifier = Modifier)
+                CustomLoader.FullScreenLoader(modifier = Modifier)
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = "Logging in via Google...",

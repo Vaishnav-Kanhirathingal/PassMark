@@ -102,7 +102,7 @@ object HomeScreen {
             is ScreenState.PreCall, is ScreenState.Loading -> Box(
                 modifier = modifier,
                 contentAlignment = Alignment.Center,
-                content = { CustomLoader(modifier = Modifier) }
+                content = { CustomLoader.FullScreenLoader(modifier = Modifier) }
             )
 
             is ScreenState.Loaded -> {

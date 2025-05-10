@@ -122,7 +122,7 @@ object LoaderScreen {
                         }
                     )
                 } else {
-                    CustomLoader(modifier = Modifier)
+                    CustomLoader.FullScreenLoader(modifier = Modifier)
                 }
             }
         )
