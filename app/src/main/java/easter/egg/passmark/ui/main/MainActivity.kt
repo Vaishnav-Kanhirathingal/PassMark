@@ -1,6 +1,7 @@
 package easter.egg.passmark.ui.main
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -51,6 +52,10 @@ class MainActivity : FragmentActivity() {
                     )
                 }
             }
+        )
+        window?.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
         )
     }
 
