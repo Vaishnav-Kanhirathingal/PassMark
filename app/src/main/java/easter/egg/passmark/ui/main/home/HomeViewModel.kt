@@ -68,15 +68,15 @@ class HomeViewModel @Inject constructor(
     //----------------------------------------------------------------------------vault-dialog-state
     val vaultDialogState: VaultDialogState = VaultDialogState()
 
-    private val _loaderSelected: MutableStateFlow<VaultDialogActionOptions> =
+    private val _dialogButtonPressed: MutableStateFlow<VaultDialogActionOptions> =
         MutableStateFlow(VaultDialogActionOptions.UPDATE)
-    val loaderSelected: StateFlow<VaultDialogActionOptions> get() = _loaderSelected
+    val dialogButtonPressed: StateFlow<VaultDialogActionOptions> get() = _dialogButtonPressed
 
     fun performVaultAction(
         action: VaultDialogActionOptions
     ) {
         val vault = vaultDialogState.fetchNewVault()
-        _loaderSelected.value = action
+        _dialogButtonPressed.value = action
         vaultDialogState.setScreenState(
             newState = ScreenState.Loading()
         )

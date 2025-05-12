@@ -563,7 +563,7 @@ object HomeDrawer {
                             verticalAlignment = Alignment.CenterVertically,
                             content = {
                                 val loaderSelected =
-                                    homeViewModel.loaderSelected.collectAsState().value
+                                    homeViewModel.dialogButtonPressed.collectAsState().value
 
                                 if (isSavedAlready) {
                                     Box(
