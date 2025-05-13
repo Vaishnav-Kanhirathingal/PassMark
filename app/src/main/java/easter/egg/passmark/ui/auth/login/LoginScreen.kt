@@ -4,21 +4,21 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,8 +45,8 @@ import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
-import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
+import easter.egg.passmark.utils.values.setSizeLimitation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -147,42 +147,55 @@ object LoginScreen {
     ) {
         val coroutineScope = rememberCoroutineScope()
         val context = LocalContext.current
-        ElevatedButton(
-            modifier = modifier.sizeIn(
-                minWidth = PassMarkDimensions.minTouchSize,
-                minHeight = PassMarkDimensions.minTouchSize
+        Row(
+            modifier = modifier
+                .setSizeLimitation()
+                .clip(shape = RoundedCornerShape(size = 16.dp))
+                .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                .clickable(
+                    onClick = {
+                        val googleIdOption = GetGoogleIdOption.Builder()
+                            .setServerClientId(BuildConfig.FIREBASE_WEB_CLIENT_ID)
+                            .setFilterByAuthorizedAccounts(filterByAuthorizedAccounts = false)
+                            .build()
+                        val request = GetCredentialRequest.Builder()
+                            .addCredentialOption(googleIdOption)
+                            .build()
+                        coroutineScope.launch {
+                            try {
+                                val result = CredentialManager.create(context).getCredential(
+                                    request = request,
+                                    context = context,
+                                )
+                                withContext(Dispatchers.Main) {
+                                    viewModel.login(credentialResponse = result)
+                                }
+                            } catch (e: GetCredentialCancellationException) {
+                                Log.d(TAG, "cancelled sign in")
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        context,
+                                        "Something Went Wrong",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        }
+                    },
+                )
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    shape = RoundedCornerShape(size = 16.dp)
+                )
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(
+                space = 8.dp,
+                alignment = Alignment.CenterHorizontally
             ),
-            onClick = {
-                val googleIdOption = GetGoogleIdOption.Builder()
-                    .setServerClientId(BuildConfig.FIREBASE_WEB_CLIENT_ID)
-                    .setFilterByAuthorizedAccounts(filterByAuthorizedAccounts = false)
-                    .build()
-                val request = GetCredentialRequest.Builder()
-                    .addCredentialOption(googleIdOption)
-                    .build()
-                coroutineScope.launch {
-                    try {
-                        val result = CredentialManager.create(context).getCredential(
-                            request = request,
-                            context = context,
-                        )
-                        withContext(Dispatchers.Main) {
-                            viewModel.login(credentialResponse = result)
-                        }
-                    } catch (e: GetCredentialCancellationException) {
-                        Log.d(TAG, "cancelled sign in")
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(
-                                context,
-                                "Something Went Wrong",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                }
-            },
+            verticalAlignment = Alignment.CenterVertically,
             content = {
                 Image(
                     modifier = Modifier.size(24.dp),
@@ -190,8 +203,13 @@ object LoginScreen {
                     contentScale = ContentScale.Fit,
                     contentDescription = null
                 )
-                Spacer(modifier = Modifier.width(width = 8.dp))
-                Text(text = "Google")
+                Text(
+                    text = "Google",
+                    fontFamily = PassMarkFonts.font,
+                    fontSize = PassMarkFonts.Body.medium,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         )
     }
