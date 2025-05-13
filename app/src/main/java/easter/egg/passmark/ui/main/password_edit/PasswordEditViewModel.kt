@@ -135,7 +135,6 @@ class PasswordEditViewModel @Inject constructor(
 
         viewModelScope.launch {
             val newState: ScreenState<Password> = try {
-
                 val savedPasswordCapsule = if (saveToStorage) {
                     _oldPassword?.cloudId
                         ?.takeUnless { _deleteCompleted }

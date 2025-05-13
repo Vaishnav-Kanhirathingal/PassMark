@@ -108,10 +108,9 @@ fun ConfirmationDialog(
                             contentAlignment = Alignment.Center,
                             content = {
                                 if (isLoading) {
-                                    CircularProgressIndicator(
+                                    CustomLoader.ButtonLoader(
                                         modifier = Modifier.size(size = 24.dp),
                                         color = onContainerColor,
-                                        strokeWidth = 2.dp
                                     )
                                 } else {
                                     Text(

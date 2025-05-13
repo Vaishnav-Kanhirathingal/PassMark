@@ -36,7 +36,6 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Web
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -77,6 +76,7 @@ import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.ui.main.MainViewModel
+import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.extensions.customTopBarModifier
@@ -315,8 +315,8 @@ object PasswordEditScreen {
                             fontFamily = PassMarkFonts.font,
                         )
                         if (isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(size = 24.dp),
+                            CustomLoader.ButtonLoader(
+                                modifier = Modifier,
                                 color = MaterialTheme.colorScheme.onPrimary
                             )
                         }

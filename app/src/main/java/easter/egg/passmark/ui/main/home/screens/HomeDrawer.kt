@@ -33,7 +33,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -68,6 +67,7 @@ import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.main.home.VaultDialogActionOptions
 import easter.egg.passmark.ui.main.home.VaultDialogResult
+import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -582,10 +582,9 @@ object HomeDrawer {
                                         contentAlignment = Alignment.Center,
                                         content = {
                                             if (loaderSelected == VaultDialogActionOptions.DELETE && screenState.isLoading) {
-                                                CircularProgressIndicator(
+                                                CustomLoader.ButtonLoader(
                                                     modifier = Modifier.size(size = 24.dp),
                                                     color = MaterialTheme.colorScheme.onErrorContainer,
-                                                    strokeWidth = 2.dp
                                                 )
                                             } else {
                                                 Icon(
@@ -615,6 +614,9 @@ object HomeDrawer {
                                             ),
                                         contentAlignment = Alignment.Center,
                                         content = {
+                                            val color = ButtonDefaults.textButtonColors().let {
+                                                if (enabled) it.contentColor else it.disabledContentColor
+                                            }
                                             Text(
                                                 modifier = Modifier
                                                     .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -623,14 +625,12 @@ object HomeDrawer {
                                                 fontFamily = PassMarkFonts.font,
                                                 fontWeight = FontWeight.SemiBold,
                                                 fontSize = PassMarkFonts.Title.medium,
-                                                color = ButtonDefaults.textButtonColors().let {
-                                                    if (enabled) it.contentColor else it.disabledContentColor
-                                                }
+                                                color = color
                                             )
                                             if (isLoading) {
-                                                CircularProgressIndicator(
+                                                CustomLoader.ButtonLoader(
                                                     modifier = Modifier.size(size = 24.dp),
-                                                    strokeWidth = 2.dp
+                                                    color = color
                                                 )
                                             }
                                         }
