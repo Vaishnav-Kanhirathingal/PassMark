@@ -2,17 +2,48 @@ package easter.egg.passmark.ui.main
 
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -27,27 +58,48 @@ import easter.egg.passmark.ui.main.password_view.PasswordViewScreen
 import easter.egg.passmark.ui.main.settings.SettingsScreen
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
+import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.extensions.findPassword
+import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
+import easter.egg.passmark.utils.values.PassMarkDimensions
+import easter.egg.passmark.utils.values.PassMarkFonts
+import easter.egg.passmark.utils.values.setSizeLimitation
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
     private val TAG = this::class.simpleName
 
+    // TODO: keep in viewmodel
+    private val biometricAccessGranted: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // TODO: set biometric value
         setContent(
             content = {
                 PassMarkTheme {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         content = { innerPadding ->
-                            MainActivityNavHost(
-                                modifier = Modifier.padding(
-                                    paddingValues = innerPadding
+                            val navController = rememberNavController()
+
+                            if (biometricAccessGranted.collectAsState().value) {
+                                MainActivityNavHost(
+                                    modifier = Modifier.padding(paddingValues = innerPadding),
+                                    navController = navController
                                 )
-                            )
+                            } else {
+                                SecurityScreen(
+                                    modifier = Modifier
+                                        .padding(paddingValues = innerPadding)
+                                        .fillMaxSize(),
+                                    onVerification = { this.biometricAccessGranted.value = true }
+                                )
+                            }
                         }
                     )
                 }
@@ -60,10 +112,166 @@ class MainActivity : FragmentActivity() {
     }
 
     @Composable
-    fun MainActivityNavHost(
-        modifier: Modifier
+    fun SecurityScreen(
+        modifier: Modifier,
+        onVerification: () -> Unit
     ) {
-        val navController = rememberNavController()
+        val passwordTyped = remember { mutableStateOf("") }
+        val passwordVisible = remember { mutableStateOf(false) }
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(
+                space = 4.dp,
+                alignment = Alignment.CenterVertically
+            ),
+            content = {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    textAlign = TextAlign.Start,
+                    text = "Enter password",
+                    fontFamily = PassMarkFonts.font,
+                    fontSize = PassMarkFonts.Headline.medium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    textAlign = TextAlign.Start,
+                    text = "Verification of password / biometrics is necessary to avoid unauthorized access.",
+                    fontFamily = PassMarkFonts.font,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = PassMarkFonts.Body.medium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    value = passwordTyped.value,
+                    onValueChange = { passwordTyped.value = it },
+                    label = { Text(text = "Enter your Password") },
+                    placeholder = { Text(text = "Password123") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Password,
+                            contentDescription = null
+                        )
+                    },
+                    trailingIcon = {
+                        IconButton(
+                            onClick = { passwordVisible.value = !passwordVisible.value },
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Default.Visibility,
+                                    contentDescription = null
+                                )
+                            }
+                        )
+                    },
+                    visualTransformation =
+                        if (passwordVisible.value) VisualTransformation.None
+                        else PasswordVisualTransformation(),
+                    supportingText = {
+                        Text(text = "Enter your password")
+                    }
+                )
+
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = 8.dp,
+                        alignment = Alignment.End
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    content = {
+                        val context = LocalContext.current
+                        Box(
+                            modifier = Modifier
+                                .size(size = PassMarkDimensions.minTouchSize)
+                                .clip(shape = RoundedCornerShape(16.dp))
+                                .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                    shape = RoundedCornerShape(size = 16.dp)
+                                )
+                                .clickable(
+                                    onClick = {
+                                        fun showToast(msg: String) {
+                                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                                        }
+                                        (context as? FragmentActivity)?.let { act ->
+                                            BiometricsHandler.performBiometricAuthentication(
+                                                activity = act,
+                                                onComplete = { biometricHandlerOutput ->
+                                                    when (biometricHandlerOutput) {
+                                                        BiometricsHandler.BiometricHandlerOutput.ERROR, BiometricsHandler.BiometricHandlerOutput.FAILED -> {
+                                                            showToast(msg = "Failed to authenticate via biometrics")
+                                                        }
+
+                                                        BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED -> onVerification()
+
+                                                    }
+                                                }
+                                            )
+                                        }
+                                    }
+                                ),
+                            contentAlignment = Alignment.Center,
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Default.Fingerprint,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        )
+                        Box(
+                            modifier = Modifier
+                                .setSizeLimitation()
+                                .clip(shape = RoundedCornerShape(size = 16.dp))
+                                .background(color = MaterialTheme.colorScheme.primary)
+                                .clickable(onClick = { TODO() })
+                                .padding(horizontal = 16.dp),
+                            contentAlignment = Alignment.Center,
+                            content = {
+                                Text(
+                                    text = "Verify",
+                                    fontFamily = PassMarkFonts.font,
+                                    fontSize = PassMarkFonts.Body.medium,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        )
+
+                    }
+                )
+            }
+        )
+    }
+
+    // TODO: make it for closing to recent apps only
+    override fun onPause() {
+        super.onPause()
+        this.biometricAccessGranted.value = false
+    }
+
+    @Composable
+    private fun MainActivityNavHost(
+        modifier: Modifier,
+        navController: NavHostController
+    ) {
+//        val navController = rememberNavController()
         val mainViewModel: MainViewModel by viewModels()
         val result =
             (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
@@ -206,4 +414,14 @@ private sealed class MainScreens {
 
     @Serializable
     data object ChangeMasterPassword : MainScreens()
+}
+
+@MobilePreview
+@MobileHorizontalPreview
+@Composable
+private fun SecurityScreenPreview() {
+    MainActivity().SecurityScreen(
+        modifier = Modifier.fillMaxSize(),
+        onVerification = { }
+    )
 }
