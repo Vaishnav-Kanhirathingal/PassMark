@@ -24,6 +24,7 @@ import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
@@ -129,11 +130,22 @@ class MainViewModel @Inject constructor(
         MutableStateFlow(ScreenState.PreCall())
     val passwordVerificationState: StateFlow<ScreenState<Boolean>> get() = _passwordVerificationState
 
-    fun resetPasswordScreenState() {
-        // TODO: call when app is pushed to recent
-        job.cancelChildren()
-        this._passwordVerificationState.value = ScreenState.PreCall()
-        this.passwordEntered.value = ""
+    private var lockingTask: Job? = null
+
+    fun startAppLockLambda() {
+        lockingTask?.cancel()
+        lockingTask = viewModelScope.launch {
+            delay(timeMillis = 3_000)
+            job.cancelChildren()
+            this@MainViewModel._passwordVerificationState.value = ScreenState.PreCall()
+            this@MainViewModel.passwordEntered.value = ""
+            Log.d(TAG, "locked app")
+        }
+    }
+
+    fun cancelAppLockLambda() {
+        lockingTask?.cancel()
+        lockingTask = null
     }
 
     fun onFingerprintVerified() {
@@ -170,7 +182,7 @@ class MainViewModel @Inject constructor(
             }
 
             if ((newState as? ScreenState.Loaded)?.result == true) {
-                this@MainViewModel.passwordEntered.value=""
+                this@MainViewModel.passwordEntered.value = ""
             }
             this@MainViewModel._passwordVerificationState.value = newState
         }

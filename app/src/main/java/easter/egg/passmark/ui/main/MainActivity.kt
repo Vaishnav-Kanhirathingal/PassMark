@@ -77,14 +77,16 @@ import kotlinx.serialization.Serializable
 class MainActivity : FragmentActivity() {
     private val TAG = this::class.simpleName
 
-    // TODO: keep in viewmodel
-
     private val mainViewModel: MainViewModel by viewModels()
+
+    override fun onResume() {
+        super.onResume()
+        mainViewModel.cancelAppLockLambda()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // TODO: set verification state value using bundle value
         setContent(
             content = {
                 PassMarkTheme {
@@ -427,6 +429,11 @@ class MainActivity : FragmentActivity() {
                 )
             }
         )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mainViewModel.startAppLockLambda()
     }
 }
 
