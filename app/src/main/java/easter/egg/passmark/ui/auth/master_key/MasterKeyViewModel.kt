@@ -29,7 +29,7 @@ class MasterKeyViewModel @Inject constructor(
         this._masterPasswordText.value = value
     }
 
-    private val _visible: MutableStateFlow<Boolean> = MutableStateFlow(value = true)
+    private val _visible: MutableStateFlow<Boolean> = MutableStateFlow(value = false)
     val visible: StateFlow<Boolean> get() = _visible
     fun switchVisibility() {
         this._visible.value = !this._visible.value
