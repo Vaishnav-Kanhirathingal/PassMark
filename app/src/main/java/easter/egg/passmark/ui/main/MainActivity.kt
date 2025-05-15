@@ -18,10 +18,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,9 +37,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -56,6 +61,7 @@ import easter.egg.passmark.ui.main.home.screens.HomeScreen
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.main.password_view.PasswordViewScreen
 import easter.egg.passmark.ui.main.settings.SettingsScreen
+import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -65,7 +71,6 @@ import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
@@ -73,12 +78,13 @@ class MainActivity : FragmentActivity() {
     private val TAG = this::class.simpleName
 
     // TODO: keep in viewmodel
-    private val biometricAccessGranted: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // TODO: set biometric value
+        // TODO: set verification state value using bundle value
         setContent(
             content = {
                 PassMarkTheme {
@@ -86,8 +92,12 @@ class MainActivity : FragmentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         content = { innerPadding ->
                             val navController = rememberNavController()
+                            val verificationState = mainViewModel
+                                .passwordVerificationState
+                                .collectAsState()
+                                .value
 
-                            if (biometricAccessGranted.collectAsState().value) {
+                            if ((verificationState as? ScreenState.Loaded)?.result == true) {
                                 MainActivityNavHost(
                                     modifier = Modifier.padding(paddingValues = innerPadding),
                                     navController = navController
@@ -97,7 +107,11 @@ class MainActivity : FragmentActivity() {
                                     modifier = Modifier
                                         .padding(paddingValues = innerPadding)
                                         .fillMaxSize(),
-                                    onVerification = { this.biometricAccessGranted.value = true }
+                                    text = mainViewModel.passwordEntered.collectAsState().value,
+                                    onTextChanged = { mainViewModel.passwordEntered.value = it },
+                                    onFingerPrintVerification = mainViewModel::onFingerprintVerified,
+                                    onVerifyClicked = mainViewModel::verifyPassword,
+                                    screenState = verificationState
                                 )
                             }
                         }
@@ -114,9 +128,12 @@ class MainActivity : FragmentActivity() {
     @Composable
     fun SecurityScreen(
         modifier: Modifier,
-        onVerification: () -> Unit
+        text: String,
+        onTextChanged: (String) -> Unit,
+        onFingerPrintVerification: () -> Unit,
+        onVerifyClicked: () -> Unit,
+        screenState: ScreenState<Boolean>
     ) {
-        val passwordTyped = remember { mutableStateOf("") }
         val passwordVisible = remember { mutableStateOf(false) }
         Column(
             modifier = modifier,
@@ -147,14 +164,15 @@ class MainActivity : FragmentActivity() {
                     fontFamily = PassMarkFonts.font,
                     fontWeight = FontWeight.Medium,
                     fontSize = PassMarkFonts.Body.medium,
+                    lineHeight = PassMarkFonts.Body.medium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                    value = passwordTyped.value,
-                    onValueChange = { passwordTyped.value = it },
+                    value = text,
+                    onValueChange = onTextChanged,
                     label = { Text(text = "Enter your Password") },
                     placeholder = { Text(text = "Password123") },
                     leadingIcon = {
@@ -168,7 +186,9 @@ class MainActivity : FragmentActivity() {
                             onClick = { passwordVisible.value = !passwordVisible.value },
                             content = {
                                 Icon(
-                                    imageVector = Icons.Default.Visibility,
+                                    imageVector =
+                                        if (passwordVisible.value) Icons.Default.Visibility
+                                        else Icons.Default.VisibilityOff,
                                     contentDescription = null
                                 )
                             }
@@ -178,10 +198,19 @@ class MainActivity : FragmentActivity() {
                         if (passwordVisible.value) VisualTransformation.None
                         else PasswordVisualTransformation(),
                     supportingText = {
-                        Text(text = "Enter your password")
-                    }
+                        Text(
+                            text =
+                                if ((screenState as? ScreenState.Loaded)?.result == false) "Password is incorrect"
+                                else "Enter your password"
+                        )
+                    },
+                    isError = ((screenState as? ScreenState.Loaded)?.result == false),
+                    enabled = !screenState.isLoading,
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrectEnabled = false,
+                        keyboardType = KeyboardType.Password,
+                    )
                 )
-
 
                 Row(
                     modifier = Modifier
@@ -205,6 +234,7 @@ class MainActivity : FragmentActivity() {
                                     shape = RoundedCornerShape(size = 16.dp)
                                 )
                                 .clickable(
+                                    enabled = !screenState.isLoading,
                                     onClick = {
                                         fun showToast(msg: String) {
                                             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
@@ -218,8 +248,7 @@ class MainActivity : FragmentActivity() {
                                                             showToast(msg = "Failed to authenticate via biometrics")
                                                         }
 
-                                                        BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED -> onVerification()
-
+                                                        BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED -> onFingerPrintVerification()
                                                     }
                                                 }
                                             )
@@ -231,7 +260,7 @@ class MainActivity : FragmentActivity() {
                                 Icon(
                                     imageVector = Icons.Default.Fingerprint,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurface
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         )
@@ -239,31 +268,41 @@ class MainActivity : FragmentActivity() {
                             modifier = Modifier
                                 .setSizeLimitation()
                                 .clip(shape = RoundedCornerShape(size = 16.dp))
-                                .background(color = MaterialTheme.colorScheme.primary)
-                                .clickable(onClick = { TODO() })
+                                .background(
+                                    color = ButtonDefaults.buttonColors().let {
+                                        if (text.isNotEmpty()) it.containerColor else it.disabledContainerColor
+                                    }
+                                )
+                                .clickable(
+                                    enabled = (!screenState.isLoading) && text.isNotEmpty(),
+                                    onClick = onVerifyClicked
+                                )
                                 .padding(horizontal = 16.dp),
                             contentAlignment = Alignment.Center,
                             content = {
+                                val contentColor = ButtonDefaults.buttonColors().let {
+                                    if (text.isNotEmpty()) it.contentColor else it.disabledContentColor
+                                }
+                                if (screenState.isLoading) {
+                                    CustomLoader.ButtonLoader(
+                                        modifier = Modifier,
+                                        color = contentColor
+                                    )
+                                }
                                 Text(
+                                    modifier = Modifier.alpha(alpha = if (screenState.isLoading) 0f else 1f),
                                     text = "Verify",
                                     fontFamily = PassMarkFonts.font,
                                     fontSize = PassMarkFonts.Body.medium,
                                     fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    color = contentColor,
                                 )
                             }
                         )
-
                     }
                 )
             }
         )
-    }
-
-    // TODO: make it for closing to recent apps only
-    override fun onPause() {
-        super.onPause()
-        this.biometricAccessGranted.value = false
     }
 
     @Composable
@@ -271,8 +310,6 @@ class MainActivity : FragmentActivity() {
         modifier: Modifier,
         navController: NavHostController
     ) {
-//        val navController = rememberNavController()
-        val mainViewModel: MainViewModel by viewModels()
         val result =
             (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
                 ?.result
@@ -422,6 +459,10 @@ private sealed class MainScreens {
 private fun SecurityScreenPreview() {
     MainActivity().SecurityScreen(
         modifier = Modifier.fillMaxSize(),
-        onVerification = { }
+        text = "",
+        onTextChanged = {},
+        onFingerPrintVerification = {},
+        onVerifyClicked = {},
+        screenState = ScreenState.Loaded(result = false)
     )
 }

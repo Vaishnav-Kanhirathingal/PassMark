@@ -21,8 +21,14 @@ import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -112,6 +118,68 @@ class MainViewModel @Inject constructor(
                 this@MainViewModel._screenState.value = newState
             }
         }
+    }
+
+    //-------------------------------------------------------------------------password-verification
+    private val job = SupervisorJob()
+    private val customScope = CoroutineScope(context = Dispatchers.IO + job)
+
+    val passwordEntered: MutableStateFlow<String> = MutableStateFlow("")
+    private val _passwordVerificationState: MutableStateFlow<ScreenState<Boolean>> =
+        MutableStateFlow(ScreenState.PreCall())
+    val passwordVerificationState: StateFlow<ScreenState<Boolean>> get() = _passwordVerificationState
+
+    fun resetPasswordScreenState() {
+        // TODO: call when app is pushed to recent
+        job.cancelChildren()
+        this._passwordVerificationState.value = ScreenState.PreCall()
+        this.passwordEntered.value = ""
+    }
+
+    fun onFingerprintVerified() {
+        this._passwordVerificationState.value = ScreenState.Loaded(result = true)
+    }
+
+    fun verifyPassword() {
+        val password: String = passwordEntered.value
+        this._passwordVerificationState.value = ScreenState.Loading()
+        customScope.launch {
+            val newState = try {
+                ScreenState.Loaded(
+                    result = PasswordCryptographyHandler.verifyPassword(
+                        password = password,
+                        cryptographyHandler = passwordCryptographyHandler
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d(TAG, "failed offline verification")
+                try {
+                    userApi.getUser()!!.let { user ->
+                        ScreenState.Loaded(
+                            result = PasswordCryptographyHandler(
+                                password = password,
+                                initializationVector = user.encryptionKeyInitializationVector
+                            ).solvesPuzzle(apiProvidedEncryptedPuzzle = user.passwordPuzzleEncrypted)
+                        )
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    ScreenState.ApiError.fromException(e = e)
+                }
+            }
+
+            if ((newState as? ScreenState.Loaded)?.result == true) {
+                this@MainViewModel.passwordEntered.value=""
+            }
+            this@MainViewModel._passwordVerificationState.value = newState
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        job.cancel()
+        customScope.cancel()
     }
 }
 
