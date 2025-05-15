@@ -90,7 +90,14 @@ class PasswordCryptographyHandler private constructor(
     /** returns `true` if puzzle is solved, `false` otherwise */
     fun solvesPuzzle(
         apiProvidedEncryptedPuzzle: String
-    ): Boolean = (decrypt(apiProvidedEncryptedPuzzle) == User.PUZZLE_SOLUTION)
+    ): Boolean {
+        return try {
+            (decrypt(apiProvidedEncryptedPuzzle) == User.PUZZLE_SOLUTION)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
 }
 
 //fun main() {
