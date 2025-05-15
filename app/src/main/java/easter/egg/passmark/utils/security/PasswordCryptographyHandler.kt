@@ -38,6 +38,17 @@ class PasswordCryptographyHandler private constructor(
     companion object {
         fun getNewInitializationVector(): ByteArray =
             ByteArray(size = 16).also { SecureRandom().nextBytes(it) }
+
+        fun verifyPassword(
+            password: String,
+            cryptographyHandler: PasswordCryptographyHandler
+        ): Boolean {
+            val newHandler = PasswordCryptographyHandler(
+                password = password,
+                initializationVector = cryptographyHandler.initializationVectorAsString
+            )
+            return newHandler.solvesPuzzle(apiProvidedEncryptedPuzzle = cryptographyHandler.getEncryptedPuzzle())
+        }
     }
 
     val initializationVectorAsString: String get() = ivSpec.iv.encodeBase64()
