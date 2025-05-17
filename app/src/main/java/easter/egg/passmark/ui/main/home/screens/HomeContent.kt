@@ -120,8 +120,8 @@ object HomeContent {
             ?.getFilteredPasswordList(
                 vaultId = vaultId,
                 searchString = homeViewModel.searchText.collectAsState().value,
-                passwordSortingOptions = homeViewModel.passwordSortingOption.collectAsState().value,
-                increasingOrder = homeViewModel.increasingOrder.collectAsState().value
+                passwordSortingOptions = homeViewModel.getPasswordSortingOption().value,
+                increasingOrder = homeViewModel.getIncreasingOrder().value
             )
             ?.collectAsState(initial = listOf())
             ?.value

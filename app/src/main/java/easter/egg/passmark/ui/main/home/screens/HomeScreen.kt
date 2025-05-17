@@ -217,9 +217,9 @@ object HomeScreen {
                             searchText = homeViewModel.searchText.collectAsState().value,
                             onSearch = homeViewModel::updateSearchText,
                             openNavigationDrawer = { coroutineScope.launch { drawerState.open() } },
-                            sortingOptionsSelected = homeViewModel.passwordSortingOption.collectAsState().value,
+                            sortingOptionsSelected = homeViewModel.getPasswordSortingOption().value,
                             selectPasswordSortingOption = homeViewModel::updatePasswordSortingOption,
-                            isIncreasing = homeViewModel.increasingOrder.collectAsState().value,
+                            isIncreasing = homeViewModel.getIncreasingOrder().value,
                             setIncreasing = homeViewModel::updateIncreasingOrder
                         )
                     },

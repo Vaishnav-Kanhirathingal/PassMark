@@ -2,12 +2,16 @@ package easter.egg.passmark.ui.main.home
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.password.PasswordSortingOptions
+import easter.egg.passmark.data.storage.SettingsDataStore
 import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
@@ -22,7 +26,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val vaultApi: VaultApi,
-    private val passwordDao: PasswordDao
+    private val passwordDao: PasswordDao,
+    private val settingsDataStore: SettingsDataStore
 ) : ViewModel() {
     // TODO: store sorting preferences
     companion object {
@@ -30,7 +35,8 @@ class HomeViewModel @Inject constructor(
         fun getTestViewModel(): HomeViewModel =
             HomeViewModel(
                 vaultApi = (VaultApi(supabaseClient = SupabaseModule.mockClient)),
-                passwordDao = PasswordDao.getTestingDao()
+                passwordDao = PasswordDao.getTestingDao(),
+                settingsDataStore = SettingsDataStore(context = LocalContext.current)
             )
     }
 
@@ -44,18 +50,23 @@ class HomeViewModel @Inject constructor(
     }
 
     //---------------------------------------------------------------------------------pass-sort-opt
-    private val _passwordSortingOption: MutableStateFlow<PasswordSortingOptions> =
-        MutableStateFlow(PasswordSortingOptions.CREATED)
-    val passwordSortingOption: StateFlow<PasswordSortingOptions> = _passwordSortingOption
+    @Composable
+    fun getPasswordSortingOption(): State<PasswordSortingOptions> = settingsDataStore
+        .getSortingOptionFlow()
+        .collectAsState(initial = PasswordSortingOptions.CREATED)
+
     fun updatePasswordSortingOption(passwordSortingOptions: PasswordSortingOptions) {
-        this._passwordSortingOption.value = passwordSortingOptions
+        viewModelScope.launch { settingsDataStore.setSortingOption(passwordSortingOptions = passwordSortingOptions) }
     }
 
-    //-------------------------------------------------------------------------------------ascending
-    private val _increasingOrder: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    val increasingOrder: StateFlow<Boolean> get() = _increasingOrder
+    //------------------------------------------------------------------------------------increasing
+    @Composable
+    fun getIncreasingOrder(): State<Boolean> = settingsDataStore
+        .getIsIncreasingOrder()
+        .collectAsState(initial = true)
+
     fun updateIncreasingOrder(asc: Boolean) {
-        this._increasingOrder.value = asc
+        viewModelScope.launch { settingsDataStore.setIncreasingOrder(increasing = asc) }
     }
 
     //-----------------------------------------------------------------------------------search-text
