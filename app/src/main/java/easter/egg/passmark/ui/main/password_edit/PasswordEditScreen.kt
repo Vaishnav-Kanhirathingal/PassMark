@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,6 +50,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -684,13 +686,119 @@ object PasswordEditScreen {
                 )
                 Spacer(modifier = smallSpacerModifier)
                 //--------------------------------------------------------------------on-device-only
-                CustomSwitch(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = "Keep On Device Only",
-                    isChecked = viewModel.saveToLocalOnly.collectAsState().value,
-                    onCheckedChange = { viewModel.saveToLocalOnly.value = it },
-                    isEnabled = !isLoading
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(shape = RoundedCornerShape(size = 12.dp))
+                        .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            shape = RoundedCornerShape(size = 12.dp)
+                        ),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = 16.dp,
+                        alignment = Alignment.CenterHorizontally
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    content = {
+                        Text(
+                            modifier = Modifier.padding(start = 16.dp),
+                            text = "Storage option",
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Body.medium,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Row(
+                            modifier = Modifier
+                                .setSizeLimitation()
+                                .height(height = 60.dp)
+                                .padding(
+                                    end = 12.dp,
+                                    top = 12.dp,
+                                    bottom = 12.dp
+                                )
+                                .clip(shape = RoundedCornerShape(size = 12.dp))
+                                .border(
+                                    width = 2.dp,
+                                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                    shape = RoundedCornerShape(size = 12.dp)
+                                )
+                                .weight(weight = 1f),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = {
+                                val saveToLocally = viewModel.saveToLocalOnly.collectAsState()
+
+                                @Composable
+                                fun ChoiceButton(
+                                    text: String,
+                                    isSelected: Boolean,
+                                    onClick: () -> Unit,
+                                    isEnabled: Boolean
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .background(
+                                                color =
+                                                    if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                                                    else MaterialTheme.colorScheme.surfaceContainer
+                                            )
+                                            .clickable(
+                                                enabled = isEnabled,
+                                                onClick = onClick
+                                            )
+                                            .padding(
+                                                horizontal = 16.dp,
+                                                vertical = 8.dp
+                                            )
+                                            .weight(weight = 1f),
+                                        contentAlignment = Alignment.Center,
+                                        content = {
+                                            Text(
+                                                text = text,
+                                                fontFamily = PassMarkFonts.font,
+                                                fontSize = PassMarkFonts.Body.medium,
+                                                fontWeight = FontWeight.Medium,
+                                                color =
+                                                    if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
+                                                    else MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    )
+                                }
+                                ChoiceButton(
+                                    text = "Local",
+                                    isSelected = saveToLocally.value,
+                                    onClick = { viewModel.saveToLocalOnly.value = true },
+                                    isEnabled = !isLoading
+                                )
+                                VerticalDivider(
+                                    thickness = 2.dp,
+                                    color = MaterialTheme.colorScheme.surfaceContainerHighest
+                                )
+                                ChoiceButton(
+                                    text = "Remote",
+                                    isSelected = !saveToLocally.value,
+                                    onClick = { viewModel.saveToLocalOnly.value = false },
+                                    isEnabled = !isLoading
+                                )
+                            }
+                        )
+                    }
                 )
+
+//                Spacer(modifier = smallSpacerModifier)
+//
+//                CustomSwitch(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    text = "Keep On Device Only",
+//                    isChecked = viewModel.saveToLocalOnly.collectAsState().value,
+//                    onCheckedChange = { viewModel.saveToLocalOnly.value = it },
+//                    isEnabled = !isLoading
+//                )
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()

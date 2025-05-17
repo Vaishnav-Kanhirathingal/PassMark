@@ -83,7 +83,6 @@ import kotlinx.coroutines.launch
 object HomeScreen {
     private val TAG = this::class.simpleName
 
-    // TODO: fingerprint screen
     @Composable
     fun Screen(
         modifier: Modifier,
