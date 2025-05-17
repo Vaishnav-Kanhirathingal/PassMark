@@ -61,12 +61,10 @@ object SettingsScreen {
             "process which re-encrypts all passwords with a new cryptographic key. Make sure " +
             "you have a stable internet connection to perform this task. Re-login will be " +
             "required at the end for user confirmation and background syncing."
-    private const val LOG_OUT_DESCRIPTION =
-        "Logging out won’t delete your offline passwords.However, " +
-                "uninstalling the app, resetting it, or resetting your account will. After logging " +
-                "out, you'll need to re-enter your password to log back in."
+    private const val LOG_OUT_DESCRIPTION = "Logging out won’t delete your offline passwords. " +
+            "However, uninstalling the app, resetting it, or resetting your account will. " +
+            "After logging out, you'll need to re-enter your password to log back in."
 
-    // TODO: reset user requires password
     @Composable
     fun Screen(
         modifier: Modifier,

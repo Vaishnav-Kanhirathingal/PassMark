@@ -29,7 +29,6 @@ class HomeViewModel @Inject constructor(
     private val passwordDao: PasswordDao,
     private val settingsDataStore: SettingsDataStore
 ) : ViewModel() {
-    // TODO: store sorting preferences
     companion object {
         @Composable
         fun getTestViewModel(): HomeViewModel =
