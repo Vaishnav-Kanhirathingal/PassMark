@@ -67,7 +67,6 @@ object SettingsScreen {
                 "out, you'll need to re-enter your password to log back in."
 
     // TODO: reset user requires password
-    // TODO: use userId for local database while fetching
     @Composable
     fun Screen(
         modifier: Modifier,

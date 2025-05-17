@@ -8,7 +8,6 @@ import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// TODO: use user id for storage
 /** attack safe data with encrypted password data to be stored remotely / on-storage
  * @param data is an encrypted json of [PasswordData]
  */
