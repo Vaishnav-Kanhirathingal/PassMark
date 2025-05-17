@@ -1,44 +1,13 @@
-package easter.egg.passmark.data.models.content
+package easter.egg.passmark.data.models.content.password
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import easter.egg.passmark.data.models.content.password.PasswordData
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-//------------------------------------------------------------------------------classes used with UI
-/** to be used to display stuff and only to be stored in memory */
-data class Password(
-    val localId: Int?,
-    val cloudId: Int?,
-    val vaultId: Int? = null,
-    val data: PasswordData,
-
-    val created: Long,
-    val lastUsed: Long,
-    val lastModified: Long,
-    val usedCount: Int
-) {
-    fun toPasswordCapsule(
-        passwordCryptographyHandler: PasswordCryptographyHandler,
-    ): PasswordCapsule {
-        return PasswordCapsule(
-            localId = localId,
-            cloudId = cloudId,
-            vaultId = vaultId,
-            data = passwordCryptographyHandler.encryptPasswordData(passwordData = data),
-            created = created,
-            lastUsed = lastUsed,
-            lastModified = lastModified,
-            usedCount = usedCount
-        )
-    }
-}
-
-//---------------------------------------------------------------------------------encrypted classes
 /** attack safe data with encrypted password data to be stored remotely / on-storage
  * @param data is an encrypted json of [PasswordData]
  */
@@ -54,7 +23,8 @@ data class PasswordCapsule(
     @ColumnInfo(Keys.CREATED_KEY) @SerialName(value = Keys.CREATED_KEY) val created: Long,
     @ColumnInfo(Keys.LAST_USED_KEY) @SerialName(value = Keys.LAST_USED_KEY) val lastUsed: Long,
     @ColumnInfo(Keys.LAST_MODIFIED_KEY) @SerialName(value = Keys.LAST_MODIFIED_KEY) val lastModified: Long,
-    @ColumnInfo(Keys.USED_COUNT_KEY) @SerialName(value = Keys.USED_COUNT_KEY) val usedCount: Int
+    @ColumnInfo(Keys.USED_COUNT_KEY) @SerialName(value = Keys.USED_COUNT_KEY) val usedCount: Int,
+//    @ColumnInfo(Keys.USER_ID) @SerialName(value = Keys.USER_ID) val userId: String
 ) {
     constructor(
         localId: Int?,
@@ -63,7 +33,8 @@ data class PasswordCapsule(
         created: Long,
         lastUsed: Long,
         lastModified: Long,
-        usedCount: Int
+        usedCount: Int,
+//        userId: String
     ) : this(
         cloudId = null,
         localId = localId,
@@ -73,6 +44,7 @@ data class PasswordCapsule(
         lastUsed = lastUsed,
         lastModified = lastModified,
         usedCount = usedCount,
+//        userId = userId
     )
 
     fun toPassword(
@@ -86,6 +58,7 @@ data class PasswordCapsule(
         lastUsed = lastUsed,
         lastModified = lastModified,
         usedCount = usedCount,
+//        userId = userId
     )
 
     companion object {
@@ -98,18 +71,7 @@ data class PasswordCapsule(
             const val LAST_USED_KEY = "last_used"
             const val LAST_MODIFIED_KEY = "last_modified"
             const val USED_COUNT_KEY = "used_count"
+//            const val USER_ID = "user_id"
         }
-    }
-}
-
-/** used for sorting for passwords */
-enum class PasswordSortingOptions {
-    NAME, USAGE, LAST_USED, CREATED;
-
-    fun getMenuDisplayText(): String = when (this) {
-        NAME -> "Name (asc)"
-        USAGE -> "Usage"
-        LAST_USED -> "Last Used"
-        CREATED -> "Created time"
     }
 }

@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
-import easter.egg.passmark.data.models.content.PasswordSortingOptions
 import easter.egg.passmark.data.models.content.Vault
+import easter.egg.passmark.data.models.content.password.PasswordSortingOptions
 import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule

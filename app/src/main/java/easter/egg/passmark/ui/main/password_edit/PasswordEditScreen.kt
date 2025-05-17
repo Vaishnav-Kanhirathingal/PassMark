@@ -72,9 +72,9 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import easter.egg.passmark.data.models.content.Password
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
+import easter.egg.passmark.data.models.content.password.Password
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState

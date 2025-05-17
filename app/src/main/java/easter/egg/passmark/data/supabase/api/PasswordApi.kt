@@ -1,7 +1,7 @@
 package easter.egg.passmark.data.supabase.api
 
-import easter.egg.passmark.data.models.content.Password
-import easter.egg.passmark.data.models.content.PasswordCapsule
+import easter.egg.passmark.data.models.content.password.Password
+import easter.egg.passmark.data.models.content.password.PasswordCapsule
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from

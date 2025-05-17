@@ -82,7 +82,7 @@ import androidx.constraintlayout.compose.Visibility
 import androidx.fragment.app.FragmentActivity
 import coil3.compose.SubcomposeAsyncImage
 import easter.egg.passmark.R
-import easter.egg.passmark.data.models.content.Password
+import easter.egg.passmark.data.models.content.password.Password
 import easter.egg.passmark.data.models.content.password.PasswordData
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
