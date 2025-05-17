@@ -94,22 +94,27 @@ class MainViewModel @Inject constructor(
 
                 this@MainViewModel.passwordCryptographyHandler = passwordCryptographyHandler
 
-                val vaultListDeferred = async {
+                val vaultListDeferred: Deferred<List<Vault>> = async {
                     vaultApi.getVaultList()
                 }
-                val passwordListDeferred: Deferred<List<Password>> = async {
+                val remotePasswordDeferred: Deferred<List<Password>> = async {
                     passwordApi.getPasswordList(passwordCryptographyHandler = passwordCryptographyHandler)
                 }
-                val localPasswordFetcher: Deferred<List<Password>> = async {
-                    passwordDao.getAll().map { passwordCapsule ->
-                        passwordCapsule.toPassword(passwordCryptographyHandler = passwordCryptographyHandler)
+                val localPasswordDeferred: Deferred<List<Password>> = async {
+                    passwordDao.getAll().mapNotNull { passwordCapsule ->
+                        try {
+                            passwordCapsule.toPassword(passwordCryptographyHandler = passwordCryptographyHandler)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            null
+                        }
                     }
                 }
                 ScreenState.Loaded(
                     result = HomeListData(
                         vaultList = vaultListDeferred.await().toMutableList(),
-                        passwordList = passwordListDeferred.await().toMutableList()
-                            .apply { this.addAll(elements = localPasswordFetcher.await()) }
+                        passwordList = remotePasswordDeferred.await().toMutableList()
+                            .apply { this.addAll(elements = localPasswordDeferred.await()) }
                     )
                 )
             } catch (e: Exception) {
@@ -148,7 +153,7 @@ class MainViewModel @Inject constructor(
         lockingTask = null
     }
 
-    fun onFingerprintVerified() {
+    fun forceVerify() {
         this._passwordVerificationState.value = ScreenState.Loaded(result = true)
     }
 

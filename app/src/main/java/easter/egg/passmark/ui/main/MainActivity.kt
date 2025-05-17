@@ -76,8 +76,11 @@ import kotlinx.serialization.Serializable
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
     private val TAG = this::class.simpleName
-
     private val mainViewModel: MainViewModel by viewModels()
+
+    companion object {
+        const val PASSWORD_ENTERED_RECENTLY_KEY = "PASSWORD_ENTERED_RECENTLY_KEY"
+    }
 
     override fun onResume() {
         super.onResume()
@@ -87,6 +90,10 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        if (this.intent.getBooleanExtra(PASSWORD_ENTERED_RECENTLY_KEY, false)) {
+            this.intent.removeExtra(PASSWORD_ENTERED_RECENTLY_KEY)
+            mainViewModel.forceVerify()
+        }
         setContent(
             content = {
                 PassMarkTheme {
@@ -111,7 +118,7 @@ class MainActivity : FragmentActivity() {
                                         .fillMaxSize(),
                                     text = mainViewModel.passwordEntered.collectAsState().value,
                                     onTextChanged = { mainViewModel.passwordEntered.value = it },
-                                    onFingerPrintVerification = mainViewModel::onFingerprintVerified,
+                                    onFingerPrintVerification = mainViewModel::forceVerify,
                                     onVerifyClicked = mainViewModel::verifyPassword,
                                     screenState = verificationState
                                 )

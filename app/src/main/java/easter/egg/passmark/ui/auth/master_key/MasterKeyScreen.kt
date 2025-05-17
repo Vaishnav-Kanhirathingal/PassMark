@@ -40,14 +40,13 @@ import androidx.compose.ui.unit.dp
 import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.di.supabase.SupabaseModule
+import easter.egg.passmark.ui.auth.AuthViewModel
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 object MasterKeyScreen {
     private val TAG = this::class.simpleName
@@ -57,7 +56,8 @@ object MasterKeyScreen {
         modifier: Modifier,
         viewModel: MasterKeyViewModel,
         isNewUser: Boolean,
-        toLoaderScreen: () -> Unit
+        toLoaderScreen: () -> Unit,
+        authViewModel: AuthViewModel
     ) {
         val scrollState = rememberScrollState()
         val screenState = viewModel.screenState.collectAsState()
@@ -68,7 +68,11 @@ object MasterKeyScreen {
             block = {
                 when (val state = viewModel.screenState.value) {
                     is ScreenState.PreCall, is ScreenState.Loading -> {}
-                    is ScreenState.Loaded -> withContext(Dispatchers.Main) { toLoaderScreen() }
+                    is ScreenState.Loaded -> {
+                        authViewModel.updatePasswordUsed()
+                        toLoaderScreen()
+                    }
+
                     is ScreenState.ApiError -> state.manageToastActions(context = context)
                 }
             }
@@ -207,7 +211,8 @@ private fun UserEditScreenPreview() {
                 userApi = UserApi(supabaseClient = SupabaseModule.mockClient)
             ),
             isNewUser = false,
-            toLoaderScreen = {}
+            toLoaderScreen = {},
+            authViewModel = AuthViewModel()
         )
         MasterKeyScreen.Screen(
             modifier = Modifier
@@ -218,7 +223,8 @@ private fun UserEditScreenPreview() {
                 userApi = UserApi(supabaseClient = SupabaseModule.mockClient)
             ),
             isNewUser = true,
-            toLoaderScreen = {}
+            toLoaderScreen = {},
+            authViewModel = AuthViewModel()
         )
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -29,6 +30,7 @@ import kotlinx.serialization.Serializable
 @AndroidEntryPoint
 class AuthActivity : ComponentActivity() {
     private val TAG = this::class.simpleName
+    private val authViewModel by viewModels<AuthViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +76,12 @@ class AuthActivity : ComponentActivity() {
                                     Intent(
                                         this@AuthActivity,
                                         MainActivity::class.java
-                                    )
+                                    ).apply {
+                                        putExtra(
+                                            MainActivity.PASSWORD_ENTERED_RECENTLY_KEY,
+                                            authViewModel.passwordJustUsed
+                                        )
+                                    }
                                 )
                                 this@AuthActivity.finish()
                             },
@@ -128,7 +135,8 @@ class AuthActivity : ComponentActivity() {
                                         .setPopUpTo<AuthScreens.MasterKey>(inclusive = true)
                                         .build()
                                 )
-                            }
+                            },
+                            authViewModel = this@AuthActivity.authViewModel
                         )
                     }
                 )
