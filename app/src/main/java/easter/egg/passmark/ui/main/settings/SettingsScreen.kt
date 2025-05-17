@@ -31,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import easter.egg.passmark.ui.auth.AuthActivity
 import easter.egg.passmark.ui.main.password_edit.PasswordEditScreen
 import easter.egg.passmark.ui.shared_components.ConfirmationDialog
+import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -59,6 +61,10 @@ object SettingsScreen {
             "process which re-encrypts all passwords with a new cryptographic key. Make sure " +
             "you have a stable internet connection to perform this task. Re-login will be " +
             "required at the end for user confirmation and background syncing."
+    private const val LOG_OUT_DESCRIPTION =
+        "Logging out won’t delete your offline passwords.However, " +
+                "uninstalling the app, resetting it, or resetting your account will. After logging " +
+                "out, you'll need to re-enter your password to log back in."
 
     // TODO: reset user requires password
     // TODO: use userId for local database while fetching
@@ -134,12 +140,12 @@ object SettingsScreen {
     private fun ScreenContent(
         modifier: Modifier,
         settingsViewModel: SettingsViewModel,
-        toChangePasswordScreen: () -> Unit
+        toChangePasswordScreen: () -> Unit,
     ) {
         Column(
-            modifier = modifier.verticalScroll(
-                state = rememberScrollState()
-            ),
+            modifier = modifier
+                .verticalScroll(state = rememberScrollState())
+                .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(space = 12.dp, alignment = Alignment.Top),
             content = {
@@ -149,15 +155,12 @@ object SettingsScreen {
                         .height(height = 8.dp)
                 )
                 val scope = rememberCoroutineScope()
-                val switchModifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
                 val biometricsEnabled = settingsViewModel.settingsDataStore
                     .getBiometricEnabledFlow()
                     .collectAsState(initial = false)
                     .value
                 PasswordEditScreen.CustomSwitch(
-                    modifier = switchModifier,
+                    modifier = Modifier.fillMaxWidth(),
                     text = "Enable fingerprint by default",
                     isEnabled = true,
                     isChecked = biometricsEnabled,
@@ -174,7 +177,7 @@ object SettingsScreen {
                     .collectAsState(initial = false)
                     .value
                 PasswordEditScreen.CustomSwitch(
-                    modifier = switchModifier,
+                    modifier = Modifier.fillMaxWidth(),
                     text = "Enable Offline Storage for Passwords by default",
                     isEnabled = true,
                     isChecked = offlineEnabled,
@@ -187,16 +190,43 @@ object SettingsScreen {
                     }
                 )
                 ActionCard(
-                    titleText = "Reset account?",
-                    contentText = RESET_DESCRIPTION,
-                    buttonText = "Reset account",
-                    onClick = { settingsViewModel.setResetConfirmationDialogVisibility(visible = true) }
-                )
-                ActionCard(
+                    modifier = Modifier.fillMaxWidth(),
                     titleText = "Change password?",
                     contentText = CHANGE_PASSWORD_DESCRIPTION,
                     buttonText = "Change Password",
                     onClick = toChangePasswordScreen
+                )
+                val logoutState = settingsViewModel.logoutScreenState.collectAsState()
+                val context = LocalContext.current
+                val activity = LocalActivity.current
+                fun toAuthActivity() {
+                    context.startActivity(Intent(context, AuthActivity::class.java))
+                    activity?.finish()
+                }
+                LaunchedEffect(
+                    key1 = logoutState.value,
+                    block = {
+                        when (val state = logoutState.value) {
+                            is ScreenState.PreCall, is ScreenState.Loading -> {}
+                            is ScreenState.Loaded -> toAuthActivity()
+                            is ScreenState.ApiError -> state.manageToastActions(context = context)
+                        }
+                    }
+                )
+                ActionCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    titleText = "Log out?",
+                    contentText = LOG_OUT_DESCRIPTION,
+                    buttonText = "Log out",
+                    onClick = settingsViewModel::logout,
+                    isLoading = logoutState.value.isLoading
+                )
+                ActionCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    titleText = "Reset account?",
+                    contentText = RESET_DESCRIPTION,
+                    buttonText = "Reset account",
+                    onClick = { settingsViewModel.setResetConfirmationDialogVisibility(visible = true) }
                 )
                 Spacer(
                     modifier = Modifier
@@ -217,11 +247,9 @@ object SettingsScreen {
             context.startActivity(Intent(context, AuthActivity::class.java))
             activity?.finish()
         }
-
         //--------------------------------------------------------------------------------reset-user
         val resetUserApiState = settingsViewModel.deletionScreenState.collectAsState().value
         val currentActiveStage = settingsViewModel.currentStage.collectAsState().value
-
         when (resetUserApiState) {
             is ScreenState.PreCall -> {
                 ConfirmationDialog(
@@ -254,7 +282,6 @@ object SettingsScreen {
 
             null, is ScreenState.Loaded -> {}
         }
-
         LaunchedEffect(
             key1 = resetUserApiState,
             block = {
@@ -274,15 +301,15 @@ object SettingsScreen {
 
     @Composable
     private fun ActionCard(
+        modifier: Modifier,
         titleText: String,
         contentText: String,
         buttonText: String,
-        onClick: () -> Unit
+        onClick: () -> Unit,
+        isLoading: Boolean = false
     ) {
         PasswordEditScreen.DefaultCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+            modifier = modifier,
             content = {
                 Text(
                     modifier = Modifier
@@ -302,7 +329,7 @@ object SettingsScreen {
                     fontWeight = FontWeight.Medium,
                     fontSize = PassMarkFonts.Body.medium,
                     lineHeight = PassMarkFonts.Body.large,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     text = contentText
                 )
                 Box(
@@ -321,13 +348,21 @@ object SettingsScreen {
                     contentAlignment = Alignment.Center,
                     content = {
                         Text(
-                            modifier = Modifier.padding(horizontal = 16.dp),
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .alpha(alpha = if (isLoading) 0f else 1f),
                             text = buttonText,
                             fontFamily = PassMarkFonts.font,
                             fontSize = PassMarkFonts.Body.medium,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                        if (isLoading) {
+                            CustomLoader.ButtonLoader(
+                                modifier = Modifier,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 )
             }

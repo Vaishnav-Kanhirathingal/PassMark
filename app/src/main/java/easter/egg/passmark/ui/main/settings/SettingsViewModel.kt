@@ -109,6 +109,27 @@ class SettingsViewModel @Inject constructor(
 
         DeletionStages.SUPABASE_LOGOUT -> supabaseAccountHelper.logout()
     }
+
+    //---------------------------------------------------------------------------------------log-out
+    private val _logoutScreenState: MutableStateFlow<ScreenState<Unit>> =
+        MutableStateFlow(ScreenState.PreCall())
+    val logoutScreenState: StateFlow<ScreenState<Unit>> get() = _logoutScreenState
+
+    fun logout() {
+        this._logoutScreenState.value = ScreenState.Loading()
+        viewModelScope.launch {
+            this@SettingsViewModel._logoutScreenState.value = try {
+                val dataStore =
+                    PassMarkDataStore(context = context, authId = supabaseAccountHelper.getId())
+                supabaseAccountHelper.logout()
+                dataStore.resetPassword()
+                ScreenState.Loaded(result = Unit)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                ScreenState.ApiError.fromException(e = e)
+            }
+        }
+    }
 }
 
 enum class DeletionStages {
