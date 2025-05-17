@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -50,7 +49,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -530,15 +528,10 @@ object PasswordEditScreen {
         val scrollState = rememberScrollState()
         Column(
             modifier = modifier
-                .padding(horizontal = 16.dp)
-                .verticalScroll(state = scrollState),
+                .verticalScroll(state = scrollState)
+                .padding(all = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(space = 16.dp),
             content = {
-                val smallSpacerModifier = Modifier
-                    .fillMaxWidth()
-                    .height(height = 16.dp)
-                val largeSpacerModifier = Modifier
-                    .fillMaxWidth()
-                    .height(height = 32.dp)
                 AnimatedVisibility(
                     modifier = Modifier.fillMaxWidth(),
                     visible = (!passwordRequirementsMet && viewModel.showFieldError.collectAsState().value),
@@ -546,7 +539,6 @@ object PasswordEditScreen {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             content = {
-                                Spacer(modifier = smallSpacerModifier)
                                 DefaultCard(
                                     modifier = Modifier.fillMaxWidth(),
                                     content = {
@@ -566,12 +558,10 @@ object PasswordEditScreen {
                                         )
                                     }
                                 )
-                                Spacer(modifier = smallSpacerModifier)
                             }
                         )
                     }
                 )
-                Spacer(modifier = smallSpacerModifier)
                 val textFieldModifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 72.dp)
@@ -593,7 +583,11 @@ object PasswordEditScreen {
                         )
                     }
                 )
-                Spacer(modifier = largeSpacerModifier)
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(height = 0.dp)
+                )
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
@@ -640,7 +634,6 @@ object PasswordEditScreen {
                         )
                     }
                 )
-                Spacer(modifier = smallSpacerModifier)
                 //---------------------------------------------------------------------------website
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
@@ -657,7 +650,6 @@ object PasswordEditScreen {
                         )
                     }
                 )
-                Spacer(modifier = smallSpacerModifier)
                 //------------------------------------------------------------------------------note
                 DefaultCard(
                     modifier = Modifier.fillMaxWidth(),
@@ -675,7 +667,6 @@ object PasswordEditScreen {
                         )
                     }
                 )
-                Spacer(modifier = smallSpacerModifier)
                 //-------------------------------------------------------------------use-fingerprint
                 CustomSwitch(
                     modifier = Modifier.fillMaxWidth(),
@@ -684,7 +675,6 @@ object PasswordEditScreen {
                     onCheckedChange = { viewModel.useFingerPrint.value = it },
                     isEnabled = !isLoading
                 )
-                Spacer(modifier = smallSpacerModifier)
                 //--------------------------------------------------------------------on-device-only
                 CustomSwitch(
                     modifier = Modifier.fillMaxWidth(),
