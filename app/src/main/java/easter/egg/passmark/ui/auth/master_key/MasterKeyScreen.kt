@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -45,6 +46,7 @@ import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 
@@ -115,7 +117,9 @@ object MasterKeyScreen {
                     password = viewModel.masterPasswordText.collectAsState().value
                 )
                 OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .testTag(tag = TestTags.CreateMasterKey.TEXT_FIELD.name)
+                        .fillMaxWidth(),
                     enabled = !isLoading,
                     value = viewModel.masterPasswordText.collectAsState().value,
                     onValueChange = viewModel::updateMasterPasswordText,
@@ -155,6 +159,7 @@ object MasterKeyScreen {
 
                 Box(
                     modifier = Modifier
+                        .testTag(tag = TestTags.CreateMasterKey.CONFIRM_BUTTON.name)
                         .setSizeLimitation()
                         .clip(shape = RoundedCornerShape(size = 16.dp))
                         .background(color = MaterialTheme.colorScheme.primary)

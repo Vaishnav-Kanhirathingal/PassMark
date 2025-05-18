@@ -59,6 +59,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -74,6 +75,7 @@ import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -256,6 +258,7 @@ object HomeScreen {
                     },
                     floatingActionButton = {
                         FloatingActionButton(
+                            modifier = Modifier.testTag(tag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name),
                             onClick = { toPasswordEditScreen(null) },
                             content = {
                                 Icon(
