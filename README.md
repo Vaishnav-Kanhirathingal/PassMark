@@ -4,23 +4,25 @@
 
 - icon - https://uxwing.com/shield-lock-line-icon/
 
-## Why
+## Why [PENDING - explain in detail]
 
-- TODO - talk about special features
+- local password and biometric authentication
+- auto lock
 
 ### Authentication (Login screen)
 
-Google login is the only option. click on the login button and select your google account
+Google login is the only option. click on the login button and select your Google account
 
 ### Authentication (Create/Enter master password screen)
 
-depending on your account, if you are a new user, you would be asked to create a new Master Password
+depending on your account, if you are a new user, you would be asked to create a new Master Password. Make sure the
+password is between 8 and 32 characters long. otherwise it shows an error
 
-[Image]
+[screen with error]
 
-If you already had an account, you would be asked to enter your master password for verification
+[solve error and create password]
 
-[Image]
+If you already had an account, you would be asked to enter your master password for verification during re-login (mentioned below)
 
 ### Home screen
 
@@ -28,7 +30,7 @@ Once Authentication is completed, you would be taken to the home screen.
 
 [empty home screen]
 
-Now, you can create a new password by using the create new password `+` floating action button.
+Now, you can create a new password by using the create-new-password `+` floating action button.
 
 ### Create new password
 
@@ -53,7 +55,7 @@ In this screen, set a name and an icon for the vault and click create
 
 [saving Vault GIF]
 
-In case there was an error and you want to update or delete a vault, long press the appropriate vault's button. this
+In case there was an error, and you want to update or delete a vault, long press the appropriate vault's button. this
 would reopen the vault dialog with new options.
 
 [update vault GIF]
@@ -108,3 +110,9 @@ While reset account
 option can be used to destroy everything associated with the user including local passwords.
 
 [reset user git]
+
+### Re-Login
+
+during Re-Login, you would be asked to re-enter your master password for password verification and storage.
+
+# Easter eggs [PENDING]
