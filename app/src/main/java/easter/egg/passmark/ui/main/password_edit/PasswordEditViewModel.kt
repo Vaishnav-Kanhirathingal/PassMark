@@ -65,6 +65,7 @@ class PasswordEditViewModel @Inject constructor(
         this._selectedVault.value = vault
     }
 
+    // TODO: on account reset, only delete user associated password room data
     //---------------------------------------------------------------------------------loaded-values
     private var _oldPassword: Password? = null
     private var _loaded = false
