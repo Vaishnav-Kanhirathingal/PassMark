@@ -1,5 +1,7 @@
 # PassMark [PENDING]
 
+![PassMark Icon](https://raw.githubusercontent.com/Vaishnav-Kanhirathingal/PassMark/refs/heads/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp)
+
 ## Info
 
 - icon - https://uxwing.com/shield-lock-line-icon/
@@ -9,11 +11,20 @@
 - local password and biometric authentication
 - auto lock
 
+## Material-You theming
+
+this app implements Material-You theming which means it has dynamic color support for UI elements. To make use of this,
+change your phone's system color and the app would match it. Assuming dynamic colors is enables on device
+
+[empty home screen using different colors]
+
 ### Authentication (Login screen)
 
 Google login is the only option. click on the login button and select your Google account
 
-### Authentication (Create/Enter master password screen)
+[google login screen]
+
+### Authentication (Create master password screen)
 
 depending on your account, if you are a new user, you would be asked to create a new Master Password. Make sure the
 password is between 8 and 32 characters long. otherwise it shows an error
@@ -22,7 +33,14 @@ password is between 8 and 32 characters long. otherwise it shows an error
 
 [solve error and create password]
 
-If you already had an account, you would be asked to enter your master password for verification during re-login (mentioned below)
+If you already had an account, you would be asked to enter your master password for verification during re-login (
+mentioned below)
+
+### Authentication (Enter master password screen)
+
+during Re-Login, you would be asked to re-enter your master password for password verification and storage.
+
+[enter master password screen]
 
 ### Home screen
 
@@ -92,15 +110,24 @@ sort preferences are saved locally to avoid resetting
 The app auto locks itself if pushed to recents. The locking has a delay set to ensure it wasn't user error (accidentally
 exiting the app just to re-enter instantly)
 
-[show auto lock screen]
+[show auto lock screen unlocking via fingerprint]
+
+[show auto lock screen unlocking via password]
 
 ### Settings
 
-The settings screen contains some preferences and some options. the `enable fingerprint by default` enables fingerprint
-protection option for all passwords by default during creation. Same is true for `Enable offline storage by default`.
-Change Password button can be used to change your password.
+The settings screen contains some preferences and some options.
+
+[settings screen]
+
+the `enable fingerprint by default` enables fingerprint protection option for all passwords by default during creation.
+Same is true for `Enable offline storage by default`. Change Password button can be used to change your password.
 
 [change password gif]
+
+this is a self retrying function. So, it will retry the step where an error occurs.
+
+[change password gif retrying]
 
 Logout option logs you out of your account without destroying your local passwords in the process.
 
@@ -111,8 +138,12 @@ option can be used to destroy everything associated with the user including loca
 
 [reset user git]
 
-### Re-Login
+## Error screens
 
-during Re-Login, you would be asked to re-enter your master password for password verification and storage.
+Error screens are necessary to handle error states. Each screen has an error UI to manage errors.
 
-# Easter eggs [PENDING]
+### Authentication error
+
+### Home error
+
+## Easter eggs [PENDING]
