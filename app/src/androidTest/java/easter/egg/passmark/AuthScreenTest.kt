@@ -1,16 +1,12 @@
 package easter.egg.passmark
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.click
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import easter.egg.passmark.ui.auth.AuthActivity
 import easter.egg.passmark.utils.testing.TestTags
@@ -69,9 +65,7 @@ class AuthScreenTest {
         website: String?,
         note: String?,
         useFingerprint: Boolean,
-//        keepInLocal: Boolean
     ) {
-        // TODO: check
         composeRule
             .onNodeWithTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name)
             .performClick()
@@ -85,36 +79,29 @@ class AuthScreenTest {
             composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.EditPassword.DISMISS.name))
         }
 
-        composeRule
-            .onNodeWithTag(testTag = TestTags.EditPassword.TITLE_TEXT_FIELD.name)
-            .performTextInput(text = password)
-
-
-        fun type(testTag: String, text: String) {
-            composeRule.onNodeWithTag(testTag = testTag).performTextInput(text = text)
+        fun type(testTag: String, text: String?) {
+            text?.let { composeRule.onNodeWithTag(testTag = testTag).performTextInput(text = it) }
         }
 
-        userName?.let { type(testTag = TestTags.EditPassword.USER_NAME_TEXT_FIELD.name, text = it) }
-
+        type(testTag = TestTags.EditPassword.TITLE_TEXT_FIELD.name, text = title)
+        type(testTag = TestTags.EditPassword.EMAIL_TEXT_FIELD.name, text = email)
+        type(testTag = TestTags.EditPassword.USER_NAME_TEXT_FIELD.name, text = userName)
         type(testTag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name, text = password)
-
-        website?.let { type(testTag = TestTags.EditPassword.WEBSITE_TEXT_FIELD.name, text = it) }
-        note?.let { type(testTag = TestTags.EditPassword.NOTES_TEXT_FIELD.name, text = it) }
+        type(testTag = TestTags.EditPassword.WEBSITE_TEXT_FIELD.name, text = website)
+        type(testTag = TestTags.EditPassword.NOTES_TEXT_FIELD.name, text = note)
 
         if (useFingerprint) {
             composeRule
                 .onNodeWithTag(testTag = TestTags.EditPassword.USE_FINGERPRINT_SWITCH.name)
                 .performClick()
         }
-//        if (keepInLocal) {
-//            composeRule
-//                .onNodeWithTag(testTag = TestTags.EditPassword.KEEP_LOCAL_SWITCH.name)
-//                .performClick()
-//        }
 
-        Thread.sleep(10_000)
+        Thread.sleep(8_000)
         composeRule.onNodeWithTag(testTag = TestTags.EditPassword.SAVE_BUTTON.name).performClick()
-        composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name))
+        composeRule.waitUntilAtLeastOneExists(
+            matcher = hasTestTag(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name),
+            timeoutMillis = 5_000
+        )
     }
 
     /** to be called with the navigation drawer open */
@@ -137,7 +124,8 @@ class AuthScreenTest {
             .onNodeWithTag(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name)
             .performClick()
         composeRule.waitUntilAtLeastOneExists(
-            matcher = hasTestTag(testTag = TestTags.Home.Drawer.TOP_TITLE.name)
+            matcher = hasTestTag(testTag = TestTags.Home.Drawer.TOP_TITLE.name),
+            timeoutMillis = 5_000
         )
     }
 
@@ -159,11 +147,7 @@ class AuthScreenTest {
         createRoutine(name = TestRoutines.FINANCE_ROUTINE, iconIndex = 2)
         createRoutine(name = TestRoutines.WORK_ROUTINE, iconIndex = 4)
 
-        composeRule.onRoot().performTouchInput {
-            click(
-                position = Offset(x = this.width.toFloat(), y = (this.height.toFloat() / 2))
-            )
-        }
+        Thread.sleep(5_000) // TODO: manually dismiss navigation drawer
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name))
         // TODO: check issue
         this.createAndSaveNewPassword(
