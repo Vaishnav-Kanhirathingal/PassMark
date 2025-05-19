@@ -3,6 +3,7 @@ package easter.egg.passmark.ui.shared_components
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.StartOffset
+import androidx.compose.animation.core.StartOffsetType
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -62,12 +63,13 @@ object CustomLoader {
                             targetValue = config.fullWidth.value,
                             animationSpec = infiniteRepeatable(
                                 animation = tween(
-                                    durationMillis = 1000,
+                                    durationMillis = 700,
                                     easing = FastOutSlowInEasing,
                                     delayMillis = 200
                                 ),
                                 initialStartOffset = StartOffset(
-                                    offsetMillis = (300 * impliedIndex)
+                                    offsetMillis = (230 * impliedIndex),
+                                    offsetType = StartOffsetType.FastForward
                                 ),
                                 repeatMode = RepeatMode.Reverse
                             )
