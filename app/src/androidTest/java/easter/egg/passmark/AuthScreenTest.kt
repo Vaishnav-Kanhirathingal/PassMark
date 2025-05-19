@@ -12,7 +12,6 @@ import easter.egg.passmark.utils.testing.TestTags
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import kotlin.math.min
 
 @RunWith(AndroidJUnit4::class)
 class AuthScreenTest {
@@ -39,6 +38,7 @@ class AuthScreenTest {
 
         composeRule.onNodeWithTag(testTag = TestTags.CreateMasterKey.TEXT_FIELD.name)
             .performTextInput("123456789")
+        Thread.sleep(1000)
         composeRule.onNodeWithTag(testTag = TestTags.CreateMasterKey.CONFIRM_BUTTON.name)
             .performClick()
 
