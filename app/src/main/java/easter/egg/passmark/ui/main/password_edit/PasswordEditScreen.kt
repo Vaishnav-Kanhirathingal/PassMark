@@ -63,6 +63,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -80,6 +81,7 @@ import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.extensions.customTopBarModifier
+import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -188,6 +190,7 @@ object PasswordEditScreen {
             content = {
                 Box(
                     modifier = Modifier
+                        .testTag(tag = TestTags.EditPassword.DISMISS.name)
                         .size(size = PassMarkDimensions.minTouchSize)
                         .clip(shape = CircleShape)
                         .clickable(
@@ -217,6 +220,7 @@ object PasswordEditScreen {
                 val coroutineScope = rememberCoroutineScope()
                 Row(
                     modifier = Modifier
+                        .testTag(tag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name)
                         .setSizeLimitation()
                         .clip(shape = pillShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
@@ -307,7 +311,9 @@ object PasswordEditScreen {
                     contentAlignment = Alignment.Center,
                     content = {
                         Text(
-                            modifier = Modifier.alpha(alpha = if (isLoading) 0f else 1f),
+                            modifier = Modifier
+                                .testTag(tag = TestTags.EditPassword.SAVE_BUTTON.name)
+                                .alpha(alpha = if (isLoading) 0f else 1f),
                             text = "Save",
                             color = MaterialTheme.colorScheme.onPrimary,
                             fontSize = PassMarkFonts.Body.medium,
@@ -435,7 +441,9 @@ object PasswordEditScreen {
             sheetState = sheetState,
             content = {
                 Text(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .testTag(tag = TestTags.EditPassword.SELECT_VAULT_DIALOG_CHOOSE_VAULT.name)
+                        .fillMaxWidth(),
                     text = "Choose Vault",
                     maxLines = 2,
                     textAlign = TextAlign.Center,
@@ -568,10 +576,12 @@ object PasswordEditScreen {
                     .padding(horizontal = 8.dp)
                 //-----------------------------------------------------------------------------title
                 DefaultCard(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     content = {
                         CustomTextField(
-                            modifier = textFieldModifier,
+                            modifier = textFieldModifier
+                                .testTag(tag = TestTags.EditPassword.TITLE_TEXT_FIELD.name),
                             leadingIcon = null,
                             label = "Title",
                             placeHolder = "Untitled",
@@ -593,7 +603,8 @@ object PasswordEditScreen {
                     content = {
                         //---------------------------------------------------------------------email
                         CustomTextField(
-                            modifier = textFieldModifier,
+                            modifier = textFieldModifier
+                                .testTag(tag = TestTags.EditPassword.EMAIL_TEXT_FIELD.name),
                             leadingIcon = Icons.Outlined.Email,
                             label = "Email",
                             placeHolder = "abc@def.xyz",
@@ -608,7 +619,8 @@ object PasswordEditScreen {
                         )
                         //-----------------------------------------------------------------user-name
                         CustomTextField(
-                            modifier = textFieldModifier,
+                            modifier = textFieldModifier
+                                .testTag(tag = TestTags.EditPassword.USER_NAME_TEXT_FIELD.name),
                             leadingIcon = Icons.Outlined.Person,
                             label = "UserName",
                             placeHolder = "John Doe",
@@ -623,7 +635,8 @@ object PasswordEditScreen {
                         )
                         //------------------------------------------------------------------password
                         CustomTextField(
-                            modifier = textFieldModifier,
+                            modifier = textFieldModifier
+                                .testTag(tag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name),
                             leadingIcon = Icons.Default.Password,
                             label = "Password",
                             placeHolder = "",
@@ -639,7 +652,8 @@ object PasswordEditScreen {
                     modifier = Modifier.fillMaxWidth(),
                     content = {
                         CustomTextField(
-                            modifier = textFieldModifier,
+                            modifier = textFieldModifier
+                                .testTag(tag = TestTags.EditPassword.WEBSITE_TEXT_FIELD.name),
                             leadingIcon = Icons.Default.Web,
                             label = "Website",
                             placeHolder = "www.abc.com",
@@ -655,7 +669,8 @@ object PasswordEditScreen {
                     modifier = Modifier.fillMaxWidth(),
                     content = {
                         CustomTextField(
-                            modifier = textFieldModifier,
+                            modifier = textFieldModifier
+                                .testTag(tag = TestTags.EditPassword.NOTES_TEXT_FIELD.name),
                             leadingIcon = Icons.Default.EditNote,
                             label = "notes",
                             placeHolder = "Add a note",
@@ -673,7 +688,8 @@ object PasswordEditScreen {
                     text = "Use fingerprint to access",
                     isChecked = viewModel.useFingerPrint.collectAsState().value,
                     onCheckedChange = { viewModel.useFingerPrint.value = it },
-                    isEnabled = !isLoading
+                    isEnabled = !isLoading,
+                    testTag = TestTags.EditPassword.USE_FINGERPRINT_SWITCH.name
                 )
                 //--------------------------------------------------------------------on-device-only
                 CustomSwitch(
@@ -681,7 +697,8 @@ object PasswordEditScreen {
                     text = "Keep On Device Only",
                     isChecked = viewModel.saveToLocalOnly.collectAsState().value,
                     onCheckedChange = { viewModel.saveToLocalOnly.value = it },
-                    isEnabled = !isLoading
+                    isEnabled = !isLoading,
+                    testTag = TestTags.EditPassword.KEEP_LOCAL_SWITCH.name
                 )
                 Spacer(
                     modifier = Modifier
@@ -806,7 +823,8 @@ object PasswordEditScreen {
         text: String,
         isChecked: Boolean,
         onCheckedChange: (Boolean) -> Unit,
-        isEnabled: Boolean
+        isEnabled: Boolean,
+        testTag: String? = null
     ) {
         DefaultCard(
             modifier = modifier,
@@ -836,6 +854,7 @@ object PasswordEditScreen {
                             text = text
                         )
                         Switch(
+                            modifier = Modifier.let { if (testTag == null) it else it.testTag(tag = testTag) },
                             enabled = isEnabled,
                             checked = isChecked,
                             onCheckedChange = onCheckedChange
