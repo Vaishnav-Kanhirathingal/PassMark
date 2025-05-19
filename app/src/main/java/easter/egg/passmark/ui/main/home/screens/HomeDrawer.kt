@@ -243,7 +243,14 @@ object HomeDrawer {
                 val vaultSelectableModifier = Modifier.fillMaxWidth()
                 vaultList.forEach { vault ->
                     var size = 0
-                    result?.passwordListState?.collectAsState()?.value?.forEach { if (it.vaultId == vault?.id) size++ }
+                    val passwordList = result?.passwordListState?.collectAsState()?.value
+                    if (vault?.id == null) {
+                        size = passwordList?.size ?: 0
+                    } else {
+                        passwordList?.forEach {
+                            if (it.vaultId == vault.id) size++
+                        }
+                    }
                     VaultSelectable(
                         modifier = vaultSelectableModifier,
                         vaultName = vault?.name ?: Vault.VAULT_NAME_FOR_ALL_ITEMS,
