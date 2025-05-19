@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -71,6 +72,7 @@ import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -100,6 +102,7 @@ object HomeDrawer {
                     content = {
                         Row(
                             modifier = Modifier
+                                .testTag(tag = TestTags.Home.Drawer.TOP_TITLE.name)
                                 .fillMaxWidth()
                                 .padding(
                                     top = 24.dp,
@@ -259,6 +262,7 @@ object HomeDrawer {
                 if (vaultList.size < 5) {
                     Box(
                         modifier = Modifier
+                            .testTag(tag = TestTags.Home.Drawer.CREATE_NEW_VAULT_BUTTON.name)
                             .padding(end = 8.dp)
                             .size(size = 60.dp)
                             .setSizeLimitation()
@@ -483,6 +487,7 @@ object HomeDrawer {
                         val dialogText = homeViewModel.vaultDialogState.text.collectAsState().value
                         OutlinedTextField(
                             modifier = Modifier
+                                .testTag(tag = TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name)
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp),
                             label = { Text(text = "Name") },
@@ -515,6 +520,10 @@ object HomeDrawer {
                                             content = {
                                                 Box(
                                                     modifier = Modifier
+                                                        .testTag(
+                                                            tag = TestTags.Home.Drawer
+                                                                .VaultDialog.getIconTag(index = it)
+                                                        )
                                                         .size(size = PassMarkDimensions.minTouchSize)
                                                         .clip(shape = CircleShape)
                                                         .background(
@@ -533,7 +542,7 @@ object HomeDrawer {
                                                     contentAlignment = Alignment.Center,
                                                     content = {
                                                         Icon(
-                                                            imageVector = Vault.iconList.get(it),
+                                                            imageVector = Vault.iconList[it],
                                                             contentDescription = null,
                                                             tint =
                                                                 if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
@@ -568,6 +577,7 @@ object HomeDrawer {
                                 if (isSavedAlready) {
                                     Box(
                                         modifier = Modifier
+                                            .testTag(tag = TestTags.Home.Drawer.VaultDialog.DELETE_BUTTON.name)
                                             .size(size = PassMarkDimensions.minTouchSize)
                                             .clip(shape = CircleShape)
                                             .background(color = MaterialTheme.colorScheme.errorContainer)
@@ -646,7 +656,9 @@ object HomeDrawer {
                                     isLoading = false
                                 )
                                 CustomTextButton(
-                                    modifier = Modifier.setSizeLimitation(),
+                                    modifier = Modifier
+                                        .testTag(tag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name)
+                                        .setSizeLimitation(),
                                     text = if (isSavedAlready) "Update" else "Create",
                                     enabled = (!screenState.isLoading && (dialogText.isNotBlank())),
                                     onClick = { homeViewModel.performVaultAction(action = VaultDialogActionOptions.UPDATE) },

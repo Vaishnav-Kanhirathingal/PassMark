@@ -307,6 +307,7 @@ object HomeScreen {
                 if (searchText == null) {
                     Box(
                         modifier = Modifier
+                            .testTag(tag = TestTags.Home.OPEN_DRAWER_BUTTON.name)
                             .size(size = componentHeight)
                             .clip(shape = CircleShape)
                             .background(color = MaterialTheme.colorScheme.primaryContainer)

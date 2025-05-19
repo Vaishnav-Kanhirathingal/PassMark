@@ -292,6 +292,7 @@ object PasswordEditScreen {
                 val isLoading = passwordEditViewModel.screenState.collectAsState().value.isLoading
                 Box(
                     modifier = Modifier
+                        .testTag(tag = TestTags.EditPassword.SAVE_BUTTON.name)
                         .setSizeLimitation()
                         .clip(shape = pillShape)
                         .background(color = MaterialTheme.colorScheme.primary)
@@ -311,9 +312,7 @@ object PasswordEditScreen {
                     contentAlignment = Alignment.Center,
                     content = {
                         Text(
-                            modifier = Modifier
-                                .testTag(tag = TestTags.EditPassword.SAVE_BUTTON.name)
-                                .alpha(alpha = if (isLoading) 0f else 1f),
+                            modifier = Modifier                                .alpha(alpha = if (isLoading) 0f else 1f),
                             text = "Save",
                             color = MaterialTheme.colorScheme.onPrimary,
                             fontSize = PassMarkFonts.Body.medium,
@@ -580,8 +579,7 @@ object PasswordEditScreen {
                         .fillMaxWidth(),
                     content = {
                         CustomTextField(
-                            modifier = textFieldModifier
-                                .testTag(tag = TestTags.EditPassword.TITLE_TEXT_FIELD.name),
+                            modifier = textFieldModifier,
                             leadingIcon = null,
                             label = "Title",
                             placeHolder = "Untitled",
@@ -589,7 +587,8 @@ object PasswordEditScreen {
                             onTextChange = { viewModel.title.value = it },
                             textStyle = LocalTextStyle.current.copy(fontSize = PassMarkFonts.Title.large),
                             isEnabled = !isLoading,
-                            inputOption = InputOption.TITLE
+                            inputOption = InputOption.TITLE,
+                            testTag = TestTags.EditPassword.TITLE_TEXT_FIELD.name
                         )
                     }
                 )
@@ -603,15 +602,15 @@ object PasswordEditScreen {
                     content = {
                         //---------------------------------------------------------------------email
                         CustomTextField(
-                            modifier = textFieldModifier
-                                .testTag(tag = TestTags.EditPassword.EMAIL_TEXT_FIELD.name),
+                            modifier = textFieldModifier,
                             leadingIcon = Icons.Outlined.Email,
                             label = "Email",
                             placeHolder = "abc@def.xyz",
                             text = viewModel.email.collectAsState().value,
                             onTextChange = { viewModel.email.value = it },
                             isEnabled = !isLoading,
-                            inputOption = InputOption.EMAIL
+                            inputOption = InputOption.EMAIL,
+                            testTag = TestTags.EditPassword.EMAIL_TEXT_FIELD.name
                         )
                         HorizontalDivider(
                             thickness = 1.dp,
@@ -619,15 +618,15 @@ object PasswordEditScreen {
                         )
                         //-----------------------------------------------------------------user-name
                         CustomTextField(
-                            modifier = textFieldModifier
-                                .testTag(tag = TestTags.EditPassword.USER_NAME_TEXT_FIELD.name),
+                            modifier = textFieldModifier,
                             leadingIcon = Icons.Outlined.Person,
                             label = "UserName",
                             placeHolder = "John Doe",
                             text = viewModel.userName.collectAsState().value,
                             onTextChange = { viewModel.userName.value = it },
                             isEnabled = !isLoading,
-                            inputOption = InputOption.USERNAME
+                            inputOption = InputOption.USERNAME,
+                            testTag = TestTags.EditPassword.USER_NAME_TEXT_FIELD.name
                         )
                         HorizontalDivider(
                             thickness = 1.dp,
@@ -635,15 +634,15 @@ object PasswordEditScreen {
                         )
                         //------------------------------------------------------------------password
                         CustomTextField(
-                            modifier = textFieldModifier
-                                .testTag(tag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name),
+                            modifier = textFieldModifier,
                             leadingIcon = Icons.Default.Password,
                             label = "Password",
                             placeHolder = "",
                             text = viewModel.password.collectAsState().value,
                             onTextChange = { viewModel.password.value = it },
                             isEnabled = !isLoading,
-                            inputOption = InputOption.PASSWORD
+                            inputOption = InputOption.PASSWORD,
+                            testTag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name
                         )
                     }
                 )
@@ -652,15 +651,15 @@ object PasswordEditScreen {
                     modifier = Modifier.fillMaxWidth(),
                     content = {
                         CustomTextField(
-                            modifier = textFieldModifier
-                                .testTag(tag = TestTags.EditPassword.WEBSITE_TEXT_FIELD.name),
+                            modifier = textFieldModifier,
                             leadingIcon = Icons.Default.Web,
                             label = "Website",
                             placeHolder = "www.abc.com",
                             text = viewModel.website.collectAsState().value,
                             onTextChange = { viewModel.website.value = it },
                             isEnabled = !isLoading,
-                            inputOption = InputOption.WEBSITE
+                            inputOption = InputOption.WEBSITE,
+                            testTag = TestTags.EditPassword.WEBSITE_TEXT_FIELD.name
                         )
                     }
                 )
@@ -669,8 +668,7 @@ object PasswordEditScreen {
                     modifier = Modifier.fillMaxWidth(),
                     content = {
                         CustomTextField(
-                            modifier = textFieldModifier
-                                .testTag(tag = TestTags.EditPassword.NOTES_TEXT_FIELD.name),
+                            modifier = textFieldModifier,
                             leadingIcon = Icons.Default.EditNote,
                             label = "notes",
                             placeHolder = "Add a note",
@@ -678,7 +676,8 @@ object PasswordEditScreen {
                             onTextChange = { viewModel.notes.value = it },
                             isEnabled = !isLoading,
                             inputOption = InputOption.NOTES,
-                            singleLine = false
+                            singleLine = false,
+                            testTag = TestTags.EditPassword.NOTES_TEXT_FIELD.name
                         )
                     }
                 )
@@ -698,7 +697,7 @@ object PasswordEditScreen {
                     isChecked = viewModel.saveToLocalOnly.collectAsState().value,
                     onCheckedChange = { viewModel.saveToLocalOnly.value = it },
                     isEnabled = !isLoading,
-                    testTag = TestTags.EditPassword.KEEP_LOCAL_SWITCH.name
+//                    testTag = TestTags.EditPassword.KEEP_LOCAL_SWITCH.name
                 )
                 Spacer(
                     modifier = Modifier
@@ -754,14 +753,17 @@ object PasswordEditScreen {
         textStyle: TextStyle = LocalTextStyle.current,
         isEnabled: Boolean,
         inputOption: InputOption,
-        singleLine: Boolean = true
+        singleLine: Boolean = true,
+        testTag: String
     ) {
         Box(
             modifier = modifier,
             contentAlignment = Alignment.Center,
             content = {
                 TextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(tag = testTag),
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = (inputOption !in listOf(
                             InputOption.USERNAME,

@@ -15,17 +15,20 @@ object TestTags {
 
     enum class Home {
         CREATE_NEW_PASSWORD_BUTTON,
-        SEARCH_BUTTON,
-        SORT_BUTTON;
+        OPEN_DRAWER_BUTTON;
 
         enum class Drawer {
-            CREATE_NEW_VAULT_BUTTON,
-            SETTINGS_BUTTON;
+            TOP_TITLE,
+            CREATE_NEW_VAULT_BUTTON;
 
             enum class VaultDialog {
                 TEXT_FIELD,
                 CONFIRM_BUTTON,
-                DELETE_BUTTON
+                DELETE_BUTTON;
+
+                companion object {
+                    fun getIconTag(index: Int) = "icon_$index"
+                }
             }
         }
     }
@@ -42,6 +45,6 @@ object TestTags {
         WEBSITE_TEXT_FIELD,
         NOTES_TEXT_FIELD,
         USE_FINGERPRINT_SWITCH,
-        KEEP_LOCAL_SWITCH
+//        KEEP_LOCAL_SWITCH // TODO: check use case
     }
 }
