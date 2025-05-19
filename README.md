@@ -16,9 +16,9 @@
 this app implements Material-You theming which means it has dynamic color support for UI elements. To make use of this,
 change your phone's system color and the app would match it. Assuming dynamic colors is enables on device
 
-<img src="https://github.com/user-attachments/assets/08490913-800e-49ff-b1da-c84b816199c1" alt="Empty home screenshot" width="250">
-<img src="https://github.com/user-attachments/assets/f020d0de-3e8b-456a-bc26-7540d2bb46a5" alt="Empty home screenshot" width="250">
-<img src="https://github.com/user-attachments/assets/49e74c71-9ab7-4362-bb2d-c0e782356f94" alt="Empty home screenshot" width="250">
+<img src="https://github.com/user-attachments/assets/08490913-800e-49ff-b1da-c84b816199c1" alt="Empty home screenshot" width="260">
+<img src="https://github.com/user-attachments/assets/f020d0de-3e8b-456a-bc26-7540d2bb46a5" alt="Empty home screenshot" width="260">
+<img src="https://github.com/user-attachments/assets/49e74c71-9ab7-4362-bb2d-c0e782356f94" alt="Empty home screenshot" width="260">
 
 
 <img src="https://github.com/user-attachments/assets/b102b9d3-725b-4224-9121-b1585491e03e" alt="Empty home screenshot" width="330">
