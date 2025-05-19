@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -38,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import easter.egg.passmark.BuildConfig
@@ -56,7 +59,6 @@ import kotlinx.coroutines.withContext
 object LoginScreen {
     private val TAG = this::class.simpleName
 
-    // TODO: merge loading screen into UI
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -76,20 +78,18 @@ object LoginScreen {
                 }
             }
         )
-        when (state) {
-            is ScreenState.Loading -> LoaderUi(modifier = modifier)
-            is ScreenState.Loaded -> {}
-            is ScreenState.ApiError, is ScreenState.PreCall -> LoginUi(
-                modifier = modifier,
-                viewModel = viewModel
-            )
-        }
+        LoginUi(
+            modifier = modifier,
+            isLoading = state.isLoading,
+            onCredentialResponse = viewModel::login
+        )
     }
 
     @Composable
     private fun LoginUi(
         modifier: Modifier,
-        viewModel: LoginViewModel
+        isLoading: Boolean,
+        onCredentialResponse: (GetCredentialResponse) -> Unit
     ) {
         val verticalColumnPadding = 40.dp
         Column(
@@ -135,7 +135,8 @@ object LoginScreen {
                 )
                 GoogleSignInButton(
                     modifier = Modifier.padding(horizontal = 8.dp),
-                    viewModel = viewModel
+                    isLoading = isLoading,
+                    onCredentialResponse = onCredentialResponse
                 )
                 Spacer(modifier = Modifier.height(height = verticalColumnPadding))
             }
@@ -146,17 +147,19 @@ object LoginScreen {
     @Composable
     private fun GoogleSignInButton(
         modifier: Modifier = Modifier,
-        viewModel: LoginViewModel,
+        isLoading: Boolean,
+        onCredentialResponse: (GetCredentialResponse) -> Unit
     ) {
         val coroutineScope = rememberCoroutineScope()
         val context = LocalContext.current
-        Row(
+        Box(
             modifier = modifier
                 .testTag(tag = TestTags.Login.GOOGLE_BUTTON.name)
                 .setSizeLimitation()
                 .clip(shape = RoundedCornerShape(size = 16.dp))
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)
                 .clickable(
+                    enabled = !isLoading,
                     onClick = {
                         val googleIdOption = GetGoogleIdOption.Builder()
                             .setServerClientId(BuildConfig.FIREBASE_WEB_CLIENT_ID)
@@ -172,7 +175,7 @@ object LoginScreen {
                                     context = context,
                                 )
                                 withContext(Dispatchers.Main) {
-                                    viewModel.login(credentialResponse = result)
+                                    onCredentialResponse(result)
                                 }
                             } catch (e: GetCredentialCancellationException) {
                                 Log.d(TAG, "cancelled sign in")
@@ -195,49 +198,37 @@ object LoginScreen {
                     shape = RoundedCornerShape(size = 16.dp)
                 )
                 .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(
-                space = 8.dp,
-                alignment = Alignment.CenterHorizontally
-            ),
-            verticalAlignment = Alignment.CenterVertically,
+            contentAlignment = Alignment.Center,
             content = {
-                Image(
-                    modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = R.drawable.google_48),
-                    contentScale = ContentScale.Fit,
-                    contentDescription = null
+                Row(
+                    modifier = Modifier.alpha(alpha = if (isLoading) 0f else 1f),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = 8.dp,
+                        alignment = Alignment.CenterHorizontally
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    content = {
+                        Image(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(id = R.drawable.google_48),
+                            contentScale = ContentScale.Fit,
+                            contentDescription = null
+                        )
+                        Text(
+                            text = "Google",
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Body.medium,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 )
-                Text(
-                    text = "Google",
-                    fontFamily = PassMarkFonts.font,
-                    fontSize = PassMarkFonts.Body.medium,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        )
-    }
-
-    @Composable
-    private fun LoaderUi(
-        modifier: Modifier,
-    ) {
-        Column(
-            modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(
-                space = 8.dp,
-                alignment = Alignment.CenterVertically
-            ),
-            content = {
-                CustomLoader.FullScreenLoader(modifier = Modifier)
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = "Logging in via Google...",
-                    textAlign = TextAlign.Center,
-                    fontSize = PassMarkFonts.Title.medium,
-                    fontFamily = PassMarkFonts.font
-                )
+                if (isLoading) {
+                    CustomLoader.ButtonLoader(
+                        modifier = Modifier,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         )
     }
