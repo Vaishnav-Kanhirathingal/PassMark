@@ -80,6 +80,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    //----------------------------------------------------------------------------------ui-automator
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
     //-----------------------------------------------------------------------------------credentials
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
