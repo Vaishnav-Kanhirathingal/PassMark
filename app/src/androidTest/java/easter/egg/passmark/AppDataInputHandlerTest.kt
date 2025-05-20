@@ -15,7 +15,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class AuthScreenTest {
+class AppDataInputHandlerTest {
     object TestRoutines {
         const val SOCIAL_MEDIA_ROUTINE = "Social Media"
         const val FINANCE_ROUTINE = "Finance"
