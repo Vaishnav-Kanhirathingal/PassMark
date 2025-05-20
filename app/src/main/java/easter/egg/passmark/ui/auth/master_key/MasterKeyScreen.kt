@@ -47,6 +47,7 @@ import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 
@@ -118,7 +119,7 @@ object MasterKeyScreen {
                 )
                 OutlinedTextField(
                     modifier = Modifier
-                        .testTag(tag = TestTags.CreateMasterKey.TEXT_FIELD.name)
+                        .applyTag(testTag = TestTags.CreateMasterKey.TEXT_FIELD.name)
                         .fillMaxWidth(),
                     enabled = !isLoading,
                     value = viewModel.masterPasswordText.collectAsState().value,
@@ -159,7 +160,7 @@ object MasterKeyScreen {
 
                 Box(
                     modifier = Modifier
-                        .testTag(tag = TestTags.CreateMasterKey.CONFIRM_BUTTON.name)
+                        .applyTag(testTag = TestTags.CreateMasterKey.CONFIRM_BUTTON.name)
                         .setSizeLimitation()
                         .clip(shape = RoundedCornerShape(size = 16.dp))
                         .background(color = MaterialTheme.colorScheme.primary)

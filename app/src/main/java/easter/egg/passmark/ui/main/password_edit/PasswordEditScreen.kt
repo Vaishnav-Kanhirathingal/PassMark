@@ -82,6 +82,7 @@ import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.extensions.customTopBarModifier
 import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -190,7 +191,7 @@ object PasswordEditScreen {
             content = {
                 Box(
                     modifier = Modifier
-                        .testTag(tag = TestTags.EditPassword.DISMISS.name)
+                        .applyTag(testTag = TestTags.EditPassword.DISMISS.name)
                         .size(size = PassMarkDimensions.minTouchSize)
                         .clip(shape = CircleShape)
                         .clickable(
@@ -292,7 +293,7 @@ object PasswordEditScreen {
                 val isLoading = passwordEditViewModel.screenState.collectAsState().value.isLoading
                 Box(
                     modifier = Modifier
-                        .testTag(tag = TestTags.EditPassword.SAVE_BUTTON.name)
+                        .applyTag(testTag = TestTags.EditPassword.SAVE_BUTTON.name)
                         .setSizeLimitation()
                         .clip(shape = pillShape)
                         .background(color = MaterialTheme.colorScheme.primary)
@@ -312,7 +313,7 @@ object PasswordEditScreen {
                     contentAlignment = Alignment.Center,
                     content = {
                         Text(
-                            modifier = Modifier                                .alpha(alpha = if (isLoading) 0f else 1f),
+                            modifier = Modifier.alpha(alpha = if (isLoading) 0f else 1f),
                             text = "Save",
                             color = MaterialTheme.colorScheme.onPrimary,
                             fontSize = PassMarkFonts.Body.medium,
@@ -441,7 +442,7 @@ object PasswordEditScreen {
             content = {
                 Text(
                     modifier = Modifier
-                        .testTag(tag = TestTags.EditPassword.SELECT_VAULT_DIALOG_CHOOSE_VAULT.name)
+                        .applyTag(testTag = TestTags.EditPassword.SELECT_VAULT_DIALOG_CHOOSE_VAULT.name)
                         .fillMaxWidth(),
                     text = "Choose Vault",
                     maxLines = 2,
@@ -763,7 +764,7 @@ object PasswordEditScreen {
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .testTag(tag = testTag),
+                        .applyTag(testTag = testTag),
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = (inputOption !in listOf(
                             InputOption.USERNAME,
@@ -856,7 +857,7 @@ object PasswordEditScreen {
                             text = text
                         )
                         Switch(
-                            modifier = Modifier.let { if (testTag == null) it else it.testTag(tag = testTag) },
+                            modifier = if (testTag == null) Modifier else Modifier.applyTag(testTag = testTag),
                             enabled = isEnabled,
                             checked = isChecked,
                             onCheckedChange = onCheckedChange

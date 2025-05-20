@@ -33,7 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,6 +49,7 @@ import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 import kotlinx.coroutines.Dispatchers
@@ -154,7 +154,7 @@ object LoginScreen {
         val context = LocalContext.current
         Box(
             modifier = modifier
-                .testTag(tag = TestTags.Login.GOOGLE_BUTTON.name)
+                .applyTag(testTag = TestTags.Login.GOOGLE_BUTTON.name)
                 .setSizeLimitation()
                 .clip(shape = RoundedCornerShape(size = 16.dp))
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)

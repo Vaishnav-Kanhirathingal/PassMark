@@ -76,6 +76,7 @@ import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -258,7 +259,7 @@ object HomeScreen {
                     },
                     floatingActionButton = {
                         FloatingActionButton(
-                            modifier = Modifier.testTag(tag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name),
+                            modifier = Modifier.applyTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name),
                             onClick = { toPasswordEditScreen(null) },
                             content = {
                                 Icon(
@@ -307,7 +308,7 @@ object HomeScreen {
                 if (searchText == null) {
                     Box(
                         modifier = Modifier
-                            .testTag(tag = TestTags.Home.OPEN_DRAWER_BUTTON.name)
+                            .applyTag(testTag = TestTags.Home.OPEN_DRAWER_BUTTON.name)
                             .size(size = componentHeight)
                             .clip(shape = CircleShape)
                             .background(color = MaterialTheme.colorScheme.primaryContainer)

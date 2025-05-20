@@ -1,11 +1,20 @@
 package easter.egg.passmark.utils.testing
 
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+
 object TestTags {
     // TODO: remove this
-    const val timeout = 1000L
+    fun Modifier.applyTag(testTag: String): Modifier = this
+        .testTag(tag = testTag)
+        .semantics { this.contentDescription = testTag }
+
+    const val TIME_OUT = 1000L
 
     enum class Login {
-        GOOGLE_BUTTON,
+        GOOGLE_BUTTON
     }
 
     enum class CreateMasterKey {
