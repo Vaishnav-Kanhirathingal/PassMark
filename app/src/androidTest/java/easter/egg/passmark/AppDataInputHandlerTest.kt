@@ -9,6 +9,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import easter.egg.passmark.data.PasswordData
+import easter.egg.passmark.data.TestRoutine
 import easter.egg.passmark.ui.auth.AuthActivity
 import easter.egg.passmark.utils.testing.TestTags
 import org.junit.Rule
@@ -17,11 +18,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class AppDataInputHandlerTest {
-    object TestRoutines {
-        const val SOCIAL_MEDIA_ROUTINE = "Social Media"
-        const val FINANCE_ROUTINE = "Finance"
-        const val WORK_ROUTINE = "Work"
-    }
 
     @get:Rule
     val composeRule = createAndroidComposeRule<AuthActivity>()
@@ -104,8 +100,7 @@ class AppDataInputHandlerTest {
     /** to be called with the navigation drawer open */
     @OptIn(ExperimentalTestApi::class)
     private fun createVault(
-        name: String,
-        iconIndex: Int
+        testRoutine: TestRoutine
     ) {
         composeRule
             .onNodeWithTag(testTag = TestTags.Home.Drawer.CREATE_NEW_VAULT_BUTTON.name)
@@ -113,9 +108,9 @@ class AppDataInputHandlerTest {
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name))
         composeRule
             .onNodeWithTag(testTag = TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name)
-            .performTextInput(text = name)
+            .performTextInput(text = testRoutine.name)
         composeRule
-            .onNodeWithTag(testTag = TestTags.Home.Drawer.VaultDialog.getIconTag(index = iconIndex))
+            .onNodeWithTag(testTag = TestTags.Home.Drawer.VaultDialog.getIconTag(index = testRoutine.iconIndex))
             .performClick()
         composeRule
             .onNodeWithTag(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name)
@@ -134,9 +129,8 @@ class AppDataInputHandlerTest {
             .onNodeWithTag(testTag = TestTags.Home.OPEN_DRAWER_BUTTON.name)
             .performClick()
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.Drawer.TOP_TITLE.name))
-        createVault(name = TestRoutines.SOCIAL_MEDIA_ROUTINE, iconIndex = 3)
-        createVault(name = TestRoutines.FINANCE_ROUTINE, iconIndex = 2)
-        createVault(name = TestRoutines.WORK_ROUTINE, iconIndex = 4)
+
+        TestRoutine.routineTestList.forEach(action = this::createVault)
 
         Thread.sleep(5_000) // TODO: manually dismiss navigation drawer
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name))
