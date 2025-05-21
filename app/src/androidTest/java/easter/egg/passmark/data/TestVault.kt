@@ -8,7 +8,7 @@ data class TestVault(
         const val SOCIAL_MEDIA_ROUTINE = "Social"
         const val WORK_ROUTINE = "Work"
         const val FINANCE_ROUTINE = "Finance"
-        val routineTestList = listOf(
+        val vaultTestList = listOf(
             TestVault(name = "Social Media", iconIndex = 3),
             TestVault(name = "Finance", iconIndex = 2),
             TestVault(name = "Work", iconIndex = 4),

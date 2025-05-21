@@ -130,7 +130,7 @@ class AppDataInputHandlerTest {
             .performClick()
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.Drawer.TOP_TITLE.name))
 
-        TestVault.routineTestList.forEach(action = this::createVault)
+        TestVault.vaultTestList.forEach(action = this::createVault)
 
         Thread.sleep(5_000) // TODO: manually dismiss navigation drawer
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name))

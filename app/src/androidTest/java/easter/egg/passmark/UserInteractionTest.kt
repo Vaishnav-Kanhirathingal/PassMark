@@ -44,7 +44,7 @@ class UserInteractionTest {
         val intent = context.packageManager.getLaunchIntentForPackage(packageName)
         context.startActivity(intent!!.apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) })
         device.wait(Until.hasObject(By.pkg(packageName).depth(0)), 5000)
-        Thread.sleep(5_000)
+        Thread.sleep(3_000)
     }
 
     fun type(txt: String) {
@@ -53,32 +53,32 @@ class UserInteractionTest {
 
     private fun loginToHome() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        device.findObject(By.desc(TestTags.Login.GOOGLE_BUTTON.name)).click()
+
+        findObject(TestTags.Login.GOOGLE_BUTTON.name).click()
         AnimationTime.smallDelay()
         device.findObject(By.text("vaishnav.kanhira@gmail.com")).click()
-        Thread.sleep(10_000)
-        device.findObject(By.desc(TestTags.CreateMasterKey.TEXT_FIELD.name)).let {
+        ApiCallTime.multiCallDelay()
+        findObject(testTag = TestTags.CreateMasterKey.VISIBILITY_BUTTON.name).click()
+        findObject(TestTags.CreateMasterKey.TEXT_FIELD.name).let {
             it.click()
             AnimationTime.smallDelay()
             type(txt = "123456789")
         }
         ApiCallTime.smallDelay()
-        device.findObject(By.desc(TestTags.CreateMasterKey.CONFIRM_BUTTON.name)).click()
+        findObject(TestTags.CreateMasterKey.CONFIRM_BUTTON.name).click()
         ApiCallTime.multiCallDelay()
     }
 
     /** call with an open home drawer and completes with an open drawer (is repeatable) */
     fun createVault(testVault: TestVault) {
-        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        device.findObject(By.desc(TestTags.Home.Drawer.CREATE_NEW_VAULT_BUTTON.name)).click()
+        findObject(TestTags.Home.Drawer.CREATE_NEW_VAULT_BUTTON.name).click()
         AnimationTime.smallDelay()
-        device.findObject(By.desc(TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name)).let {
+        findObject(TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name).let {
             it.click()
             AnimationTime.smallDelay()
             type(testVault.name)
         }
-        device.findObject(By.desc(TestTags.Home.Drawer.VaultDialog.getIconTag(index = testVault.iconIndex)))
-            .click()
+        findObject(TestTags.Home.Drawer.VaultDialog.getIconTag(index = testVault.iconIndex)).click()
         findObject(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name).click()
         ApiCallTime.smallDelay()
     }
@@ -86,7 +86,7 @@ class UserInteractionTest {
     /** called from home screen, exits to home screen (is repeatable) */
     fun createPassword(passwordData: PasswordData) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        device.findObject(By.desc(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name)).click()
+        findObject(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name).click()
         AnimationTime.smallDelay()
         passwordData.vault?.let {
             findObject(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name).click()
@@ -126,6 +126,8 @@ class UserInteractionTest {
             testTag = TestTags.EditPassword.NOTES_TEXT_FIELD.name,
             text = passwordData.note
         )
+
+        // TODO: scroll to pending
         if (passwordData.useFingerprint) {
             findObject(testTag = TestTags.EditPassword.USE_FINGERPRINT_SWITCH.name).click()
         }
@@ -139,7 +141,15 @@ class UserInteractionTest {
 
     @Test
     fun fullScript() {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         launchApp()
         loginToHome()
+        device.findObject(By.desc(TestTags.Home.OPEN_DRAWER_BUTTON.name)).click()
+        AnimationTime.smallDelay()
+        TestVault.vaultTestList.forEach(action = this::createVault)
+        device.click(1080, 1440)
+        AnimationTime.smallDelay()
+
+        PasswordData.testList.forEach(action = this::createPassword)
     }
 }

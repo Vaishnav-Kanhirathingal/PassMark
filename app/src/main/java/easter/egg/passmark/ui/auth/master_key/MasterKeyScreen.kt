@@ -135,6 +135,7 @@ object MasterKeyScreen {
                     },
                     trailingIcon = {
                         IconButton(
+                            modifier = Modifier.applyTag(testTag = TestTags.CreateMasterKey.VISIBILITY_BUTTON.name),
                             onClick = viewModel::switchVisibility,
                             content = {
                                 Icon(

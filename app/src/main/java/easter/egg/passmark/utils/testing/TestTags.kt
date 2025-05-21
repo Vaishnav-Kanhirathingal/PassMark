@@ -19,6 +19,7 @@ object TestTags {
 
     enum class CreateMasterKey {
         TEXT_FIELD,
+        VISIBILITY_BUTTON,
         CONFIRM_BUTTON,
     }
 

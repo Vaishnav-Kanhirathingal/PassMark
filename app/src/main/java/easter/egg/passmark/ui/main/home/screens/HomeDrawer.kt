@@ -528,8 +528,8 @@ object HomeDrawer {
                                             content = {
                                                 Box(
                                                     modifier = Modifier
-                                                        .testTag(
-                                                            tag = TestTags.Home.Drawer
+                                                        .applyTag(
+                                                            testTag = TestTags.Home.Drawer
                                                                 .VaultDialog.getIconTag(index = it)
                                                         )
                                                         .size(size = PassMarkDimensions.minTouchSize)
