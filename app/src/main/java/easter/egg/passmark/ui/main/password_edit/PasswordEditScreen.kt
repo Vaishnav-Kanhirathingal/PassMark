@@ -698,7 +698,7 @@ object PasswordEditScreen {
                     isChecked = viewModel.saveToLocalOnly.collectAsState().value,
                     onCheckedChange = { viewModel.saveToLocalOnly.value = it },
                     isEnabled = !isLoading,
-//                    testTag = TestTags.EditPassword.KEEP_LOCAL_SWITCH.name
+                    testTag = TestTags.EditPassword.KEEP_LOCAL_SWITCH.name
                 )
                 Spacer(
                     modifier = Modifier

@@ -54,6 +54,6 @@ object TestTags {
         WEBSITE_TEXT_FIELD,
         NOTES_TEXT_FIELD,
         USE_FINGERPRINT_SWITCH,
-//        KEEP_LOCAL_SWITCH // TODO: check use case
+        KEEP_LOCAL_SWITCH
     }
 }
