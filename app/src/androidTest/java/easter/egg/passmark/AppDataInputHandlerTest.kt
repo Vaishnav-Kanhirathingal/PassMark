@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import easter.egg.passmark.data.PasswordData
 import easter.egg.passmark.ui.auth.AuthActivity
 import easter.egg.passmark.utils.testing.TestTags
 import org.junit.Rule
@@ -56,21 +57,12 @@ class AppDataInputHandlerTest {
 
     /** ensure that this is called while on home screen with the create new password button visible */
     @OptIn(ExperimentalTestApi::class)
-    private fun createAndSaveNewPassword(
-        routine: String?,
-        title: String,
-        email: String?,
-        userName: String?,
-        password: String,
-        website: String?,
-        note: String?,
-        useFingerprint: Boolean,
-    ) {
+    private fun createAndSaveNewPassword(password: PasswordData) {
         composeRule
             .onNodeWithTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name)
             .performClick()
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.EditPassword.DISMISS.name))
-        routine?.let {
+        password.vault?.let {
             composeRule
                 .onNodeWithTag(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name)
                 .performClick()
@@ -83,16 +75,21 @@ class AppDataInputHandlerTest {
             text?.let { composeRule.onNodeWithTag(testTag = testTag).performTextInput(text = it) }
         }
 
-        type(testTag = TestTags.EditPassword.TITLE_TEXT_FIELD.name, text = title)
-        type(testTag = TestTags.EditPassword.EMAIL_TEXT_FIELD.name, text = email)
-        type(testTag = TestTags.EditPassword.USER_NAME_TEXT_FIELD.name, text = userName)
-        type(testTag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name, text = password)
-        type(testTag = TestTags.EditPassword.WEBSITE_TEXT_FIELD.name, text = website)
-        type(testTag = TestTags.EditPassword.NOTES_TEXT_FIELD.name, text = note)
+        type(testTag = TestTags.EditPassword.TITLE_TEXT_FIELD.name, text = password.title)
+        type(testTag = TestTags.EditPassword.EMAIL_TEXT_FIELD.name, text = password.email)
+        type(testTag = TestTags.EditPassword.USER_NAME_TEXT_FIELD.name, text = password.userName)
+        type(testTag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name, text = password.password)
+        type(testTag = TestTags.EditPassword.WEBSITE_TEXT_FIELD.name, text = password.website)
+        type(testTag = TestTags.EditPassword.NOTES_TEXT_FIELD.name, text = password.note)
 
-        if (useFingerprint) {
+        if (password.useFingerprint) {
             composeRule
                 .onNodeWithTag(testTag = TestTags.EditPassword.USE_FINGERPRINT_SWITCH.name)
+                .performClick()
+        }
+        if (password.useLocalStorage) {
+            composeRule
+                .onNodeWithTag(testTag = TestTags.EditPassword.KEEP_LOCAL_SWITCH.name)
                 .performClick()
         }
 
@@ -106,7 +103,7 @@ class AppDataInputHandlerTest {
 
     /** to be called with the navigation drawer open */
     @OptIn(ExperimentalTestApi::class)
-    private fun createRoutine(
+    private fun createVault(
         name: String,
         iconIndex: Int
     ) {
@@ -123,8 +120,8 @@ class AppDataInputHandlerTest {
         composeRule
             .onNodeWithTag(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name)
             .performClick()
-        composeRule.waitUntilAtLeastOneExists(
-            matcher = hasTestTag(testTag = TestTags.Home.Drawer.TOP_TITLE.name),
+        composeRule.waitUntilDoesNotExist(
+            matcher = hasTestTag(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name),
             timeoutMillis = 5_000
         )
     }
@@ -132,105 +129,19 @@ class AppDataInputHandlerTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun loginAndSavePasswordsAndVaults() {
-        val email = "john.doe@gmail.com"
-        val workEmail = "john.doe@SomeCompany.co"
-        val note = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam feugiat " +
-                "lorem magna, in auctor urna molestie ut. Donec venenatis tortor in elit " +
-                "scelerisque congue venenatis quis ligula. "
-
         this.createANewUser()
         composeRule
             .onNodeWithTag(testTag = TestTags.Home.OPEN_DRAWER_BUTTON.name)
             .performClick()
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.Drawer.TOP_TITLE.name))
-        createRoutine(name = TestRoutines.SOCIAL_MEDIA_ROUTINE, iconIndex = 3)
-        createRoutine(name = TestRoutines.FINANCE_ROUTINE, iconIndex = 2)
-        createRoutine(name = TestRoutines.WORK_ROUTINE, iconIndex = 4)
+        createVault(name = TestRoutines.SOCIAL_MEDIA_ROUTINE, iconIndex = 3)
+        createVault(name = TestRoutines.FINANCE_ROUTINE, iconIndex = 2)
+        createVault(name = TestRoutines.WORK_ROUTINE, iconIndex = 4)
 
         Thread.sleep(5_000) // TODO: manually dismiss navigation drawer
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name))
         // TODO: check issue
-        this.createAndSaveNewPassword(
-            routine = null,
-            title = "Google",
-            email = email,
-            userName = "John D",
-            password = "Google123",
-            website = "www.google.com",
-            note = note,
-            useFingerprint = true,
-        )
-        this.createAndSaveNewPassword(
-            routine = TestRoutines.SOCIAL_MEDIA_ROUTINE,
-            title = "FaceBook",
-            email = email,
-            userName = "john_d",
-            password = "FaceBook123",
-            website = "www.facebook.com",
-            note = note,
-            useFingerprint = false,
-        )
-        this.createAndSaveNewPassword(
-            routine = TestRoutines.SOCIAL_MEDIA_ROUTINE,
-            title = "Instagram",
-            email = email,
-            userName = "j_doe",
-            password = "insta123",
-            website = "www.instagram.com",
-            note = note,
-            useFingerprint = false,
-        )
-        this.createAndSaveNewPassword(
-            routine = TestRoutines.WORK_ROUTINE,
-            title = "LinkedIn",
-            email = email,
-            userName = "John Marksman Doe",
-            password = "insta123",
-            website = "www.linkedin.com",
-            note = note,
-            useFingerprint = true,
-        )
-        this.createAndSaveNewPassword(
-            routine = TestRoutines.WORK_ROUTINE,
-            title = "Git-Hub",
-            email = email,
-            userName = "j_d_112",
-            password = "git123",
-            website = "www.github.com",
-            note = note,
-            useFingerprint = true,
-        )
-        this.createAndSaveNewPassword(
-            routine = TestRoutines.WORK_ROUTINE,
-            title = "Email",
-            email = workEmail,
-            userName = "Dr. John Doe",
-            password = "Work123",
-            website = "www.outlook.com",
-            note = note,
-            useFingerprint = true,
-        )
-        this.createAndSaveNewPassword(
-            routine = null,
-            title = "spotify",
-            email = email,
-            userName = "jd",
-            password = "spoty_123",
-            website = "www.spotify.com",
-            note = note,
-            useFingerprint = false,
-        )
 
-
-        this.createAndSaveNewPassword(
-            routine = TestRoutines.FINANCE_ROUTINE,
-            title = "RBI",
-            email = email,
-            userName = "Mr. John Doe",
-            password = "fin123",
-            website = "www.rbi.org",
-            note = note,
-            useFingerprint = true,
-        )
+        PasswordData.testList.forEach(this::createAndSaveNewPassword)
     }
 }
