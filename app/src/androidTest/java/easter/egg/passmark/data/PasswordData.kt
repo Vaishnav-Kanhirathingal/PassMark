@@ -1,7 +1,7 @@
 package easter.egg.passmark.data
 
-import easter.egg.passmark.AppDataInputHandlerTest.TestRoutines
 
+// TODO: rename
 data class PasswordData(
     val vault: String?,
     val title: String,
@@ -20,7 +20,7 @@ data class PasswordData(
                 "Nullam feugiat lorem magna, in auctor urna molestie ut. Donec venenatis tortor " +
                 "in elit scelerisque congue venenatis quis ligula. "
 
-        val testList = mutableListOf(
+        val testList = listOf(
             PasswordData(
                 vault = null,
                 title = "Google",
@@ -32,7 +32,7 @@ data class PasswordData(
                 useFingerprint = true,
             ),
             PasswordData(
-                vault = TestRoutines.SOCIAL_MEDIA_ROUTINE,
+                vault = TestVault.SOCIAL_MEDIA_ROUTINE,
                 title = "FaceBook",
                 email = EMAIL,
                 userName = "john_d",
@@ -42,7 +42,7 @@ data class PasswordData(
                 useFingerprint = false,
             ),
             PasswordData(
-                vault = TestRoutines.SOCIAL_MEDIA_ROUTINE,
+                vault = TestVault.SOCIAL_MEDIA_ROUTINE,
                 title = "Instagram",
                 email = EMAIL,
                 userName = "j_doe",
@@ -52,7 +52,7 @@ data class PasswordData(
                 useFingerprint = false,
             ),
             PasswordData(
-                vault = TestRoutines.WORK_ROUTINE,
+                vault = TestVault.WORK_ROUTINE,
                 title = "LinkedIn",
                 email = EMAIL,
                 userName = "John Marksman Doe",
@@ -62,7 +62,7 @@ data class PasswordData(
                 useFingerprint = true,
             ),
             PasswordData(
-                vault = TestRoutines.WORK_ROUTINE,
+                vault = TestVault.WORK_ROUTINE,
                 title = "Git-Hub",
                 email = EMAIL,
                 userName = "j_d_112",
@@ -72,7 +72,7 @@ data class PasswordData(
                 useFingerprint = true,
             ),
             PasswordData(
-                vault = TestRoutines.WORK_ROUTINE,
+                vault = TestVault.WORK_ROUTINE,
                 title = "Email",
                 email = WORK_EMAIL,
                 userName = "Dr. John Doe",
@@ -92,7 +92,7 @@ data class PasswordData(
                 useFingerprint = false,
             ),
             PasswordData(
-                vault = TestRoutines.FINANCE_ROUTINE,
+                vault = TestVault.FINANCE_ROUTINE,
                 title = "RBI",
                 email = EMAIL,
                 userName = "Mr. John Doe",
