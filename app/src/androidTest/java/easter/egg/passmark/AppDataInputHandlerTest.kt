@@ -9,7 +9,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import easter.egg.passmark.data.PasswordData
-import easter.egg.passmark.data.TestRoutine
+import easter.egg.passmark.data.TestVault
 import easter.egg.passmark.ui.auth.AuthActivity
 import easter.egg.passmark.utils.testing.TestTags
 import org.junit.Rule
@@ -100,7 +100,7 @@ class AppDataInputHandlerTest {
     /** to be called with the navigation drawer open */
     @OptIn(ExperimentalTestApi::class)
     private fun createVault(
-        testRoutine: TestRoutine
+        testVault: TestVault
     ) {
         composeRule
             .onNodeWithTag(testTag = TestTags.Home.Drawer.CREATE_NEW_VAULT_BUTTON.name)
@@ -108,9 +108,9 @@ class AppDataInputHandlerTest {
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name))
         composeRule
             .onNodeWithTag(testTag = TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name)
-            .performTextInput(text = testRoutine.name)
+            .performTextInput(text = testVault.name)
         composeRule
-            .onNodeWithTag(testTag = TestTags.Home.Drawer.VaultDialog.getIconTag(index = testRoutine.iconIndex))
+            .onNodeWithTag(testTag = TestTags.Home.Drawer.VaultDialog.getIconTag(index = testVault.iconIndex))
             .performClick()
         composeRule
             .onNodeWithTag(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name)
@@ -130,7 +130,7 @@ class AppDataInputHandlerTest {
             .performClick()
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.Drawer.TOP_TITLE.name))
 
-        TestRoutine.routineTestList.forEach(action = this::createVault)
+        TestVault.routineTestList.forEach(action = this::createVault)
 
         Thread.sleep(5_000) // TODO: manually dismiss navigation drawer
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name))
