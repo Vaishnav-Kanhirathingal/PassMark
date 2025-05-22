@@ -61,7 +61,6 @@ class UserInteractionTest {
         findObject(testTag = TestTags.CreateMasterKey.VISIBILITY_BUTTON.name).click()
         findObject(TestTags.CreateMasterKey.TEXT_FIELD.name).let {
             it.click()
-            AnimationTime.smallDelay()
             type(txt = "123456789")
         }
         ApiCallTime.smallDelay()
@@ -98,7 +97,6 @@ class UserInteractionTest {
         ) {
             text?.let {
                 findObject(testTag = testTag).click()
-                AnimationTime.smallDelay()
                 type(txt = it)
             }
         }
@@ -126,6 +124,7 @@ class UserInteractionTest {
             testTag = TestTags.EditPassword.NOTES_TEXT_FIELD.name,
             text = passwordData.note
         )
+        device.pressBack()
 
         // TODO: scroll to pending
         if (passwordData.useFingerprint) {
@@ -144,12 +143,15 @@ class UserInteractionTest {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         launchApp()
         loginToHome()
+
+        //------------------------------------------------------------------------------------vaults
         device.findObject(By.desc(TestTags.Home.OPEN_DRAWER_BUTTON.name)).click()
         AnimationTime.smallDelay()
         TestVault.vaultTestList.forEach(action = this::createVault)
         device.click(1080, 1440)
         AnimationTime.smallDelay()
 
+        //---------------------------------------------------------------------------------passwords
         PasswordData.testList.forEach(action = this::createPassword)
     }
 }
