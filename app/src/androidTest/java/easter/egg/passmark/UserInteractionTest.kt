@@ -18,7 +18,7 @@ class UserInteractionTest {
     companion object {
         const val SMALL_ANIMATION_DELAY = 1_000L
 
-        const val NAVIGATION_DELAY = 2_000L
+        const val NAVIGATION_DELAY = 3_000L
         const val SINGLE_CALL_LOADING_DELAY = 3_000 + TestTags.TIME_OUT
         const val INITIAL_LOADING_SCREEN_DELAY = 3_000 + (2 * TestTags.TIME_OUT)
     }
@@ -82,9 +82,9 @@ class UserInteractionTest {
         findObject(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name).click()
         Thread.sleep(NAVIGATION_DELAY)
         testPasswordData.vault?.let {
-            findObject(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name).click()
+            this.findObject(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name).click()
             Thread.sleep(SMALL_ANIMATION_DELAY)
-            findObject(testTag = TestTags.EditPassword.ChooseVault.getVaultTestTag(vaultName = it))
+            this.findObject(testTag = TestTags.EditPassword.ChooseVault.getVaultTestTag(vaultName = it))
                 .click()
 //            device.findObject(By.text(it)).click()
             Thread.sleep(SMALL_ANIMATION_DELAY)
