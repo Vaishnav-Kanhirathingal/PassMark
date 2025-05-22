@@ -82,6 +82,8 @@ class UserInteractionTest {
         findObject(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name).click()
         Thread.sleep(NAVIGATION_DELAY)
         testPasswordData.vault?.let {
+            device.wait(Until.hasObject(By.desc(TestTags.EditPassword.SELECT_VAULT_BUTTON.name)), 2000)
+
             this.findObject(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name).click()
             Thread.sleep(SMALL_ANIMATION_DELAY)
             this.findObject(testTag = TestTags.EditPassword.ChooseVault.getVaultTestTag(vaultName = it))
