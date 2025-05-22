@@ -63,7 +63,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -221,7 +220,7 @@ object PasswordEditScreen {
                 val coroutineScope = rememberCoroutineScope()
                 Row(
                     modifier = Modifier
-                        .testTag(tag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name)
+                        .applyTag(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name)
                         .setSizeLimitation()
                         .clip(shape = pillShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
@@ -466,7 +465,15 @@ object PasswordEditScreen {
                             items = tempVaultList,
                             itemContent = {
                                 Selectable(
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier
+                                        .applyTag(
+                                            testTag = TestTags.EditPassword.ChooseVault
+                                                .getVaultTestTag(
+                                                    vaultName =
+                                                        it?.name ?: Vault.VAULT_NAME_FOR_ALL_ITEMS
+                                                )
+                                        )
+                                        .fillMaxWidth(),
                                     vault = it
                                 )
                                 if (it != tempVaultList.last()) {

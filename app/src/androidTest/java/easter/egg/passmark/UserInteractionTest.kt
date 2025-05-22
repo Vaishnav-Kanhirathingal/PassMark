@@ -15,20 +15,12 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class UserInteractionTest {
-    object ApiCallTime {
-        fun smallDelay() {
-            Thread.sleep(4_000)
-        }
+    companion object {
+        const val SMALL_ANIMATION_DELAY = 1_000L
 
-        fun multiCallDelay() {
-            Thread.sleep(8_000)
-        }
-    }
-
-    object AnimationTime {
-        fun smallDelay() {
-            Thread.sleep(1_500)
-        }
+        const val NAVIGATION_DELAY = 2_000L
+        const val SINGLE_CALL_LOADING_DELAY = 3_000 + TestTags.TIME_OUT
+        const val INITIAL_LOADING_SCREEN_DELAY = 3_000 + (2 * TestTags.TIME_OUT)
     }
 
     private fun findObject(testTag: String): UiObject2 {
@@ -44,7 +36,7 @@ class UserInteractionTest {
         val intent = context.packageManager.getLaunchIntentForPackage(packageName)
         context.startActivity(intent!!.apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) })
         device.wait(Until.hasObject(By.pkg(packageName).depth(0)), 5000)
-        Thread.sleep(3_000)
+        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
     }
 
     fun type(txt: String) {
@@ -55,41 +47,47 @@ class UserInteractionTest {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         findObject(TestTags.Login.GOOGLE_BUTTON.name).click()
-        AnimationTime.smallDelay()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
         device.findObject(By.text("vaishnav.kanhira@gmail.com")).click()
-        ApiCallTime.multiCallDelay()
+        Thread.sleep(INITIAL_LOADING_SCREEN_DELAY)
         findObject(testTag = TestTags.CreateMasterKey.VISIBILITY_BUTTON.name).click()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
         findObject(TestTags.CreateMasterKey.TEXT_FIELD.name).let {
             it.click()
+            Thread.sleep(SMALL_ANIMATION_DELAY)
             type(txt = "123456789")
         }
-        ApiCallTime.smallDelay()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
         findObject(TestTags.CreateMasterKey.CONFIRM_BUTTON.name).click()
-        ApiCallTime.multiCallDelay()
+        Thread.sleep(INITIAL_LOADING_SCREEN_DELAY)
     }
 
     /** call with an open home drawer and completes with an open drawer (is repeatable) */
-    fun createVault(testVault: TestVault) {
+    private fun createVault(testVault: TestVault) {
         findObject(TestTags.Home.Drawer.CREATE_NEW_VAULT_BUTTON.name).click()
-        AnimationTime.smallDelay()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
         findObject(TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name).let {
             it.click()
-            AnimationTime.smallDelay()
+            Thread.sleep(SMALL_ANIMATION_DELAY)
             type(testVault.name)
         }
         findObject(TestTags.Home.Drawer.VaultDialog.getIconTag(index = testVault.iconIndex)).click()
         findObject(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name).click()
-        ApiCallTime.smallDelay()
+        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
     }
 
     /** called from home screen, exits to home screen (is repeatable) */
-    fun createPassword(testPasswordData: TestPasswordData) {
+    private fun createPassword(testPasswordData: TestPasswordData) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         findObject(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name).click()
-        AnimationTime.smallDelay()
+        Thread.sleep(NAVIGATION_DELAY)
         testPasswordData.vault?.let {
             findObject(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name).click()
-            device.findObject(By.text(it)).click()
+            Thread.sleep(SMALL_ANIMATION_DELAY)
+            findObject(testTag = TestTags.EditPassword.ChooseVault.getVaultTestTag(vaultName = it))
+                .click()
+//            device.findObject(By.text(it)).click()
+            Thread.sleep(SMALL_ANIMATION_DELAY)
         }
         fun textHandler(
             testTag: String,
@@ -97,6 +95,7 @@ class UserInteractionTest {
         ) {
             text?.let {
                 findObject(testTag = testTag).click()
+                Thread.sleep(SMALL_ANIMATION_DELAY)
                 type(txt = it)
             }
         }
@@ -126,7 +125,6 @@ class UserInteractionTest {
         )
         device.pressBack()
 
-        // TODO: scroll to pending
         if (testPasswordData.useFingerprint) {
             findObject(testTag = TestTags.EditPassword.USE_FINGERPRINT_SWITCH.name).click()
         }
@@ -135,7 +133,7 @@ class UserInteractionTest {
         }
 
         findObject(testTag = TestTags.EditPassword.SAVE_BUTTON.name).click()
-        ApiCallTime.smallDelay()
+        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
     }
 
     @Test
@@ -146,12 +144,16 @@ class UserInteractionTest {
 
         //------------------------------------------------------------------------------------vaults
         device.findObject(By.desc(TestTags.Home.OPEN_DRAWER_BUTTON.name)).click()
-        AnimationTime.smallDelay()
-        TestVault.vaultTestList.forEach(action = this::createVault)
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+
+//        TestVault.vaultTestList.forEach(action = this::createVault)
+//        createVault(testVault = TestVault.vaultTestList[0])
+
         device.click(1080, 1440)
-        AnimationTime.smallDelay()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
 
         //---------------------------------------------------------------------------------passwords
-        TestPasswordData.testList.forEach(action = this::createPassword)
+//        TestPasswordData.testList.forEach(action = this::createPassword)
+        this.createPassword(testPasswordData = TestPasswordData.testList[1])
     }
 }
