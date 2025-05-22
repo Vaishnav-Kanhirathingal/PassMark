@@ -16,6 +16,8 @@ import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.testing.TestTags
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -91,6 +93,7 @@ class HomeViewModel @Inject constructor(
             newState = ScreenState.Loading()
         )
         viewModelScope.launch {
+            delay(timeMillis = TestTags.TIME_OUT)
             val newState: ScreenState<VaultDialogResult> = try {
                 val receivedVault: Vault = when (action) {
                     VaultDialogActionOptions.UPDATE -> vaultApi.upsert(vault = vault)

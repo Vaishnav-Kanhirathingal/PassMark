@@ -16,6 +16,8 @@ import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.extensions.nullIfBlank
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
+import easter.egg.passmark.utils.testing.TestTags
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -135,6 +137,7 @@ class PasswordEditViewModel @Inject constructor(
         ).toPasswordCapsule(passwordCryptographyHandler = passwordCryptographyHandler)
 
         viewModelScope.launch {
+            delay(timeMillis = TestTags.TIME_OUT)
             val newState: ScreenState<Password> = try {
                 val savedPasswordCapsule = if (saveToStorage) {
                     _oldPassword?.cloudId

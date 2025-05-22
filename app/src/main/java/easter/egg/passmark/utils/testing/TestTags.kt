@@ -11,7 +11,7 @@ object TestTags {
         .testTag(tag = testTag)
         .semantics { this.contentDescription = testTag }
 
-    const val TIME_OUT = 1000L
+    const val TIME_OUT = 2000L // TODO: remove in production
 
     enum class Login {
         GOOGLE_BUTTON
