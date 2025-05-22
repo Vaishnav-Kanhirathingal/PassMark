@@ -8,7 +8,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import easter.egg.passmark.data.PasswordData
+import easter.egg.passmark.data.TestPasswordData
 import easter.egg.passmark.data.TestVault
 import easter.egg.passmark.ui.auth.AuthActivity
 import easter.egg.passmark.utils.testing.TestTags
@@ -53,7 +53,7 @@ class AppDataInputHandlerTest {
 
     /** ensure that this is called while on home screen with the create new password button visible */
     @OptIn(ExperimentalTestApi::class)
-    private fun createAndSaveNewPassword(password: PasswordData) {
+    private fun createAndSaveNewPassword(password: TestPasswordData) {
         composeRule
             .onNodeWithTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name)
             .performClick()
@@ -136,6 +136,6 @@ class AppDataInputHandlerTest {
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name))
         // TODO: check issue
 
-        PasswordData.testList.forEach(this::createAndSaveNewPassword)
+        TestPasswordData.testList.forEach(this::createAndSaveNewPassword)
     }
 }

@@ -7,7 +7,7 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
-import easter.egg.passmark.data.PasswordData
+import easter.egg.passmark.data.TestPasswordData
 import easter.egg.passmark.data.TestVault
 import easter.egg.passmark.utils.testing.TestTags
 import org.junit.Test
@@ -83,11 +83,11 @@ class UserInteractionTest {
     }
 
     /** called from home screen, exits to home screen (is repeatable) */
-    fun createPassword(passwordData: PasswordData) {
+    fun createPassword(testPasswordData: TestPasswordData) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         findObject(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name).click()
         AnimationTime.smallDelay()
-        passwordData.vault?.let {
+        testPasswordData.vault?.let {
             findObject(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name).click()
             device.findObject(By.text(it)).click()
         }
@@ -102,35 +102,35 @@ class UserInteractionTest {
         }
         textHandler(
             testTag = TestTags.EditPassword.TITLE_TEXT_FIELD.name,
-            text = passwordData.title
+            text = testPasswordData.title
         )
         textHandler(
             testTag = TestTags.EditPassword.EMAIL_TEXT_FIELD.name,
-            text = passwordData.email
+            text = testPasswordData.email
         )
         textHandler(
             testTag = TestTags.EditPassword.USER_NAME_TEXT_FIELD.name,
-            text = passwordData.userName
+            text = testPasswordData.userName
         )
         textHandler(
             testTag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name,
-            text = passwordData.password
+            text = testPasswordData.password
         )
         textHandler(
             testTag = TestTags.EditPassword.WEBSITE_TEXT_FIELD.name,
-            text = passwordData.website
+            text = testPasswordData.website
         )
         textHandler(
             testTag = TestTags.EditPassword.NOTES_TEXT_FIELD.name,
-            text = passwordData.note
+            text = testPasswordData.note
         )
         device.pressBack()
 
         // TODO: scroll to pending
-        if (passwordData.useFingerprint) {
+        if (testPasswordData.useFingerprint) {
             findObject(testTag = TestTags.EditPassword.USE_FINGERPRINT_SWITCH.name).click()
         }
-        if (passwordData.useLocalStorage) {
+        if (testPasswordData.useLocalStorage) {
             findObject(testTag = TestTags.EditPassword.KEEP_LOCAL_SWITCH.name).click()
         }
 
@@ -152,6 +152,6 @@ class UserInteractionTest {
         AnimationTime.smallDelay()
 
         //---------------------------------------------------------------------------------passwords
-        PasswordData.testList.forEach(action = this::createPassword)
+        TestPasswordData.testList.forEach(action = this::createPassword)
     }
 }

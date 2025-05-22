@@ -2,7 +2,7 @@ package easter.egg.passmark.data
 
 
 // TODO: rename
-data class PasswordData(
+data class TestPasswordData(
     val vault: String?,
     val title: String,
     val email: String?,
@@ -21,7 +21,7 @@ data class PasswordData(
                 "in elit scelerisque congue venenatis quis ligula. "
 
         val testList = listOf(
-            PasswordData(
+            TestPasswordData(
                 vault = null,
                 title = "Google",
                 email = EMAIL,
@@ -31,7 +31,7 @@ data class PasswordData(
                 note = NOTE,
                 useFingerprint = true,
             ),
-            PasswordData(
+            TestPasswordData(
                 vault = TestVault.SOCIAL_MEDIA_ROUTINE,
                 title = "FaceBook",
                 email = EMAIL,
@@ -41,7 +41,7 @@ data class PasswordData(
                 note = NOTE,
                 useFingerprint = false,
             ),
-            PasswordData(
+            TestPasswordData(
                 vault = TestVault.SOCIAL_MEDIA_ROUTINE,
                 title = "Instagram",
                 email = EMAIL,
@@ -51,7 +51,7 @@ data class PasswordData(
                 note = NOTE,
                 useFingerprint = false,
             ),
-            PasswordData(
+            TestPasswordData(
                 vault = TestVault.WORK_ROUTINE,
                 title = "LinkedIn",
                 email = EMAIL,
@@ -61,7 +61,7 @@ data class PasswordData(
                 note = NOTE,
                 useFingerprint = true,
             ),
-            PasswordData(
+            TestPasswordData(
                 vault = TestVault.WORK_ROUTINE,
                 title = "Git-Hub",
                 email = EMAIL,
@@ -71,7 +71,7 @@ data class PasswordData(
                 note = NOTE,
                 useFingerprint = true,
             ),
-            PasswordData(
+            TestPasswordData(
                 vault = TestVault.WORK_ROUTINE,
                 title = "Email",
                 email = WORK_EMAIL,
@@ -81,7 +81,7 @@ data class PasswordData(
                 note = NOTE,
                 useFingerprint = true,
             ),
-            PasswordData(
+            TestPasswordData(
                 vault = null,
                 title = "spotify",
                 email = EMAIL,
@@ -91,7 +91,7 @@ data class PasswordData(
                 note = NOTE,
                 useFingerprint = false,
             ),
-            PasswordData(
+            TestPasswordData(
                 vault = TestVault.FINANCE_ROUTINE,
                 title = "RBI",
                 email = EMAIL,
