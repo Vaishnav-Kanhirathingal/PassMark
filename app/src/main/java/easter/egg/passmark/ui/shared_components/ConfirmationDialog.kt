@@ -22,6 +22,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -159,6 +161,7 @@ fun ConfirmationDialog(
 
                     CustomButton(
                         modifier = Modifier
+                            .applyTag(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name)
                             .constrainAs(
                                 ref = positiveButtonRef,
                                 constrainBlock = {

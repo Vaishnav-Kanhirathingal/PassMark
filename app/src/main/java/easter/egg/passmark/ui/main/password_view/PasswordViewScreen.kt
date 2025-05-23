@@ -87,6 +87,8 @@ import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.extensions.customTopBarModifier
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
+import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -95,6 +97,7 @@ import java.time.ZoneId
 object PasswordViewScreen {
     private val TAG = this::class.simpleName
 
+    // TODO: fix last used time being displayed
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -445,6 +448,7 @@ object PasswordViewScreen {
                 )
                 Box(
                     modifier = Modifier
+                        .applyTag(testTag = TestTags.ViewPassword.DELETE_BUTTON.name)
                         .align(alignment = Alignment.End)
                         .setSizeLimitation()
                         .padding(horizontal = 16.dp)

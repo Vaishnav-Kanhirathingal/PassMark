@@ -92,6 +92,8 @@ import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
+import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -110,9 +112,6 @@ object HomeContent {
         toViewPasswordScreen: (password: Password) -> Unit,
         toPasswordEditScreen: (password: Password?) -> Unit,
     ) {
-        val listItemModifier = Modifier
-            .setSizeLimitation()
-            .fillMaxWidth()
         val vaultId = homeViewModel.vaultIdSelected.collectAsState().value
         val homeResult = (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
             ?.result
@@ -189,6 +188,9 @@ object HomeContent {
                 TODO("show master password prompt")
             }
 
+            val listingModifier = Modifier
+                .setSizeLimitation()
+                .fillMaxWidth()
             LazyColumn(
                 modifier = modifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -205,7 +207,11 @@ object HomeContent {
                         items = passwordList ?: listOf(),
                         itemContent = {
                             PasswordListItem(
-                                modifier = listItemModifier,
+                                modifier = listingModifier.applyTag(
+                                    testTag = TestTags.Home.getPasswordTag(
+                                        name = it.data.title
+                                    )
+                                ),
                                 password = it,
                                 viewPassword = { toViewPasswordScreen(it) },
                                 openOptions = {

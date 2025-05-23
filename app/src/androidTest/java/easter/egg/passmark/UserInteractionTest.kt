@@ -6,6 +6,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
+import androidx.test.uiautomator.UiScrollable
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import easter.egg.passmark.data.TestPasswordData
 import easter.egg.passmark.data.TestVault
@@ -80,12 +82,15 @@ class UserInteractionTest {
     private fun createPassword(testPasswordData: TestPasswordData) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        device.wait(Until.hasObject(By.desc(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name)),2_000 )
+        device.wait(Until.hasObject(By.desc(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name)), 2_000)
         findObject(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name).click()
         Thread.sleep(NAVIGATION_DELAY)
 
         testPasswordData.vault?.let {
-            device.wait(Until.hasObject(By.desc(TestTags.EditPassword.SELECT_VAULT_BUTTON.name)), 2_000)
+            device.wait(
+                Until.hasObject(By.desc(TestTags.EditPassword.SELECT_VAULT_BUTTON.name)),
+                2_000
+            )
             this.findObject(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name).click()
             Thread.sleep(SMALL_ANIMATION_DELAY)
             device.findObject(By.text(it)).click()
@@ -137,6 +142,21 @@ class UserInteractionTest {
 
         findObject(testTag = TestTags.EditPassword.SAVE_BUTTON.name).click()
         Thread.sleep(8_000)
+    }
+
+    private fun viewAndDeletePassword(passwordName: String) {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
+        findObject(testTag = TestTags.Home.getPasswordTag(name = passwordName)).click()
+        Thread.sleep(NAVIGATION_DELAY)
+        UiScrollable(UiSelector().scrollable(true)).scrollIntoView(UiSelector().description(TestTags.ViewPassword.DELETE_BUTTON.name))
+
+        device.wait(Until.hasObject(By.desc(TestTags.ViewPassword.DELETE_BUTTON.name)), 2_000)
+
+        findObject(testTag = TestTags.ViewPassword.DELETE_BUTTON.name).click()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+        findObject(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name).click()
+        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
     }
 
     @Test

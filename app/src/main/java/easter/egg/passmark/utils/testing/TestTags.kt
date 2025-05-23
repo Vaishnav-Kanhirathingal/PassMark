@@ -27,6 +27,10 @@ object TestTags {
         CREATE_NEW_PASSWORD_BUTTON,
         OPEN_DRAWER_BUTTON;
 
+        companion object {
+            fun getPasswordTag(name: String): String = "$name password"
+        }
+
         enum class Drawer {
             TOP_TITLE,
             CREATE_NEW_VAULT_BUTTON;
@@ -61,4 +65,10 @@ object TestTags {
             fun getVaultTestTag(vaultName: String) = "Vault $vaultName"
         }
     }
+
+    enum class ViewPassword {
+        DELETE_BUTTON,
+    }
+
+    enum class ConfirmationDialog { POSITIVE_BUTTON }
 }
