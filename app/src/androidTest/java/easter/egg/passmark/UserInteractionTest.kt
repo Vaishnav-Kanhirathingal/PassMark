@@ -79,16 +79,15 @@ class UserInteractionTest {
     /** called from home screen, exits to home screen (is repeatable) */
     private fun createPassword(testPasswordData: TestPasswordData) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
+        device.wait(Until.hasObject(By.desc(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name)),2_000 )
         findObject(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name).click()
         Thread.sleep(NAVIGATION_DELAY)
 
         testPasswordData.vault?.let {
-            device.wait(Until.hasObject(By.desc(TestTags.EditPassword.SELECT_VAULT_BUTTON.name)), 2000)
-
+            device.wait(Until.hasObject(By.desc(TestTags.EditPassword.SELECT_VAULT_BUTTON.name)), 2_000)
             this.findObject(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name).click()
             Thread.sleep(SMALL_ANIMATION_DELAY)
-//            this.findObject(testTag = TestTags.EditPassword.ChooseVault.getVaultTestTag(vaultName = it))
-//                .click()
             device.findObject(By.text(it)).click()
             Thread.sleep(SMALL_ANIMATION_DELAY)
         }
@@ -137,7 +136,7 @@ class UserInteractionTest {
         }
 
         findObject(testTag = TestTags.EditPassword.SAVE_BUTTON.name).click()
-        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
+        Thread.sleep(8_000)
     }
 
     @Test
@@ -149,10 +148,8 @@ class UserInteractionTest {
         //------------------------------------------------------------------------------------vaults
         device.findObject(By.desc(TestTags.Home.OPEN_DRAWER_BUTTON.name)).click()
         Thread.sleep(SMALL_ANIMATION_DELAY)
-
         TestVault.vaultTestList.forEach(action = this::createVault)
-//        createVault(testVault = TestVault.vaultTestList[0])
-
+////        createVault(testVault = TestVault.vaultTestList[0])
         device.click(1080, 1440)
         Thread.sleep(SMALL_ANIMATION_DELAY)
 
