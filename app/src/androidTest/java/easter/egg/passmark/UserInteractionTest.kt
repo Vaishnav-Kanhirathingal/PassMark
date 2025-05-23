@@ -39,7 +39,7 @@ class UserInteractionTest {
         Thread.sleep(SINGLE_CALL_LOADING_DELAY)
     }
 
-    fun type(txt: String) {
+    private fun type(txt: String) {
         InstrumentationRegistry.getInstrumentation().sendStringSync(txt)
     }
 
@@ -81,16 +81,18 @@ class UserInteractionTest {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         findObject(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name).click()
         Thread.sleep(NAVIGATION_DELAY)
+
         testPasswordData.vault?.let {
             device.wait(Until.hasObject(By.desc(TestTags.EditPassword.SELECT_VAULT_BUTTON.name)), 2000)
 
             this.findObject(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name).click()
             Thread.sleep(SMALL_ANIMATION_DELAY)
-            this.findObject(testTag = TestTags.EditPassword.ChooseVault.getVaultTestTag(vaultName = it))
-                .click()
-//            device.findObject(By.text(it)).click()
+//            this.findObject(testTag = TestTags.EditPassword.ChooseVault.getVaultTestTag(vaultName = it))
+//                .click()
+            device.findObject(By.text(it)).click()
             Thread.sleep(SMALL_ANIMATION_DELAY)
         }
+
         fun textHandler(
             testTag: String,
             text: String?
@@ -148,14 +150,14 @@ class UserInteractionTest {
         device.findObject(By.desc(TestTags.Home.OPEN_DRAWER_BUTTON.name)).click()
         Thread.sleep(SMALL_ANIMATION_DELAY)
 
-//        TestVault.vaultTestList.forEach(action = this::createVault)
+        TestVault.vaultTestList.forEach(action = this::createVault)
 //        createVault(testVault = TestVault.vaultTestList[0])
 
         device.click(1080, 1440)
         Thread.sleep(SMALL_ANIMATION_DELAY)
 
         //---------------------------------------------------------------------------------passwords
-//        TestPasswordData.testList.forEach(action = this::createPassword)
-        this.createPassword(testPasswordData = TestPasswordData.testList[1])
+        TestPasswordData.testList.forEach(action = this::createPassword)
+//        this.createPassword(testPasswordData = TestPasswordData.testList[0])
     }
 }
