@@ -93,36 +93,38 @@ class HomeViewModel @Inject constructor(
             newState = ScreenState.Loading()
         )
         viewModelScope.launch {
-            delay(timeMillis = TestTags.TIME_OUT)
-            val newState: ScreenState<VaultDialogResult> = try {
-                val receivedVault: Vault = when (action) {
-                    VaultDialogActionOptions.UPDATE -> vaultApi.upsert(vault = vault)
-                    VaultDialogActionOptions.DELETE -> {
-                        val deleted = vaultApi.delete(vault = vault)
-                        passwordDao.deleteByVaultId(vaultId = vault.id!!)
-                        Log.d(
-                            TAG,
-                            "deleted = ${
-                                GsonBuilder().setPrettyPrinting().create().toJson(deleted)
-                            }"
+            val newState: ScreenState<VaultDialogResult> = TestTags.holdForDelay(
+                task = {
+                    try {
+                        val receivedVault: Vault = when (action) {
+                            VaultDialogActionOptions.UPDATE -> vaultApi.upsert(vault = vault)
+                            VaultDialogActionOptions.DELETE -> {
+                                val deleted = vaultApi.delete(vault = vault)
+                                passwordDao.deleteByVaultId(vaultId = vault.id!!)
+                                Log.d(
+                                    TAG,
+                                    "deleted = ${
+                                        GsonBuilder().setPrettyPrinting().create().toJson(deleted)
+                                    }"
+                                )
+                                deleted
+                            }
+                        }
+
+                        ScreenState.Loaded(
+                            result = VaultDialogResult(
+                                vault = receivedVault,
+                                action = action
+                            )
                         )
-                        deleted
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        ScreenState.ApiError.fromException(e = e)
                     }
                 }
-
-                ScreenState.Loaded(
-                    result = VaultDialogResult(
-                        vault = receivedVault,
-                        action = action
-                    )
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-                ScreenState.ApiError.fromException(e = e)
-            }
-            vaultDialogState.setScreenState(
-                newState = newState
             )
+
+            vaultDialogState.setScreenState(newState = newState)
         }
     }
 

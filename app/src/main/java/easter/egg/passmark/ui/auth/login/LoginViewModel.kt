@@ -32,25 +32,28 @@ class LoginViewModel @Inject constructor(
     fun login(credentialResponse: GetCredentialResponse) {
         this@LoginViewModel._screenState.value = ScreenState.Loading()
         viewModelScope.launch {
-            delay(TestTags.TIME_OUT)
-            val newState: ScreenState<Unit> = try {
-                val googleIdToken =
-                    GoogleIdTokenCredential.createFrom(data = credentialResponse.credential.data).idToken
-                supabaseClient.auth.signInWith(
-                    provider = IDToken,
-                    config = {
-                        this.idToken = googleIdToken
-                        this.provider = Google
+            val newState: ScreenState<Unit> = TestTags.holdForDelay(
+                task = {
+                    try {
+                        val googleIdToken =
+                            GoogleIdTokenCredential.createFrom(data = credentialResponse.credential.data).idToken
+                        supabaseClient.auth.signInWith(
+                            provider = IDToken,
+                            config = {
+                                this.idToken = googleIdToken
+                                this.provider = Google
+                            }
+                        )
+                        ScreenState.Loaded(result = Unit)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        when (e) {
+                            is HttpRequestTimeoutException, is HttpRequestException -> ScreenState.ApiError.NetworkError()
+                            else -> ScreenState.ApiError.SomethingWentWrong()
+                        }
                     }
-                )
-                ScreenState.Loaded(result = Unit)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                when (e) {
-                    is HttpRequestTimeoutException, is HttpRequestException -> ScreenState.ApiError.NetworkError()
-                    else -> ScreenState.ApiError.SomethingWentWrong()
                 }
-            }
+            )
             this@LoginViewModel._screenState.value = newState
         }
     }

@@ -61,37 +61,40 @@ class LoaderViewModel @Inject constructor(
     }
 
     private suspend fun verifyKeyState() {
-        delay(TestTags.TIME_OUT)
-        this@LoaderViewModel._screenState.value = try {
-            val user = userApi.getUser()
-            val userState: UserState =
-                if (user == null) {
-                    UserState.NEW_USER
-                } else {
-                    val password: String? = PassMarkDataStore(
-                        context = applicationContext,
-                        authId = supabaseAccountHelper.getId()
-                    ).fetchPassword().first()
-                    if (password == null) {
-                        UserState.EXISTS_WITHOUT_KEY_IN_STORAGE
-                    } else {
-                        PasswordCryptographyHandler(
-                            password = password,
-                            initializationVector = user.encryptionKeyInitializationVector
-                        )
-                            .solvesPuzzle(apiProvidedEncryptedPuzzle = user.passwordPuzzleEncrypted)
-                            .let { puzzleSolved ->
-                                if (puzzleSolved) UserState.EXISTS_WITH_KEY_IN_STORAGE
-                                else UserState.EXISTS_WITHOUT_KEY_IN_STORAGE
+        this@LoaderViewModel._screenState.value = TestTags.holdForDelay(
+            task = {
+                try {
+                    val user = userApi.getUser()
+                    val userState: UserState =
+                        if (user == null) {
+                            UserState.NEW_USER
+                        } else {
+                            val password: String? = PassMarkDataStore(
+                                context = applicationContext,
+                                authId = supabaseAccountHelper.getId()
+                            ).fetchPassword().first()
+                            if (password == null) {
+                                UserState.EXISTS_WITHOUT_KEY_IN_STORAGE
+                            } else {
+                                PasswordCryptographyHandler(
+                                    password = password,
+                                    initializationVector = user.encryptionKeyInitializationVector
+                                )
+                                    .solvesPuzzle(apiProvidedEncryptedPuzzle = user.passwordPuzzleEncrypted)
+                                    .let { puzzleSolved ->
+                                        if (puzzleSolved) UserState.EXISTS_WITH_KEY_IN_STORAGE
+                                        else UserState.EXISTS_WITHOUT_KEY_IN_STORAGE
+                                    }
                             }
-                    }
+                        }
+                    Log.d(TAG, "user state = ${userState.name}")
+                    ScreenState.Loaded(userState)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    ScreenState.ApiError.fromException(e = e)
                 }
-            Log.d(TAG, "user state = ${userState.name}")
-            ScreenState.Loaded(userState)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ScreenState.ApiError.fromException(e = e)
-        }
+            }
+        )
     }
 }
 

@@ -12,7 +12,6 @@ import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import easter.egg.passmark.utils.testing.TestTags
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -53,30 +52,33 @@ class MasterKeyViewModel @Inject constructor(
     ) {
         _screenState.value = ScreenState.Loading()
         viewModelScope.launch {
-            delay(TestTags.TIME_OUT)
             val password = this@MasterKeyViewModel.masterPasswordText.value
             Log.d(TAG, "password = $password")
 
-            val newState: ScreenState<Unit> =
-                try {
-                    val authId = this@MasterKeyViewModel.supabaseAccountHelper.getId()
-                    val dataStoreHandler = PassMarkDataStore(context = context, authId = authId)
-                    if (isNewUser) {
-                        setUpNewUser(
-                            password = password,
-                            dataStoreHandler = dataStoreHandler
-                        )
-                    } else {
-                        verifyUser(
-                            password = password,
-                            dataStoreHandler = dataStoreHandler,
-                            userApi = userApi
-                        )
+            val newState: ScreenState<Unit> = TestTags.holdForDelay(
+                task = {
+                    try {
+                        val authId = this@MasterKeyViewModel.supabaseAccountHelper.getId()
+                        val dataStoreHandler =
+                            PassMarkDataStore(context = context, authId = authId)
+                        if (isNewUser) {
+                            setUpNewUser(
+                                password = password,
+                                dataStoreHandler = dataStoreHandler
+                            )
+                        } else {
+                            verifyUser(
+                                password = password,
+                                dataStoreHandler = dataStoreHandler,
+                                userApi = userApi
+                            )
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        ScreenState.ApiError.fromException(e = e)
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    ScreenState.ApiError.fromException(e = e)
                 }
+            )
             this@MasterKeyViewModel._screenState.value = newState
         }
     }

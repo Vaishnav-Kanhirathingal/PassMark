@@ -17,7 +17,6 @@ import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.extensions.nullIfBlank
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import easter.egg.passmark.utils.testing.TestTags
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -137,38 +136,42 @@ class PasswordEditViewModel @Inject constructor(
         ).toPasswordCapsule(passwordCryptographyHandler = passwordCryptographyHandler)
 
         viewModelScope.launch {
-            delay(timeMillis = TestTags.TIME_OUT)
-            val newState: ScreenState<Password> = try {
-                val savedPasswordCapsule = if (saveToStorage) {
-                    _oldPassword?.cloudId
-                        ?.takeUnless { _deleteCompleted }
-                        ?.let { id -> // deletes cloud version if switching to local
-                            Log.d(TAG, "deleting cloud version")
-                            passwordApi.deletePassword(passwordId = id)
-                            _deleteCompleted = true
+            val newState: ScreenState<Password> = TestTags.holdForDelay(
+                task = {
+                    try {
+                        val savedPasswordCapsule = if (saveToStorage) {
+                            _oldPassword?.cloudId
+                                ?.takeUnless { _deleteCompleted }
+                                ?.let { id -> // deletes cloud version if switching to local
+                                    Log.d(TAG, "deleting cloud version")
+                                    passwordApi.deletePassword(passwordId = id)
+                                    _deleteCompleted = true
+                                }
+
+                            val id =
+                                passwordDao.upsert(passwordCapsule = passwordCapsuleToSave).toInt()
+                            passwordDao.getById(id = id)
+                        } else {
+                            _oldPassword?.localId
+                                ?.takeUnless { _deleteCompleted }
+                                ?.let { localId -> // deletes local version if switching to cloud
+                                    passwordDao.deleteById(localId = localId)
+                                    _deleteCompleted = true
+                                }
+                            passwordApi.savePassword(passwordCapsule = passwordCapsuleToSave)
                         }
 
-                    val id = passwordDao.upsert(passwordCapsule = passwordCapsuleToSave).toInt()
-                    passwordDao.getById(id = id)
-                } else {
-                    _oldPassword?.localId
-                        ?.takeUnless { _deleteCompleted }
-                        ?.let { localId -> // deletes local version if switching to cloud
-                            passwordDao.deleteById(localId = localId)
-                            _deleteCompleted = true
-                        }
-                    passwordApi.savePassword(passwordCapsule = passwordCapsuleToSave)
+                        val res = savedPasswordCapsule.toPassword(
+                            passwordCryptographyHandler = passwordCryptographyHandler
+                        )
+                        this@PasswordEditViewModel._deleteCompleted = false
+                        ScreenState.Loaded(result = res)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        ScreenState.ApiError.fromException(e = e)
+                    }
                 }
-
-                val res = savedPasswordCapsule.toPassword(
-                    passwordCryptographyHandler = passwordCryptographyHandler
-                )
-                this@PasswordEditViewModel._deleteCompleted = false
-                ScreenState.Loaded(result = res)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                ScreenState.ApiError.fromException(e = e)
-            }
+            )
             this@PasswordEditViewModel._screenState.value = newState
         }
     }
