@@ -25,6 +25,11 @@ class UserInteractionTest {
         const val INITIAL_LOADING_SCREEN_DELAY = 3_000 + (2 * TestTags.TIME_OUT)
     }
 
+    private object MasterPasswords {
+        const val OLD_PASSWORD = "123456789"
+        const val NEW_PASSWORD = "987654321"
+    }
+
     private fun findObject(testTag: String): UiObject2 {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         return device.findObject(By.desc(testTag))
@@ -38,14 +43,23 @@ class UserInteractionTest {
         val intent = context.packageManager.getLaunchIntentForPackage(packageName)
         context.startActivity(intent!!.apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) })
         device.wait(Until.hasObject(By.pkg(packageName).depth(0)), 5000)
-        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
+        Thread.sleep(NAVIGATION_DELAY)
     }
 
     private fun type(txt: String) {
         InstrumentationRegistry.getInstrumentation().sendStringSync(txt)
     }
 
-    private fun loginToHome() {
+    private fun type(
+        testTag: String,
+        text: String
+    ) {
+        findObject(testTag = testTag).click()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+        type(txt = text)
+    }
+
+    private fun loginToHome(masterPassword: String) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         findObject(TestTags.Login.GOOGLE_BUTTON.name).click()
@@ -57,7 +71,7 @@ class UserInteractionTest {
         findObject(TestTags.CreateMasterKey.TEXT_FIELD.name).let {
             it.click()
             Thread.sleep(SMALL_ANIMATION_DELAY)
-            type(txt = "123456789")
+            type(txt = masterPassword)
         }
         Thread.sleep(SMALL_ANIMATION_DELAY)
         findObject(TestTags.CreateMasterKey.CONFIRM_BUTTON.name).click()
@@ -159,22 +173,91 @@ class UserInteractionTest {
         Thread.sleep(SINGLE_CALL_LOADING_DELAY)
     }
 
+    /** call from home screen without open drawer */
+    private fun resetUser() {
+        drawerFunctionality(toOpen = true)
+        findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
+        Thread.sleep(NAVIGATION_DELAY)
+        findObject(testTag = TestTags.Settings.RESET_ACCOUNT_BUTTON.name).click()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+        findObject(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name).click()
+        Thread.sleep(4_000 + SINGLE_CALL_LOADING_DELAY)
+    }
+
+    /** call from home screen without open drawer */
+    private fun changePasswordAndBackToHome(
+        oldPassword: String,
+        newPassword: String
+    ) {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        drawerFunctionality(toOpen = true)
+        findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
+        Thread.sleep(NAVIGATION_DELAY)
+        findObject(testTag = TestTags.Settings.CHANGE_PASSWORD_BUTTON.name).click()
+        Thread.sleep(NAVIGATION_DELAY)
+
+        device.wait(
+            Until.hasObject(By.desc(TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name)),
+            3_000
+        )
+
+        type(
+            testTag = TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name,
+            text = oldPassword
+        )
+        type(
+            testTag = TestTags.ChangePassword.NEW_PASSWORD_TEXT_FIELD.name,
+            text = newPassword
+        )
+        type(
+            testTag = TestTags.ChangePassword.NEW_PASSWORD_REPEATED_TEXT_FIELD.name,
+            text = newPassword
+        )
+        device.pressBack()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+        findObject(testTag = TestTags.ChangePassword.CONFIRM_BUTTON.name).click()
+        Thread.sleep(5_000 + SINGLE_CALL_LOADING_DELAY)
+    }
+
+    /** to be called from home */
+    private fun drawerFunctionality(toOpen: Boolean) {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        if (toOpen) {
+            device.findObject(By.desc(TestTags.Home.OPEN_DRAWER_BUTTON.name)).click()
+        } else {
+            device.click(1080, 1440)
+        }
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+    }
+
     @Test
     fun fullScript() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         launchApp()
-        loginToHome()
+        loginToHome(masterPassword = MasterPasswords.OLD_PASSWORD)
 
         //------------------------------------------------------------------------------------vaults
-        device.findObject(By.desc(TestTags.Home.OPEN_DRAWER_BUTTON.name)).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
-        TestVault.vaultTestList.forEach(action = this::createVault)
-////        createVault(testVault = TestVault.vaultTestList[0])
-        device.click(1080, 1440)
-        Thread.sleep(SMALL_ANIMATION_DELAY)
-
+//        drawerFunctionality(toOpen = true)
+//        TestVault.vaultTestList.forEach(action = this::createVault)
+//        createVault(testVault = TestVault.vaultTestList[0])
+//        drawerFunctionality(toOpen = false)
         //---------------------------------------------------------------------------------passwords
-        TestPasswordData.testList.forEach(action = this::createPassword)
+//        TestPasswordData.testList.forEach(action = this::createPassword)
 //        this.createPassword(testPasswordData = TestPasswordData.testList[0])
+//        viewAndDeletePassword(passwordName = TestPasswordData.testList[0].title)
+        changePasswordAndBackToHome(
+            oldPassword = MasterPasswords.OLD_PASSWORD,
+            newPassword = MasterPasswords.NEW_PASSWORD
+        )
+        loginToHome(masterPassword = MasterPasswords.NEW_PASSWORD)
     }
 }
+
+/** Scripts to record -
+ * login
+ * create vault
+ * create password
+ * view and delete password
+ * change password
+ * reset account
+ */
