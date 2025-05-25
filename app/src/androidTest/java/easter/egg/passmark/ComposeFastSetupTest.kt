@@ -41,7 +41,6 @@ class ComposeFastSetupTest {
 
         composeRule.onNodeWithTag(testTag = TestTags.CreateMasterKey.TEXT_FIELD.name)
             .performTextInput("123456789")
-        Thread.sleep(1000)
         composeRule.onNodeWithTag(testTag = TestTags.CreateMasterKey.CONFIRM_BUTTON.name)
             .performClick()
 

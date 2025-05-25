@@ -30,20 +30,29 @@ class ActionAutomatorTest {
         const val NEW_PASSWORD = "987654321"
     }
 
+    private object TestingObjects {
+        val testVault: TestVault = TestVault(
+            name = "Games",
+            iconIndex = 11
+        )
+
+        val testPasswordData = TestPasswordData(
+            vault = testVault.name,
+            title = "Epic",
+            email = "johnDoe@epic.com",
+            userName = "Easter123",
+            password = "EpycMilan",
+            website = "epic.com",
+            note = "3rd gen",
+            useFingerprint = true,
+            useLocalStorage = true
+        )
+    }
+
+    //---------------------------------------------------------------------------------------utility
     private fun findObject(testTag: String): UiObject2 {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         return device.findObject(By.desc(testTag))
-    }
-
-    @Test
-    fun launchApp() {
-        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        val packageName = "easter.egg.passmark"
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val intent = context.packageManager.getLaunchIntentForPackage(packageName)
-        context.startActivity(intent!!.apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) })
-        device.wait(Until.hasObject(By.pkg(packageName).depth(0)), 5000)
-        Thread.sleep(NAVIGATION_DELAY)
     }
 
     private fun type(txt: String) {
@@ -59,13 +68,27 @@ class ActionAutomatorTest {
         type(txt = text)
     }
 
-    private fun loginToHome(masterPassword: String) {
+    //---------------------------------------------------------------------------------------actions
+    private fun launchApp() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        val packageName = "easter.egg.passmark"
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val intent = context.packageManager.getLaunchIntentForPackage(packageName)
+        context.startActivity(intent!!.apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) })
+        device.wait(Until.hasObject(By.pkg(packageName).depth(0)), 5000)
+        Thread.sleep(NAVIGATION_DELAY)
+    }
 
+    private fun selectGoogleAccount() {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         findObject(TestTags.Login.GOOGLE_BUTTON.name).click()
         Thread.sleep(SMALL_ANIMATION_DELAY)
         device.findObject(By.text("vaishnav.kanhira@gmail.com")).click()
         Thread.sleep(INITIAL_LOADING_SCREEN_DELAY)
+
+    }
+
+    private fun enterMasterKey(masterPassword: String) {
         findObject(testTag = TestTags.CreateMasterKey.VISIBILITY_BUTTON.name).click()
         Thread.sleep(SMALL_ANIMATION_DELAY)
         findObject(TestTags.CreateMasterKey.TEXT_FIELD.name).let {
@@ -76,6 +99,7 @@ class ActionAutomatorTest {
         Thread.sleep(SMALL_ANIMATION_DELAY)
         findObject(TestTags.CreateMasterKey.CONFIRM_BUTTON.name).click()
         Thread.sleep(INITIAL_LOADING_SCREEN_DELAY)
+
     }
 
     /** call with an open home drawer and completes with an open drawer (is repeatable) */
@@ -160,8 +184,10 @@ class ActionAutomatorTest {
 
     private fun viewAndDeletePassword(passwordName: String) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
         findObject(testTag = TestTags.Home.getPasswordTag(name = passwordName)).click()
+
+        // TODO: fingerprint requirement
+
         Thread.sleep(NAVIGATION_DELAY)
         UiScrollable(UiSelector().scrollable(true)).scrollIntoView(UiSelector().description(TestTags.ViewPassword.DELETE_BUTTON.name))
 
@@ -184,8 +210,10 @@ class ActionAutomatorTest {
         Thread.sleep(4_000 + SINGLE_CALL_LOADING_DELAY)
     }
 
-    /** call from home screen without open drawer */
-    private fun changePasswordAndBackToHome(
+    /** call from home screen without open drawer. exits at master password screen with a request
+     * to enter password
+     */
+    private fun changePassword(
         oldPassword: String,
         newPassword: String
     ) {
@@ -232,24 +260,21 @@ class ActionAutomatorTest {
 
     @Test
     fun fullScript() {
-        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         launchApp()
-        loginToHome(masterPassword = MasterPasswords.OLD_PASSWORD)
+        selectGoogleAccount()
+        enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
 
-        //------------------------------------------------------------------------------------vaults
-//        drawerFunctionality(toOpen = true)
-//        TestVault.vaultTestList.forEach(action = this::createVault)
-//        createVault(testVault = TestVault.vaultTestList[0])
-//        drawerFunctionality(toOpen = false)
-        //---------------------------------------------------------------------------------passwords
-//        TestPasswordData.testList.forEach(action = this::createPassword)
-//        this.createPassword(testPasswordData = TestPasswordData.testList[0])
-//        viewAndDeletePassword(passwordName = TestPasswordData.testList[0].title)
-        changePasswordAndBackToHome(
+        drawerFunctionality(toOpen = true)
+        createVault(testVault = TestingObjects.testVault)
+        drawerFunctionality(toOpen = false)
+        createPassword(testPasswordData = TestingObjects.testPasswordData)
+        viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
+        changePassword(
             oldPassword = MasterPasswords.OLD_PASSWORD,
             newPassword = MasterPasswords.NEW_PASSWORD
         )
-        loginToHome(masterPassword = MasterPasswords.NEW_PASSWORD)
+        enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD)
+        resetUser()
     }
 }
 
