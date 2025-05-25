@@ -50,7 +50,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -157,12 +156,13 @@ object HomeDrawer {
                         Spacer(modifier = Modifier.height(height = 8.dp))
                         @Composable
                         fun DrawerButton(
+                            modifier: Modifier = Modifier,
                             text: String,
                             icon: ImageVector,
                             onclick: () -> Unit
                         ) {
                             Row(
-                                modifier = Modifier
+                                modifier = modifier
                                     .setSizeLimitation()
                                     .fillMaxWidth()
                                     .clickable(onClick = onclick),
@@ -190,6 +190,7 @@ object HomeDrawer {
                             )
                         }
                         DrawerButton(
+                            modifier = Modifier.applyTag(testTag = TestTags.Home.Drawer.SETTINGS.name),
                             text = "Settings",
                             icon = Icons.Default.Settings,
                             onclick = toSettingsScreen

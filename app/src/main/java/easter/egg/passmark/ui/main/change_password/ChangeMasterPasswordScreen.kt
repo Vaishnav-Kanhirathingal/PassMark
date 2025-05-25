@@ -216,13 +216,14 @@ object ChangeMasterPasswordScreen {
                     contentAlignment = Alignment.Center,
                     content = {
                         PasswordTextField(
-                            modifier = textFieldModifier.applyTag(testTag = TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name),
+                            modifier = textFieldModifier,
                             label = "Enter current password",
                             text = oldPass.value,
                             onTextChanged = {
                                 changeMasterPasswordViewModel.oldPassword.value = it
                             },
-                            isEnabled = !screenState.isLoading
+                            isEnabled = !screenState.isLoading,
+                            testTag = TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name
                         )
                     }
                 )
@@ -279,13 +280,14 @@ object ChangeMasterPasswordScreen {
                     verticalArrangement = Arrangement.Center,
                     content = {
                         PasswordTextField(
-                            modifier = textFieldModifier.applyTag(testTag = TestTags.ChangePassword.NEW_PASSWORD_TEXT_FIELD.name),
+                            modifier = textFieldModifier,
                             label = "Enter new password",
                             text = newPass.value,
                             onTextChanged = {
                                 changeMasterPasswordViewModel.newPassword.value = it
                             },
-                            isEnabled = !screenState.isLoading
+                            isEnabled = !screenState.isLoading,
+                            testTag = TestTags.ChangePassword.NEW_PASSWORD_TEXT_FIELD.name
                         )
                         HorizontalDivider(
                             modifier = Modifier.fillMaxWidth(),
@@ -293,13 +295,14 @@ object ChangeMasterPasswordScreen {
                             color = MaterialTheme.colorScheme.surfaceContainerHighest
                         )
                         PasswordTextField(
-                            modifier = textFieldModifier.applyTag(testTag = TestTags.ChangePassword.NEW_PASSWORD_REPEATED_TEXT_FIELD.name),
+                            modifier = textFieldModifier,
                             label = "Repeat new password",
                             text = newPassRepeat.value,
                             onTextChanged = {
                                 changeMasterPasswordViewModel.newPasswordRepeated.value = it
                             },
-                            isEnabled = !screenState.isLoading
+                            isEnabled = !screenState.isLoading,
+                            testTag = TestTags.ChangePassword.NEW_PASSWORD_REPEATED_TEXT_FIELD.name
                         )
                     }
                 )
@@ -314,12 +317,13 @@ object ChangeMasterPasswordScreen {
                     content = {
                         @Composable
                         fun RowScope.CustomButton(
+                            modifier: Modifier = Modifier,
                             isPrimary: Boolean,
                             text: String,
                             onClick: () -> Unit
                         ) {
                             Box(
-                                modifier = Modifier
+                                modifier = modifier
                                     .setSizeLimitation()
                                     .weight(weight = 1f)
                                     .clip(shape = RoundedCornerShape(size = corners))
@@ -357,6 +361,7 @@ object ChangeMasterPasswordScreen {
                             onClick = navigateUp
                         )
                         CustomButton(
+                            modifier = Modifier.applyTag(testTag = TestTags.ChangePassword.CONFIRM_BUTTON.name),
                             isPrimary = true,
                             text = "Confirm",
                             onClick = {
@@ -384,14 +389,17 @@ object ChangeMasterPasswordScreen {
         label: String,
         text: String,
         onTextChanged: (String) -> Unit,
-        isEnabled: Boolean
+        isEnabled: Boolean,
+        testTag: String,
     ) {
         Box(
             modifier = modifier,
             contentAlignment = Alignment.Center,
             content = {
                 TextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .applyTag(testTag = testTag)
+                        .fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = false,
                         keyboardType = KeyboardType.Password

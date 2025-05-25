@@ -189,13 +189,12 @@ object SettingsScreen {
                     }
                 )
                 ActionCard(
-                    modifier = Modifier
-                        .applyTag(testTag = TestTags.Settings.CHANGE_PASSWORD_BUTTON.name)
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     titleText = "Change password?",
                     contentText = CHANGE_PASSWORD_DESCRIPTION,
                     buttonText = "Change Password",
-                    onClick = toChangePasswordScreen
+                    onClick = toChangePasswordScreen,
+                    testTag = TestTags.Settings.CHANGE_PASSWORD_BUTTON.name
                 )
                 val logoutState = settingsViewModel.logoutScreenState.collectAsState()
                 val context = LocalContext.current
@@ -215,23 +214,21 @@ object SettingsScreen {
                     }
                 )
                 ActionCard(
-                    modifier = Modifier
-                        .applyTag(testTag = TestTags.Settings.LOG_OUT.name)
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     titleText = "Log out?",
                     contentText = LOG_OUT_DESCRIPTION,
                     buttonText = "Log out",
                     onClick = settingsViewModel::logout,
-                    isLoading = logoutState.value.isLoading
+                    isLoading = logoutState.value.isLoading,
+                    testTag = TestTags.Settings.LOG_OUT.name
                 )
                 ActionCard(
-                    modifier = Modifier
-                        .applyTag(testTag = TestTags.Settings.RESET_ACCOUNT_BUTTON.name)
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     titleText = "Reset account?",
                     contentText = RESET_DESCRIPTION,
                     buttonText = "Reset account",
-                    onClick = { settingsViewModel.setResetConfirmationDialogVisibility(visible = true) }
+                    onClick = { settingsViewModel.setResetConfirmationDialogVisibility(visible = true) },
+                    testTag = TestTags.Settings.RESET_ACCOUNT_BUTTON.name
                 )
                 Spacer(
                     modifier = Modifier
@@ -311,7 +308,8 @@ object SettingsScreen {
         contentText: String,
         buttonText: String,
         onClick: () -> Unit,
-        isLoading: Boolean = false
+        isLoading: Boolean = false,
+        testTag: String
     ) {
         PasswordEditScreen.DefaultCard(
             modifier = modifier,
@@ -339,6 +337,7 @@ object SettingsScreen {
                 )
                 Box(
                     modifier = Modifier
+                        .applyTag(testTag = testTag)
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                         .setSizeLimitation()
                         .clip(shape = RoundedCornerShape(size = 12.dp))

@@ -127,14 +127,19 @@ class ChangeMasterPasswordViewModel @Inject constructor(
 
             ReEncryptionStates.LOCAL_PASSWORD_DATABASE -> {
                 val oldList = passwordDao.getAll()
-                val newList = oldList.map { oldPass ->
-                    oldPass.copy(
-                        data = this._newCryptoHandler!!.encryptPasswordData(
-                            passwordData = this._oldCryptoHandler!!.decryptPasswordData(
-                                passwordData = oldPass.data
+                val newList = oldList.mapNotNull { oldPass ->
+                    try {
+                        oldPass.copy(
+                            data = this._newCryptoHandler!!.encryptPasswordData(
+                                passwordData = this._oldCryptoHandler!!.decryptPasswordData(
+                                    passwordData = oldPass.data
+                                )
                             )
                         )
-                    )
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        null
+                    }
                 }
                 newList.forEach { passwordDao.upsert(passwordCapsule = it) }
             }
