@@ -61,6 +61,8 @@ import easter.egg.passmark.ui.main.settings.SettingsScreen
 import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 import kotlinx.coroutines.delay
@@ -206,11 +208,15 @@ object ChangeMasterPasswordScreen {
                     }
                 )
 
+                val textFieldModifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 60.dp)
                 Box(
                     modifier = cardModifier,
                     contentAlignment = Alignment.Center,
                     content = {
                         PasswordTextField(
+                            modifier = textFieldModifier.applyTag(testTag = TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name),
                             label = "Enter current password",
                             text = oldPass.value,
                             onTextChanged = {
@@ -273,6 +279,7 @@ object ChangeMasterPasswordScreen {
                     verticalArrangement = Arrangement.Center,
                     content = {
                         PasswordTextField(
+                            modifier = textFieldModifier.applyTag(testTag = TestTags.ChangePassword.NEW_PASSWORD_TEXT_FIELD.name),
                             label = "Enter new password",
                             text = newPass.value,
                             onTextChanged = {
@@ -286,6 +293,7 @@ object ChangeMasterPasswordScreen {
                             color = MaterialTheme.colorScheme.surfaceContainerHighest
                         )
                         PasswordTextField(
+                            modifier = textFieldModifier.applyTag(testTag = TestTags.ChangePassword.NEW_PASSWORD_REPEATED_TEXT_FIELD.name),
                             label = "Repeat new password",
                             text = newPassRepeat.value,
                             onTextChanged = {
@@ -372,15 +380,14 @@ object ChangeMasterPasswordScreen {
 
     @Composable
     private fun PasswordTextField(
+        modifier: Modifier,
         label: String,
         text: String,
         onTextChanged: (String) -> Unit,
         isEnabled: Boolean
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 60.dp),
+            modifier = modifier,
             contentAlignment = Alignment.Center,
             content = {
                 TextField(

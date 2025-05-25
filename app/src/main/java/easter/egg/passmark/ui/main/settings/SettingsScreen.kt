@@ -45,6 +45,8 @@ import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.extensions.customTopBarModifier
+import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -187,7 +189,9 @@ object SettingsScreen {
                     }
                 )
                 ActionCard(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .applyTag(testTag = TestTags.Settings.CHANGE_PASSWORD_BUTTON.name)
+                        .fillMaxWidth(),
                     titleText = "Change password?",
                     contentText = CHANGE_PASSWORD_DESCRIPTION,
                     buttonText = "Change Password",
@@ -211,7 +215,9 @@ object SettingsScreen {
                     }
                 )
                 ActionCard(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .applyTag(testTag = TestTags.Settings.LOG_OUT.name)
+                        .fillMaxWidth(),
                     titleText = "Log out?",
                     contentText = LOG_OUT_DESCRIPTION,
                     buttonText = "Log out",
@@ -219,7 +225,9 @@ object SettingsScreen {
                     isLoading = logoutState.value.isLoading
                 )
                 ActionCard(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .applyTag(testTag = TestTags.Settings.RESET_ACCOUNT_BUTTON.name)
+                        .fillMaxWidth(),
                     titleText = "Reset account?",
                     contentText = RESET_DESCRIPTION,
                     buttonText = "Reset account",

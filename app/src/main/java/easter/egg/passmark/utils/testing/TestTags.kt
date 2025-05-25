@@ -11,6 +11,7 @@ object TestTags {
         .testTag(tag = testTag)
         .semantics { this.contentDescription = testTag }
 
+    // TODO: use a function instead of delay for consistency
     const val TIME_OUT = 2000L // TODO: remove in production
 
     enum class Login {
@@ -33,7 +34,8 @@ object TestTags {
 
         enum class Drawer {
             TOP_TITLE,
-            CREATE_NEW_VAULT_BUTTON;
+            CREATE_NEW_VAULT_BUTTON,
+            SETTINGS;
 
             enum class VaultDialog {
                 TEXT_FIELD,
@@ -71,4 +73,17 @@ object TestTags {
     }
 
     enum class ConfirmationDialog { POSITIVE_BUTTON }
+
+    enum class Settings {
+        RESET_ACCOUNT_BUTTON,
+        CHANGE_PASSWORD_BUTTON,
+        LOG_OUT
+    }
+
+    enum class ChangePassword {
+        ORIGINAL_PASSWORD_TEXT_FIELD,
+        NEW_PASSWORD_TEXT_FIELD,
+        NEW_PASSWORD_REPEATED_TEXT_FIELD,
+        CONFIRM_BUTTON
+    }
 }
