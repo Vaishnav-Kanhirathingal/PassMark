@@ -16,7 +16,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class UserInteractionTest {
+class ActionAutomatorTest {
     companion object {
         const val SMALL_ANIMATION_DELAY = 1_000L
 
