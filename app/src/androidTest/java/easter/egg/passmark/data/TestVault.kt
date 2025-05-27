@@ -5,13 +5,13 @@ data class TestVault(
     val iconIndex: Int
 ) {
     companion object {
-        const val SOCIAL_MEDIA_ROUTINE = "Social"
-        const val WORK_ROUTINE = "Work"
-        const val FINANCE_ROUTINE = "Finance"
+        const val SOCIAL_MEDIA_VAULT = "Social"
+        const val WORK_VAULT = "Work"
+        const val FINANCE_VAULT = "Finance"
         val vaultTestList = listOf(
-            TestVault(name = SOCIAL_MEDIA_ROUTINE, iconIndex = 3),
-            TestVault(name = WORK_ROUTINE, iconIndex = 2),
-            TestVault(name = FINANCE_ROUTINE, iconIndex = 4),
+            TestVault(name = SOCIAL_MEDIA_VAULT, iconIndex = 3),
+            TestVault(name = WORK_VAULT, iconIndex = 2),
+            TestVault(name = FINANCE_VAULT, iconIndex = 4),
         )
     }
 }

@@ -32,7 +32,7 @@ data class TestPasswordData(
                 useFingerprint = true,
             ),
             TestPasswordData(
-                vault = TestVault.SOCIAL_MEDIA_ROUTINE,
+                vault = TestVault.SOCIAL_MEDIA_VAULT,
                 title = "FaceBook",
                 email = EMAIL,
                 userName = "john_d",
@@ -42,7 +42,7 @@ data class TestPasswordData(
                 useFingerprint = false,
             ),
             TestPasswordData(
-                vault = TestVault.SOCIAL_MEDIA_ROUTINE,
+                vault = TestVault.SOCIAL_MEDIA_VAULT,
                 title = "Instagram",
                 email = EMAIL,
                 userName = "j_doe",
@@ -52,7 +52,7 @@ data class TestPasswordData(
                 useFingerprint = false,
             ),
             TestPasswordData(
-                vault = TestVault.WORK_ROUTINE,
+                vault = TestVault.WORK_VAULT,
                 title = "LinkedIn",
                 email = EMAIL,
                 userName = "John Marksman Doe",
@@ -62,7 +62,7 @@ data class TestPasswordData(
                 useFingerprint = true,
             ),
             TestPasswordData(
-                vault = TestVault.WORK_ROUTINE,
+                vault = TestVault.WORK_VAULT,
                 title = "Git-Hub",
                 email = EMAIL,
                 userName = "j_d_112",
@@ -72,7 +72,7 @@ data class TestPasswordData(
                 useFingerprint = true,
             ),
             TestPasswordData(
-                vault = TestVault.WORK_ROUTINE,
+                vault = TestVault.WORK_VAULT,
                 title = "Email",
                 email = WORK_EMAIL,
                 userName = "Dr. John Doe",
@@ -92,7 +92,7 @@ data class TestPasswordData(
                 useFingerprint = false,
             ),
             TestPasswordData(
-                vault = TestVault.FINANCE_ROUTINE,
+                vault = TestVault.FINANCE_VAULT,
                 title = "RBI",
                 email = EMAIL,
                 userName = "Mr. John Doe",
