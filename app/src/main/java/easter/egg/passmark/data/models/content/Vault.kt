@@ -3,9 +3,9 @@ package easter.egg.passmark.data.models.content
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.DirectionsBike
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Apartment
+import androidx.compose.material.icons.filled.Games
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Handshake
 import androidx.compose.material.icons.filled.Lock
@@ -43,7 +43,7 @@ data class Vault(
             Icons.Default.Lock,
             Icons.Default.Star,
             Icons.Default.SensorOccupied,
-            Icons.AutoMirrored.Filled.DirectionsBike
+            Icons.Default.Games
         )
 
         const val VAULT_NAME_FOR_ALL_ITEMS = "All items"
