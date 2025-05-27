@@ -54,16 +54,16 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
-    @Before
-    fun startRecording() {
-        val command = "screenrecord /sdcard/test.mp4"
-        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command)
-    }
-
-    @After
-    fun stopRecording() {
-        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("pkill -l2 screenrecord")
-    }
+//    @Before
+//    fun startRecording() {
+//        val command = "screenrecord /sdcard/test.mp4"
+//        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command)
+//    }
+//
+//    @After
+//    fun stopRecording() {
+//        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("pkill -l2 screenrecord")
+//    }
 
     //---------------------------------------------------------------------------------------utility
     private fun findObject(testTag: String): UiObject2 {
@@ -98,7 +98,7 @@ class ActionAutomatorTest {
     private fun selectGoogleAccount() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         findObject(TestTags.Login.GOOGLE_BUTTON.name).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        Thread.sleep(NAVIGATION_DELAY)
         device.findObject(By.text("vaishnav.kanhira@gmail.com")).click()
         Thread.sleep(INITIAL_LOADING_SCREEN_DELAY)
 
@@ -201,14 +201,15 @@ class ActionAutomatorTest {
     private fun viewAndDeletePassword(passwordName: String) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         findObject(testTag = TestTags.Home.getPasswordTag(name = passwordName)).click()
+        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
 
-        // TODO: fingerprint requirement
+        device.wait(Until.hasObject(By.desc(TestTags.ViewPassword.FINGERPRINT_BUTTON.name)), 3_000)
+        findObject(testTag = TestTags.ViewPassword.FINGERPRINT_BUTTON.name).click()
+        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
 
-        Thread.sleep(NAVIGATION_DELAY)
-        UiScrollable(UiSelector().scrollable(true)).scrollIntoView(UiSelector().description(TestTags.ViewPassword.DELETE_BUTTON.name))
+        UiScrollable(UiSelector().scrollable(true)).scrollToEnd(1)
 
-        device.wait(Until.hasObject(By.desc(TestTags.ViewPassword.DELETE_BUTTON.name)), 2_000)
-
+        device.wait(Until.hasObject(By.desc(TestTags.ViewPassword.DELETE_BUTTON.name)),3_000)
         findObject(testTag = TestTags.ViewPassword.DELETE_BUTTON.name).click()
         Thread.sleep(SMALL_ANIMATION_DELAY)
         findObject(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name).click()
@@ -312,13 +313,13 @@ class ActionAutomatorTest {
 //        drawerFunctionality(toOpen = true)
 //        createVault(testVault = TestingObjects.testVault)
 //        drawerFunctionality(toOpen = false)
-//        createPassword(testPasswordData = TestingObjects.testPasswordData)
-//        viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
+        createPassword(testPasswordData = TestingObjects.testPasswordData)
+        viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
 
 //        sortPasswordList()
 //        search()
-        filterUsingVault()
-
+//        filterUsingVault()
+//
 //        changePassword(
 //            oldPassword = MasterPasswords.OLD_PASSWORD,
 //            newPassword = MasterPasswords.NEW_PASSWORD
