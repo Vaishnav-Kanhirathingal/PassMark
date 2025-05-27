@@ -11,12 +11,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 object TestTags {
-    // TODO: remove this
+    // TODO: remove this after testing
     fun Modifier.applyTag(testTag: String): Modifier = this
         .testTag(tag = testTag)
         .semantics { this.contentDescription = testTag }
 
-    // TODO: use a function instead of delay for consistency
     const val TIME_OUT = 2000L // TODO: remove in production
 
     // TODO: remove this after testing
