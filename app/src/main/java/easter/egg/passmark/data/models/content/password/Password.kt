@@ -1,5 +1,6 @@
 package easter.egg.passmark.data.models.content.password
 
+import easter.egg.passmark.data.models.content.password.sensitive.PasswordHistory
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 
 // TODO: rename to PasswordData
@@ -39,6 +40,13 @@ data class Password(
             lastUsed = lastUsed,
             lastModified = lastModified,
             usedCount = usedCount,
+        )
+    }
+
+    fun currentPasswordAsPasswordHistory(): PasswordHistory {
+        return PasswordHistory(
+            password = this.data.password,
+            discardedOn = System.currentTimeMillis()
         )
     }
 }
