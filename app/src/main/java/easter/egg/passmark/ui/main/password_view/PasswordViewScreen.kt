@@ -340,7 +340,8 @@ object PasswordViewScreen {
                                     endIconOnClick = {
                                         if (accessGranted.value) copy(str = password.data.password)
                                         else showBiometricPrompt()
-                                    }
+                                    },
+                                    endIconTestTag = TestTags.ViewPassword.FINGERPRINT_BUTTON.name
                                 )
                             }
                         )
@@ -652,7 +653,8 @@ object PasswordViewScreen {
         fieldText: String,
         endIcon: ImageVector? = null,
         endIconOnClick: (() -> Unit)? = null,
-        singleLine: Boolean = true
+        singleLine: Boolean = true,
+        endIconTestTag: String? = null
     ) {
         ConstraintLayout(
             modifier = modifier
@@ -721,17 +723,19 @@ object PasswordViewScreen {
                 )
                 createVerticalChain(titleRef, contentRef, chainStyle = ChainStyle.Packed)
                 IconButton(
-                    modifier = Modifier.constrainAs(
-                        ref = endIconRef,
-                        constrainBlock = {
-                            this.top.linkTo(parent.top)
-                            this.end.linkTo(anchor = parent.end, margin = 4.dp)
-                            this.bottom.linkTo(parent.bottom)
-                            visibility =
-                                if (endIcon == null) Visibility.Gone
-                                else Visibility.Visible
-                        }
-                    ),
+                    modifier = Modifier
+                        .let { if (endIconTestTag == null) it else it.applyTag(testTag = endIconTestTag) }
+                        .constrainAs(
+                            ref = endIconRef,
+                            constrainBlock = {
+                                this.top.linkTo(parent.top)
+                                this.end.linkTo(anchor = parent.end, margin = 4.dp)
+                                this.bottom.linkTo(parent.bottom)
+                                visibility =
+                                    if (endIcon == null) Visibility.Gone
+                                    else Visibility.Visible
+                            }
+                        ),
                     onClick = { endIconOnClick?.invoke() },
                     content = {
                         endIcon?.let {

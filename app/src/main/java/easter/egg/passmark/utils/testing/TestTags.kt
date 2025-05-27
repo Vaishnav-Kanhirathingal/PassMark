@@ -4,6 +4,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import easter.egg.passmark.data.models.content.password.PasswordSortingOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -38,8 +39,26 @@ object TestTags {
     }
 
     enum class Home {
-        CREATE_NEW_PASSWORD_BUTTON,
-        OPEN_DRAWER_BUTTON;
+        CREATE_NEW_PASSWORD_BUTTON;
+
+        enum class TopBar{
+            SORTING_BUTTON,
+            SEARCH_BUTTON,
+            SEARCH_TEXT_FIELD,
+            BACK_BUTTON,
+            OPEN_DRAWER_BUTTON;
+        }
+
+        enum class Sorting {
+            INCREASING_ORDER,
+            DECREASING_ORDER;
+
+            companion object {
+                fun getSortOptionTag(passwordSortingOptions: PasswordSortingOptions): String {
+                    return passwordSortingOptions.name
+                }
+            }
+        }
 
         companion object {
             fun getPasswordTag(name: String): String = "$name password"
@@ -82,6 +101,7 @@ object TestTags {
     }
 
     enum class ViewPassword {
+        FINGERPRINT_BUTTON,
         DELETE_BUTTON,
     }
 

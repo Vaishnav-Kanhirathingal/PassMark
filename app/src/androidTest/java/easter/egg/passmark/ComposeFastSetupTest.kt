@@ -125,7 +125,7 @@ class ComposeFastSetupTest {
     fun loginAndSavePasswordsAndVaults() {
         this.createANewUser()
         composeRule
-            .onNodeWithTag(testTag = TestTags.Home.OPEN_DRAWER_BUTTON.name)
+            .onNodeWithTag(testTag = TestTags.Home.TopBar.OPEN_DRAWER_BUTTON.name)
             .performClick()
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.Drawer.TOP_TITLE.name))
 

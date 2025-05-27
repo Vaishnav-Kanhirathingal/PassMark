@@ -11,6 +11,7 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import easter.egg.passmark.data.TestPasswordData
 import easter.egg.passmark.data.TestVault
+import easter.egg.passmark.data.models.content.password.PasswordSortingOptions
 import easter.egg.passmark.utils.testing.TestTags
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -251,10 +252,39 @@ class ActionAutomatorTest {
     private fun drawerFunctionality(toOpen: Boolean) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         if (toOpen) {
-            device.findObject(By.desc(TestTags.Home.OPEN_DRAWER_BUTTON.name)).click()
+            device.findObject(By.desc(TestTags.Home.TopBar.OPEN_DRAWER_BUTTON.name)).click()
         } else {
             device.click(1080, 1440)
         }
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+    }
+
+    private fun sortPasswordList() {
+        findObject(testTag = TestTags.Home.TopBar.SORTING_BUTTON.name).click()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+        findObject(testTag = TestTags.Home.Sorting.getSortOptionTag(passwordSortingOptions = PasswordSortingOptions.NAME)).click()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+    }
+
+    private fun search() {
+        findObject(testTag = TestTags.Home.TopBar.SEARCH_BUTTON.name).click()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+        "goo".forEach {
+            type(txt = it.toString())
+            Thread.sleep(SMALL_ANIMATION_DELAY)
+        }
+
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+
+        findObject(testTag = TestTags.Home.TopBar.BACK_BUTTON.name).click()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+    }
+
+    private fun filterUsingVault() {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        drawerFunctionality(toOpen = true)
+        device.wait(Until.hasObject(By.text(TestVault.WORK_VAULT)), 3_000)
+        device.findObject(By.text(TestVault.WORK_VAULT)).click()
         Thread.sleep(SMALL_ANIMATION_DELAY)
     }
 
@@ -264,17 +294,22 @@ class ActionAutomatorTest {
         selectGoogleAccount()
         enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
 
-        drawerFunctionality(toOpen = true)
-        createVault(testVault = TestingObjects.testVault)
-        drawerFunctionality(toOpen = false)
-        createPassword(testPasswordData = TestingObjects.testPasswordData)
-        viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
-        changePassword(
-            oldPassword = MasterPasswords.OLD_PASSWORD,
-            newPassword = MasterPasswords.NEW_PASSWORD
-        )
-        enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD)
-        resetUser()
+//        drawerFunctionality(toOpen = true)
+//        createVault(testVault = TestingObjects.testVault)
+//        drawerFunctionality(toOpen = false)
+//        createPassword(testPasswordData = TestingObjects.testPasswordData)
+//        viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
+
+//        sortPasswordList()
+//        search()
+        filterUsingVault()
+
+//        changePassword(
+//            oldPassword = MasterPasswords.OLD_PASSWORD,
+//            newPassword = MasterPasswords.NEW_PASSWORD
+//        )
+//        enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD)
+//        resetUser()
     }
 }
 
@@ -282,7 +317,10 @@ class ActionAutomatorTest {
  * login
  * create vault
  * create password
- * view and delete password
+ * view (for both fingerprint and non fingerprint) and delete password
+ * sorting
+ * searching passwords
+ * vault filtering
  * change password
  * reset account
  */

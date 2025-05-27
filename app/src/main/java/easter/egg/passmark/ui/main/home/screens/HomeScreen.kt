@@ -59,7 +59,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -308,7 +307,7 @@ object HomeScreen {
                 if (searchText == null) {
                     Box(
                         modifier = Modifier
-                            .applyTag(testTag = TestTags.Home.OPEN_DRAWER_BUTTON.name)
+                            .applyTag(testTag = TestTags.Home.TopBar.OPEN_DRAWER_BUTTON.name)
                             .size(size = componentHeight)
                             .clip(shape = CircleShape)
                             .background(color = MaterialTheme.colorScheme.primaryContainer)
@@ -324,6 +323,7 @@ object HomeScreen {
                     )
                     Row(
                         modifier = Modifier
+                            .applyTag(testTag = TestTags.Home.TopBar.SEARCH_BUTTON.name)
                             .height(height = componentHeight)
                             .weight(1f)
                             .padding(horizontal = 8.dp)
@@ -358,6 +358,7 @@ object HomeScreen {
                 } else {
                     Box(
                         modifier = Modifier
+                            .applyTag(testTag = TestTags.Home.TopBar.BACK_BUTTON.name)
                             .size(size = componentHeight)
                             .clip(shape = CircleShape)
                             .background(color = MaterialTheme.colorScheme.primaryContainer)
@@ -373,6 +374,7 @@ object HomeScreen {
                     )
                     BasicTextField(
                         modifier = Modifier
+                            .applyTag(testTag = TestTags.Home.TopBar.SEARCH_TEXT_FIELD.name)
                             .weight(1f)
                             .heightIn(min = PassMarkDimensions.minTouchSize)
                             .focusRequester(focusRequester = focusRequester),
@@ -408,6 +410,7 @@ object HomeScreen {
 
                 ConstraintLayout(
                     modifier = Modifier
+                        .applyTag(testTag = TestTags.Home.TopBar.SORTING_BUTTON.name)
                         .size(size = componentHeight)
                         .clip(shape = CircleShape)
                         .clickable(onClick = { showSortMenu.value = true }),
@@ -464,6 +467,11 @@ object HomeScreen {
                                         fun SortButton(forAscending: Boolean) {
                                             Box(
                                                 modifier = Modifier
+                                                    .applyTag(
+                                                        testTag =
+                                                            if (forAscending) TestTags.Home.Sorting.INCREASING_ORDER.name
+                                                            else TestTags.Home.Sorting.DECREASING_ORDER.name
+                                                    )
                                                     .setSizeLimitation()
                                                     .weight(1f)
                                                     .background(
@@ -495,6 +503,11 @@ object HomeScreen {
                                 )
                                 PasswordSortingOptions.entries.forEach { passwordSortingOptions: PasswordSortingOptions ->
                                     DropdownMenuItem(
+                                        modifier = Modifier.applyTag(
+                                            testTag = TestTags.Home.Sorting.getSortOptionTag(
+                                                passwordSortingOptions = passwordSortingOptions
+                                            )
+                                        ),
                                         text = { Text(text = passwordSortingOptions.getMenuDisplayText()) },
                                         onClick = {
                                             selectPasswordSortingOption(passwordSortingOptions)
