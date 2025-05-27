@@ -13,6 +13,8 @@ import easter.egg.passmark.data.TestPasswordData
 import easter.egg.passmark.data.TestVault
 import easter.egg.passmark.data.models.content.password.PasswordSortingOptions
 import easter.egg.passmark.utils.testing.TestTags
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -48,6 +50,19 @@ class ActionAutomatorTest {
             useFingerprint = true,
             useLocalStorage = true
         )
+    }
+
+    //-------------------------------------------------------------------------------------recording
+
+    @Before
+    fun startRecording() {
+        val command = "screenrecord /sdcard/test.mp4"
+        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command)
+    }
+
+    @After
+    fun stopRecording() {
+        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("pkill -l2 screenrecord")
     }
 
     //---------------------------------------------------------------------------------------utility
