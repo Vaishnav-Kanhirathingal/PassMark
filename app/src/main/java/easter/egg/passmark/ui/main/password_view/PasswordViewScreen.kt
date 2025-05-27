@@ -371,13 +371,7 @@ object PasswordViewScreen {
                                         else showBiometricPrompt(forHistory = false)
                                     },
                                     endIconTestTag = TestTags.ViewPassword.FINGERPRINT_BUTTON.name,
-                                    onShowPasswordHistory = if (password.data.passwordHistory.isEmpty()) {
-                                        null
-                                    } else {
-                                        {
-                                            showBiometricPrompt(forHistory = true)
-                                        }
-                                    }
+                                    onShowPasswordHistory = { showBiometricPrompt(forHistory = true) }
                                 )
                             }
                         )
