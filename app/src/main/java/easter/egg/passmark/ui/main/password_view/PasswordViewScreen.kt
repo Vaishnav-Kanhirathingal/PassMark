@@ -783,7 +783,10 @@ object PasswordViewScreen {
                     verticalArrangement = Arrangement.Top,
                     content = {
                         Text(
-                            modifier = Modifier.padding(all = 12.dp),
+                            modifier = Modifier.padding(
+                                top = 8.dp,
+                                bottom = 16.dp
+                            ),
                             text = "Password History",
                             fontFamily = PassMarkFonts.font,
                             fontWeight = FontWeight.Bold,
@@ -803,61 +806,9 @@ object PasswordViewScreen {
                                 itemsIndexed(
                                     items = passwordHistory,
                                     itemContent = { index, item ->
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .background(
-                                                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                                    shape = RoundedCornerShape(size = 8.dp)
-                                                )
-                                                .border(
-                                                    width = 1.dp,
-                                                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                                    shape = RoundedCornerShape(size = 8.dp)
-                                                )
-                                                .padding(all = 4.dp),
-                                            horizontalArrangement = Arrangement.Center,
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            content = {
-                                                Column(
-                                                    modifier = Modifier
-                                                        .weight(weight = 1f)
-                                                        .padding(start = 12.dp),
-                                                    verticalArrangement = Arrangement.Top,
-                                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                                    content = {
-                                                        val color =
-                                                            if (index == 0) MaterialTheme.colorScheme.onSurface
-                                                            else MaterialTheme.colorScheme.onSurfaceVariant
-                                                        Text(
-                                                            modifier = Modifier.fillMaxWidth(),
-                                                            text = "${item.password}${if (index == 0) " [current]" else ""}",
-                                                            fontFamily = PassMarkFonts.font,
-                                                            fontWeight = FontWeight.SemiBold,
-                                                            fontSize = PassMarkFonts.Title.medium,
-                                                            color = color
-                                                        )
-                                                        Text(
-                                                            modifier = Modifier.fillMaxWidth(),
-                                                            text = item.discardedOn.formatToTime(),
-                                                            fontFamily = PassMarkFonts.font,
-                                                            fontWeight = FontWeight.Medium,
-                                                            fontSize = PassMarkFonts.Body.medium,
-                                                            color = color
-                                                        )
-                                                    }
-                                                )
-                                                IconButton(
-                                                    modifier = Modifier.setSizeLimitation(),
-                                                    onClick = { TODO() },
-                                                    content = {
-                                                        Icon(
-                                                            imageVector = Icons.Default.ContentCopy,
-                                                            contentDescription = null
-                                                        )
-                                                    }
-                                                )
-                                            }
+                                        PasswordHistoryListItem(
+                                            passwordHistory = item,
+                                            isCurrent = (index == 0)
                                         )
                                     }
                                 )
@@ -869,6 +820,75 @@ object PasswordViewScreen {
         )
     }
 
+    @Composable
+    private fun PasswordHistoryListItem(
+        passwordHistory: PasswordHistory,
+        isCurrent: Boolean
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    shape = RoundedCornerShape(size = 8.dp)
+                )
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    shape = RoundedCornerShape(size = 8.dp)
+                )
+                .padding(all = 4.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            content = {
+                Column(
+                    modifier = Modifier
+                        .weight(weight = 1f)
+                        .padding(start = 12.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    content = {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = "${passwordHistory.password}${if (isCurrent) " (current)" else ""}",
+                            fontFamily = PassMarkFonts.font,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = PassMarkFonts.Title.medium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = passwordHistory.discardedOn.formatToTime(),
+                            fontFamily = PassMarkFonts.font,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = PassMarkFonts.Body.medium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+                val clipboardManager = LocalClipboardManager.current
+                val context = LocalContext.current
+                IconButton(
+                    modifier = Modifier.setSizeLimitation(),
+                    onClick = {
+                        copyToClipBoard(
+                            clipboardManager = clipboardManager,
+                            context = context,
+                            str = passwordHistory.password
+                        )
+                    },
+                    content = {
+                        Icon(
+                            imageVector = Icons.Default.ContentCopy,
+                            contentDescription = null
+                        )
+                    }
+                )
+            }
+        )
+
+    }
+
     private fun copyToClipBoard(
         clipboardManager: ClipboardManager,
         context: Context,
@@ -876,13 +896,7 @@ object PasswordViewScreen {
     ) {
         clipboardManager.setText(AnnotatedString(text = str))
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            Toast
-                .makeText(
-                    context,
-                    "Text copied to clipboard",
-                    Toast.LENGTH_LONG
-                )
-                .show()
+            Toast.makeText(context, "Text copied to clipboard", Toast.LENGTH_LONG).show()
         } else {
             Log.d(TAG, "system has it's own toast")
         }
