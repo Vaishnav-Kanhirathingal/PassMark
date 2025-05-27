@@ -723,8 +723,7 @@ object PasswordViewScreen {
                 )
                 createVerticalChain(titleRef, contentRef, chainStyle = ChainStyle.Packed)
                 IconButton(
-                    modifier = Modifier
-                        .let { if (endIconTestTag == null) it else it.applyTag(testTag = endIconTestTag) }
+                    modifier = (if (endIconTestTag == null) Modifier else Modifier.applyTag(testTag = endIconTestTag))
                         .constrainAs(
                             ref = endIconRef,
                             constrainBlock = {
