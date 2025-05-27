@@ -54,16 +54,16 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
-//    @Before
-//    fun startRecording() {
-//        val command = "screenrecord /sdcard/test.mp4"
-//        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command)
-//    }
-//
-//    @After
-//    fun stopRecording() {
-//        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("pkill -l2 screenrecord")
-//    }
+    @Before
+    fun startRecording() {
+        val command = "screenrecord /sdcard/TestRecordings/test.mp4"
+        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command)
+    }
+
+    @After
+    fun stopRecording() {
+        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("pkill -l2 screenrecord")
+    }
 
     //---------------------------------------------------------------------------------------utility
     private fun findObject(testTag: String): UiObject2 {
@@ -209,7 +209,7 @@ class ActionAutomatorTest {
 
         UiScrollable(UiSelector().scrollable(true)).scrollToEnd(1)
 
-        device.wait(Until.hasObject(By.desc(TestTags.ViewPassword.DELETE_BUTTON.name)),3_000)
+        device.wait(Until.hasObject(By.desc(TestTags.ViewPassword.DELETE_BUTTON.name)), 3_000)
         findObject(testTag = TestTags.ViewPassword.DELETE_BUTTON.name).click()
         Thread.sleep(SMALL_ANIMATION_DELAY)
         findObject(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name).click()
@@ -310,22 +310,23 @@ class ActionAutomatorTest {
         selectGoogleAccount()
         enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
 
-//        drawerFunctionality(toOpen = true)
-//        createVault(testVault = TestingObjects.testVault)
-//        drawerFunctionality(toOpen = false)
+        drawerFunctionality(toOpen = true)
+        createVault(testVault = TestingObjects.testVault)
+        drawerFunctionality(toOpen = false)
+
         createPassword(testPasswordData = TestingObjects.testPasswordData)
         viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
 
-//        sortPasswordList()
-//        search()
-//        filterUsingVault()
-//
-//        changePassword(
-//            oldPassword = MasterPasswords.OLD_PASSWORD,
-//            newPassword = MasterPasswords.NEW_PASSWORD
-//        )
-//        enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD)
-//        resetUser()
+        sortPasswordList()
+        search()
+        filterUsingVault()
+
+        changePassword(
+            oldPassword = MasterPasswords.OLD_PASSWORD,
+            newPassword = MasterPasswords.NEW_PASSWORD
+        )
+        enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD)
+        resetUser()
     }
 }
 
