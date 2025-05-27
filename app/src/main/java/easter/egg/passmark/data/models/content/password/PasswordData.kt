@@ -1,5 +1,7 @@
 package easter.egg.passmark.data.models.content.password
 
+// TODO: rename to sensitive components
+// TODO: add password history
 /** sensitive content inside the password data */
 data class PasswordData(
     val title: String,
@@ -8,8 +10,22 @@ data class PasswordData(
     val password: String,
     val website: String?,
     val notes: String?,
-    val useFingerPrint: Boolean
+    val useFingerPrint: Boolean,
 ) {
+    companion object {
+        val testData = PasswordData(
+            title = "Google",
+            email = "someone@gmail.com",
+            userName = "some_user",
+            password = "Some password",
+            website = "www.somewebsite.com",
+            useFingerPrint = true,
+            notes = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sodales " +
+                    "velit in nisi ornare posuere. Donec nec lectus nisi. Praesent quis " +
+                    "tristique nisi. Aenean ac pulvinar nisl. Nunc non luctus dolor.",
+        )
+    }
+
     fun getSubTitle(): String? =
         listOf(email, userName, website).firstOrNull { !it.isNullOrBlank() }
 

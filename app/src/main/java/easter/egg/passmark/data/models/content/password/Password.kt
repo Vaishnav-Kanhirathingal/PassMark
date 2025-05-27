@@ -2,19 +2,31 @@ package easter.egg.passmark.data.models.content.password
 
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 
+// TODO: rename to PasswordData
 /** to be used to display stuff and only to be stored in memory */
 data class Password(
     val localId: Int?,
     val cloudId: Int?,
     val vaultId: Int? = null,
     val data: PasswordData,
-//    val userId: String,
-
     val created: Long,
     val lastUsed: Long,
     val lastModified: Long,
     val usedCount: Int
 ) {
+    companion object {
+        private val now = System.currentTimeMillis()
+        val testPassword = Password(
+            localId = null,
+            cloudId = 0,
+            data = PasswordData.testData,
+            created = now,
+            lastUsed = now,
+            lastModified = now,
+            usedCount = 0,
+        )
+    }
+
     fun toPasswordCapsule(
         passwordCryptographyHandler: PasswordCryptographyHandler,
     ): PasswordCapsule {
@@ -27,7 +39,6 @@ data class Password(
             lastUsed = lastUsed,
             lastModified = lastModified,
             usedCount = usedCount,
-//            userId = userId
         )
     }
 }
