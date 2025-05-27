@@ -24,6 +24,15 @@ change your phone's system color and the app would match it. Assuming dynamic co
 <img src="https://github.com/user-attachments/assets/b2682e4f-7f1c-422c-baec-fe2b4f2a17e7" alt="Empty home screenshot" width="273">
 <img src="https://github.com/user-attachments/assets/3ff6ce6e-e217-48a0-be28-120404d37732" alt="Empty home screenshot" width="273">
 
+
+## Full Flow -
+
+the below video contains majority of the actions documented. Refer the documentation section for deeper details
+
+Timeline - 
+
+> TODO
+
 ## Documentation
 
 below is a step-by-step guide for everything
