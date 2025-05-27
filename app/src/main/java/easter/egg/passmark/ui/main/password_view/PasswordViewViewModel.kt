@@ -53,6 +53,9 @@ class PasswordViewViewModel @Inject constructor(
         }
     }
 
+    private var _lastUpdatedTimeBeforeCall: Long? = null
+    val lastUpdatedTimeBeforeCall: Long? get() = _lastUpdatedTimeBeforeCall
+
     private var _updated = false
     suspend fun updateUsageStats(
         password: Password,
@@ -62,6 +65,7 @@ class PasswordViewViewModel @Inject constructor(
         if (_updated) {
             Log.d(TAG, "usage has been updated")
         } else {
+            this._lastUpdatedTimeBeforeCall = password.lastUsed
             val now = System.currentTimeMillis()
             try {
                 val newPassword: Password = when {

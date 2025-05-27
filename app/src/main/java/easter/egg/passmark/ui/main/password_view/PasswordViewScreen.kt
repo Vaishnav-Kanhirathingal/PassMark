@@ -97,7 +97,6 @@ import java.time.ZoneId
 object PasswordViewScreen {
     private val TAG = this::class.simpleName
 
-    // TODO: fix last used time being displayed
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -172,6 +171,7 @@ object PasswordViewScreen {
                         .fillMaxSize()
                         .padding(paddingValues = it),
                     password = password,
+                    lastUpdatedTimeBeforeUpdate = passwordViewViewModel.lastUpdatedTimeBeforeCall,
                     associatedVault = associatedVault,
                     showDialog = { passwordViewViewModel.setDeleteDialogVisibility(visibility = true) }
                 )
@@ -250,6 +250,7 @@ object PasswordViewScreen {
     private fun PasswordViewContent(
         modifier: Modifier,
         password: Password,
+        lastUpdatedTimeBeforeUpdate: Long?,
         associatedVault: Vault?,
         showDialog: () -> Unit
     ) {
@@ -441,7 +442,8 @@ object PasswordViewScreen {
                                     modifier = displayFieldContentModifier,
                                     startIcon = Icons.Default.EventRepeat,
                                     titleText = "Last Used",
-                                    fieldText = password.lastUsed.formatToTime()
+                                    fieldText = (lastUpdatedTimeBeforeUpdate ?: password.lastUsed)
+                                        .formatToTime()
                                 )
                             }
                         )
@@ -493,6 +495,11 @@ object PasswordViewScreen {
                         .size(size = 100.dp)
                         .clip(shape = RoundedCornerShape(size = 24.dp))
                         .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                        .border(
+                            width = if (password.localId != null) 2.dp else 0.dp,
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            shape = RoundedCornerShape(size = 24.dp)
+                        )
                         .constrainAs(
                             ref = passwordIcon,
                             constrainBlock = {
@@ -782,8 +789,8 @@ private fun PasswordViewScreenPreview() {
     PasswordViewScreen.Screen(
         modifier = Modifier.fillMaxSize(),
         password = Password(
-            localId = null,
-            cloudId = 0,
+            localId = 0,
+            cloudId = null,
             data = PasswordData(
                 title = "Title",
                 email = "someEmail@gmail.com",
