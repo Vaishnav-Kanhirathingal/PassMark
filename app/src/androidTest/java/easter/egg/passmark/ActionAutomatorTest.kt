@@ -68,6 +68,7 @@ class ActionAutomatorTest {
     //---------------------------------------------------------------------------------------utility
     private fun findObject(testTag: String): UiObject2 {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        device.wait(Until.hasObject(By.desc(testTag)), 3_000)
         return device.findObject(By.desc(testTag))
     }
 
@@ -268,7 +269,7 @@ class ActionAutomatorTest {
     private fun drawerFunctionality(toOpen: Boolean) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         if (toOpen) {
-            device.findObject(By.desc(TestTags.Home.TopBar.OPEN_DRAWER_BUTTON.name)).click()
+            findObject(testTag = TestTags.Home.TopBar.OPEN_DRAWER_BUTTON.name).click()
         } else {
             device.click(1080, 1440)
         }

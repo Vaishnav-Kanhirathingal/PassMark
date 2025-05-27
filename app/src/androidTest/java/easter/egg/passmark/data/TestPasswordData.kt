@@ -1,6 +1,5 @@
 package easter.egg.passmark.data
 
-
 // TODO: rename
 data class TestPasswordData(
     val vault: String?,
