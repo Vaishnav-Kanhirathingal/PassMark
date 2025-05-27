@@ -57,7 +57,10 @@ class ActionAutomatorTest {
     @Before
     fun startRecording() {
         val command = "screenrecord /sdcard/TestRecordings/test.mp4"
-        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command)
+        InstrumentationRegistry.getInstrumentation().uiAutomation.let {
+            it.executeShellCommand("mkdir -p /sdcard/TestRecordings")
+            it.executeShellCommand(command)
+        }
     }
 
     @After
