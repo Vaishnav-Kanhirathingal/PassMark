@@ -76,7 +76,6 @@ import coil3.request.crossfade
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.data.models.content.password.Password
-import easter.egg.passmark.data.models.content.password.PasswordData
 import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.di.supabase.SupabaseModule
@@ -788,22 +787,9 @@ object PasswordViewScreen {
 private fun PasswordViewScreenPreview() {
     PasswordViewScreen.Screen(
         modifier = Modifier.fillMaxSize(),
-        password = Password(
+        password = Password.testPassword.copy(
             localId = 0,
-            cloudId = null,
-            data = PasswordData(
-                title = "Title",
-                email = "someEmail@gmail.com",
-                userName = "SomeUserName",
-                password = "SomePassword",
-                website = "www.google.com",
-                notes = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                useFingerPrint = false,
-            ),
-            created = 0L,
-            lastUsed = 0L,
-            lastModified = 0L,
-            usedCount = 0
+            cloudId = null
         ),
         navigateUp = {},
         toEditScreen = {},

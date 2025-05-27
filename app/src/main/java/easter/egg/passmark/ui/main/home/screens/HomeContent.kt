@@ -728,27 +728,6 @@ object HomeContent {
     }
 }
 
-private val testBasePasswordData = PasswordData(
-    title = "",
-    email = "",
-    userName = "",
-    password = "",
-    website = "",
-    notes = "",
-    useFingerPrint = true,
-)
-private val testBasePassword = System.currentTimeMillis().let { now ->
-    Password(
-        localId = 0,
-        cloudId = 0,
-        data = testBasePasswordData.copy(),
-        created = now,
-        lastUsed = now,
-        lastModified = now,
-        usedCount = 0
-    )
-}
-
 @Composable
 @MobilePreview
 @MobileHorizontalPreview
@@ -773,8 +752,8 @@ fun PasswordListItemPreview() {
             .fillMaxWidth()
             .setSizeLimitation()
             .wrapContentHeight(),
-        password = testBasePassword.copy(
-            data = testBasePasswordData.copy(
+        password = Password.testPassword.copy(
+            data = PasswordData.testData.copy(
                 title = "Google",
                 email = "sample@gmail.com",
                 userName = "GmailUserName",
@@ -806,25 +785,8 @@ private fun EmptyState() {
     showBackground = true
 )
 private fun PasswordOptionDrawerPreview() {
-    val now = System.currentTimeMillis()
     HomeContent.PasswordOptionDrawer(
-        password = Password(
-            localId = 0,
-            cloudId = 0,
-            data = PasswordData(
-                title = "Google",
-                email = "someone@gmail.com",
-                userName = "some_user",
-                password = "Some password",
-                website = "www.somewebsite.com",
-                useFingerPrint = true,
-                notes = null
-            ),
-            created = now,
-            lastUsed = now,
-            lastModified = now,
-            usedCount = 0,
-        ),
+        password = Password.testPassword,
         sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
         dismissSheet = {},
         toPasswordEditScreen = {},
