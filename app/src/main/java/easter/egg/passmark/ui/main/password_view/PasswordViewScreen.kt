@@ -16,9 +16,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,6 +40,8 @@ import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Web
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,10 +69,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.constraintlayout.compose.Visibility
 import androidx.fragment.app.FragmentActivity
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
@@ -76,13 +79,13 @@ import coil3.request.crossfade
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
 import easter.egg.passmark.data.models.content.password.Password
+import easter.egg.passmark.data.models.content.password.sensitive.PasswordHistory
 import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.shared_components.ConfirmationDialog
 import easter.egg.passmark.utils.ScreenState
-import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.extensions.customTopBarModifier
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
@@ -262,19 +265,45 @@ object PasswordViewScreen {
             ),
             content = {
                 val biometricAuthenticated = remember { mutableStateOf(false) }
+                val showHistory = remember { mutableStateOf(false) }
                 val context = LocalContext.current
-                fun showBiometricPrompt() {
-                    (context as? FragmentActivity)?.let {
+                fun showBiometricPrompt(
+                    forHistory: Boolean
+                ) {
+                    (context as? FragmentActivity)?.let { activity ->
                         BiometricsHandler.performBiometricAuthentication(
-                            activity = it,
-                            onComplete = {},
-                            onSuccess = { biometricAuthenticated.value = true },
-                            showToast = { s ->
-                                Toast.makeText(context, s, Toast.LENGTH_SHORT).show()
+                            activity = activity,
+                            onComplete = { biometricHandlerOutput ->
+                                Toast.makeText(
+                                    context,
+                                    when (biometricHandlerOutput) {
+                                        BiometricsHandler.BiometricHandlerOutput.FAILED -> "Authentication failed"
+                                        BiometricsHandler.BiometricHandlerOutput.ERROR -> "Authentication error has occurred"
+                                        BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED -> "Authentication successful"
+                                    },
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                if (biometricHandlerOutput == BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED) {
+                                    biometricAuthenticated.value = true
+                                    if (forHistory) {
+                                        showHistory.value = true
+                                    }
+                                }
                             }
                         )
                     }
                 }
+
+                if (showHistory.value) {
+                    PasswordHistoryDialog(
+                        modifier = Modifier.fillMaxWidth(),
+                        passwordHistory = password.data.passwordHistory.toMutableList().apply {
+                            this.add(element = password.currentPasswordAsPasswordHistory())
+                        }.reversed(),
+                        dismiss = { showHistory.value = false }
+                    )
+                }
+
                 Heading(
                     modifier = Modifier.fillMaxWidth(),
                     password = password,
@@ -339,9 +368,16 @@ object PasswordViewScreen {
                                         else Icons.Default.Fingerprint,
                                     endIconOnClick = {
                                         if (accessGranted.value) copy(str = password.data.password)
-                                        else showBiometricPrompt()
+                                        else showBiometricPrompt(forHistory = false)
                                     },
-                                    endIconTestTag = TestTags.ViewPassword.FINGERPRINT_BUTTON.name
+                                    endIconTestTag = TestTags.ViewPassword.FINGERPRINT_BUTTON.name,
+                                    onShowPasswordHistory = if (password.data.passwordHistory.isEmpty()) {
+                                        null
+                                    } else {
+                                        {
+                                            showBiometricPrompt(forHistory = true)
+                                        }
+                                    }
                                 )
                             }
                         )
@@ -399,19 +435,6 @@ object PasswordViewScreen {
                     ),
                 )
                 val deleteShape = RoundedCornerShape(size = 16.dp)
-                fun Long.formatToTime(): String {
-                    return try {
-                        val instant = java.time.Instant.ofEpochMilli(this)
-                        val dateTime =
-                            java.time.LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-                        val formatted =
-                            dateTime.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss | dd/MM/yyyy"))
-                        formatted!!
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        "Time Error"
-                    }
-                }
                 PropertyListCard(
                     modifier = itemModifier,
                     itemList = mutableListOf<@Composable () -> Unit>().apply {
@@ -660,98 +683,188 @@ object PasswordViewScreen {
         endIcon: ImageVector? = null,
         endIconOnClick: (() -> Unit)? = null,
         singleLine: Boolean = true,
-        endIconTestTag: String? = null
+        endIconTestTag: String? = null,
+        onShowPasswordHistory: (() -> Unit)? = null
     ) {
-        ConstraintLayout(
+        Row(
             modifier = modifier
                 .setSizeLimitation()
                 .padding(all = 12.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
             content = {
-                val (startIconRef, titleRef, contentRef, endIconRef) = createRefs()
                 Icon(
-                    modifier = Modifier.constrainAs(
-                        ref = startIconRef,
-                        constrainBlock = {
-                            this.top.linkTo(parent.top)
-                            this.bottom.linkTo(parent.bottom)
-                            this.start.linkTo(anchor = parent.start, margin = 12.dp)
-                        }
-                    ),
+                    modifier = Modifier.padding(all = 12.dp),
                     imageVector = startIcon,
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null
                 )
-                Text(
-                    modifier = Modifier.constrainAs(
-                        ref = titleRef,
-                        constrainBlock = {
-                            this.top.linkTo(parent.top)
-                            this.bottom.linkTo(contentRef.top)
-                            this.start.linkTo(anchor = startIconRef.end, margin = 24.dp)
-                            this.end.linkTo(
-                                anchor = endIconRef.start,
-                                margin = 12.dp,
-                                goneMargin = 12.dp
-                            )
-                            width = Dimension.fillToConstraints
-                        }
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = PassMarkFonts.font,
-                    fontSize = PassMarkFonts.Label.medium,
-                    fontWeight = FontWeight.Normal,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    text = titleText,
-                )
-                Text(
-                    modifier = Modifier.constrainAs(
-                        ref = contentRef,
-                        constrainBlock = {
-                            this.top.linkTo(titleRef.bottom)
-                            this.bottom.linkTo(parent.bottom)
-                            this.start.linkTo(anchor = startIconRef.end, margin = 24.dp)
-                            this.end.linkTo(
-                                anchor = endIconRef.start,
-                                margin = 12.dp,
-                                goneMargin = 12.dp
-                            )
-                            width = Dimension.fillToConstraints
-                        }
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = PassMarkFonts.font,
-                    fontSize = PassMarkFonts.Title.medium,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = if (singleLine) 1 else Int.MAX_VALUE,
-                    overflow = TextOverflow.Ellipsis,
-                    text = fieldText,
-                )
-                createVerticalChain(titleRef, contentRef, chainStyle = ChainStyle.Packed)
-                IconButton(
-                    modifier = (if (endIconTestTag == null) Modifier else Modifier.applyTag(testTag = endIconTestTag))
-                        .constrainAs(
-                            ref = endIconRef,
-                            constrainBlock = {
-                                this.top.linkTo(parent.top)
-                                this.end.linkTo(anchor = parent.end, margin = 4.dp)
-                                this.bottom.linkTo(parent.bottom)
-                                visibility =
-                                    if (endIcon == null) Visibility.Gone
-                                    else Visibility.Visible
-                            }
-                        ),
-                    onClick = { endIconOnClick?.invoke() },
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
                     content = {
-                        endIcon?.let {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Start,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Label.medium,
+                            fontWeight = FontWeight.Normal,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            text = titleText,
+                        )
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Start,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontFamily = PassMarkFonts.font,
+                            fontSize = PassMarkFonts.Title.medium,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = if (singleLine) 1 else Int.MAX_VALUE,
+                            overflow = TextOverflow.Ellipsis,
+                            text = fieldText,
+                        )
+                    }
+                )
+                onShowPasswordHistory?.let {
+                    IconButton(
+                        modifier = Modifier.setSizeLimitation(),
+                        onClick = it,
+                        content = {
                             Icon(
-                                imageVector = it,
+                                imageVector = Icons.Default.EventRepeat,
                                 contentDescription = null
                             )
                         }
+                    )
+                }
+                endIcon?.let { icon ->
+                    IconButton(
+                        modifier = (
+                                if (endIconTestTag == null) Modifier
+                                else Modifier.applyTag(testTag = endIconTestTag)
+                                )
+                            .setSizeLimitation(),
+                        onClick = { endIconOnClick?.invoke() },
+                        content = {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
+            }
+        )
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun PasswordHistoryDialog(
+        modifier: Modifier,
+        passwordHistory: List<PasswordHistory>,
+        dismiss: () -> Unit
+    ) {
+        BasicAlertDialog(
+            modifier = modifier
+                .clip(shape = RoundedCornerShape(size = PassMarkDimensions.dialogRadius))
+                .background(color = MaterialTheme.colorScheme.surfaceContainer),
+            onDismissRequest = dismiss,
+            content = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(all = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top,
+                    content = {
+                        Text(
+                            modifier = Modifier.padding(all = 12.dp),
+                            text = "Password History",
+                            fontFamily = PassMarkFonts.font,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = PassMarkFonts.Title.medium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 360.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(
+                                space = 8.dp,
+                                alignment = Alignment.CenterVertically
+                            ),
+                            content = {
+                                itemsIndexed(
+                                    items = passwordHistory,
+                                    itemContent = { index, item ->
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .background(
+                                                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                                    shape = RoundedCornerShape(size = 8.dp)
+                                                )
+                                                .border(
+                                                    width = 1.dp,
+                                                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                                    shape = RoundedCornerShape(size = 8.dp)
+                                                )
+                                                .padding(all = 4.dp),
+                                            horizontalArrangement = Arrangement.Center,
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            content = {
+                                                Column(
+                                                    modifier = Modifier
+                                                        .weight(weight = 1f)
+                                                        .padding(start = 12.dp),
+                                                    verticalArrangement = Arrangement.Top,
+                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                    content = {
+                                                        val color =
+                                                            if (index == 0) MaterialTheme.colorScheme.onSurface
+                                                            else MaterialTheme.colorScheme.onSurfaceVariant
+                                                        Text(
+                                                            modifier = Modifier.fillMaxWidth(),
+                                                            text = "${item.password}${if (index == 0) " [current]" else ""}",
+                                                            fontFamily = PassMarkFonts.font,
+                                                            fontWeight = FontWeight.SemiBold,
+                                                            fontSize = PassMarkFonts.Title.medium,
+                                                            color = color
+                                                        )
+                                                        Text(
+                                                            modifier = Modifier.fillMaxWidth(),
+                                                            text = item.discardedOn.formatToTime(),
+                                                            fontFamily = PassMarkFonts.font,
+                                                            fontWeight = FontWeight.Medium,
+                                                            fontSize = PassMarkFonts.Body.medium,
+                                                            color = color
+                                                        )
+                                                    }
+                                                )
+                                                IconButton(
+                                                    modifier = Modifier.setSizeLimitation(),
+                                                    onClick = { TODO() },
+                                                    content = {
+                                                        Icon(
+                                                            imageVector = Icons.Default.ContentCopy,
+                                                            contentDescription = null
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        )
+                                    }
+                                )
+                            }
+                        )
                     }
                 )
-                createVerticalChain(titleRef, contentRef)
             }
         )
     }
@@ -774,16 +887,29 @@ object PasswordViewScreen {
             Log.d(TAG, "system has it's own toast")
         }
     }
+
+    private fun Long.formatToTime(): String {
+        return try {
+            val instant = java.time.Instant.ofEpochMilli(this)
+            val dateTime =
+                java.time.LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+            val formatted =
+                dateTime.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss | dd/MM/yyyy"))
+            formatted!!
+        } catch (e: Exception) {
+            e.printStackTrace()
+            "Time Error"
+        }
+    }
 }
 
 @Composable
 @Preview(
     widthDp = 360,
-    heightDp = 1000,
+    heightDp = 1200,
     showBackground = true
 )
 @MobilePreview
-@MobileHorizontalPreview
 private fun PasswordViewScreenPreview() {
     PasswordViewScreen.Screen(
         modifier = Modifier.fillMaxSize(),
@@ -799,5 +925,28 @@ private fun PasswordViewScreenPreview() {
             passwordDao = PasswordDao.getTestingDao()
         ),
         mainViewModel = MainViewModel.getTestViewModel()
+    )
+}
+
+@Preview(
+    widthDp = 360,
+    heightDp = 360,
+    showBackground = true
+)
+@Composable
+private fun PasswordHistoryDialogPreview() {
+    PasswordViewScreen.PasswordHistoryDialog(
+        modifier = Modifier.fillMaxWidth(),
+        passwordHistory = listOf(
+            PasswordHistory(
+                password = "SomePassword",
+                discardedOn = System.currentTimeMillis()
+            ),
+            PasswordHistory(
+                password = "SomePassword",
+                discardedOn = System.currentTimeMillis()
+            ),
+        ),
+        dismiss = {}
     )
 }
