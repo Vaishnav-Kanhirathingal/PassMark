@@ -14,7 +14,6 @@ import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import easter.egg.passmark.utils.testing.TestTags
 import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first

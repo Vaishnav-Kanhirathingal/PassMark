@@ -41,7 +41,7 @@ object TestTags {
     enum class Home {
         CREATE_NEW_PASSWORD_BUTTON;
 
-        enum class TopBar{
+        enum class TopBar {
             SORTING_BUTTON,
             SEARCH_BUTTON,
             SEARCH_TEXT_FIELD,
