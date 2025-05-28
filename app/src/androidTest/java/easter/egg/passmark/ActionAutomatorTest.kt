@@ -21,6 +21,22 @@ import kotlin.math.absoluteValue
 
 @RunWith(AndroidJUnit4::class)
 class ActionAutomatorTest {
+
+    enum class CustomDelay(private val delay: Long) {
+        /** used for small animations which might not require waiting. eg - switching from one text
+         * field to another */
+        MICRO_ANIMATION(delay = 500L),
+        /** for dialogs, bottom sheets, etc */
+        SMALL_ANIMATION(delay = 1_000L),
+        NAVIGATION(delay = 3_000L),
+        SINGLE_API_CALL(delay = 3_000L + TestTags.TIME_OUT),
+        AUTH_LOADING(delay = 3_000 + (2 * TestTags.TIME_OUT));
+
+        fun hold() {
+            Thread.sleep(this.delay)
+        }
+    }
+
     companion object {
         const val SMALL_ANIMATION_DELAY = 1_000L
 
