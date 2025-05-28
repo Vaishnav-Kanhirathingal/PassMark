@@ -64,8 +64,8 @@ class PasswordApi @Inject constructor(
         val oldList = table.select().decodeList<PasswordCapsule>()
         val newList = oldList.map {
             it.copy(
-                data = newPasswordCryptographyHandler.encryptPasswordData(
-                    sensitiveContent = oldPasswordCryptographyHandler.decryptPasswordData(
+                data = newPasswordCryptographyHandler.encryptSensitiveContent(
+                    sensitiveContent = oldPasswordCryptographyHandler.decryptSensitiveContent(
                         passwordData = it.data
                     )
                 )

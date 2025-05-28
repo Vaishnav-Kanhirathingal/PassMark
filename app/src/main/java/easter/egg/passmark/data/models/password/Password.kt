@@ -36,7 +36,7 @@ data class Password(
             localId = localId,
             cloudId = cloudId,
             vaultId = vaultId,
-            data = passwordCryptographyHandler.encryptPasswordData(sensitiveContent = data),
+            data = passwordCryptographyHandler.encryptSensitiveContent(sensitiveContent = data),
             created = created,
             lastUsed = lastUsed,
             lastModified = lastModified,

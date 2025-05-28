@@ -73,11 +73,11 @@ class PasswordCryptographyHandler private constructor(
     }
 
     // TODO: rename
-    fun encryptPasswordData(sensitiveContent: SensitiveContent): String {
+    fun encryptSensitiveContent(sensitiveContent: SensitiveContent): String {
         return encrypt(input = Gson().toJson(sensitiveContent))
     }
 
-    fun decryptPasswordData(passwordData: String): SensitiveContent {
+    fun decryptSensitiveContent(passwordData: String): SensitiveContent {
         return Gson().fromJson(
             this.decrypt(encryptedInput = passwordData),
             SensitiveContent::class.java

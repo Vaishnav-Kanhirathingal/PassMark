@@ -130,8 +130,8 @@ class ChangeMasterPasswordViewModel @Inject constructor(
                 val newList = oldList.mapNotNull { oldPass ->
                     try {
                         oldPass.copy(
-                            data = this._newCryptoHandler!!.encryptPasswordData(
-                                sensitiveContent = this._oldCryptoHandler!!.decryptPasswordData(
+                            data = this._newCryptoHandler!!.encryptSensitiveContent(
+                                sensitiveContent = this._oldCryptoHandler!!.decryptSensitiveContent(
                                     passwordData = oldPass.data
                                 )
                             )

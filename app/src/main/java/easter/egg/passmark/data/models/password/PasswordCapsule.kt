@@ -53,7 +53,7 @@ data class PasswordCapsule(
         localId = localId,
         cloudId = cloudId,
         vaultId = vaultId,
-        data = passwordCryptographyHandler.decryptPasswordData(passwordData = this.data),
+        data = passwordCryptographyHandler.decryptSensitiveContent(passwordData = this.data),
         created = created,
         lastUsed = lastUsed,
         lastModified = lastModified,
