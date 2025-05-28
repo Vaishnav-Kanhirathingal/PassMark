@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import easter.egg.passmark.data.models.Vault
 import easter.egg.passmark.data.models.password.Password
-import easter.egg.passmark.data.models.password.sensitive.PasswordData
+import easter.egg.passmark.data.models.password.sensitive.SensitiveContent
 import easter.egg.passmark.data.storage.SettingsDataStore
 import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.PasswordApi
@@ -120,7 +120,7 @@ class PasswordEditViewModel @Inject constructor(
             cloudId = if (saveToStorage) null else _oldPassword?.cloudId,
             localId = if (saveToStorage) _oldPassword?.localId else null,
             vaultId = selectedVault.value?.id,
-            data = PasswordData(
+            data = SensitiveContent(
                 title = title.value,
                 email = email.value.nullIfBlank(),
                 userName = userName.value.nullIfBlank(),

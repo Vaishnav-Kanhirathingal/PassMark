@@ -2,7 +2,7 @@ package easter.egg.passmark.utils.security
 
 import com.google.gson.Gson
 import easter.egg.passmark.data.models.User
-import easter.egg.passmark.data.models.password.sensitive.PasswordData
+import easter.egg.passmark.data.models.password.sensitive.SensitiveContent
 import io.ktor.util.decodeBase64Bytes
 import io.ktor.util.encodeBase64
 import java.security.MessageDigest
@@ -72,14 +72,15 @@ class PasswordCryptographyHandler private constructor(
             .let { String(it) }
     }
 
-    fun encryptPasswordData(passwordData: PasswordData): String {
-        return encrypt(input = Gson().toJson(passwordData))
+    // TODO: rename
+    fun encryptPasswordData(sensitiveContent: SensitiveContent): String {
+        return encrypt(input = Gson().toJson(sensitiveContent))
     }
 
-    fun decryptPasswordData(passwordData: String): PasswordData {
+    fun decryptPasswordData(passwordData: String): SensitiveContent {
         return Gson().fromJson(
             this.decrypt(encryptedInput = passwordData),
-            PasswordData::class.java
+            SensitiveContent::class.java
         )
     }
 

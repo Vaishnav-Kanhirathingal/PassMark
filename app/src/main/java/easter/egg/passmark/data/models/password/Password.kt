@@ -1,6 +1,6 @@
 package easter.egg.passmark.data.models.password
 
-import easter.egg.passmark.data.models.password.sensitive.PasswordData
+import easter.egg.passmark.data.models.password.sensitive.SensitiveContent
 import easter.egg.passmark.data.models.password.sensitive.PasswordHistory
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 
@@ -10,7 +10,7 @@ data class Password(
     val localId: Int?,
     val cloudId: Int?,
     val vaultId: Int? = null,
-    val data: PasswordData,
+    val data: SensitiveContent,
     val created: Long,
     val lastUsed: Long,
     val lastModified: Long,
@@ -21,7 +21,7 @@ data class Password(
         val testPassword = Password(
             localId = null,
             cloudId = 0,
-            data = PasswordData.testData,
+            data = SensitiveContent.testData,
             created = now,
             lastUsed = now,
             lastModified = now,
@@ -36,7 +36,7 @@ data class Password(
             localId = localId,
             cloudId = cloudId,
             vaultId = vaultId,
-            data = passwordCryptographyHandler.encryptPasswordData(passwordData = data),
+            data = passwordCryptographyHandler.encryptPasswordData(sensitiveContent = data),
             created = created,
             lastUsed = lastUsed,
             lastModified = lastModified,

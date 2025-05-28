@@ -131,7 +131,7 @@ class ChangeMasterPasswordViewModel @Inject constructor(
                     try {
                         oldPass.copy(
                             data = this._newCryptoHandler!!.encryptPasswordData(
-                                passwordData = this._oldCryptoHandler!!.decryptPasswordData(
+                                sensitiveContent = this._oldCryptoHandler!!.decryptPasswordData(
                                     passwordData = oldPass.data
                                 )
                             )

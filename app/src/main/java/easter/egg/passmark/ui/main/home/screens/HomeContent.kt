@@ -83,7 +83,7 @@ import androidx.fragment.app.FragmentActivity
 import coil3.compose.SubcomposeAsyncImage
 import easter.egg.passmark.R
 import easter.egg.passmark.data.models.password.Password
-import easter.egg.passmark.data.models.password.sensitive.PasswordData
+import easter.egg.passmark.data.models.password.sensitive.SensitiveContent
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.main.home.SecurityChoices
@@ -753,7 +753,7 @@ fun PasswordListItemPreview() {
             .setSizeLimitation()
             .wrapContentHeight(),
         password = Password.testPassword.copy(
-            data = PasswordData.testData.copy(
+            data = SensitiveContent.testData.copy(
                 title = "Google",
                 email = "sample@gmail.com",
                 userName = "GmailUserName",
