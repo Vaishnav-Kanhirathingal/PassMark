@@ -245,20 +245,27 @@ class MainActivity : FragmentActivity() {
                                 .clickable(
                                     enabled = !screenState.isLoading,
                                     onClick = {
-                                        fun showToast(msg: String) {
-                                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                                        }
                                         (context as? FragmentActivity)?.let { act ->
                                             BiometricsHandler.performBiometricAuthentication(
+                                                context = context,
                                                 activity = act,
                                                 onComplete = { biometricHandlerOutput ->
-                                                    when (biometricHandlerOutput) {
-                                                        BiometricsHandler.BiometricHandlerOutput.ERROR, BiometricsHandler.BiometricHandlerOutput.FAILED -> {
-                                                            showToast(msg = "Failed to authenticate via biometrics")
-                                                        }
+                                                    if (biometricHandlerOutput == BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED) {
+                                                        onFingerPrintVerification()
+                                                    } else {
+                                                        biometricHandlerOutput.handleToast(
+                                                            context = context,
+                                                            successMessage = null
 
-                                                        BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED -> onFingerPrintVerification()
+                                                        )
                                                     }
+                                                },
+                                                onBiometricsNotPresent = {
+                                                    Toast.makeText(
+                                                        context,
+                                                        BiometricsHandler.BIOMETRICS_NOT_PRESENT_TOAST_MESSAGE,
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
                                                 }
                                             )
                                         }

@@ -272,23 +272,24 @@ object PasswordViewScreen {
                 ) {
                     (context as? FragmentActivity)?.let { activity ->
                         BiometricsHandler.performBiometricAuthentication(
+                            context = context,
                             activity = activity,
                             onComplete = { biometricHandlerOutput ->
-                                Toast.makeText(
-                                    context,
-                                    when (biometricHandlerOutput) {
-                                        BiometricsHandler.BiometricHandlerOutput.FAILED -> "Authentication failed"
-                                        BiometricsHandler.BiometricHandlerOutput.ERROR -> "Authentication error has occurred"
-                                        BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED -> "Authentication successful"
-                                    },
-                                    Toast.LENGTH_SHORT
-                                ).show()
                                 if (biometricHandlerOutput == BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED) {
                                     biometricAuthenticated.value = true
                                     if (forHistory) {
                                         showHistory.value = true
                                     }
+                                } else {
+                                    biometricHandlerOutput.handleToast(context = context)
                                 }
+                            },
+                            onBiometricsNotPresent = {
+                                Toast.makeText(
+                                    context,
+                                    BiometricsHandler.BIOMETRICS_NOT_PRESENT_TOAST_MESSAGE,
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         )
                     }

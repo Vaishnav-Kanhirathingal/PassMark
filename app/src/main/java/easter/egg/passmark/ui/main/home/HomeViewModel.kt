@@ -191,9 +191,7 @@ enum class VaultDialogActionOptions { UPDATE, DELETE }
 
 class SecurityPromptState(
     val password: String,
-    val securityChoices: SecurityChoices
+    val action:PasswordOptionChoices
 )
 
-enum class SecurityChoices {
-    BIOMETRICS, MASTER_PASSWORD
-}
+enum class PasswordOptionChoices { EDIT, COPY }

@@ -1,14 +1,10 @@
 package easter.egg.passmark.ui.main.home.screens
 
 import android.content.Context
-import android.content.Intent
+import android.content.ContextWrapper
 import android.os.Build
-import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
-import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
-import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -51,7 +47,6 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -86,7 +81,7 @@ import easter.egg.passmark.data.models.password.Password
 import easter.egg.passmark.data.models.password.sensitive.SensitiveContent
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
-import easter.egg.passmark.ui.main.home.SecurityChoices
+import easter.egg.passmark.ui.main.home.PasswordOptionChoices
 import easter.egg.passmark.ui.main.home.SecurityPromptState
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -157,34 +152,8 @@ object HomeContent {
                 )
             }
             val securityPromptState = homeViewModel.securityPromptState.collectAsState().value
-            val clipboardManager = LocalClipboardManager.current
-            val context = LocalContext.current
 
-            LaunchedEffect(
-                key1 = securityPromptState,
-                block = {
-                    if (securityPromptState?.securityChoices == SecurityChoices.BIOMETRICS) {
-                        (context as? FragmentActivity)?.let {
-                            BiometricsHandler.performBiometricAuthentication(
-                                activity = it,
-                                onComplete = { homeViewModel.securityPromptState.value = null },
-                                onSuccess = {
-                                    copyToClipBoard(
-                                        clipboardManager = clipboardManager,
-                                        context = context,
-                                        str = securityPromptState.password
-                                    )
-                                },
-                                showToast = { toastMessage ->
-                                    Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
-                                }
-                            )
-                            Log.d(TAG, "showing prompt")
-                        }
-                    }
-                }
-            )
-            if (securityPromptState?.securityChoices == SecurityChoices.MASTER_PASSWORD) {
+            if (securityPromptState != null) {
                 TODO("show master password prompt")
             }
 
@@ -637,39 +606,41 @@ object HomeContent {
                                         actionIcon = Icons.Default.ContentCopy,
                                     )
                                 }
+                                fun Context.findFragmentActivity(): FragmentActivity? {
+                                    var ctx = this
+                                    while (ctx is ContextWrapper) {
+                                        if (ctx is FragmentActivity) return ctx
+                                        ctx = ctx.baseContext
+                                    }
+                                    return null
+                                }
+
+
+
                                 SheetButton(
                                     mainIcon = Icons.Default.Password,
                                     text = "Copy password",
                                     onClick = {
                                         if (password.data.useFingerPrint) {
-                                            val securityChoice =
-                                                getSecurityChoices(context = context)
-                                            if (securityChoice == null) { // show toast or open settings
-                                                if (Build.VERSION.SDK_INT > 29) {
-                                                    try {
-                                                        val enrollIntent =
-                                                            Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
-                                                                putExtra(
-                                                                    Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
-                                                                    BIOMETRIC_STRONG or DEVICE_CREDENTIAL
-                                                                )
-                                                            }
-                                                        context.startActivity(enrollIntent)
-                                                    } catch (e: Exception) {
-                                                        e.printStackTrace()
+                                            (context.findFragmentActivity())?.let { activity ->
+                                                BiometricsHandler.performBiometricAuthentication(
+                                                    context = context,
+                                                    activity = activity,
+                                                    onComplete = {
+                                                        if (it == BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED) {
+                                                            copy(str = password.data.password)
+                                                        } else {
+                                                            it.handleToast(context = context)
+                                                        }
+                                                    },
+                                                    onBiometricsNotPresent = {
+                                                        setPromptState(
+                                                            SecurityPromptState(
+                                                                password = password.data.password,
+                                                                action = PasswordOptionChoices.COPY
+                                                            )
+                                                        )
                                                     }
-                                                }
-                                                Toast.makeText(
-                                                    context,
-                                                    "Biometrics not enabled on device. Go to Settings -> Security -> Fingerprint -> set fingerprint",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            } else {
-                                                setPromptState(
-                                                    SecurityPromptState(
-                                                        password = password.data.password,
-                                                        securityChoices = securityChoice
-                                                    )
                                                 )
                                             }
                                         } else {
@@ -685,7 +656,37 @@ object HomeContent {
                                 SheetButton(
                                     mainIcon = Icons.Default.Edit,
                                     text = "Edit Password",
-                                    onClick = toPasswordEditScreen,
+                                    onClick = {
+                                        if (password.data.useFingerPrint) {
+                                            Log.d(TAG, "requires fingerprint")
+                                            (context.findFragmentActivity())?.let {
+                                                Log.d(TAG, "fingerprint prompt opening")
+                                                BiometricsHandler.performBiometricAuthentication(
+                                                    context = context,
+                                                    activity = it,
+                                                    onComplete = { biometricHandlerOutput ->
+                                                        if (biometricHandlerOutput == BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED) {
+                                                            toPasswordEditScreen()
+                                                        } else {
+                                                            biometricHandlerOutput.handleToast(
+                                                                context = context
+                                                            )
+                                                        }
+                                                    },
+                                                    onBiometricsNotPresent = {
+                                                        setPromptState(
+                                                            SecurityPromptState(
+                                                                password = password.data.password,
+                                                                action = PasswordOptionChoices.EDIT
+                                                            )
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        } else {
+                                            toPasswordEditScreen()
+                                        }
+                                    },
                                     actionIcon = Icons.AutoMirrored.Filled.ArrowRight
                                 )
                             }
@@ -712,18 +713,6 @@ object HomeContent {
                 .show()
         } else {
             Log.d(TAG, "system has it's own toast")
-        }
-    }
-
-    private fun getSecurityChoices(
-        context: Context,
-    ): SecurityChoices? {
-        return when (
-            BiometricManager.from(context).canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
-        ) {
-            BiometricManager.BIOMETRIC_SUCCESS -> SecurityChoices.BIOMETRICS
-            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> null
-            else -> SecurityChoices.MASTER_PASSWORD
         }
     }
 }
