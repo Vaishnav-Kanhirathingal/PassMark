@@ -241,6 +241,12 @@ class ActionAutomatorTest {
         findObject(testTag = TestTags.Home.getPasswordTag(name = passwordName)).click()
         Thread.sleep(SINGLE_CALL_LOADING_DELAY)
 
+        findObject(testTag = TestTags.ViewPassword.PASSWORD_HISTORY_BUTTON.name).click()
+        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
+
+        device.click(630, 2580)
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+
         device.wait(Until.hasObject(By.desc(TestTags.ViewPassword.FINGERPRINT_BUTTON.name)), 3_000)
         findObject(testTag = TestTags.ViewPassword.FINGERPRINT_BUTTON.name).click()
         Thread.sleep(SINGLE_CALL_LOADING_DELAY)
