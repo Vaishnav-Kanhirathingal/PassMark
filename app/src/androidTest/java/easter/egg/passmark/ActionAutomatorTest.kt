@@ -122,7 +122,7 @@ class ActionAutomatorTest {
         text: String
     ) {
         findObject(testTag = testTag).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.MICRO_ANIMATION.hold()
         type(txt = text)
     }
 
@@ -134,42 +134,40 @@ class ActionAutomatorTest {
         val intent = context.packageManager.getLaunchIntentForPackage(packageName)
         context.startActivity(intent!!.apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) })
         device.wait(Until.hasObject(By.pkg(packageName).depth(0)), 5000)
-        Thread.sleep(NAVIGATION_DELAY)
+        CustomDelay.NAVIGATION.hold()
     }
 
     private fun selectGoogleAccount() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         findObject(TestTags.Login.GOOGLE_BUTTON.name).click()
-        Thread.sleep(NAVIGATION_DELAY)
+        CustomDelay.NAVIGATION.hold()
         device.findObject(By.text("vaishnav.kanhira@gmail.com")).click()
-        Thread.sleep(INITIAL_LOADING_SCREEN_DELAY)
-
+        CustomDelay.AUTH_LOADING.hold()
     }
 
     private fun enterMasterKey(masterPassword: String) {
         findObject(testTag = TestTags.CreateMasterKey.VISIBILITY_BUTTON.name).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.MICRO_ANIMATION.hold()
         type(
             testTag = TestTags.CreateMasterKey.TEXT_FIELD.name,
             text = masterPassword
         )
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.MICRO_ANIMATION.hold()
         findObject(TestTags.CreateMasterKey.CONFIRM_BUTTON.name).click()
-        Thread.sleep(INITIAL_LOADING_SCREEN_DELAY)
-
+        CustomDelay.AUTH_LOADING.hold()
     }
 
     /** call with an open home drawer and completes with an open drawer (is repeatable) */
     private fun createVault(testVault: TestVault) {
         findObject(TestTags.Home.Drawer.CREATE_NEW_VAULT_BUTTON.name).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.SMALL_ANIMATION.hold()
         type(
             testTag = TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name,
             text = testVault.name
         )
         findObject(TestTags.Home.Drawer.VaultDialog.getIconTag(index = testVault.iconIndex)).click()
         findObject(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name).click()
-        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
+        CustomDelay.SINGLE_API_CALL.hold()
     }
 
     /** called from home screen, exits to home screen (is repeatable) */
@@ -178,7 +176,7 @@ class ActionAutomatorTest {
 
         device.wait(Until.hasObject(By.desc(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name)), 2_000)
         findObject(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name).click()
-        Thread.sleep(NAVIGATION_DELAY)
+        CustomDelay.NAVIGATION.hold()
 
         testPasswordData.vault?.let {
             device.wait(
@@ -186,9 +184,10 @@ class ActionAutomatorTest {
                 2_000
             )
             this.findObject(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name).click()
-            Thread.sleep(SMALL_ANIMATION_DELAY)
+
+            CustomDelay.SMALL_ANIMATION.hold()
             device.findObject(By.text(it)).click()
-            Thread.sleep(SMALL_ANIMATION_DELAY)
+            CustomDelay.SMALL_ANIMATION.hold()
         }
 
         fun textHandler(
@@ -231,7 +230,7 @@ class ActionAutomatorTest {
         }
 
         findObject(testTag = TestTags.EditPassword.SAVE_BUTTON.name).click()
-        Thread.sleep(8_000)
+        CustomDelay.SINGLE_API_CALL.hold()
     }
 
     private fun updatePassword(
@@ -241,50 +240,51 @@ class ActionAutomatorTest {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         findObject(testTag = TestTags.Home.getPasswordOptionsTag(name = passwordTitleToUpdate)).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.SMALL_ANIMATION.hold()
 
         device.swipe(1080, 2700, 240, 2700, 50)
         findObject(testTag = TestTags.Home.PasswordOptionsBottomSheet.EDIT_BUTTON.name).click()
-        Thread.sleep(SINGLE_CALL_LOADING_DELAY + NAVIGATION_DELAY)
+        CustomDelay.FINGERPRINT.hold()
 
         findObject(testTag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.MICRO_ANIMATION.hold()
 
         repeat(
             times = 16,
             action = { device.pressDelete() }
         )
 
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.MICRO_ANIMATION.hold()
         type(newPassword)
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.MICRO_ANIMATION.hold()
         findObject(testTag = TestTags.EditPassword.SAVE_BUTTON.name).click()
-        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
+        CustomDelay.SINGLE_API_CALL.hold()
 
     }
 
     private fun viewAndDeletePassword(passwordName: String) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         findObject(testTag = TestTags.Home.getPasswordTag(name = passwordName)).click()
-        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
+        CustomDelay.NAVIGATION.hold()
 
         findObject(testTag = TestTags.ViewPassword.PASSWORD_HISTORY_BUTTON.name).click()
-        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
+        CustomDelay.FINGERPRINT.hold()
 
         device.click(630, 2580)
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.SMALL_ANIMATION.hold()
 
         device.wait(Until.hasObject(By.desc(TestTags.ViewPassword.FINGERPRINT_BUTTON.name)), 3_000)
         findObject(testTag = TestTags.ViewPassword.FINGERPRINT_BUTTON.name).click()
-        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
+        CustomDelay.FINGERPRINT.hold()
 
         UiScrollable(UiSelector().scrollable(true)).scrollToEnd(1)
 
         device.wait(Until.hasObject(By.desc(TestTags.ViewPassword.DELETE_BUTTON.name)), 3_000)
         findObject(testTag = TestTags.ViewPassword.DELETE_BUTTON.name).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+
+        CustomDelay.SMALL_ANIMATION.hold()
         findObject(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name).click()
-        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
+        CustomDelay.SINGLE_API_CALL.hold()
     }
 
     /** call from home screen without open drawer */
@@ -304,7 +304,7 @@ class ActionAutomatorTest {
     private fun changePassword(
         oldPassword: String,
         newPassword: String
-    ) {
+    ) { // TODO: rename to changeToNewPassword and remove parameters
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         drawerFunctionality(toOpen = true)
         findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
@@ -343,28 +343,28 @@ class ActionAutomatorTest {
         } else {
             device.click(1080, 1440)
         }
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.SMALL_ANIMATION.hold()
     }
 
     private fun sortPasswordList() {
         findObject(testTag = TestTags.Home.TopBar.SORTING_BUTTON.name).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.SMALL_ANIMATION.hold()
         findObject(testTag = TestTags.Home.Sorting.getSortOptionTag(passwordSortingOptions = PasswordSortingOptions.NAME)).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.SMALL_ANIMATION.hold()
     }
 
     private fun search() {
         findObject(testTag = TestTags.Home.TopBar.SEARCH_BUTTON.name).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.MICRO_ANIMATION.hold()
         "goo".forEach {
             type(txt = it.toString())
-            Thread.sleep(SMALL_ANIMATION_DELAY)
+            CustomDelay.MICRO_ANIMATION.hold()
         }
 
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.SMALL_ANIMATION.hold()
 
         findObject(testTag = TestTags.Home.TopBar.BACK_BUTTON.name).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.SMALL_ANIMATION.hold()
     }
 
     private fun filterUsingVault() {
@@ -372,7 +372,7 @@ class ActionAutomatorTest {
         drawerFunctionality(toOpen = true)
         device.wait(Until.hasObject(By.text(TestVault.WORK_VAULT)), 3_000)
         device.findObject(By.text(TestVault.WORK_VAULT)).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.SMALL_ANIMATION.hold()
     }
 
     @Test
