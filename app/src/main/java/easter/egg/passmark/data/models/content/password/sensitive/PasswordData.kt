@@ -1,6 +1,4 @@
-package easter.egg.passmark.data.models.content.password
-
-import easter.egg.passmark.data.models.content.password.sensitive.PasswordHistory
+package easter.egg.passmark.data.models.content.password.sensitive
 
 // TODO: rename to sensitive components
 // TODO: add password history

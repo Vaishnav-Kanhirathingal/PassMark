@@ -1,5 +1,6 @@
 package easter.egg.passmark.data.models.content.password
 
+import easter.egg.passmark.data.models.content.password.sensitive.PasswordData
 import easter.egg.passmark.data.models.content.password.sensitive.PasswordHistory
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 

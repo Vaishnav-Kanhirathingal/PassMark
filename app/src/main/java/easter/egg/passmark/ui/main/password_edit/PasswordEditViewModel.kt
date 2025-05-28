@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import easter.egg.passmark.data.models.content.Vault
 import easter.egg.passmark.data.models.content.password.Password
-import easter.egg.passmark.data.models.content.password.PasswordData
+import easter.egg.passmark.data.models.content.password.sensitive.PasswordData
 import easter.egg.passmark.data.storage.SettingsDataStore
 import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.PasswordApi
