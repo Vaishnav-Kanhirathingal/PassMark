@@ -7,7 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Room
-import easter.egg.passmark.data.models.content.password.PasswordCapsule
+import easter.egg.passmark.data.models.password.PasswordCapsule
 
 @Dao
 interface PasswordDao {

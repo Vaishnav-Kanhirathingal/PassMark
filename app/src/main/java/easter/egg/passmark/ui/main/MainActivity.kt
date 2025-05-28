@@ -54,7 +54,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import easter.egg.passmark.data.models.content.password.Password
+import easter.egg.passmark.data.models.password.Password
 import easter.egg.passmark.ui.main.change_password.ChangeMasterPasswordScreen
 import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.main.home.screens.HomeScreen

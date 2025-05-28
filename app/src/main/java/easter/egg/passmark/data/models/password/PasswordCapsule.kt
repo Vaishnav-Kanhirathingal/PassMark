@@ -1,4 +1,4 @@
-package easter.egg.passmark.data.models.content.password
+package easter.egg.passmark.data.models.password
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -1,7 +1,7 @@
-package easter.egg.passmark.data.models.content.password
+package easter.egg.passmark.data.models.password
 
-import easter.egg.passmark.data.models.content.password.sensitive.PasswordData
-import easter.egg.passmark.data.models.content.password.sensitive.PasswordHistory
+import easter.egg.passmark.data.models.password.sensitive.PasswordData
+import easter.egg.passmark.data.models.password.sensitive.PasswordHistory
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 
 // TODO: rename to PasswordData

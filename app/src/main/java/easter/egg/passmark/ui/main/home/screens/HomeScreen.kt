@@ -65,8 +65,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.gson.GsonBuilder
 import easter.egg.passmark.R
-import easter.egg.passmark.data.models.content.password.Password
-import easter.egg.passmark.data.models.content.password.PasswordSortingOptions
+import easter.egg.passmark.data.models.password.Password
+import easter.egg.passmark.data.models.password.PasswordSortingOptions
 import easter.egg.passmark.ui.main.HomeListData
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel

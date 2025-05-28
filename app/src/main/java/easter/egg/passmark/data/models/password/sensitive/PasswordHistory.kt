@@ -1,4 +1,4 @@
-package easter.egg.passmark.data.models.content.password.sensitive
+package easter.egg.passmark.data.models.password.sensitive
 
 class PasswordHistory(
     val password: String,

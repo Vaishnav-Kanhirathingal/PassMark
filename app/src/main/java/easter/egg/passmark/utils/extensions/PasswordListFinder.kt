@@ -1,6 +1,6 @@
 package easter.egg.passmark.utils.extensions
 
-import easter.egg.passmark.data.models.content.password.Password
+import easter.egg.passmark.data.models.password.Password
 
 /** note that only one of the given arguments [localId] or [cloudId] should be non null */
 fun List<Password>.findPassword(

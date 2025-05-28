@@ -1,4 +1,4 @@
-package easter.egg.passmark.data.models.content
+package easter.egg.passmark.data.models
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

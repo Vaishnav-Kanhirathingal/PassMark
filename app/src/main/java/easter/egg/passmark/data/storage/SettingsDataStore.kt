@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import easter.egg.passmark.data.models.content.password.PasswordSortingOptions
+import easter.egg.passmark.data.models.password.PasswordSortingOptions
 import easter.egg.passmark.utils.datastore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

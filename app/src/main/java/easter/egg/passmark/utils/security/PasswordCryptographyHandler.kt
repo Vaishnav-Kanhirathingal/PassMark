@@ -2,7 +2,7 @@ package easter.egg.passmark.utils.security
 
 import com.google.gson.Gson
 import easter.egg.passmark.data.models.User
-import easter.egg.passmark.data.models.content.password.sensitive.PasswordData
+import easter.egg.passmark.data.models.password.sensitive.PasswordData
 import io.ktor.util.decodeBase64Bytes
 import io.ktor.util.encodeBase64
 import java.security.MessageDigest

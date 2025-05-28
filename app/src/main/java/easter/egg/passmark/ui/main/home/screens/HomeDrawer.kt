@@ -61,8 +61,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.R
-import easter.egg.passmark.data.models.content.Vault
-import easter.egg.passmark.data.models.content.Vault.Companion.getIcon
+import easter.egg.passmark.data.models.Vault
+import easter.egg.passmark.data.models.Vault.Companion.getIcon
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.main.home.VaultDialogActionOptions

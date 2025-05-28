@@ -11,7 +11,7 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import easter.egg.passmark.data.TestPasswordData
 import easter.egg.passmark.data.TestVault
-import easter.egg.passmark.data.models.content.password.PasswordSortingOptions
+import easter.egg.passmark.data.models.password.PasswordSortingOptions
 import easter.egg.passmark.utils.testing.TestTags
 import org.junit.After
 import org.junit.Before
