@@ -12,6 +12,10 @@ import androidx.test.uiautomator.Until
 import easter.egg.passmark.data.TestPasswordData
 import easter.egg.passmark.data.TestVault
 import easter.egg.passmark.data.models.password.PasswordSortingOptions
+import easter.egg.passmark.ui.main.change_password.ChangeMasterPasswordViewModel
+import easter.egg.passmark.ui.main.change_password.ReEncryptionStates
+import easter.egg.passmark.ui.main.settings.DeletionStages
+import easter.egg.passmark.ui.main.settings.SettingsViewModel
 import easter.egg.passmark.utils.testing.TestTags
 import org.junit.After
 import org.junit.Before
