@@ -28,6 +28,7 @@ class ChangeMasterPasswordViewModel @Inject constructor(
 ) : ViewModel() {
     companion object {
         const val INCORRECT_PASSWORD_ERROR_MESSAGE = "INCORRECT_PASSWORD_ERROR_MESSAGE"
+        const val LOOP_DELAY = 1_000L
     }
 
     val oldPassword: MutableStateFlow<String> = MutableStateFlow("")
@@ -67,7 +68,7 @@ class ChangeMasterPasswordViewModel @Inject constructor(
                     .forEach { currentState: ReEncryptionStates ->
                         this@ChangeMasterPasswordViewModel._currentReEncryptionStates.value =
                             currentState
-                        delay(timeMillis = 1_000L)
+                        delay(timeMillis = LOOP_DELAY)
                         performAction(currentState)
                     }
                 ScreenState.Loaded(Unit)

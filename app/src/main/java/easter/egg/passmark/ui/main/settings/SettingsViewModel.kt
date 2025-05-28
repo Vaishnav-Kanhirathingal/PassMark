@@ -32,6 +32,8 @@ class SettingsViewModel @Inject constructor(
     private val TAG = this::class.simpleName
 
     companion object {
+        const val LOOP_DELAY = 1_000L
+
         @Composable
         fun getTestViewModel(): SettingsViewModel {
             val client = SupabaseModule.mockClient
@@ -77,7 +79,7 @@ class SettingsViewModel @Inject constructor(
                     .forEach {
                         this@SettingsViewModel._currentStage.value = it
                         Log.d(TAG, "about to perform ${it.name}")
-                        delay(timeMillis = 800L)
+                        delay(timeMillis = LOOP_DELAY)
                         performDeletionTask(deletionStages = it)
                     }
                 ScreenState.Loaded(Unit)
