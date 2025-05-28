@@ -30,6 +30,7 @@ class ActionAutomatorTest {
         /** used for small animations which might not require waiting. eg - switching from one text
          * field to another */
         MICRO_ANIMATION(delay = 500L),
+
         /** for dialogs, bottom sheets, etc */
         SMALL_ANIMATION(delay = 1_000L),
         NAVIGATION(delay = 3_000L),

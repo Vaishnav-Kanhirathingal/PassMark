@@ -131,7 +131,7 @@ class PasswordEditViewModel @Inject constructor(
                 passwordHistory = this._oldPassword?.let {
                     if (it.data.password != password.value) {
                         it.data.passwordHistory.toMutableList().apply {
-                            this.add(element = it.currentPasswordAsPasswordHistory() )
+                            this.add(element = it.currentPasswordAsPasswordHistory())
                         }
                     } else {
                         it.data.passwordHistory
