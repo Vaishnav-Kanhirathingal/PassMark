@@ -105,6 +105,7 @@ object TestTags {
     }
 
     enum class ViewPassword {
+        PASSWORD_HISTORY_BUTTON,
         FINGERPRINT_BUTTON,
         DELETE_BUTTON,
     }

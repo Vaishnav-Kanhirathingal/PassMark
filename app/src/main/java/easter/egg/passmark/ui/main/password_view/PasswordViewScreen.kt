@@ -743,7 +743,9 @@ object PasswordViewScreen {
                 )
                 onShowPasswordHistory?.let {
                     IconButton(
-                        modifier = Modifier.setSizeLimitation(),
+                        modifier = Modifier
+                            .applyTag(testTag = TestTags.ViewPassword.PASSWORD_HISTORY_BUTTON.name)
+                            .setSizeLimitation(),
                         onClick = it,
                         content = {
                             Icon(
