@@ -48,14 +48,6 @@ class ActionAutomatorTest {
         }
     }
 
-    companion object {
-        const val SMALL_ANIMATION_DELAY = 1_000L
-
-        const val NAVIGATION_DELAY = 3_000L
-        const val SINGLE_CALL_LOADING_DELAY = 3_000 + TestTags.TIME_OUT
-        const val INITIAL_LOADING_SCREEN_DELAY = 3_000 + (2 * TestTags.TIME_OUT)
-    }
-
     private object MasterPasswords {
         const val OLD_PASSWORD = "123456789"
         const val NEW_PASSWORD = "987654321"
@@ -291,11 +283,11 @@ class ActionAutomatorTest {
     private fun resetUser() {
         drawerFunctionality(toOpen = true)
         findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
-        Thread.sleep(NAVIGATION_DELAY)
+        CustomDelay.NAVIGATION.hold()
         findObject(testTag = TestTags.Settings.RESET_ACCOUNT_BUTTON.name).click()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.SMALL_ANIMATION.hold()
         findObject(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name).click()
-        Thread.sleep(4_000 + SINGLE_CALL_LOADING_DELAY)
+        CustomDelay.RESET_USER.hold()
     }
 
     /** call from home screen without open drawer. exits at master password screen with a request
@@ -308,9 +300,9 @@ class ActionAutomatorTest {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         drawerFunctionality(toOpen = true)
         findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
-        Thread.sleep(NAVIGATION_DELAY)
+        CustomDelay.NAVIGATION.hold()
         findObject(testTag = TestTags.Settings.CHANGE_PASSWORD_BUTTON.name).click()
-        Thread.sleep(NAVIGATION_DELAY)
+        CustomDelay.NAVIGATION.hold()
 
         device.wait(
             Until.hasObject(By.desc(TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name)),
@@ -330,9 +322,9 @@ class ActionAutomatorTest {
             text = newPassword
         )
         device.pressBack()
-        Thread.sleep(SMALL_ANIMATION_DELAY)
+        CustomDelay.MICRO_ANIMATION.hold()
         findObject(testTag = TestTags.ChangePassword.CONFIRM_BUTTON.name).click()
-        Thread.sleep(5_000 + SINGLE_CALL_LOADING_DELAY)
+        CustomDelay.CHANGE_PASSWORD.hold() // TODO:
     }
 
     /** to be called from home */
