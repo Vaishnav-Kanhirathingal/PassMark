@@ -27,14 +27,16 @@ object BiometricsHandler {
         }
     }
 
-    const val BIOMETRICS_NOT_PRESENT_TOAST_MESSAGE = "Biometrics not present on device"
+    private fun showBiometricsNotPresentToast(context: Context) {
+        Toast.makeText(context, "Biometrics not present on device", Toast.LENGTH_SHORT).show()
+    }
 
     /** handles settings opening if biometrics not set */
     fun performBiometricAuthentication(
         context: Context,
         activity: FragmentActivity,
         onComplete: (BiometricHandlerOutput) -> Unit,
-        onBiometricsNotPresent: () -> Unit
+        onBiometricsNotPresent: () -> Unit = { showBiometricsNotPresentToast(context = context) }
     ) {
         when (hasFingerprintSetup(context = context)) {
             true -> {

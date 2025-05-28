@@ -259,13 +259,6 @@ class MainActivity : FragmentActivity() {
 
                                                         )
                                                     }
-                                                },
-                                                onBiometricsNotPresent = {
-                                                    Toast.makeText(
-                                                        context,
-                                                        BiometricsHandler.BIOMETRICS_NOT_PRESENT_TOAST_MESSAGE,
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
                                                 }
                                             )
                                         }

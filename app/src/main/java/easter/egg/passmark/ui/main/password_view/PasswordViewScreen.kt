@@ -130,6 +130,7 @@ object PasswordViewScreen {
                     modifier = Modifier.customTopBarModifier(),
                     navigateUp = navigateUp,
                     toEditScreen = toEditScreen,
+                    requireFingerprint = password.data.useFingerPrint
                 )
             },
             content = {
@@ -185,7 +186,8 @@ object PasswordViewScreen {
     private fun PasswordViewTopBar(
         modifier: Modifier,
         navigateUp: () -> Unit,
-        toEditScreen: () -> Unit
+        toEditScreen: () -> Unit,
+        requireFingerprint: Boolean
     ) {
         val barSize = PassMarkDimensions.minTouchSize
         Row(
@@ -212,6 +214,7 @@ object PasswordViewScreen {
                     }
                 )
                 Spacer(modifier = Modifier.weight(weight = 1f))
+                val context = LocalContext.current
                 Row(
                     modifier = Modifier
                         .setSizeLimitation()
@@ -219,7 +222,27 @@ object PasswordViewScreen {
                         .widthIn(min = barSize)
                         .clip(shape = CircleShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
-                        .clickable(onClick = toEditScreen)
+                        .clickable(
+                            onClick = {
+                                if (requireFingerprint) {
+                                    (context as? FragmentActivity)?.let {
+                                        BiometricsHandler.performBiometricAuthentication(
+                                            context = context,
+                                            activity = it,
+                                            onComplete = { biometricHandlerOutput ->
+                                                if (biometricHandlerOutput == BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED) {
+                                                    toEditScreen()
+                                                } else {
+                                                    biometricHandlerOutput.handleToast(context = context)
+                                                }
+                                            },
+                                        )
+                                    }
+                                } else {
+                                    toEditScreen()
+                                }
+                            }
+                        )
                         .padding(
                             start = 20.dp,
                             end = 24.dp
@@ -284,13 +307,6 @@ object PasswordViewScreen {
                                     biometricHandlerOutput.handleToast(context = context)
                                 }
                             },
-                            onBiometricsNotPresent = {
-                                Toast.makeText(
-                                    context,
-                                    BiometricsHandler.BIOMETRICS_NOT_PRESENT_TOAST_MESSAGE,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
                         )
                     }
                 }
