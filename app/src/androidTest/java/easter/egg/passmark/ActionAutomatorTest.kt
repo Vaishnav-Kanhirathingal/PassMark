@@ -122,11 +122,10 @@ class ActionAutomatorTest {
     private fun enterMasterKey(masterPassword: String) {
         findObject(testTag = TestTags.CreateMasterKey.VISIBILITY_BUTTON.name).click()
         Thread.sleep(SMALL_ANIMATION_DELAY)
-        findObject(TestTags.CreateMasterKey.TEXT_FIELD.name).let {
-            it.click()
-            Thread.sleep(SMALL_ANIMATION_DELAY)
-            type(txt = masterPassword)
-        }
+        type(
+            testTag = TestTags.CreateMasterKey.TEXT_FIELD.name,
+            text = masterPassword
+        )
         Thread.sleep(SMALL_ANIMATION_DELAY)
         findObject(TestTags.CreateMasterKey.CONFIRM_BUTTON.name).click()
         Thread.sleep(INITIAL_LOADING_SCREEN_DELAY)
@@ -137,11 +136,10 @@ class ActionAutomatorTest {
     private fun createVault(testVault: TestVault) {
         findObject(TestTags.Home.Drawer.CREATE_NEW_VAULT_BUTTON.name).click()
         Thread.sleep(SMALL_ANIMATION_DELAY)
-        findObject(TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name).let {
-            it.click()
-            Thread.sleep(SMALL_ANIMATION_DELAY)
-            type(testVault.name)
-        }
+        type(
+            testTag = TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name,
+            text = testVault.name
+        )
         findObject(TestTags.Home.Drawer.VaultDialog.getIconTag(index = testVault.iconIndex)).click()
         findObject(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name).click()
         Thread.sleep(SINGLE_CALL_LOADING_DELAY)
