@@ -132,7 +132,7 @@ object HomeContent {
             val optionSheetIsVisible: MutableState<Password?> = remember { mutableStateOf(null) }
             val coroutineScope = rememberCoroutineScope()
             optionSheetIsVisible.value?.let { password ->
-                PasswordOptionDrawer(
+                PasswordOptionBottomSheet(
                     password = password,
                     sheetState = sheetState,
                     dismissSheet = {
@@ -397,6 +397,7 @@ object HomeContent {
 
                 IconButton(
                     modifier = Modifier
+                        .applyTag(testTag = TestTags.Home.getPasswordOptionsTag(name = password.data.title))
                         .size(size = iconSize)
                         .constrainAs(
                             ref = optionButton,
@@ -421,7 +422,7 @@ object HomeContent {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun PasswordOptionDrawer(
+    fun PasswordOptionBottomSheet(
         password: Password,
         sheetState: SheetState,
         dismissSheet: () -> Unit,
@@ -472,14 +473,14 @@ object HomeContent {
 
                         @Composable
                         fun SheetButton(
+                            modifier: Modifier = Modifier,
                             mainIcon: ImageVector,
                             text: String,
                             actionIcon: ImageVector,
                             onClick: () -> Unit,
                         ) {
                             Column(
-                                modifier = Modifier
-                                    .width(width = PassMarkDimensions.minTouchSize * 2),
+                                modifier = modifier.width(width = PassMarkDimensions.minTouchSize * 2),
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 content = {
@@ -614,9 +615,6 @@ object HomeContent {
                                     }
                                     return null
                                 }
-
-
-
                                 SheetButton(
                                     mainIcon = Icons.Default.Password,
                                     text = "Copy password",
@@ -654,6 +652,7 @@ object HomeContent {
                                 )
 
                                 SheetButton(
+                                    modifier = Modifier.applyTag(testTag = TestTags.Home.PasswordOptionsBottomSheet.EDIT_BUTTON.name),
                                     mainIcon = Icons.Default.Edit,
                                     text = "Edit Password",
                                     onClick = {
@@ -774,7 +773,7 @@ private fun EmptyState() {
     showBackground = true
 )
 private fun PasswordOptionDrawerPreview() {
-    HomeContent.PasswordOptionDrawer(
+    HomeContent.PasswordOptionBottomSheet(
         password = Password.testPassword,
         sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
         dismissSheet = {},

@@ -61,6 +61,11 @@ object TestTags {
 
         companion object {
             fun getPasswordTag(name: String): String = "$name password"
+            fun getPasswordOptionsTag(name: String): String = "$name options"
+        }
+
+        enum class PasswordOptionsBottomSheet {
+            EDIT_BUTTON
         }
 
         enum class Drawer {
