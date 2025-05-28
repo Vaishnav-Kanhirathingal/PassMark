@@ -129,6 +129,7 @@ class ActionAutomatorTest {
         CustomDelay.NAVIGATION.hold()
     }
 
+    //------------------------------------------------------------------------------------------auth
     private fun selectGoogleAccount() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         findObject(TestTags.Login.GOOGLE_BUTTON.name).click()
@@ -149,6 +150,7 @@ class ActionAutomatorTest {
         CustomDelay.AUTH_LOADING.hold()
     }
 
+    //-------------------------------------------------------------------passwords-&-vaults-creation
     /** call with an open home drawer and completes with an open drawer (is repeatable) */
     private fun createVault(testVault: TestVault) {
         findObject(TestTags.Home.Drawer.CREATE_NEW_VAULT_BUTTON.name).click()
@@ -251,7 +253,6 @@ class ActionAutomatorTest {
         CustomDelay.MICRO_ANIMATION.hold()
         findObject(testTag = TestTags.EditPassword.SAVE_BUTTON.name).click()
         CustomDelay.SINGLE_API_CALL.hold()
-
     }
 
     private fun viewAndDeletePassword(passwordName: String) {
@@ -279,54 +280,7 @@ class ActionAutomatorTest {
         CustomDelay.SINGLE_API_CALL.hold()
     }
 
-    /** call from home screen without open drawer */
-    private fun resetUser() {
-        drawerFunctionality(toOpen = true)
-        findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
-        CustomDelay.NAVIGATION.hold()
-        findObject(testTag = TestTags.Settings.RESET_ACCOUNT_BUTTON.name).click()
-        CustomDelay.SMALL_ANIMATION.hold()
-        findObject(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name).click()
-        CustomDelay.RESET_USER.hold()
-    }
-
-    /** call from home screen without open drawer. exits at master password screen with a request
-     * to enter password
-     */
-    private fun changePassword(
-        oldPassword: String,
-        newPassword: String
-    ) { // TODO: rename to changeToNewPassword and remove parameters
-        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        drawerFunctionality(toOpen = true)
-        findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
-        CustomDelay.NAVIGATION.hold()
-        findObject(testTag = TestTags.Settings.CHANGE_PASSWORD_BUTTON.name).click()
-        CustomDelay.NAVIGATION.hold()
-
-        device.wait(
-            Until.hasObject(By.desc(TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name)),
-            3_000
-        )
-
-        type(
-            testTag = TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name,
-            text = oldPassword
-        )
-        type(
-            testTag = TestTags.ChangePassword.NEW_PASSWORD_TEXT_FIELD.name,
-            text = newPassword
-        )
-        type(
-            testTag = TestTags.ChangePassword.NEW_PASSWORD_REPEATED_TEXT_FIELD.name,
-            text = newPassword
-        )
-        device.pressBack()
-        CustomDelay.MICRO_ANIMATION.hold()
-        findObject(testTag = TestTags.ChangePassword.CONFIRM_BUTTON.name).click()
-        CustomDelay.CHANGE_PASSWORD.hold() // TODO:
-    }
-
+    //------------------------------------------------------------------------------------------home
     /** to be called from home */
     private fun drawerFunctionality(toOpen: Boolean) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -367,6 +321,53 @@ class ActionAutomatorTest {
         CustomDelay.SMALL_ANIMATION.hold()
     }
 
+    //-------------------------------------------------------------------------------setting-options
+    /** call from home screen without open drawer */
+    private fun resetUser() {
+        drawerFunctionality(toOpen = true)
+        findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
+        CustomDelay.NAVIGATION.hold()
+        findObject(testTag = TestTags.Settings.RESET_ACCOUNT_BUTTON.name).click()
+        CustomDelay.SMALL_ANIMATION.hold()
+        findObject(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name).click()
+        CustomDelay.RESET_USER.hold()
+    }
+
+    /** call from home screen without open drawer. exits at master password screen with a request
+     * to enter password
+     */
+    private fun changeToNewPassword() { // TODO: rename to changeToNewPassword and remove parameters
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        drawerFunctionality(toOpen = true)
+        findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
+        CustomDelay.NAVIGATION.hold()
+        findObject(testTag = TestTags.Settings.CHANGE_PASSWORD_BUTTON.name).click()
+        CustomDelay.NAVIGATION.hold()
+
+        device.wait(
+            Until.hasObject(By.desc(TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name)),
+            3_000
+        )
+
+        type(
+            testTag = TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name,
+            text = MasterPasswords.OLD_PASSWORD
+        )
+        type(
+            testTag = TestTags.ChangePassword.NEW_PASSWORD_TEXT_FIELD.name,
+            text = MasterPasswords.NEW_PASSWORD
+        )
+        type(
+            testTag = TestTags.ChangePassword.NEW_PASSWORD_REPEATED_TEXT_FIELD.name,
+            text = MasterPasswords.NEW_PASSWORD
+        )
+        device.pressBack()
+        CustomDelay.MICRO_ANIMATION.hold()
+        findObject(testTag = TestTags.ChangePassword.CONFIRM_BUTTON.name).click()
+        CustomDelay.CHANGE_PASSWORD.hold()
+    }
+
+    //----------------------------------------------------------------------------------final-script
     @Test
     fun fullScript() {
         launchApp()
@@ -396,10 +397,7 @@ class ActionAutomatorTest {
         search()
         filterUsingVault()
 
-        changePassword(
-            oldPassword = MasterPasswords.OLD_PASSWORD,
-            newPassword = MasterPasswords.NEW_PASSWORD
-        )
+        changeToNewPassword()
         enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD)
         resetUser()
     }
@@ -409,7 +407,8 @@ class ActionAutomatorTest {
  * login
  * create vault
  * create password
- * view (for both fingerprint and non fingerprint) and delete password
+ * edit password
+ * view, view history, copy and delete password
  * sorting
  * searching passwords
  * vault filtering
