@@ -168,11 +168,7 @@ class ActionAutomatorTest {
             testTag: String,
             text: String?
         ) {
-            text?.let {
-                findObject(testTag = testTag).click()
-                Thread.sleep(SMALL_ANIMATION_DELAY)
-                type(txt = it)
-            }
+            text?.let { type(testTag = testTag, text = it) }
         }
         textHandler(
             testTag = TestTags.EditPassword.TITLE_TEXT_FIELD.name,
@@ -209,6 +205,35 @@ class ActionAutomatorTest {
 
         findObject(testTag = TestTags.EditPassword.SAVE_BUTTON.name).click()
         Thread.sleep(8_000)
+    }
+
+    private fun updatePassword(
+        passwordTitleToUpdate: String,
+        newPassword: String
+    ) {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
+        findObject(testTag = TestTags.Home.getPasswordOptionsTag(name = passwordTitleToUpdate)).click()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+
+        device.swipe(1080, 2700, 240, 2700, 50)
+        findObject(testTag = TestTags.Home.PasswordOptionsBottomSheet.EDIT_BUTTON.name).click()
+        Thread.sleep(SINGLE_CALL_LOADING_DELAY + NAVIGATION_DELAY)
+
+        findObject(testTag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name).click()
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+
+        repeat(
+            times = 16,
+            action = { device.pressDelete() }
+        )
+
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+        type(newPassword)
+        Thread.sleep(SMALL_ANIMATION_DELAY)
+        findObject(testTag = TestTags.EditPassword.SAVE_BUTTON.name).click()
+        Thread.sleep(SINGLE_CALL_LOADING_DELAY)
+
     }
 
     private fun viewAndDeletePassword(passwordName: String) {
@@ -328,6 +353,18 @@ class ActionAutomatorTest {
         drawerFunctionality(toOpen = false)
 
         createPassword(testPasswordData = TestingObjects.testPasswordData)
+
+        // TODO: update password twice
+        repeat(
+            times = 3,
+            action = {
+                updatePassword(
+                    passwordTitleToUpdate = TestingObjects.testPasswordData.title,
+                    newPassword = TestingObjects.getTestingPassword(index = it + 1)
+                )
+            }
+        )
+
         viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
 
         sortPasswordList()
