@@ -17,6 +17,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.math.absoluteValue
 
 @RunWith(AndroidJUnit4::class)
 class ActionAutomatorTest {
@@ -39,13 +40,22 @@ class ActionAutomatorTest {
             iconIndex = 11
         )
 
+        fun getTestingPassword(index: Int): String {
+            return when ((index % 4).absoluteValue) {
+                0 -> "BlackWell"
+                1 -> "LoveLace"
+                2 -> "Ampere"
+                else -> "Turing"
+            }
+        }
+
         val testPasswordData = TestPasswordData(
             vault = testVault.name,
-            title = "Epic",
-            email = "johnDoe@epic.com",
+            title = "Nvidia",
+            email = "johnDoe@nvidia.com",
             userName = "Easter123",
-            password = "EpycMilan",
-            website = "epic.com",
+            password = getTestingPassword(index = 0),
+            website = "nvidia.com",
             note = "3rd gen",
             useFingerprint = true,
             useLocalStorage = true
@@ -56,7 +66,8 @@ class ActionAutomatorTest {
 
     @Before
     fun startRecording() {
-        val command = "screenrecord /sdcard/TestRecordings/test.mp4"
+        val themeSelected = "Cyan" // TODO: update every time
+        val command = "screenrecord /sdcard/TestRecordings/${themeSelected}FullFlow.mp4"
         InstrumentationRegistry.getInstrumentation().uiAutomation.let {
             it.executeShellCommand("mkdir -p /sdcard/TestRecordings")
             it.executeShellCommand(command)
