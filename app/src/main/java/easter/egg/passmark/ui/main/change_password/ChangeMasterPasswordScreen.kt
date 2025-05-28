@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -400,7 +401,7 @@ object ChangeMasterPasswordScreen {
                         .fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = false,
-                        keyboardType = KeyboardType.Password
+//                        keyboardType = KeyboardType.Password // TODO: enable password option
                     ),
                     label = { Text(text = label) },
                     colors = TextFieldDefaults.colors(

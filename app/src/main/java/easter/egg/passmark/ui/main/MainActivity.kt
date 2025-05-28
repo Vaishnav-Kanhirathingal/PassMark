@@ -1,8 +1,6 @@
 package easter.egg.passmark.ui.main
 
 import android.os.Bundle
-import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -106,7 +104,9 @@ class MainActivity : FragmentActivity() {
                                 .collectAsState()
                                 .value
 
-                            if ((verificationState as? ScreenState.Loaded)?.result == true) {
+                            // TODO: ensure fingerprint lock is enabled
+//                            if ((verificationState as? ScreenState.Loaded)?.result == true) {
+                            if (true) {
                                 MainActivityNavHost(
                                     modifier = Modifier.padding(paddingValues = innerPadding),
                                     navController = navController
@@ -128,10 +128,11 @@ class MainActivity : FragmentActivity() {
                 }
             }
         )
-        window?.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
+        // TODO: ensure this is enabled post testing
+//        window?.setFlags(
+//            WindowManager.LayoutParams.FLAG_SECURE,
+//            WindowManager.LayoutParams.FLAG_SECURE
+//        )
     }
 
     @Composable

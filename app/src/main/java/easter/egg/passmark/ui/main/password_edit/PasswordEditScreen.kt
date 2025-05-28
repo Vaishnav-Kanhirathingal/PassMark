@@ -779,7 +779,7 @@ object PasswordEditScreen {
                         )),
                         keyboardType = when (inputOption) {
                             InputOption.EMAIL -> KeyboardType.Email
-                            InputOption.PASSWORD -> KeyboardType.Password
+                            InputOption.PASSWORD -> KeyboardType.Text // TODO: use this after testing: [KeyboardType.Password]
                             InputOption.WEBSITE -> KeyboardType.Uri
                             InputOption.USERNAME, InputOption.TITLE, InputOption.NOTES -> KeyboardType.Text
                         },
