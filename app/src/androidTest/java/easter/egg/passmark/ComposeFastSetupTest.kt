@@ -24,7 +24,6 @@ class ComposeFastSetupTest {
 
     /** logs in the user and places them in the home screen */
     @OptIn(ExperimentalTestApi::class)
-    @Test
     fun createANewUser() {
         // login screen
         composeRule.waitUntilAtLeastOneExists(
@@ -88,7 +87,10 @@ class ComposeFastSetupTest {
                 .performClick()
         }
 
-        Thread.sleep(8_000)
+        composeRule.waitUntilAtLeastOneExists(
+            matcher = hasTestTag(testTag = TestTags.EditPassword.SAVE_BUTTON.name),
+            timeoutMillis = 8_000
+        )
         composeRule.onNodeWithTag(testTag = TestTags.EditPassword.SAVE_BUTTON.name).performClick()
         composeRule.waitUntilAtLeastOneExists(
             matcher = hasTestTag(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name),
