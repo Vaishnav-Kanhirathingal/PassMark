@@ -30,7 +30,14 @@ class ActionAutomatorTest {
         SMALL_ANIMATION(delay = 1_000L),
         NAVIGATION(delay = 3_000L),
         SINGLE_API_CALL(delay = 3_000L + TestTags.TIME_OUT),
-        AUTH_LOADING(delay = 3_000 + (2 * TestTags.TIME_OUT));
+        AUTH_LOADING(delay = 3_000 + (3 * TestTags.TIME_OUT)), // TODO: increased multiplier. check.
+        FINGERPRINT(delay = 8_000L),
+        CHANGE_PASSWORD(
+            delay = 3_000 + ((ChangeMasterPasswordViewModel.LOOP_DELAY + 500) * ReEncryptionStates.entries.size)
+        ),
+        RESET_USER(
+            delay = 3_000 + ((SettingsViewModel.LOOP_DELAY + 500) * DeletionStages.entries.size)
+        );
 
         fun hold() {
             Thread.sleep(this.delay)
