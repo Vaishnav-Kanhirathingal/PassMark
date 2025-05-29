@@ -28,7 +28,7 @@ import kotlin.math.absoluteValue
 class ActionAutomatorTest {
 
     enum class CustomDelay(private val delay: Long) {
-        APP_LAUNCH(delay = 5_000L),
+        APP_LAUNCH(delay = 3_000L),
 
         /** used for small animations which might not require waiting. eg - switching from one text
          * field to another */
@@ -87,7 +87,7 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
-    private val themeName: String? = "MonoTone"
+    private val themeName: String? = "VaultOptions"
 
     @Before
     fun startRecording() {
@@ -113,6 +113,12 @@ class ActionAutomatorTest {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         device.wait(Until.hasObject(By.desc(testTag)), 500)
         return device.findObject(By.desc(testTag))
+    }
+
+    private fun hasObjectByText(text: String) {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        device.wait(Until.hasObject(By.text(text)), 500)
+
     }
 
     private fun type(text: String) { // TODO: rename txt
@@ -185,12 +191,23 @@ class ActionAutomatorTest {
         newVaultName: String
     ) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        hasObjectByText(text = oldVaultName)
         device.findObject(By.text(oldVaultName)).longClick()
+        CustomDelay.SMALL_ANIMATION.hold()
         findObject(testTag = TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name).click()
         clearText()
         type(text = newVaultName)
         device.pressBack()
         findObject(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name).click()
+        CustomDelay.SINGLE_API_CALL.hold()
+    }
+
+    private fun deleteVault(name: String) {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        hasObjectByText(text = name)
+        device.findObject(By.text(name)).longClick()
+        CustomDelay.SMALL_ANIMATION.hold()
+        findObject(testTag = TestTags.Home.Drawer.VaultDialog.DELETE_BUTTON.name).click()
         CustomDelay.SINGLE_API_CALL.hold()
     }
 
@@ -427,6 +444,33 @@ class ActionAutomatorTest {
         changeToNewPassword()
         enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD)
         resetUser()
+    }
+
+    @Test
+    fun miniScript() {
+        launchApp()
+        selectGoogleAccount()
+        enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
+
+        val vaultNameToReplace = "Game"
+
+        drawerFunctionality(toOpen = true)
+        createVault(testVault = TestingObjects.testVault.copy(name = vaultNameToReplace))
+        drawerFunctionality(toOpen = false)
+        CustomDelay.SMALL_ANIMATION.hold()
+
+        drawerFunctionality(toOpen = true)
+        updateVault(
+            oldVaultName = vaultNameToReplace,
+            newVaultName = TestingObjects.testVault.name
+        )
+        drawerFunctionality(toOpen = false)
+        CustomDelay.SMALL_ANIMATION.hold()
+
+        drawerFunctionality(toOpen = true)
+        deleteVault(name = TestingObjects.testVault.name)
+        drawerFunctionality(toOpen = false)
+        CustomDelay.SMALL_ANIMATION.hold()
     }
 }
 
