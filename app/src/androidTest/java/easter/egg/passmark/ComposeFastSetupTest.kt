@@ -8,6 +8,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiDevice
 import easter.egg.passmark.data.TestPasswordData
 import easter.egg.passmark.data.TestVault
 import easter.egg.passmark.ui.auth.AuthActivity
@@ -32,6 +35,11 @@ class ComposeFastSetupTest {
         )
 
         composeRule.onNodeWithTag(TestTags.Login.GOOGLE_BUTTON.name).performClick()
+
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+            .findObject(By.text("vaishnav.kanhira@gmail.com"))
+            .click()
+
         Thread.sleep(6_000)
         // opens create new user screen
 
