@@ -1,6 +1,7 @@
 package easter.egg.passmark
 
 import android.content.Intent
+import android.view.KeyEvent
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
@@ -84,19 +85,24 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
+    private val themeName: String? = "MonoTone"
+
     @Before
     fun startRecording() {
-        val themeSelected = "Cyan" // TODO: update every time
-        val command = "screenrecord /sdcard/TestRecordings/${themeSelected}FullFlow.mp4"
-        InstrumentationRegistry.getInstrumentation().uiAutomation.let {
-            it.executeShellCommand("mkdir -p /sdcard/TestRecordings")
-            it.executeShellCommand(command)
+        themeName?.let { theme ->
+            val command = "screenrecord /sdcard/TestRecordings/${theme}FullFlow.mp4"
+            InstrumentationRegistry.getInstrumentation().uiAutomation.let {
+                it.executeShellCommand("mkdir -p /sdcard/TestRecordings")
+                it.executeShellCommand(command)
+            }
         }
     }
 
     @After
     fun stopRecording() {
-        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("pkill -l2 screenrecord")
+        themeName?.let {
+            InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("pkill -l2 screenrecord")
+        }
     }
 
     //---------------------------------------------------------------------------------------utility
@@ -244,10 +250,8 @@ class ActionAutomatorTest {
         findObject(testTag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name).click()
         CustomDelay.MICRO_ANIMATION.hold()
 
-        repeat(
-            times = 16,
-            action = { device.pressDelete() }
-        )
+        device.pressKeyCode(KeyEvent.KEYCODE_A, KeyEvent.META_CTRL_ON)
+        device.pressDelete()
 
         CustomDelay.MICRO_ANIMATION.hold()
         type(newPassword)
@@ -337,7 +341,7 @@ class ActionAutomatorTest {
     /** call from home screen without open drawer. exits at master password screen with a request
      * to enter password
      */
-    private fun changeToNewPassword() { // TODO: rename to changeToNewPassword and remove parameters
+    private fun changeToNewPassword() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         drawerFunctionality(toOpen = true)
         findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
@@ -377,11 +381,12 @@ class ActionAutomatorTest {
 
         drawerFunctionality(toOpen = true)
         createVault(testVault = TestingObjects.testVault)
+        // TODO: update vault
+
         drawerFunctionality(toOpen = false)
 
         createPassword(testPasswordData = TestingObjects.testPasswordData)
 
-        // TODO: update password twice
         repeat(
             times = 3,
             action = {
