@@ -24,18 +24,19 @@ change your phone's system color and the app would match it. Assuming dynamic co
 <img src="https://github.com/user-attachments/assets/b2682e4f-7f1c-422c-baec-fe2b4f2a17e7" alt="Empty home screenshot" width="273">
 <img src="https://github.com/user-attachments/assets/3ff6ce6e-e217-48a0-be28-120404d37732" alt="Empty home screenshot" width="273">
 
-
 ## Full Flow -
 
 the below video contains majority of the actions documented. Refer the documentation section for deeper details
 
-Timeline - 
+Timeline -
 
 > TODO
 
 ## Documentation
 
 below is a step-by-step guide for everything
+
+
 
 ### Authentication (Login screen -> Create master password screen -> Home)
 
@@ -49,6 +50,27 @@ password for verification during re-login (mentioned below)
 during Re-Login, you would be asked to re-enter your master password for password verification and storage.
 
 > [google login Process GIF for already existing user]
+
+
+
+### Create/Update/Delete a vault
+
+A vault is where you store a collection of passwords. Creation steps are given below. To update a vault, just long press
+it to open its update dialog. The update dialog also contains the delete button. You can have a total of 4 additional
+vaults.
+
+![Demo](http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4)
+
+
+
+
+[navigation drawer -> press add new button -> vault dialog -> fill details -> save]
+
+[navigation drawer -> long press some vault -> vault dialog -> update details -> save]
+
+[navigation drawer -> press add new button -> vault dialog -> delete]
+
+
 
 ### Create a password (Home screen -> Crete new password screen -> save)
 
@@ -67,44 +89,30 @@ button.
 
 [password screen wih error -> solve error -> home]
 
-### Create new vault
 
-you can further organize your passwords by sorting them into different vaults, similar to folders. To create a new
-vault, navigate to home screen and open the navigation drawer (side menu) there click on the `+` button to create a new
-vault. In this screen, set a name and an icon for the vault and click create
 
-[navigation drawer -> press add new button -> vault dialog -> fill details -> save]
 
-### Update a vault
+### View a password -
 
-In case there was an error, and you want to update or delete a vault, long press the appropriate vault's button. this
-would reopen the vault dialog with new options.
+this screen contains the password details and a history of previous passwords that can be helpful in recovery.
 
-[navigation drawer -> long press some vault -> vault dialog -> update details -> save]
+[password view screen using fingerprint - view password history, delete]
 
-### Delete a vault
+[password view screen not using fingerprint - view password history, delete]
 
-[navigation drawer -> press add new button -> vault dialog -> delete]
 
-### Selecting a vault
 
-Select a vault from navigation drawer to only show passwords in that vault.
+
+### Filtering, Sorting & Searching -
+
+You can see contents of a selected vault if you select the vault's card. Sorting options are provided on home screen as
+displayed below. Sort preferences are saved locally to avoid resetting. Searching has also been implemented as usual.
 
 [home -> nav drawer -> select a vault -> Home(auto)]
 
-### Selecting a vault for a password
+[home -> sort]
 
-you can move a password to a vault or create a password predefining a vault. The app also shows a warning if no vaults
-are created
-
-[home -> edit password -> change vault -> save]
-
-### Search and sort
-
-search and sort can be easily performed on the password list provided. However, it does take into account which vault is
-selected. Sort preferences are saved locally to avoid resetting
-
-[home -> search -> back -> sort]
+[home -> search]
 
 ### Auto lock
 
