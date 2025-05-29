@@ -115,8 +115,8 @@ class ActionAutomatorTest {
         return device.findObject(By.desc(testTag))
     }
 
-    private fun type(txt: String) { // TODO: rename txt
-        InstrumentationRegistry.getInstrumentation().sendStringSync(txt)
+    private fun type(text: String) { // TODO: rename txt
+        InstrumentationRegistry.getInstrumentation().sendStringSync(text)
     }
 
     private fun type(
@@ -125,7 +125,7 @@ class ActionAutomatorTest {
     ) {
         findObject(testTag = testTag).click()
         CustomDelay.MICRO_ANIMATION.hold()
-        type(txt = text)
+        type(text = text)
     }
 
     private fun clearText() {
@@ -188,7 +188,7 @@ class ActionAutomatorTest {
         device.findObject(By.text(oldVaultName)).longClick()
         findObject(testTag = TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name).click()
         clearText()
-        type(txt = newVaultName)
+        type(text = newVaultName)
         device.pressBack()
         findObject(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name).click()
         CustomDelay.SINGLE_API_CALL.hold()
@@ -325,7 +325,7 @@ class ActionAutomatorTest {
         findObject(testTag = TestTags.Home.TopBar.SEARCH_BUTTON.name).click()
         CustomDelay.MICRO_ANIMATION.hold()
         "goo".forEach {
-            type(txt = it.toString())
+            type(text = it.toString())
             CustomDelay.MICRO_ANIMATION.hold()
         }
 
