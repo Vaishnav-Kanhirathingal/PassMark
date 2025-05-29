@@ -35,8 +35,8 @@ class ActionAutomatorTest {
         MICRO_ANIMATION(delay = 500L),
 
         /** for dialogs, bottom sheets, etc */
-        SMALL_ANIMATION(delay = 1_000L),
-        NAVIGATION(delay = 3_000L),
+        SMALL_ANIMATION(delay = 1_200L),
+        NAVIGATION(delay = 2_500L),
         SINGLE_API_CALL(delay = 3_000L + TestTags.TIME_OUT),
         AUTH_LOADING(delay = 3_000 + (3 * TestTags.TIME_OUT)),
         FINGERPRINT(delay = 8_000L),
@@ -115,7 +115,7 @@ class ActionAutomatorTest {
         return device.findObject(By.desc(testTag))
     }
 
-    private fun type(txt: String) {
+    private fun type(txt: String) { // TODO: rename txt
         InstrumentationRegistry.getInstrumentation().sendStringSync(txt)
     }
 
@@ -126,6 +126,12 @@ class ActionAutomatorTest {
         findObject(testTag = testTag).click()
         CustomDelay.MICRO_ANIMATION.hold()
         type(txt = text)
+    }
+
+    private fun clearText() {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        device.pressKeyCode(KeyEvent.KEYCODE_A, KeyEvent.META_CTRL_ON)
+        device.pressDelete()
     }
 
     //-------------------------------------------------------------------------------------start-app
@@ -170,6 +176,20 @@ class ActionAutomatorTest {
             text = testVault.name
         )
         findObject(TestTags.Home.Drawer.VaultDialog.getIconTag(index = testVault.iconIndex)).click()
+        findObject(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name).click()
+        CustomDelay.SINGLE_API_CALL.hold()
+    }
+
+    private fun updateVault(
+        @Suppress("SameParameterValue") oldVaultName: String,
+        newVaultName: String
+    ) {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        device.findObject(By.text(oldVaultName)).longClick()
+        findObject(testTag = TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name).click()
+        clearText()
+        type(txt = newVaultName)
+        device.pressBack()
         findObject(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name).click()
         CustomDelay.SINGLE_API_CALL.hold()
     }
@@ -253,8 +273,7 @@ class ActionAutomatorTest {
         findObject(testTag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name).click()
         CustomDelay.MICRO_ANIMATION.hold()
 
-        device.pressKeyCode(KeyEvent.KEYCODE_A, KeyEvent.META_CTRL_ON)
-        device.pressDelete()
+        clearText()
 
         CustomDelay.MICRO_ANIMATION.hold()
         type(newPassword)
@@ -378,8 +397,12 @@ class ActionAutomatorTest {
         enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
 
         drawerFunctionality(toOpen = true)
-        createVault(testVault = TestingObjects.testVault)
-        // TODO: update vault
+        val vaultNameToReplace = "Game"
+        createVault(testVault = TestingObjects.testVault.copy(name = vaultNameToReplace))
+        updateVault(
+            oldVaultName = vaultNameToReplace,
+            newVaultName = TestingObjects.testVault.name
+        )
 
         drawerFunctionality(toOpen = false)
 
