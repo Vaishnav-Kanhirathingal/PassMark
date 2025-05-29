@@ -30,12 +30,14 @@ class ComposeFastSetupTest {
             matcher = hasTestTag(testTag = TestTags.Login.GOOGLE_BUTTON.name),
             timeoutMillis = 5_000
         )
+
         composeRule.onNodeWithTag(TestTags.Login.GOOGLE_BUTTON.name).performClick()
         Thread.sleep(6_000)
         // opens create new user screen
+
         composeRule.waitUntilAtLeastOneExists(
             matcher = hasTestTag(testTag = TestTags.CreateMasterKey.CONFIRM_BUTTON.name),
-            timeoutMillis = 3_000
+            timeoutMillis = 6_000
         )
 
         composeRule.onNodeWithTag(testTag = TestTags.CreateMasterKey.TEXT_FIELD.name)
@@ -130,12 +132,13 @@ class ComposeFastSetupTest {
             .onNodeWithTag(testTag = TestTags.Home.TopBar.OPEN_DRAWER_BUTTON.name)
             .performClick()
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.Drawer.TOP_TITLE.name))
-
         TestVault.vaultTestList.forEach(action = this::createVault)
 
-        Thread.sleep(5_000) // TODO: manually dismiss navigation drawer
         composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name))
-        // TODO: check issue
+
+        composeRule
+            .onNodeWithTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name)
+            .performClick()
 
         TestPasswordData.testList.forEach(this::createAndSaveNewPassword)
     }
