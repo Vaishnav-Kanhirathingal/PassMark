@@ -361,14 +361,14 @@ object HomeScreen {
                             .applyTag(testTag = TestTags.Home.TopBar.BACK_BUTTON.name)
                             .size(size = componentHeight)
                             .clip(shape = CircleShape)
-                            .background(color = MaterialTheme.colorScheme.primaryContainer)
+                            .background(color = MaterialTheme.colorScheme.surfaceContainer)
                             .clickable(onClick = { onSearch(null) }),
                         contentAlignment = Alignment.Center,
                         content = {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     )
