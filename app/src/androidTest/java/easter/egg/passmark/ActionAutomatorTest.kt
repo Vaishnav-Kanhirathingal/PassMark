@@ -327,17 +327,6 @@ class ActionAutomatorTest {
     }
 
     //-------------------------------------------------------------------------------setting-options
-    /** call from home screen without open drawer */
-    private fun resetUser() {
-        drawerFunctionality(toOpen = true)
-        findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
-        CustomDelay.NAVIGATION.hold()
-        findObject(testTag = TestTags.Settings.RESET_ACCOUNT_BUTTON.name).click()
-        CustomDelay.SMALL_ANIMATION.hold()
-        findObject(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name).click()
-        CustomDelay.RESET_USER.hold()
-    }
-
     /** call from home screen without open drawer. exits at master password screen with a request
      * to enter password
      */
@@ -370,6 +359,17 @@ class ActionAutomatorTest {
         CustomDelay.MICRO_ANIMATION.hold()
         findObject(testTag = TestTags.ChangePassword.CONFIRM_BUTTON.name).click()
         CustomDelay.CHANGE_PASSWORD.hold()
+    }
+
+    /** call from home screen without open drawer */
+    private fun resetUser() {
+        drawerFunctionality(toOpen = true)
+        findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
+        CustomDelay.NAVIGATION.hold()
+        findObject(testTag = TestTags.Settings.RESET_ACCOUNT_BUTTON.name).click()
+        CustomDelay.SMALL_ANIMATION.hold()
+        findObject(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name).click()
+        CustomDelay.RESET_USER.hold()
     }
 
     //----------------------------------------------------------------------------------final-script
