@@ -59,19 +59,10 @@ A vault is where you store a collection of passwords. Creation steps are given b
 it to open its update dialog. The update dialog also contains the delete button. You can have a total of 4 additional
 vaults.
 
-![createVault](https://github.com/user-attachments/assets/be807579-b2e9-4a6e-957b-5067dc0884a2)
-![updateVault](https://github.com/user-attachments/assets/9d5c178f-625a-4ec4-b5a4-714ff493598a)
-![deleteVault](https://github.com/user-attachments/assets/ac6a3703-1ac5-4011-8d17-ad0942bcc994)
 
-
-
-
-
-[navigation drawer -> press add new button -> vault dialog -> fill details -> save]
-
-[navigation drawer -> long press some vault -> vault dialog -> update details -> save]
-
-[navigation drawer -> press add new button -> vault dialog -> delete]
+<img src="https://github.com/user-attachments/assets/be807579-b2e9-4a6e-957b-5067dc0884a2" alt="Empty home screenshot" width="273">
+<img src="https://github.com/user-attachments/assets/9d5c178f-625a-4ec4-b5a4-714ff493598a" alt="Empty home screenshot" width="273">
+<img src="https://github.com/user-attachments/assets/ac6a3703-1ac5-4011-8d17-ad0942bcc994" alt="Empty home screenshot" width="273">
 
 
 
