@@ -28,6 +28,8 @@ import kotlin.math.absoluteValue
 class ActionAutomatorTest {
 
     enum class CustomDelay(private val delay: Long) {
+        APP_LAUNCH(delay = 5_000L),
+
         /** used for small animations which might not require waiting. eg - switching from one text
          * field to another */
         MICRO_ANIMATION(delay = 500L),
@@ -36,7 +38,7 @@ class ActionAutomatorTest {
         SMALL_ANIMATION(delay = 1_000L),
         NAVIGATION(delay = 3_000L),
         SINGLE_API_CALL(delay = 3_000L + TestTags.TIME_OUT),
-        AUTH_LOADING(delay = 3_000 + (3 * TestTags.TIME_OUT)), // TODO: increased multiplier. check.
+        AUTH_LOADING(delay = 3_000 + (3 * TestTags.TIME_OUT)),
         FINGERPRINT(delay = 8_000L),
         CHANGE_PASSWORD(
             delay = 3_000 + ((ChangeMasterPasswordViewModel.LOOP_DELAY + 500) * ReEncryptionStates.entries.size)
@@ -74,7 +76,7 @@ class ActionAutomatorTest {
             vault = testVault.name,
             title = "Nvidia",
             email = "johnDoe@nvidia.com",
-            userName = "Easter123",
+            userName = "JensenHuang",
             password = getTestingPassword(index = 0),
             website = "nvidia.com",
             note = "3rd gen",
@@ -101,14 +103,15 @@ class ActionAutomatorTest {
     @After
     fun stopRecording() {
         themeName?.let {
-            InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("pkill -l2 screenrecord")
+            InstrumentationRegistry.getInstrumentation().uiAutomation
+                .executeShellCommand("pkill -l2 screenrecord")
         }
     }
 
     //---------------------------------------------------------------------------------------utility
     private fun findObject(testTag: String): UiObject2 {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        device.wait(Until.hasObject(By.desc(testTag)), 3_000)
+        device.wait(Until.hasObject(By.desc(testTag)), 500)
         return device.findObject(By.desc(testTag))
     }
 
@@ -125,7 +128,7 @@ class ActionAutomatorTest {
         type(txt = text)
     }
 
-    //---------------------------------------------------------------------------------------actions
+    //-------------------------------------------------------------------------------------start-app
     private fun launchApp() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         val packageName = "easter.egg.passmark"
@@ -133,7 +136,7 @@ class ActionAutomatorTest {
         val intent = context.packageManager.getLaunchIntentForPackage(packageName)
         context.startActivity(intent!!.apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) })
         device.wait(Until.hasObject(By.pkg(packageName).depth(0)), 5000)
-        CustomDelay.NAVIGATION.hold()
+        CustomDelay.APP_LAUNCH.hold()
     }
 
     //------------------------------------------------------------------------------------------auth
@@ -271,12 +274,7 @@ class ActionAutomatorTest {
         device.click(630, 2580)
         CustomDelay.SMALL_ANIMATION.hold()
 
-        device.wait(Until.hasObject(By.desc(TestTags.ViewPassword.FINGERPRINT_BUTTON.name)), 3_000)
-        findObject(testTag = TestTags.ViewPassword.FINGERPRINT_BUTTON.name).click()
-        CustomDelay.FINGERPRINT.hold()
-
         UiScrollable(UiSelector().scrollable(true)).scrollToEnd(1)
-
         device.wait(Until.hasObject(By.desc(TestTags.ViewPassword.DELETE_BUTTON.name)), 3_000)
         findObject(testTag = TestTags.ViewPassword.DELETE_BUTTON.name).click()
 
@@ -321,7 +319,7 @@ class ActionAutomatorTest {
     private fun filterUsingVault() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         drawerFunctionality(toOpen = true)
-        device.wait(Until.hasObject(By.text(TestVault.WORK_VAULT)), 3_000)
+        device.wait(Until.hasObject(By.text(TestVault.WORK_VAULT)), 1_000)
         device.findObject(By.text(TestVault.WORK_VAULT)).click()
         CustomDelay.SMALL_ANIMATION.hold()
     }
