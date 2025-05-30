@@ -15,6 +15,7 @@ import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.testing.TestTags
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -121,11 +122,15 @@ class SettingsViewModel @Inject constructor(
         this._logoutScreenState.value = ScreenState.Loading()
         viewModelScope.launch {
             this@SettingsViewModel._logoutScreenState.value = try {
-                val dataStore =
-                    PassMarkDataStore(context = context, authId = supabaseAccountHelper.getId())
-                supabaseAccountHelper.logout()
-                dataStore.resetPassword()
-                ScreenState.Loaded(result = Unit)
+                TestTags.holdForDelay(
+                    task = {
+                        val dataStore =
+                            PassMarkDataStore(context = context, authId = supabaseAccountHelper.getId())
+                        supabaseAccountHelper.logout()
+                        dataStore.resetPassword()
+                        ScreenState.Loaded(result = Unit)
+                    }
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
                 ScreenState.ApiError.fromException(e = e)

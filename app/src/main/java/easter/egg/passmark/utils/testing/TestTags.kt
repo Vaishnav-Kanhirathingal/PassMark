@@ -113,6 +113,8 @@ object TestTags {
     enum class ConfirmationDialog { POSITIVE_BUTTON }
 
     enum class Settings {
+        LOCAL_STORAGE_SWITCH,
+        FINGERPRINT_AUTHENTICATION_SWITCH,
         RESET_ACCOUNT_BUTTON,
         CHANGE_PASSWORD_BUTTON,
         LOG_OUT

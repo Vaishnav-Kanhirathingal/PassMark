@@ -169,7 +169,8 @@ object SettingsScreen {
                                 biometricsEnabledByDefault = !biometricsEnabled
                             )
                         }
-                    }
+                    },
+                    testTag = TestTags.Settings.FINGERPRINT_AUTHENTICATION_SWITCH.name
                 )
                 val offlineEnabled = settingsViewModel.settingsDataStore
                     .getOfflineStorageFlow()
@@ -186,7 +187,8 @@ object SettingsScreen {
                                 offlineStorageEnabledByDefault = !offlineEnabled
                             )
                         }
-                    }
+                    },
+                    testTag = TestTags.Settings.LOCAL_STORAGE_SWITCH.name
                 )
                 ActionCard(
                     modifier = Modifier.fillMaxWidth(),
