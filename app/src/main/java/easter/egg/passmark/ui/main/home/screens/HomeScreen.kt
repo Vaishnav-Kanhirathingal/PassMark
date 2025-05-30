@@ -65,6 +65,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.gson.GsonBuilder
 import easter.egg.passmark.R
+import easter.egg.passmark.data.models.Vault
+import easter.egg.passmark.data.models.Vault.Companion.getIcon
 import easter.egg.passmark.data.models.password.Password
 import easter.egg.passmark.data.models.password.PasswordSortingOptions
 import easter.egg.passmark.ui.main.HomeListData
@@ -211,10 +213,9 @@ object HomeScreen {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .setSizeLimitation(),
-                            searchingVaultName = homeViewModel.vaultIdSelected.collectAsState().value?.let {
+                            searchingVault = homeViewModel.vaultIdSelected.collectAsState().value?.let {
                                 (mainResultState.value as? ScreenState.Loaded)
                                     ?.result?.getVaultById(it)
-                                    ?.name
                             },
                             searchText = homeViewModel.searchText.collectAsState().value,
                             onSearch = homeViewModel::updateSearchText,
@@ -277,7 +278,7 @@ object HomeScreen {
     private fun HomeTopBar(
         modifier: Modifier,
         searchText: String?,
-        searchingVaultName: String?,
+        searchingVault: Vault?,
         onSearch: (String?) -> Unit,
         openNavigationDrawer: () -> Unit,
         sortingOptionsSelected: PasswordSortingOptions,
@@ -314,11 +315,20 @@ object HomeScreen {
                             .clickable(onClick = openNavigationDrawer),
                         contentAlignment = Alignment.Center,
                         content = {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_monochrome),
-                                contentDescription = null,
-                                colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onPrimaryContainer)
-                            )
+                            if (searchingVault == null) {
+                                Image(
+                                    modifier = Modifier.size(size = 24.dp),
+                                    painter = painterResource(id = R.drawable.ic_launcher_uncropped),
+                                    contentDescription = null,
+                                    colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onPrimaryContainer)
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = searchingVault.getIcon(),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
                         }
                     )
                     Row(
@@ -342,16 +352,19 @@ object HomeScreen {
                                 }
                             }
                             .padding(horizontal = 12.dp),
-                        horizontalArrangement = Arrangement.Center,
+                        horizontalArrangement = Arrangement.spacedBy(space = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         content = {
                             Icon(
                                 imageVector = Icons.Default.Search,
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
                                 modifier = Modifier.weight(1f),
-                                text = "Search passwords"
+                                text = searchingVault?.name?.let { "Search $it vault" }
+                                    ?: "Search all passwords",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     )
@@ -395,7 +408,7 @@ object HomeScreen {
                                     if (searchText.isEmpty()) {
 
                                         Text(
-                                            text = "Search in ${searchingVaultName ?: "all items"}...",
+                                            text = "Search in ${searchingVault?.name ?: "all items"}...",
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
