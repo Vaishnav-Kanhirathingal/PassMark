@@ -47,9 +47,9 @@ password for verification during re-login (mentioned below)
 
 > [google login Process GIF for new user]
 
-during Re-Login, you would be asked to re-enter your master password for password verification and storage.
-
 > [google login Process GIF for already existing user]
+
+> Description - TODO
 
 
 
@@ -64,26 +64,27 @@ vaults.
 <img src="https://github.com/user-attachments/assets/9d5c178f-625a-4ec4-b5a4-714ff493598a" alt="Empty home screenshot" width="273">
 <img src="https://github.com/user-attachments/assets/ac6a3703-1ac5-4011-8d17-ad0942bcc994" alt="Empty home screenshot" width="273">
 
+> Description - TODO
 
 
 ### Create a password (Home screen -> Crete new password screen -> save)
 
 Once Authentication is completed, you would be taken to the home screen. Now, you can create a new password by using the
 create-new-password `+` floating action button. Create a new password by adding necessary details. Title and password
-are compulsory details. The last 2 options are security features. Passmark allows you to do 2 additional things. require
-fingerprint authentication to copy your password and second is a keep on device only option. This way the current
-password is saved locally only. It would survive logouts but not app resets and uninstalls as they aren't stored
-remotely. This is a security feature for users who might want to store certain details locally only as that would
-certainly be helpful in avoiding cyber-attacks.
+are compulsory details. The last 2 options are security features. Warnings might occur if details are improper/ incomplete. In that case once all warnings are sorted, click the save
+button.
 
 [empty home screen -> create new password screen -> select vault drop down -> back and fill details -> save -> home (GIF)]
 
-Warnings might occur if details are improper/ incomplete. In that case once all warnings are sorted, click the save
-button.
-
 [password screen wih error -> solve error -> home]
 
+[update flow]
 
+> Passmark allows you to do 2 additional things, `require
+fingerprint authentication` to copy your password and second is a `keep on device` only option. This way the current
+password is saved locally only. It would survive logouts but not app resets and uninstalls as they aren't stored
+remotely. This is a security feature for users who might want to store certain details locally only as that would
+certainly be helpful in avoiding cyber-attacks.
 
 
 ### View a password -
