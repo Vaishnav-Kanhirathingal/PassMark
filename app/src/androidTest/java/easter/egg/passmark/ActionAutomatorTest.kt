@@ -87,25 +87,22 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
-    private val themeName: String? = "LoginAndCreatePassword"
+    private val themeName: String = "UserCreation"
 
     @Before
     fun startRecording() {
-        themeName?.let { theme ->
-            val command = "screenrecord /sdcard/TestRecordings/${theme}FullFlow.mp4"
-            InstrumentationRegistry.getInstrumentation().uiAutomation.let {
-                it.executeShellCommand("mkdir -p /sdcard/TestRecordings")
-                it.executeShellCommand(command)
-            }
+        val command = "screenrecord /sdcard/TestRecordings/${themeName}Flow.mp4"
+        InstrumentationRegistry.getInstrumentation().uiAutomation.let {
+            it.executeShellCommand("mkdir -p /sdcard/TestRecordings")
+            it.executeShellCommand(command)
         }
+
     }
 
     @After
     fun stopRecording() {
-        themeName?.let {
-            InstrumentationRegistry.getInstrumentation().uiAutomation
-                .executeShellCommand("pkill -l2 screenrecord")
-        }
+        InstrumentationRegistry.getInstrumentation().uiAutomation
+            .executeShellCommand("pkill -l2 screenrecord")
     }
 
     //---------------------------------------------------------------------------------------utility
