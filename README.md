@@ -45,9 +45,16 @@ you are a new user, you would be asked to create a new Master Password. Make sur
 characters long. otherwise it shows an error. If you already had an account, you would be asked to enter your master
 password for verification during re-login (mentioned below)
 
-> [google login Process GIF for new user]
+[google login Process GIF for new user]
+ 
+[google login Process GIF for new user with error]
 
-> [google login Process GIF for already existing user]
+[google login Process GIF for already existing user]
+
+![LoginForExisting](https://github.com/user-attachments/assets/58375ab7-6189-4398-b47c-fd5e22f53abc)
+
+
+
 
 > Description - TODO
 
@@ -73,6 +80,14 @@ Once Authentication is completed, you would be taken to the home screen. Now, yo
 create-new-password `+` floating action button. Create a new password by adding necessary details. Title and password
 are compulsory details. The last 2 options are security features. Warnings might occur if details are improper/ incomplete. In that case once all warnings are sorted, click the save
 button.
+
+![creatingPassword](https://github.com/user-attachments/assets/6d1461b5-9d59-41d9-a380-eff526e43b30)
+
+![creatingPasswordError](https://github.com/user-attachments/assets/a555236e-acde-4761-9e15-d5dd10ed956e)
+
+![updatePassword](https://github.com/user-attachments/assets/41f9aacb-1b16-4aa4-8345-4d07396bbf22)
+
+
 
 [empty home screen -> create new password screen -> select vault drop down -> back and fill details -> save -> home (GIF)]
 
