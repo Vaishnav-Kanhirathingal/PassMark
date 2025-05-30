@@ -79,6 +79,10 @@ create-new-password `+` floating action button. Create a new password by adding 
 are compulsory details. The last 2 options are security features. Warnings might occur if details are improper/ incomplete. In that case once all warnings are sorted, click the save
 button.
 
+> Passmark allows you to do 2 additional things, `require fingerprint authentication` to copy your password and second
+is a `keep on device` only option. This way the current password is saved locally only. It would survive logouts but
+not app resets and uninstalls as they aren't stored remotely. This is a security feature for users who might want to
+store certain details locally only as that would certainly be helpful in avoiding cyber-attacks.
 
 
 
@@ -86,18 +90,7 @@ button.
 <img src="https://github.com/user-attachments/assets/a555236e-acde-4761-9e15-d5dd10ed956e" alt="Error screen in creation of a password" width="273">
 <img src="https://github.com/user-attachments/assets/41f9aacb-1b16-4aa4-8345-4d07396bbf22" alt="Updating a password" width="273">
 
-
-
-[empty home screen -> create new password screen -> select vault drop down -> back and fill details -> save -> home (GIF)]
-
-[password screen wih error -> solve error -> home]
-
-[update flow]
-
-> Passmark allows you to do 2 additional things, `require fingerprint authentication` to copy your password and second 
-is a `keep on device` only option. This way the current password is saved locally only. It would survive logouts but 
-not app resets and uninstalls as they aren't stored remotely. This is a security feature for users who might want to
-store certain details locally only as that would certainly be helpful in avoiding cyber-attacks.
+> Description - TODO
 
 
 ### View a password -
