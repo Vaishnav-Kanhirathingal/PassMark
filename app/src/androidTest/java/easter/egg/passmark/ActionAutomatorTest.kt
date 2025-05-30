@@ -38,7 +38,7 @@ class ActionAutomatorTest {
         SMALL_ANIMATION(delay = 1_200L),
         NAVIGATION(delay = 2_500L),
         SINGLE_API_CALL(delay = 3_000L + TestTags.TIME_OUT),
-        AUTH_LOADING(delay = 3_000 + (3 * TestTags.TIME_OUT)),
+        AUTH_LOADING(delay = 3_000 + (2 * TestTags.TIME_OUT)),
         FINGERPRINT(delay = 8_000L),
         CHANGE_PASSWORD(
             delay = 3_000 + ((ChangeMasterPasswordViewModel.LOOP_DELAY + 500) * ReEncryptionStates.entries.size)
@@ -87,7 +87,7 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
-    private val themeName: String? = "VaultOptions"
+    private val themeName: String? = "LoginAndCreatePassword"
 
     @Before
     fun startRecording() {
@@ -452,25 +452,12 @@ class ActionAutomatorTest {
         selectGoogleAccount()
         enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
 
-        val vaultNameToReplace = "Game"
+//        drawerFunctionality(toOpen = true)
+//        createVault(testVault = TestingObjects.testVault)
+//        drawerFunctionality(toOpen = false)
 
-        drawerFunctionality(toOpen = true)
-        createVault(testVault = TestingObjects.testVault.copy(name = vaultNameToReplace))
-        drawerFunctionality(toOpen = false)
-        CustomDelay.SMALL_ANIMATION.hold()
-
-        drawerFunctionality(toOpen = true)
-        updateVault(
-            oldVaultName = vaultNameToReplace,
-            newVaultName = TestingObjects.testVault.name
-        )
-        drawerFunctionality(toOpen = false)
-        CustomDelay.SMALL_ANIMATION.hold()
-
-        drawerFunctionality(toOpen = true)
-        deleteVault(name = TestingObjects.testVault.name)
-        drawerFunctionality(toOpen = false)
-        CustomDelay.SMALL_ANIMATION.hold()
+        createPassword(testPasswordData = TestingObjects.testPasswordData)
+        CustomDelay.SINGLE_API_CALL.hold()
     }
 }
 
