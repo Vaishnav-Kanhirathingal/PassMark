@@ -102,16 +102,24 @@ this screen contains the password details and a history of previous passwords th
 
 
 
-### Filtering, Sorting & Searching -
+### Sorting, Searching & Filtering -
 
 You can see contents of a selected vault if you select the vault's card. Sorting options are provided on home screen as
 displayed below. Sort preferences are saved locally to avoid resetting. Searching has also been implemented as usual.
 
-[home -> nav drawer -> select a vault -> Home(auto)]
+![sort](https://github.com/user-attachments/assets/491453ea-de68-4500-9806-b0759e0e619d)
+![search](https://github.com/user-attachments/assets/14304e6c-164e-48ff-ba2d-ff6f7279f492)
+![filter](https://github.com/user-attachments/assets/e1caf762-1430-4999-bbcc-472057f730ba)
 
-[home -> sort]
 
-[home -> search]
+
+
+
+
+
+
+
+
 
 ### Auto lock
 
