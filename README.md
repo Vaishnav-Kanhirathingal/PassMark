@@ -45,13 +45,11 @@ you are a new user, you would be asked to create a new Master Password. Make sur
 characters long. otherwise it shows an error. If you already had an account, you would be asked to enter your master
 password for verification during re-login (mentioned below)
 
-[google login Process GIF for new user]
- 
-[google login Process GIF for new user with error]
+![UserCreationFlow](https://github.com/user-attachments/assets/2f81ecc0-b695-4eb1-bc66-e49ff7563f0b)
+
+![UserCreationWithErrorFlow](https://github.com/user-attachments/assets/b5401c16-cb49-4fb4-baf3-91e6676f07ba)
 
 <img src="https://github.com/user-attachments/assets/58375ab7-6189-4398-b47c-fd5e22f53abc" alt="Login for existing user" width="273">
-
-
 
 
 > Description - TODO
