@@ -45,10 +45,8 @@ you are a new user, you would be asked to create a new Master Password. Make sur
 characters long. otherwise it shows an error. If you already had an account, you would be asked to enter your master
 password for verification during re-login (mentioned below)
 
-![UserCreationFlow](https://github.com/user-attachments/assets/2f81ecc0-b695-4eb1-bc66-e49ff7563f0b)
-
-![UserCreationWithErrorFlow](https://github.com/user-attachments/assets/b5401c16-cb49-4fb4-baf3-91e6676f07ba)
-
+<img src="https://github.com/user-attachments/assets/2f81ecc0-b695-4eb1-bc66-e49ff7563f0b" alt="Create a new user" width="273">
+<img src="https://github.com/user-attachments/assets/b5401c16-cb49-4fb4-baf3-91e6676f07ba" alt="Error screen in create a new user" width="273">
 <img src="https://github.com/user-attachments/assets/58375ab7-6189-4398-b47c-fd5e22f53abc" alt="Login for existing user" width="273">
 
 
@@ -107,12 +105,9 @@ this screen contains the password details and a history of previous passwords th
 You can see contents of a selected vault if you select the vault's card. Sorting options are provided on home screen as
 displayed below. Sort preferences are saved locally to avoid resetting. Searching has also been implemented as usual.
 
-![sort](https://github.com/user-attachments/assets/491453ea-de68-4500-9806-b0759e0e619d)
-![search](https://github.com/user-attachments/assets/14304e6c-164e-48ff-ba2d-ff6f7279f492)
-![filter](https://github.com/user-attachments/assets/e1caf762-1430-4999-bbcc-472057f730ba)
-
-
-
+<img src="https://github.com/user-attachments/assets/491453ea-de68-4500-9806-b0759e0e619d" alt="Sorting" width="273">
+<img src="https://github.com/user-attachments/assets/14304e6c-164e-48ff-ba2d-ff6f7279f492" alt="Searching" width="273">
+<img src="https://github.com/user-attachments/assets/e1caf762-1430-4999-bbcc-472057f730ba" alt="Selecting a vault" width="273">
 
 
 
