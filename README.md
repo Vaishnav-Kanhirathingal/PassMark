@@ -49,9 +49,7 @@ password for verification during re-login (mentioned below)
  
 [google login Process GIF for new user with error]
 
-[google login Process GIF for already existing user]
-
-![LoginForExisting](https://github.com/user-attachments/assets/58375ab7-6189-4398-b47c-fd5e22f53abc)
+<img src="https://github.com/user-attachments/assets/58375ab7-6189-4398-b47c-fd5e22f53abc" alt="Login for existing user" width="273">
 
 
 
@@ -67,9 +65,9 @@ it to open its update dialog. The update dialog also contains the delete button.
 vaults.
 
 
-<img src="https://github.com/user-attachments/assets/be807579-b2e9-4a6e-957b-5067dc0884a2" alt="Empty home screenshot" width="273">
-<img src="https://github.com/user-attachments/assets/9d5c178f-625a-4ec4-b5a4-714ff493598a" alt="Empty home screenshot" width="273">
-<img src="https://github.com/user-attachments/assets/ac6a3703-1ac5-4011-8d17-ad0942bcc994" alt="Empty home screenshot" width="273">
+<img src="https://github.com/user-attachments/assets/be807579-b2e9-4a6e-957b-5067dc0884a2" alt="Create a vault" width="273">
+<img src="https://github.com/user-attachments/assets/9d5c178f-625a-4ec4-b5a4-714ff493598a" alt="Update a vault" width="273">
+<img src="https://github.com/user-attachments/assets/ac6a3703-1ac5-4011-8d17-ad0942bcc994" alt="Delete a vault" width="273">
 
 > Description - TODO
 
@@ -81,11 +79,12 @@ create-new-password `+` floating action button. Create a new password by adding 
 are compulsory details. The last 2 options are security features. Warnings might occur if details are improper/ incomplete. In that case once all warnings are sorted, click the save
 button.
 
-![creatingPassword](https://github.com/user-attachments/assets/6d1461b5-9d59-41d9-a380-eff526e43b30)
 
-![creatingPasswordError](https://github.com/user-attachments/assets/a555236e-acde-4761-9e15-d5dd10ed956e)
 
-![updatePassword](https://github.com/user-attachments/assets/41f9aacb-1b16-4aa4-8345-4d07396bbf22)
+
+<img src="https://github.com/user-attachments/assets/6d1461b5-9d59-41d9-a380-eff526e43b30" alt="Creating a password" width="273">
+<img src="https://github.com/user-attachments/assets/a555236e-acde-4761-9e15-d5dd10ed956e" alt="Error screen in creation of a password" width="273">
+<img src="https://github.com/user-attachments/assets/41f9aacb-1b16-4aa4-8345-4d07396bbf22" alt="Updating a password" width="273">
 
 
 
@@ -95,11 +94,10 @@ button.
 
 [update flow]
 
-> Passmark allows you to do 2 additional things, `require
-fingerprint authentication` to copy your password and second is a `keep on device` only option. This way the current
-password is saved locally only. It would survive logouts but not app resets and uninstalls as they aren't stored
-remotely. This is a security feature for users who might want to store certain details locally only as that would
-certainly be helpful in avoiding cyber-attacks.
+> Passmark allows you to do 2 additional things, `require fingerprint authentication` to copy your password and second 
+is a `keep on device` only option. This way the current password is saved locally only. It would survive logouts but 
+not app resets and uninstalls as they aren't stored remotely. This is a security feature for users who might want to
+store certain details locally only as that would certainly be helpful in avoiding cyber-attacks.
 
 
 ### View a password -
