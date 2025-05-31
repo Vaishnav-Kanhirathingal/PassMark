@@ -50,9 +50,9 @@ password for verification during re-login (mentioned below)
 <img src="https://github.com/user-attachments/assets/58375ab7-6189-4398-b47c-fd5e22f53abc" alt="Login for existing user" width="273">
 
 
-> Description - TODO
-
-
+> 1. New user creation
+> 2. Error screen
+> 3. Login for existing user
 
 ### Create/Update/Delete a vault
 
@@ -65,7 +65,9 @@ vaults.
 <img src="https://github.com/user-attachments/assets/9d5c178f-625a-4ec4-b5a4-714ff493598a" alt="Update a vault" width="273">
 <img src="https://github.com/user-attachments/assets/ac6a3703-1ac5-4011-8d17-ad0942bcc994" alt="Delete a vault" width="273">
 
-> Description - TODO
+> 1. Create a new vault
+> 2. Update an existing vault
+> 3. Delete a vault.
 
 
 ### Create a password (Home screen -> Crete new password screen -> save)
@@ -86,8 +88,9 @@ store certain details locally only as that would certainly be helpful in avoidin
 <img src="https://github.com/user-attachments/assets/a555236e-acde-4761-9e15-d5dd10ed956e" alt="Error screen in creation of a password" width="273">
 <img src="https://github.com/user-attachments/assets/41f9aacb-1b16-4aa4-8345-4d07396bbf22" alt="Updating a password" width="273">
 
-> Description - TODO
-
+> 1. Creation of a Password, 
+> 2. Error screen when title is empty, password is empty or email is of incorrect format.
+> 3. Updating  a password (fingerprint will be required for editing if use fingerprint is enabled for the selected password)
 
 ### View a password -
 
@@ -103,14 +106,15 @@ this screen contains the password details and a history of previous passwords th
 ### Sorting, Searching & Filtering -
 
 You can see contents of a selected vault if you select the vault's card. Sorting options are provided on home screen as
-displayed below. Sort preferences are saved locally to avoid resetting. Searching has also been implemented as usual.
+displayed below. Searching has also been implemented as usual.
 
 <img src="https://github.com/user-attachments/assets/491453ea-de68-4500-9806-b0759e0e619d" alt="Sorting" width="273">
 <img src="https://github.com/user-attachments/assets/14304e6c-164e-48ff-ba2d-ff6f7279f492" alt="Searching" width="273">
 <img src="https://github.com/user-attachments/assets/e1caf762-1430-4999-bbcc-472057f730ba" alt="Selecting a vault" width="273">
 
-
-
+> 1. Sorting using name (Sort preferences are saved locally to avoid resetting.)
+> 2. Searching
+> 3. Filtering using a vault.
 
 
 
