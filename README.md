@@ -134,6 +134,18 @@ This is a self retrying function. So, it will retry the step where an error occu
 
 [reset user git]
 
+![SwitchesAndLogOut](https://github.com/user-attachments/assets/b2ce209c-548f-44cd-80aa-b50c9778f07f)
+
+![changePass](https://github.com/user-attachments/assets/57937c31-6fcc-4cf0-9e24-6a8ac8121dc6)
+
+![resetUser](https://github.com/user-attachments/assets/cda0ab53-7e59-4fbe-bf5c-0a3f9ed59527)
+
+
+
+
+
+
+
 > 1. Switches and logout
 > 2. Change Password
 > 3. Reset User
