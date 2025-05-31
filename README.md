@@ -28,9 +28,10 @@ change your phone's system color and the app would match it. Assuming dynamic co
 
 the below video contains majority of the actions documented. Refer the documentation section for deeper details
 
-Timeline -
+[multiple full flow video with unique themes themes]
 
-> TODO
+> Timeline -
+> 1. TODO
 
 ## Documentation
 
@@ -92,11 +93,19 @@ button.
 
 ### View a password -
 
-this screen contains the password details and a history of previous passwords that can be helpful in recovery.
+This screen contains the password details and a history of previous passwords that can be helpful in recovery. Viewing
+this screen triggers the updation of the `last used` property of the password
 
-[password view screen using fingerprint - view password history, delete]
+[password view screen using fingerprint - view password, view password history, delete]
+
+[password view screen using fingerprint - view password history, view password, delete]
 
 [password view screen not using fingerprint - view password history, delete]
+
+> 1. Flow of the screen where the password is viewed first.
+> 2. Flow of the screen where the password history is viewed first. In both cases, if fingerprint is verified once,
+     reverification isn't required for subsequent action which requires fingerprint access.
+> 3. Flow of screen where fingerprint access isn't required.
 
 ### Sorting, Searching & Filtering -
 
@@ -128,23 +137,10 @@ Rest is self-explanatory. Logout option safely logs you out of your account with
 the process. Reset account option can be used to destroy everything associated with the user including local passwords.
 This is a self retrying function. So, it will retry the step where an error occurs.
 
-[settings screen nav and switches and logout]
 
-[change password gif]
-
-[reset user git]
-
-![SwitchesAndLogOut](https://github.com/user-attachments/assets/b2ce209c-548f-44cd-80aa-b50c9778f07f)
-
-![changePass](https://github.com/user-attachments/assets/57937c31-6fcc-4cf0-9e24-6a8ac8121dc6)
-
-![resetUser](https://github.com/user-attachments/assets/cda0ab53-7e59-4fbe-bf5c-0a3f9ed59527)
-
-
-
-
-
-
+<img src="https://github.com/user-attachments/assets/b2ce209c-548f-44cd-80aa-b50c9778f07f" alt="settings screen nav and switches and logout" width="273">
+<img src="https://github.com/user-attachments/assets/57937c31-6fcc-4cf0-9e24-6a8ac8121dc6" alt="change password gif" width="273">
+<img src="https://github.com/user-attachments/assets/cda0ab53-7e59-4fbe-bf5c-0a3f9ed59527" alt="reset user git" width="273">
 
 > 1. Switches and logout
 > 2. Change Password
