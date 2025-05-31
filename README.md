@@ -36,8 +36,6 @@ Timeline -
 
 below is a step-by-step guide for everything
 
-
-
 ### Authentication (Login screen -> Create master password screen -> Home)
 
 Google login is the only option. click on the login button and select your Google account .depending on your account, if
@@ -48,7 +46,6 @@ password for verification during re-login (mentioned below)
 <img src="https://github.com/user-attachments/assets/2f81ecc0-b695-4eb1-bc66-e49ff7563f0b" alt="Create a new user" width="273">
 <img src="https://github.com/user-attachments/assets/b5401c16-cb49-4fb4-baf3-91e6676f07ba" alt="Error screen in create a new user" width="273">
 <img src="https://github.com/user-attachments/assets/58375ab7-6189-4398-b47c-fd5e22f53abc" alt="Login for existing user" width="273">
-
 
 > 1. New user creation
 > 2. Error screen
@@ -69,18 +66,18 @@ vaults.
 > 2. Update an existing vault
 > 3. Delete a vault.
 
-
 ### Create a password (Home screen -> Crete new password screen -> save)
 
 Once Authentication is completed, you would be taken to the home screen. Now, you can create a new password by using the
 create-new-password `+` floating action button. Create a new password by adding necessary details. Title and password
-are compulsory details. The last 2 options are security features. Warnings might occur if details are improper/ incomplete. In that case once all warnings are sorted, click the save
+are compulsory details. The last 2 options are security features. Warnings might occur if details are improper/
+incomplete. In that case once all warnings are sorted, click the save
 button.
 
 > Passmark allows you to do 2 additional things, `require fingerprint authentication` to copy your password and second
-is a `keep on device` only option. This way the current password is saved locally only. It would survive logouts but
-not app resets and uninstalls as they aren't stored remotely. This is a security feature for users who might want to
-store certain details locally only as that would certainly be helpful in avoiding cyber-attacks.
+> is a `keep on device` only option. This way the current password is saved locally only. It would survive logouts but
+> not app resets and uninstalls as they aren't stored remotely. This is a security feature for users who might want to
+> store certain details locally only as that would certainly be helpful in avoiding cyber-attacks.
 
 
 
@@ -88,9 +85,10 @@ store certain details locally only as that would certainly be helpful in avoidin
 <img src="https://github.com/user-attachments/assets/a555236e-acde-4761-9e15-d5dd10ed956e" alt="Error screen in creation of a password" width="273">
 <img src="https://github.com/user-attachments/assets/41f9aacb-1b16-4aa4-8345-4d07396bbf22" alt="Updating a password" width="273">
 
-> 1. Creation of a Password, 
+> 1. Creation of a Password,
 > 2. Error screen when title is empty, password is empty or email is of incorrect format.
-> 3. Updating  a password (fingerprint will be required for editing if use fingerprint is enabled for the selected password)
+> 3. Updating a password (fingerprint will be required for editing if use fingerprint is enabled for the selected
+     password)
 
 ### View a password -
 
@@ -99,9 +97,6 @@ this screen contains the password details and a history of previous passwords th
 [password view screen using fingerprint - view password history, delete]
 
 [password view screen not using fingerprint - view password history, delete]
-
-
-
 
 ### Sorting, Searching & Filtering -
 
@@ -116,10 +111,6 @@ displayed below. Searching has also been implemented as usual.
 > 2. Searching
 > 3. Filtering using a vault.
 
-
-
-
-
 ### Auto lock
 
 The app auto locks itself if pushed to recents. The locking has a delay set to ensure it wasn't user error (accidentally
@@ -131,34 +122,57 @@ exiting the app just to re-enter instantly)
 
 ### Settings
 
-The settings screen contains some preferences and some options.
+The settings screen contains some preferences and some options. The `enable fingerprint by default` enables fingerprint
+protection option for all passwords by default during creation. Same is true for `Enable offline storage by default`.
+Rest is self-explanatory. Logout option safely logs you out of your account without destroying your local passwords in
+the process. Reset account option can be used to destroy everything associated with the user including local passwords.
+This is a self retrying function. So, it will retry the step where an error occurs.
 
-[settings screen]
-
-the `enable fingerprint by default` enables fingerprint protection option for all passwords by default during creation.
-Same is true for `Enable offline storage by default`. Change Password button can be used to change your password.
+[settings screen nav and switches and logout]
 
 [change password gif]
 
-this is a self retrying function. So, it will retry the step where an error occurs.
+[reset user git]
+
+> 1. Switches and logout
+> 2. Change Password
+> 3. Reset User
 
 [change password gif retrying]
 
-Logout option logs you out of your account without destroying your local passwords in the process.
-
-[logout user git]
-
-While reset account
-option can be used to destroy everything associated with the user including local passwords.
-
-[reset user git]
-
 ## Error screens
 
-Error screens are necessary to handle error states. Each screen has an error UI to manage errors.
+Error screens are necessary to handle error states. Each screen has an error UI of some sort to manage errors.
 
-### Authentication error
+### Error Toasters
 
-### Home error
+Actions such as creating a `Vault` or `Password` are simple and do not require a separate UI composable. Hence, such
+actions just display a toast when an error is encountered.
+
+[wrong password toaster]
+
+[create vault toaster]
+
+[create password toaster]
+
+### Full Screen Error
+
+Actions like authenticating user in loading screen, loading the passwords and vaults from the api are full screen
+actions and do require a separate UI. here, They are given that separate UI.
+
+[auth loading error]
+
+[home list loading error]
+
+### Sequential looping error
+
+Actions like `changing user password` and `resetting a user` are sequential in nature and cannot proceed to their next
+stage if an error occurs. In such a case, it would go into a loop of retrying until the entire task list is completed.
+
+[change password looping error]
+
+[reset user looping error]
 
 ## Easter eggs [PENDING]
+
+> TODO
