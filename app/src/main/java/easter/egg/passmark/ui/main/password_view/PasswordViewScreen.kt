@@ -388,7 +388,13 @@ object PasswordViewScreen {
                                         else showBiometricPrompt(forHistory = false)
                                     },
                                     endIconTestTag = TestTags.ViewPassword.FINGERPRINT_BUTTON.name,
-                                    onShowPasswordHistory = { showBiometricPrompt(forHistory = true) }
+                                    onShowPasswordHistory = {
+                                        if (accessGranted.value) {
+                                            showHistory.value = true
+                                        } else {
+                                            showBiometricPrompt(forHistory = true)
+                                        }
+                                    }
                                 )
                             }
                         )
