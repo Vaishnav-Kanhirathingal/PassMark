@@ -26,20 +26,21 @@ import kotlin.math.absoluteValue
 
 @RunWith(AndroidJUnit4::class)
 class ActionAutomatorTest {
+    // TODO: replace all theme home screen images since search changed
 
     enum class CustomDelay(private val delay: Long) {
         APP_LAUNCH(delay = 3_000L),
 
         /** used for small animations which might not require waiting. eg - switching from one text
          * field to another */
-        MICRO_ANIMATION(delay = 500L),
+        MICRO_ANIMATION(delay = 300L),
 
         /** for dialogs, bottom sheets, etc */
         SMALL_ANIMATION(delay = 1_200L),
         NAVIGATION(delay = 2_500L),
         SINGLE_API_CALL(delay = 3_000L + TestTags.TIME_OUT),
         AUTH_LOADING(delay = 3_000 + (2 * TestTags.TIME_OUT)),
-        FINGERPRINT(delay = 8_000L),
+        FINGERPRINT(delay = 5_000L),
         CHANGE_PASSWORD(
             delay = 3_000 + ((ChangeMasterPasswordViewModel.LOOP_DELAY + 500) * ReEncryptionStates.entries.size)
         ),
@@ -394,7 +395,7 @@ class ActionAutomatorTest {
         CustomDelay.CHANGE_PASSWORD.hold()
     }
 
-    /** call from home screen without open drawer */
+    /** call from home screen with closed drawer */
     private fun resetUser() {
         drawerFunctionality(toOpen = true)
         findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
