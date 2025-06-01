@@ -336,12 +336,12 @@ class ActionAutomatorTest {
     private fun sortPasswordList() {
         findObject(testTag = TestTags.Home.TopBar.SORTING_BUTTON.name).click()
         CustomDelay.SMALL_ANIMATION.hold()
-        findObject(testTag = TestTags.Home.Sorting.getSortOptionTag(passwordSortingOptions = PasswordSortingOptions.NAME)).click()
+        findObject(testTag = TestTags.Home.Sorting.getSortOptionTag(passwordSortingOptions = PasswordSortingOptions.NAME)).visibleClick()
         CustomDelay.SMALL_ANIMATION.hold()
     }
 
     private fun search() {
-        findObject(testTag = TestTags.Home.TopBar.SEARCH_BUTTON.name).click()
+        findObject(testTag = TestTags.Home.TopBar.SEARCH_BUTTON.name).visibleClick()
         CustomDelay.MICRO_ANIMATION.hold()
         "goo".forEach {
             type(text = it.toString())
@@ -358,7 +358,7 @@ class ActionAutomatorTest {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         drawerFunctionality(toOpen = true)
         device.wait(Until.hasObject(By.text(TestVault.WORK_VAULT)), 1_000)
-        device.findObject(By.text(TestVault.WORK_VAULT)).click()
+        device.findObject(By.text(TestVault.WORK_VAULT)).visibleClick()
         CustomDelay.SMALL_ANIMATION.hold()
     }
 
@@ -464,13 +464,6 @@ class ActionAutomatorTest {
         launchApp()
         selectGoogleAccount()
         enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
-
-//        drawerFunctionality(toOpen = true)
-//        createVault(testVault = TestingObjects.testVault)
-//        drawerFunctionality(toOpen = false)
-
-        createPassword(testPasswordData = TestingObjects.testPasswordData)
-        CustomDelay.SINGLE_API_CALL.hold()
     }
 }
 
