@@ -87,7 +87,7 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
-    private val themeName: String = "UserCreation"
+    private val themeName: String = "ViewScript"
 
     @Before
     fun startRecording() {
@@ -135,6 +135,10 @@ class ActionAutomatorTest {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         device.pressKeyCode(KeyEvent.KEYCODE_A, KeyEvent.META_CTRL_ON)
         device.pressDelete()
+    }
+
+    private fun UiObject2.visibleClick() {
+        this.click(300)
     }
 
     //-------------------------------------------------------------------------------------start-app
@@ -358,9 +362,7 @@ class ActionAutomatorTest {
     }
 
     //-------------------------------------------------------------------------------setting-options
-    /** call from home screen without open drawer. exits at master password screen with a request
-     * to enter password
-     */
+    /** call from home screen with closed drawer */
     private fun changeToNewPassword() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         drawerFunctionality(toOpen = true)
@@ -401,6 +403,19 @@ class ActionAutomatorTest {
         CustomDelay.SMALL_ANIMATION.hold()
         findObject(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name).click()
         CustomDelay.RESET_USER.hold()
+    }
+
+    /** call from home screen with closed drawer */
+    private fun turnOnSwitchesAndLogout() {
+        drawerFunctionality(toOpen = true)
+        findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
+        CustomDelay.NAVIGATION.hold()
+        findObject(testTag = TestTags.Settings.FINGERPRINT_AUTHENTICATION_SWITCH.name).click()
+        CustomDelay.SMALL_ANIMATION.hold()
+        findObject(testTag = TestTags.Settings.LOCAL_STORAGE_SWITCH.name).click()
+        CustomDelay.SMALL_ANIMATION.hold()
+        findObject(testTag = TestTags.Settings.LOG_OUT.name).click()
+        CustomDelay.SINGLE_API_CALL.hold()
     }
 
     //----------------------------------------------------------------------------------final-script
