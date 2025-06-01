@@ -89,8 +89,6 @@ button.
 > not app resets and uninstalls as they aren't stored remotely. This is a security feature for users who might want to
 > store certain details locally only as that would certainly be helpful in avoiding cyber-attacks.
 
-
-
 <img src="https://github.com/user-attachments/assets/6d1461b5-9d59-41d9-a380-eff526e43b30" alt="Creating a password" width="273">
 <img src="https://github.com/user-attachments/assets/a555236e-acde-4761-9e15-d5dd10ed956e" alt="Error screen in creation of a password" width="273">
 <img src="https://github.com/user-attachments/assets/41f9aacb-1b16-4aa4-8345-4d07396bbf22" alt="Updating a password" width="273">
@@ -114,22 +112,9 @@ button.
 This screen contains the password details and a history of previous passwords that can be helpful in recovery. Viewing
 this screen triggers the updation of the `last used` property of the password
 
-
-![fingerprintFirst](https://github.com/user-attachments/assets/c2957783-ec75-4cdf-b330-2f80df60ae5e)
-
-![historyFirst](https://github.com/user-attachments/assets/c3349ed6-71eb-4ecd-a45f-6228c122eb34)
-
-![noBiometricsView](https://github.com/user-attachments/assets/2f559c24-7671-4787-bf30-e53b07e688f9)
-
-
-
-
-
-[password view screen using fingerprint - view password, view password history, delete]
-
-[password view screen using fingerprint - view password history, view password, delete]
-
-[password view screen not using fingerprint - view password history, delete]
+<img src="https://github.com/user-attachments/assets/c2957783-ec75-4cdf-b330-2f80df60ae5e" alt="fingerprint first" width="273">
+<img src="https://github.com/user-attachments/assets/c3349ed6-71eb-4ecd-a45f-6228c122eb34" alt="history first" width="273">
+<img src="https://github.com/user-attachments/assets/2f559c24-7671-4787-bf30-e53b07e688f9" alt="no biometrics view" width="273">
 
 > 1. Flow of the screen where the password is viewed first.
 > 2. Flow of the screen where the password history is viewed first. In both cases, if fingerprint is verified once,
