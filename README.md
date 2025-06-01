@@ -6,10 +6,17 @@
 
 - icon - https://uxwing.com/shield-lock-line-icon/
 
-## Why [PENDING - explain in detail]
+## Features
 
-- local password and biometric authentication
-- auto lock
+| Feature                       | Description                                                                                                                                                                                                                                          |
+|-------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Master password               | A master password is a password for this service. This password will be used to create an encryption key which will be used for encryption of everything related to the user.                                                                        |
+| Local password storage option | The user has the option to store the password either locally or on a remote server. While both are secure, this option gives the user a peace of mind in the sense that an attack on a remote storage won't compromise their security.               |
+| Biometric authentication      | Passwords can be locked using biometrics. Meaning, an additional layer of security for viewing or editing the password.                                                                                                                              |
+| Password history              | Passwords store their history. Meaning, they store the past passwords you saved in them. This list of previous passwords can be easily viewed when needed from the view password screen.                                                             |
+| Grouping/Collection formation | Passwords can be grouped to form collections known as `vaults`. Users can further use these vaults as a filter mechanism or, also to delete all passwords associated with that vault.                                                                |
+| Auto lock                     | Auto lock is a feature where the application locks itself after being pushed to the background. This is paired with the `FLAG_SECURE` parameter for the activity. Meaning, the app locks itself while also hiding it's content from the recents tab. |
+| Re-encryption                 | If the user decides to change their password, the entire list of passwords is re-encrypted using the key generate from the new password.                                                                                                             |
 
 ## Material-You theming
 
