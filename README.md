@@ -115,6 +115,9 @@ this screen triggers the updation of the `last used` property of the password
 <img src="https://github.com/user-attachments/assets/c2957783-ec75-4cdf-b330-2f80df60ae5e" alt="fingerprint first" width="273">
 <img src="https://github.com/user-attachments/assets/c3349ed6-71eb-4ecd-a45f-6228c122eb34" alt="history first" width="273">
 <img src="https://github.com/user-attachments/assets/2f559c24-7671-4787-bf30-e53b07e688f9" alt="no biometrics view" width="273">
+![viewAndDelete](https://github.com/user-attachments/assets/7da79759-ac41-4781-91fb-17285e0ddfb9)
+
+
 
 > 1. Flow of the screen where the password is viewed first.
 > 2. Flow of the screen where the password history is viewed first. In both cases, if fingerprint is verified once,
