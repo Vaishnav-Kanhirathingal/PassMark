@@ -8,6 +8,8 @@
 
 ## Features
 
+Majority of the features are listed below. There may be additional features not listed below.
+
 | Feature                       | Description                                                                                                                                                                                                                                          |
 |-------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Master password               | A master password is a password for this service. This password will be used to create an encryption key which will be used for encryption of everything related to the user.                                                                        |
@@ -97,6 +99,15 @@ button.
 > 2. Error screen when title is empty, password is empty or email is of incorrect format.
 > 3. Updating a password (fingerprint will be required for editing if use fingerprint is enabled for the selected
      password)
+
+### Difference between a remote and locally stored password -
+
+[square image of a remote password]
+
+[square image of a local password]
+
+> 1. Password stored remotely has no border.
+> 2. Password stored locally has a border.
 
 ### View a password -
 
