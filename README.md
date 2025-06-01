@@ -114,6 +114,17 @@ button.
 This screen contains the password details and a history of previous passwords that can be helpful in recovery. Viewing
 this screen triggers the updation of the `last used` property of the password
 
+
+![fingerprintFirst](https://github.com/user-attachments/assets/c2957783-ec75-4cdf-b330-2f80df60ae5e)
+
+![historyFirst](https://github.com/user-attachments/assets/c3349ed6-71eb-4ecd-a45f-6228c122eb34)
+
+![noBiometricsView](https://github.com/user-attachments/assets/2f559c24-7671-4787-bf30-e53b07e688f9)
+
+
+
+
+
 [password view screen using fingerprint - view password, view password history, delete]
 
 [password view screen using fingerprint - view password history, view password, delete]
