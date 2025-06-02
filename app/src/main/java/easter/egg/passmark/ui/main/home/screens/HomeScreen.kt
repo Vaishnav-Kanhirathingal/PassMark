@@ -73,6 +73,7 @@ import easter.egg.passmark.ui.main.HomeListData
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.shared_components.CustomLoader
+import easter.egg.passmark.ui.shared_components.ErrorScreen
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -101,15 +102,27 @@ object HomeScreen {
             onBack = { homeViewModel.updateSearchText(str = null) }
         )
         val context = LocalContext.current
-        when (val screenState = mainViewModel.screenState.collectAsState().value) {
-            is ScreenState.PreCall, is ScreenState.Loading -> Box(
-                modifier = modifier,
-                contentAlignment = Alignment.Center,
-                content = { CustomLoader.FullScreenLoader(modifier = Modifier) }
-            )
+        val screenState = mainViewModel.screenState.collectAsState()
+        LaunchedEffect(
+            key1 = screenState.value,
+            block = {
+                when (val ss = screenState.value) {
+                    is ScreenState.PreCall, is ScreenState.Loading, is ScreenState.Loaded -> {}
+                    is ScreenState.ApiError -> ss.manageToastActions(context = context)
+                }
+            }
+        )
+        when (val state = screenState.value) {
+            is ScreenState.PreCall, is ScreenState.Loading -> {
+                Box(
+                    modifier = modifier,
+                    contentAlignment = Alignment.Center,
+                    content = { CustomLoader.FullScreenLoader(modifier = Modifier) }
+                )
+            }
 
             is ScreenState.Loaded -> {
-                Log.d(TAG, GsonBuilder().setPrettyPrinting().create().toJson(screenState.result))
+                Log.d(TAG, GsonBuilder().setPrettyPrinting().create().toJson(state.result))
                 MainScreen(
                     modifier = modifier,
                     toPasswordEditScreen = toPasswordEditScreen,
@@ -121,11 +134,17 @@ object HomeScreen {
             }
 
             is ScreenState.ApiError -> {
-                screenState.manageToastActions(context = context)
-                ErrorScreen(
+                Box(
                     modifier = modifier,
-                    errorState = screenState,
-                    onRetry = { mainViewModel.refreshHomeList() }
+                    contentAlignment = Alignment.Center,
+                    content = {
+                        ErrorScreen.ErrorCard(
+                            modifier = ErrorScreen.errorCardFullScreenModifier,
+                            screenState = state,
+                            onRetry = mainViewModel::refreshHomeList,
+                            attemptedAction = "trying to fetch passwords"
+                        )
+                    }
                 )
             }
         }
