@@ -23,7 +23,7 @@ Majority of the features are listed below. There may be additional features not 
 ## Material-You theming
 
 this app implements Material-You theming which means it has dynamic color support for UI elements. To make use of this,
-change your phone's system color and the app would match it. Assuming dynamic colors is enables on device
+change your phone's system color and the app would match it. Assuming dynamic colors is enabled on device
 
 <img src="https://github.com/user-attachments/assets/08490913-800e-49ff-b1da-c84b816199c1" alt="Empty home screenshot" width="273">
 <img src="https://github.com/user-attachments/assets/f020d0de-3e8b-456a-bc26-7540d2bb46a5" alt="Empty home screenshot" width="273">
@@ -35,7 +35,7 @@ change your phone's system color and the app would match it. Assuming dynamic co
 
 ## Full Flow -
 
-the below video contains majority of the actions documented. Refer the documentation section for deeper details
+the below video contains the majority of the actions documented. Refer the documentation section for deeper details
 
 [multiple full flow video with unique themes themes]
 
@@ -95,7 +95,7 @@ button.
 
 > 1. Creation of a Password,
 > 2. Error screen when title is empty, password is empty or email is of incorrect format.
-> 3. Updating a password (fingerprint will be required for editing if use fingerprint is enabled for the selected
+> 3. Updating a password (fingerprint will be required for editing if `use fingerprint` is enabled for the selected
      password)
 
 ### Difference between a remote and locally stored password -
@@ -109,7 +109,7 @@ button.
 ### View a password -
 
 This screen contains the password details and a history of previous passwords that can be helpful in recovery. Viewing
-this screen triggers the updation of the `last used` property of the password
+this screen triggers the update of the `last used` property of the password
 
 <img src="https://github.com/user-attachments/assets/c2957783-ec75-4cdf-b330-2f80df60ae5e" alt="fingerprint first" width="273">
 <img src="https://github.com/user-attachments/assets/c3349ed6-71eb-4ecd-a45f-6228c122eb34" alt="history first" width="273">
