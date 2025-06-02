@@ -101,10 +101,9 @@ class HomeViewModel @Inject constructor(
                                 val deleted = vaultApi.delete(vault = vault)
                                 passwordDao.deleteByVaultId(vaultId = vault.id!!)
                                 Log.d(
-                                    TAG,
-                                    "deleted = ${
-                                        GsonBuilder().setPrettyPrinting().create().toJson(deleted)
-                                    }"
+                                    TAG, "deleted = " +
+                                            GsonBuilder().setPrettyPrinting().create()
+                                                .toJson(deleted)
                                 )
                                 deleted
                             }

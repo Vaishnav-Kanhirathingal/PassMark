@@ -76,7 +76,8 @@ object LoaderScreen {
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp),
                         screenState = screenState,
-                        onRetry = viewModel::forceVerify
+                        onRetry = viewModel::forceVerify,
+                        attemptedAction = "trying to load user data"
                     )
                 } else {
                     CustomLoader.FullScreenLoader(modifier = Modifier)
@@ -85,11 +86,16 @@ object LoaderScreen {
         )
     }
 
+    /** @param attemptedAction is the action that was supposed to be performed where the error was
+     * thrown. This string will be used in the error message. write something in the blank.
+     * `Something went wrong while __________. please try again.`
+     *  */
     @Composable
     fun <T> ErrorScreen(
         modifier: Modifier,
         screenState: ScreenState.ApiError<T>,
-        onRetry: () -> Unit
+        onRetry: () -> Unit,
+        attemptedAction: String
     ) {
         Column(
             modifier = modifier
@@ -121,9 +127,9 @@ object LoaderScreen {
                 Text(
                     textAlign = TextAlign.Center,
                     text = when (screenState) {
-                        is ScreenState.ApiError.NetworkError -> "A network call has failed. Please check your internet connection and try again."
-                        is ScreenState.ApiError.SomethingWentWrong -> "Something went wrong. Please check your internet connection and try again."
-                    },
+                        is ScreenState.ApiError.NetworkError -> "A network call has failed"
+                        is ScreenState.ApiError.SomethingWentWrong -> "Something went wrong"
+                    } + " while ${attemptedAction}. Please check your internet connection and try again.",
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Body.medium,
                     lineHeight = PassMarkFonts.Body.medium,
@@ -184,7 +190,8 @@ fun ErrorScreenPreview() {
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
                 screenState = ScreenState.ApiError.SomethingWentWrong<Unit>(),
-                onRetry = {}
+                onRetry = {},
+                attemptedAction = "doing something"
             )
         }
     )
