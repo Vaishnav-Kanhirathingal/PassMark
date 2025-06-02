@@ -100,9 +100,8 @@ button.
 
 ### Difference between a remote and locally stored password -
 
-[square image of a remote password]
-
-[square image of a local password]
+<img src="https://github.com/user-attachments/assets/daba80cd-10d7-449d-9541-516ffd5c5812" alt="remote" width="820">
+<img src="https://github.com/user-attachments/assets/a9b95013-95b4-4e67-b256-73203996f932" alt="local" width="820">
 
 > 1. Password stored remotely has no border.
 > 2. Password stored locally has a border.
