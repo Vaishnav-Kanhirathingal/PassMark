@@ -126,4 +126,8 @@ object TestTags {
         NEW_PASSWORD_REPEATED_TEXT_FIELD,
         CONFIRM_BUTTON
     }
+
+    enum class ErrorScreen{
+        RETRY_BUTTON
+    }
 }

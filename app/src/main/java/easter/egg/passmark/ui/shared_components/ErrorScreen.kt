@@ -25,11 +25,13 @@ import androidx.compose.ui.unit.dp
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 
 object ErrorScreen {
-    val errorCardFullScreenModifier=Modifier
+    val errorCardFullScreenModifier = Modifier
         .widthIn(max = 450.dp)
         .fillMaxWidth()
         .padding(horizontal = 24.dp)
@@ -86,6 +88,7 @@ object ErrorScreen {
                 )
                 Box(
                     modifier = Modifier
+                        .applyTag(testTag = TestTags.ErrorScreen.RETRY_BUTTON.name)
                         .setSizeLimitation()
                         .clip(shape = RoundedCornerShape(size = 16.dp))
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
