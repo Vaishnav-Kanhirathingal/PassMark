@@ -29,6 +29,11 @@ import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 
 object ErrorScreen {
+    val errorCardFullScreenModifier=Modifier
+        .widthIn(max = 450.dp)
+        .fillMaxWidth()
+        .padding(horizontal = 24.dp)
+
     /** @param attemptedAction is the action that was supposed to be performed where the error was
      * thrown. This string will be used in the error message. write something in the blank.
      * `Something went wrong while __________. please try again.`

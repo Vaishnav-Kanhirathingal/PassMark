@@ -55,10 +55,7 @@ object LoaderScreen {
             content = {
                 if (screenState is ScreenState.ApiError) {
                     ErrorScreen.ErrorCard(
-                        modifier = Modifier
-                            .widthIn(max = 450.dp)
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp),
+                        modifier = ErrorScreen.errorCardFullScreenModifier,
                         screenState = screenState,
                         onRetry = viewModel::forceVerify,
                         attemptedAction = "trying to load user data"
