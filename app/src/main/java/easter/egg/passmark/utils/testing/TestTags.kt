@@ -127,7 +127,7 @@ object TestTags {
         CONFIRM_BUTTON
     }
 
-    enum class ErrorScreen{
+    enum class ErrorScreen {
         RETRY_BUTTON
     }
 }

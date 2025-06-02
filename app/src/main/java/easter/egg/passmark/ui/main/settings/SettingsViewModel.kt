@@ -125,7 +125,10 @@ class SettingsViewModel @Inject constructor(
                 TestTags.holdForDelay(
                     task = {
                         val dataStore =
-                            PassMarkDataStore(context = context, authId = supabaseAccountHelper.getId())
+                            PassMarkDataStore(
+                                context = context,
+                                authId = supabaseAccountHelper.getId()
+                            )
                         supabaseAccountHelper.logout()
                         dataStore.resetPassword()
                         ScreenState.Loaded(result = Unit)
