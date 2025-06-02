@@ -27,6 +27,7 @@ import kotlin.math.absoluteValue
 @RunWith(AndroidJUnit4::class)
 class ActionAutomatorTest {
     // TODO: replace all theme home screen images since search changed
+    // TODO: bug in edit from view. not updating in view
 
     enum class CustomDelay(private val delay: Long) {
         APP_LAUNCH(delay = 3_000L),
@@ -88,7 +89,7 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
-    private val themeName: String = "ViewScript"
+    private val themeName: String = "ErrorToaster"
 
     @Before
     fun startRecording() {
@@ -466,16 +467,3 @@ class ActionAutomatorTest {
         enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
     }
 }
-
-/** Scripts to record -
- * login
- * create vault
- * create password
- * edit password
- * view, view history, copy and delete password
- * sorting
- * searching passwords
- * vault filtering
- * change password
- * reset account
- */
