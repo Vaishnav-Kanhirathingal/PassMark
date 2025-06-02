@@ -169,6 +169,16 @@ Error screens are necessary to handle error states. Each screen has an error UI 
 Actions such as creating a `Vault` or `Password` are simple and do not require a separate UI composable. Hence, such
 actions just display a toast when an error is encountered.
 
+
+![loginError](https://github.com/user-attachments/assets/59158580-a951-422a-b8f1-17c4d98f3f4c)
+
+![vaultNoInternet](https://github.com/user-attachments/assets/5b9a5901-0439-4ec3-a8a1-8112fe320565)
+
+
+![PasswordNoInternet](https://github.com/user-attachments/assets/e16cdcb1-b3e0-4f40-96a6-8d094f64e0d7)
+
+
+
 [wrong password toaster]
 
 [create vault toaster]
