@@ -114,9 +114,6 @@ this screen triggers the updation of the `last used` property of the password
 
 <img src="https://github.com/user-attachments/assets/c2957783-ec75-4cdf-b330-2f80df60ae5e" alt="fingerprint first" width="273">
 <img src="https://github.com/user-attachments/assets/c3349ed6-71eb-4ecd-a45f-6228c122eb34" alt="history first" width="273">
-<img src="https://github.com/user-attachments/assets/2f559c24-7671-4787-bf30-e53b07e688f9" alt="no biometrics view" width="273">
-
-
 <img src="https://github.com/user-attachments/assets/7da79759-ac41-4781-91fb-17285e0ddfb9" alt="no biometrics view & delete" width="273">
 
 
@@ -153,8 +150,8 @@ The settings screen contains some preferences and some options. The `enable fing
 protection option for all passwords by default during creation. Same is true for `Enable offline storage by default`.
 Rest is self-explanatory. Logout option safely logs you out of your account without destroying your local passwords in
 the process. Reset account option can be used to destroy everything associated with the user including local passwords.
-This is a self retrying function. So, it will retry the step where an error occurs.
-
+This is a self retrying function. So, it will retry the step where an error occurs. Example showcased in the error
+section below.
 
 <img src="https://github.com/user-attachments/assets/b2ce209c-548f-44cd-80aa-b50c9778f07f" alt="settings screen nav and switches and logout" width="273">
 <img src="https://github.com/user-attachments/assets/57937c31-6fcc-4cf0-9e24-6a8ac8121dc6" alt="change password gif" width="273">
@@ -163,8 +160,6 @@ This is a self retrying function. So, it will retry the step where an error occu
 > 1. Switches and logout
 > 2. Change Password
 > 3. Reset User
-
-[change password gif retrying]
 
 ## Error screens
 
