@@ -7,9 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,8 +27,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -57,10 +53,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.gson.GsonBuilder
@@ -69,7 +63,6 @@ import easter.egg.passmark.data.models.Vault
 import easter.egg.passmark.data.models.Vault.Companion.getIcon
 import easter.egg.passmark.data.models.password.Password
 import easter.egg.passmark.data.models.password.PasswordSortingOptions
-import easter.egg.passmark.ui.main.HomeListData
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.shared_components.CustomLoader
@@ -80,7 +73,6 @@ import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
-import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -101,18 +93,7 @@ object HomeScreen {
             enabled = homeViewModel.searchText.collectAsState().value != null,
             onBack = { homeViewModel.updateSearchText(str = null) }
         )
-        val context = LocalContext.current
-        val screenState = mainViewModel.screenState.collectAsState()
-        LaunchedEffect(
-            key1 = screenState.value,
-            block = {
-                when (val ss = screenState.value) {
-                    is ScreenState.PreCall, is ScreenState.Loading, is ScreenState.Loaded -> {}
-                    is ScreenState.ApiError -> ss.manageToastActions(context = context)
-                }
-            }
-        )
-        when (val state = screenState.value) {
+        when (val screenState = mainViewModel.screenState.collectAsState().value) {
             is ScreenState.PreCall, is ScreenState.Loading -> {
                 Box(
                     modifier = modifier,
@@ -122,7 +103,7 @@ object HomeScreen {
             }
 
             is ScreenState.Loaded -> {
-                Log.d(TAG, GsonBuilder().setPrettyPrinting().create().toJson(state.result))
+                Log.d(TAG, GsonBuilder().setPrettyPrinting().create().toJson(screenState.result))
                 MainScreen(
                     modifier = modifier,
                     toPasswordEditScreen = toPasswordEditScreen,
@@ -140,7 +121,7 @@ object HomeScreen {
                     content = {
                         ErrorScreen.ErrorCard(
                             modifier = ErrorScreen.errorCardFullScreenModifier,
-                            screenState = state,
+                            screenState = screenState,
                             onRetry = mainViewModel::refreshHomeList,
                             attemptedAction = "trying to fetch passwords"
                         )
@@ -148,50 +129,6 @@ object HomeScreen {
                 )
             }
         }
-    }
-
-    @Composable
-    fun ErrorScreen(
-        modifier: Modifier,
-        errorState: ScreenState.ApiError<HomeListData>,
-        onRetry: () -> Unit
-    ) {
-        Column(
-            modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            content = {
-                Icon(
-                    modifier = Modifier.size(100.dp),
-                    imageVector = Icons.Default.Warning,
-                    contentDescription = null
-                )
-                Text(
-                    fontFamily = PassMarkFonts.font,
-                    fontSize = PassMarkFonts.Headline.medium,
-                    fontWeight = FontWeight.SemiBold,
-                    text = when (errorState) {
-                        is ScreenState.ApiError.NetworkError -> "No Internet"
-                        is ScreenState.ApiError.SomethingWentWrong -> "Something Went Wrong"
-                    }
-                )
-                Text(
-                    fontFamily = PassMarkFonts.font,
-                    fontSize = PassMarkFonts.Body.medium,
-                    fontWeight = FontWeight.Medium,
-                    text = when (errorState) {
-                        is ScreenState.ApiError.NetworkError -> "Can't connect to network"
-                        is ScreenState.ApiError.SomethingWentWrong -> "Give it another try"
-                    }
-                )
-                Spacer(modifier = Modifier.height(height = 4.dp))
-                Button(
-                    modifier = Modifier.setSizeLimitation(),
-                    onClick = onRetry,
-                    content = { Text(text = "Retry") }
-                )
-            }
-        )
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -575,16 +512,5 @@ private fun HomeScreenPreview() {
         toViewPasswordScreen = {},
         homeViewModel = HomeViewModel.getTestViewModel(),
         toSettingsScreen = {}
-    )
-}
-
-@Composable
-@MobilePreview
-@MobileHorizontalPreview
-private fun HomeErrorScreenPreview() {
-    HomeScreen.ErrorScreen(
-        modifier = Modifier.fillMaxSize(),
-        errorState = ScreenState.ApiError.NetworkError(),
-        onRetry = {}
     )
 }
