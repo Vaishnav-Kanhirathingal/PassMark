@@ -67,7 +67,6 @@ A vault is where you store a collection of passwords. Creation steps are given b
 it to open its update dialog. The update dialog also contains the delete button. You can have a total of 4 additional
 vaults.
 
-
 <img src="https://github.com/user-attachments/assets/be807579-b2e9-4a6e-957b-5067dc0884a2" alt="Create a vault" width="273">
 <img src="https://github.com/user-attachments/assets/9d5c178f-625a-4ec4-b5a4-714ff493598a" alt="Update a vault" width="273">
 <img src="https://github.com/user-attachments/assets/ac6a3703-1ac5-4011-8d17-ad0942bcc994" alt="Delete a vault" width="273">
@@ -114,7 +113,6 @@ this screen triggers the update of the `last used` property of the password
 <img src="https://github.com/user-attachments/assets/c2957783-ec75-4cdf-b330-2f80df60ae5e" alt="fingerprint first" width="273">
 <img src="https://github.com/user-attachments/assets/c3349ed6-71eb-4ecd-a45f-6228c122eb34" alt="history first" width="273">
 <img src="https://github.com/user-attachments/assets/7da79759-ac41-4781-91fb-17285e0ddfb9" alt="no biometrics view & delete" width="273">
-
 
 > 1. Flow of the screen where the password is viewed first.
 > 2. Flow of the screen where the password history is viewed first. In both cases, if fingerprint is verified once,
@@ -189,17 +187,11 @@ actions and do require a separate UI. here, They are given that separate UI.
 Actions like `changing user password` and `resetting a user` are sequential in nature and cannot proceed to their next
 stage if an error occurs. In such a case, it would go into a loop of retrying until the entire task list is completed.
 
-![changePWDError](https://github.com/user-attachments/assets/d831cd38-b9ee-40e7-a896-cf26e21f0c89)
+<img src="https://github.com/user-attachments/assets/d831cd38-b9ee-40e7-a896-cf26e21f0c89" alt="change password looping error" width="410">
+<img src="https://github.com/user-attachments/assets/55af2d3e-35e3-455f-8d32-53380e0ae636" alt="reset user looping error" width="410">
 
-![resetError](https://github.com/user-attachments/assets/55af2d3e-35e3-455f-8d32-53380e0ae636)
-
-
-
-
-
-[change password looping error]
-
-[reset user looping error]
+> 1. Error occurred while trying to change password. Will keep retrying in a loop with a delay.
+> 2. Error occurred while trying to reset user account. Will keep retrying in a loop with a delay.
 
 ## Easter eggs [PENDING]
 

@@ -89,7 +89,7 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
-    private val themeName: String = "ErrorToaster"
+    private val themeName: String = "changePassword"
 
     @Before
     fun startRecording() {
