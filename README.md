@@ -189,6 +189,14 @@ actions and do require a separate UI. here, They are given that separate UI.
 Actions like `changing user password` and `resetting a user` are sequential in nature and cannot proceed to their next
 stage if an error occurs. In such a case, it would go into a loop of retrying until the entire task list is completed.
 
+![changePWDError](https://github.com/user-attachments/assets/d831cd38-b9ee-40e7-a896-cf26e21f0c89)
+
+![resetError](https://github.com/user-attachments/assets/55af2d3e-35e3-455f-8d32-53380e0ae636)
+
+
+
+
+
 [change password looping error]
 
 [reset user looping error]
