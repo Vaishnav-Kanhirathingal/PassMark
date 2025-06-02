@@ -180,9 +180,20 @@ actions just display a toast when an error is encountered.
 Actions like authenticating user in loading screen, loading the passwords and vaults from the api are full screen
 actions and do require a separate UI. here, They are given that separate UI.
 
-[auth loading error]
 
-[home list loading error]
+
+<img src="" alt="change password gif" width="273">
+<img src="" alt="change password gif" width="273">
+
+
+![loginError](https://github.com/user-attachments/assets/3ec1ae88-ad29-44d1-9eb7-1719f7cf7312)
+
+![homeError](https://github.com/user-attachments/assets/97b60a73-9315-4af8-8c7b-3d13ba9ae0b3)
+
+> 1. Authentication error
+> 2. Password loading error
+
+
 
 ### Sequential looping error
 
