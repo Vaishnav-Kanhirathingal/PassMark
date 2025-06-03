@@ -2,9 +2,16 @@
 
 ![PassMark Icon](https://raw.githubusercontent.com/Vaishnav-Kanhirathingal/PassMark/refs/heads/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp)
 
-## Info
+icon - https://uxwing.com/shield-lock-line-icon/
 
-- icon - https://uxwing.com/shield-lock-line-icon/
+## Dynamic (Themed) app icons
+
+Themed app icons chane colors based on the theme selected in the system. This is a system-wide functionality but adding
+support for this is optional. While some apps skip out on this, Passmark has this baked in.
+
+[list of icons in different themes]
+
+> Themed app icon sampled
 
 ## Features
 
