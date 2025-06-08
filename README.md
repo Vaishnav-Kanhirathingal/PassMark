@@ -9,6 +9,16 @@ icon - https://uxwing.com/shield-lock-line-icon/
 Themed app icons chane colors based on the theme selected in the system. This is a system-wide functionality but adding
 support for this is optional. While some apps skip out on this, Passmark has this baked in.
 
+## Unthemed icon
+
+this is the normal icon which will be displayed on devices with themed icon disabled
+
+[normal icon]
+
+## Themed icon
+
+These are the themed icons which will appear on devices with themed icon enabled.
+
 [list of icons in different themes]
 
 > Themed app icon sampled
