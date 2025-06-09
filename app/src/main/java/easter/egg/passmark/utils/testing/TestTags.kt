@@ -130,4 +130,8 @@ object TestTags {
     enum class ErrorScreen {
         RETRY_BUTTON
     }
+
+    enum class AutoLock {
+        PASSWORD_TEXT_FIELD, VISIBILITY_BUTTON, FINGERPRINT_BUTTON,CONFIRM_BUTTON
+    }
 }
