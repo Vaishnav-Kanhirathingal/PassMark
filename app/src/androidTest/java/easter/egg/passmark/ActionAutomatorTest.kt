@@ -459,11 +459,4 @@ class ActionAutomatorTest {
         enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD)
         resetUser()
     }
-
-    @Test
-    fun miniScript() {
-        launchApp()
-        selectGoogleAccount()
-        enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
-    }
 }
