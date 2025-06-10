@@ -538,7 +538,6 @@ class ActionAutomatorTest {
                         )
                     }
                 )
-
                 holdFor(
                     time = 23_000,
                     action = {
@@ -546,7 +545,6 @@ class ActionAutomatorTest {
                         createPassword(testPasswordData = TestingObjects.testPasswordData)
                     }
                 )
-
                 repeat(
                     times = 2,
                     action = {
@@ -575,20 +573,23 @@ class ActionAutomatorTest {
                         filterUsingVault()
                     }
                 )
-
-                // TODO: test below
-
+                holdFor(
+                    time = 18_000,
+                    action = {
+                        lockApp()
+                        unlockApp(passwordToUse = MasterPasswords.OLD_PASSWORD)
+                    }
+                )
                 setLapTime(title = "pre-lock")
-                lockApp()
-                unlockApp(passwordToUse = MasterPasswords.OLD_PASSWORD)
-                setLapTime(title = "app lock")
-
-                turnOnSwitchesAndLogout()
-                selectGoogleAccount()
-                enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
+                holdFor(
+                    time = 34_000,
+                    action = {
+                        turnOnSwitchesAndLogout()
+                        selectGoogleAccount()
+                        enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
+                    }
+                )
                 setLapTime(title = "logout and login")
-
-
 
                 holdFor(
                     time = 24_000,
@@ -627,6 +628,8 @@ Lap time for Password update------------------------- | 16094 ms
 Lap time for Password update------------------------- | 16063 ms
 Lap time for View and delete password---------------- | 18425 ms
 Lap time for Search, sort and filter----------------- | 11157 ms
+Lap time for app lock-------------------------------- | 16051 ms
+Lap time for logout and login------------------------ | 31726 ms
 Lap time for Change master password------------------ | 22188 ms
 Lap time for Re-login-------------------------------- | 9585 ms
 Lap time for User reset------------------------------ | 15988 ms
