@@ -18,6 +18,11 @@ import easter.egg.passmark.ui.main.change_password.ReEncryptionStates
 import easter.egg.passmark.ui.main.settings.DeletionStages
 import easter.egg.passmark.ui.main.settings.SettingsViewModel
 import easter.egg.passmark.utils.testing.TestTags
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -89,7 +94,7 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
-    private val themeName: String = "changePassword"
+    private val themeName: String = "AppLock"
 
     @Before
     fun startRecording() {
@@ -117,10 +122,9 @@ class ActionAutomatorTest {
     private fun hasObjectByText(text: String) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         device.wait(Until.hasObject(By.text(text)), 500)
-
     }
 
-    private fun type(text: String) { // TODO: rename txt
+    private fun type(text: String) {
         InstrumentationRegistry.getInstrumentation().sendStringSync(text)
     }
 
@@ -418,6 +422,33 @@ class ActionAutomatorTest {
         CustomDelay.SMALL_ANIMATION.hold()
         findObject(testTag = TestTags.Settings.LOG_OUT.name).click()
         CustomDelay.SINGLE_API_CALL.hold()
+    }
+
+    //-------------------------------------------------------------------------------------auto-lock
+    private fun lockApp() {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        device.pressRecentApps()
+        CustomDelay.SINGLE_API_CALL.hold()
+        device.click(630, 1440)
+        CustomDelay.NAVIGATION.hold()
+    }
+
+    /** To be called from app's lock screen
+     * @param passwordToUse keep null for fingerprint */
+    private fun unlockApp(passwordToUse: String?) {
+        if (passwordToUse == null) {
+            findObject(testTag = TestTags.AutoLock.FINGERPRINT_BUTTON.name).visibleClick()
+            CustomDelay.FINGERPRINT.hold()
+        } else {
+            findObject(testTag = TestTags.AutoLock.VISIBILITY_BUTTON.name).visibleClick()
+            CustomDelay.MICRO_ANIMATION.hold()
+            type(
+                testTag = TestTags.AutoLock.PASSWORD_TEXT_FIELD.name,
+                text = passwordToUse
+            )
+            findObject(testTag = TestTags.AutoLock.CONFIRM_BUTTON.name).visibleClick()
+            CustomDelay.SINGLE_API_CALL.hold()
+        }
     }
 
     //----------------------------------------------------------------------------------final-script
