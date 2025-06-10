@@ -158,6 +158,17 @@ exiting the app just to re-enter instantly)
 
 [show auto lock screen unlocking via password]
 
+
+![autoLockFingerPrint](https://github.com/user-attachments/assets/392ca41a-a4d4-4a72-9349-739108cc9e24)
+
+
+![autoLockPassword](https://github.com/user-attachments/assets/38d400ff-08aa-4f27-ab35-11df6891251a)
+
+
+
+
+
+
 ### Settings
 
 The settings screen contains some preferences and some options. The `enable fingerprint by default` enables fingerprint
