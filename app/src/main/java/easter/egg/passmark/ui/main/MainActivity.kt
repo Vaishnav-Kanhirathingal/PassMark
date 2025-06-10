@@ -222,7 +222,7 @@ class MainActivity : FragmentActivity() {
                     enabled = !screenState.isLoading,
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = false,
-                        keyboardType = KeyboardType.Password,
+                        keyboardType = KeyboardType.Text, // TODO: KeyboardType.Password
                     )
                 )
 
