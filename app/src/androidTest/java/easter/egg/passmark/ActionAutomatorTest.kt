@@ -511,60 +511,103 @@ class ActionAutomatorTest {
 
                     lastLap = now
                 }
-
-                launchApp()
-                selectGoogleAccount()
-                enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
-                setLapTime(title = "Login using google")
-
-                drawerFunctionality(toOpen = true)
-                val vaultNameToReplace = "Game"
-                createVault(testVault = TestingObjects.testVault.copy(name = vaultNameToReplace))
-                setLapTime(title = "Vault creation")
-
-                updateVault(
-                    oldVaultName = vaultNameToReplace,
-                    newVaultName = TestingObjects.testVault.name
+                holdFor(
+                    time = 25_000,
+                    action = {
+                        launchApp()
+                        selectGoogleAccount()
+                        enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
+                    }
                 )
-                setLapTime(title = "Vault update")
 
-                drawerFunctionality(toOpen = false)
-                createPassword(testPasswordData = TestingObjects.testPasswordData)
-                setLapTime(title = "Password creation")
+                val vaultNameToReplace = "Game"
+
+                holdFor(
+                    time = 14_000,
+                    action = {
+                        drawerFunctionality(toOpen = true)
+                        createVault(testVault = TestingObjects.testVault.copy(name = vaultNameToReplace))
+                    }
+                )
+                holdFor(
+                    time = 12_000,
+                    action = {
+                        updateVault(
+                            oldVaultName = vaultNameToReplace,
+                            newVaultName = TestingObjects.testVault.name
+                        )
+                    }
+                )
+
+                holdFor(
+                    time = 23_000,
+                    action = {
+                        drawerFunctionality(toOpen = false)
+                        createPassword(testPasswordData = TestingObjects.testPasswordData)
+                    }
+                )
 
                 repeat(
                     times = 2,
                     action = {
-                        updatePassword(
-                            passwordTitleToUpdate = TestingObjects.testPasswordData.title,
-                            newPassword = TestingObjects.getTestingPassword(index = it + 1)
+                        holdFor(
+                            time = 18_000,
+                            action = {
+                                updatePassword(
+                                    passwordTitleToUpdate = TestingObjects.testPasswordData.title,
+                                    newPassword = TestingObjects.getTestingPassword(index = it + 1)
+                                )
+                            }
                         )
-                        setLapTime(title = "Password update")
+                    }
+                )
+                holdFor(
+                    time = 20_000,
+                    action = {
+                        viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
+                    }
+                )
+                holdFor(
+                    time = 13_000,
+                    action = {
+                        sortPasswordList()
+                        search()
+                        filterUsingVault()
                     }
                 )
 
-                viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
-                setLapTime(title = "View and delete password")
+                // TODO: test below
 
-                sortPasswordList()
-                search()
-                filterUsingVault()
-                setLapTime(title = "Search, sort and filter")
+                setLapTime(title = "pre-lock")
+                lockApp()
+                unlockApp(passwordToUse = MasterPasswords.OLD_PASSWORD)
+                setLapTime(title = "app lock")
 
-                changeToNewPassword()
-                setLapTime(title = "Change master password")
+                turnOnSwitchesAndLogout()
+                selectGoogleAccount()
+                enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
+                setLapTime(title = "logout and login")
 
-                enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD)
-                setLapTime(title = "Re-login")
 
-                resetUser()
-                setLapTime(title = "User reset")
+
+                holdFor(
+                    time = 24_000,
+                    action = { changeToNewPassword() }
+                )
+                holdFor(
+                    time = 11_000,
+                    action = { enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD) }
+                )
+                holdFor(
+                    time = 18_000,
+                    action = { resetUser() }
+                )
             }
         )
         Log.d(tag, "Lap time list :-$finalOutput")
     }
 
-    suspend fun holdFor(
+    private suspend fun holdFor(
         time: Long,
         action: () -> Unit
     ) = withContext(Dispatchers.IO) {
