@@ -36,18 +36,15 @@ class ComposeFastSetupTest {
 
         composeRule.onNodeWithTag(TestTags.Login.GOOGLE_BUTTON.name).performClick()
 
+        Thread.sleep(2_000)
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
             .findObject(By.text("vaishnav.kanhira@gmail.com"))
             .click()
 
-        Thread.sleep(6_000)
-        // opens create new user screen
-
         composeRule.waitUntilAtLeastOneExists(
             matcher = hasTestTag(testTag = TestTags.CreateMasterKey.CONFIRM_BUTTON.name),
-            timeoutMillis = 6_000
+            timeoutMillis = 10_000
         )
-
         composeRule.onNodeWithTag(testTag = TestTags.CreateMasterKey.TEXT_FIELD.name)
             .performTextInput("123456789")
         composeRule.onNodeWithTag(testTag = TestTags.CreateMasterKey.CONFIRM_BUTTON.name)
