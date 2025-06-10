@@ -519,9 +519,7 @@ class ActionAutomatorTest {
                         enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
                     }
                 )
-
                 val vaultNameToReplace = "Game"
-
                 holdFor(
                     time = 14_000,
                     action = {
@@ -568,6 +566,14 @@ class ActionAutomatorTest {
                 holdFor(
                     time = 13_000,
                     action = {
+                        drawerFunctionality(toOpen = true)
+                        deleteVault(name = TestingObjects.testVault.name)
+                        drawerFunctionality(toOpen = false)
+                    }
+                )
+                holdFor(
+                    time = 13_000,
+                    action = {
                         sortPasswordList()
                         search()
                         filterUsingVault()
@@ -580,7 +586,6 @@ class ActionAutomatorTest {
                         unlockApp(passwordToUse = MasterPasswords.OLD_PASSWORD)
                     }
                 )
-                setLapTime(title = "pre-lock")
                 holdFor(
                     time = 34_000,
                     action = {
@@ -589,7 +594,6 @@ class ActionAutomatorTest {
                         enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
                     }
                 )
-                setLapTime(title = "logout and login")
 
                 holdFor(
                     time = 24_000,
@@ -627,6 +631,7 @@ Lap time for Password creation----------------------- | 21419 ms
 Lap time for Password update------------------------- | 16094 ms
 Lap time for Password update------------------------- | 16063 ms
 Lap time for View and delete password---------------- | 18425 ms
+Lap time for vault delete---------------------------- | 11851 ms
 Lap time for Search, sort and filter----------------- | 11157 ms
 Lap time for app lock-------------------------------- | 16051 ms
 Lap time for logout and login------------------------ | 31726 ms
