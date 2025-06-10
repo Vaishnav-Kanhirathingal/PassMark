@@ -154,20 +154,11 @@ displayed below. Searching has also been implemented as usual.
 The app auto locks itself if pushed to recents. The locking has a delay set to ensure it wasn't user error (accidentally
 exiting the app just to re-enter instantly)
 
-[show auto lock screen unlocking via fingerprint]
+<img src="https://github.com/user-attachments/assets/392ca41a-a4d4-4a72-9349-739108cc9e24" alt="show auto lock screen unlocking via fingerprint" width="410">
+<img src="https://github.com/user-attachments/assets/38d400ff-08aa-4f27-ab35-11df6891251a" alt="show auto lock screen unlocking via password" width="410">
 
-[show auto lock screen unlocking via password]
-
-
-![autoLockFingerPrint](https://github.com/user-attachments/assets/392ca41a-a4d4-4a72-9349-739108cc9e24)
-
-
-![autoLockPassword](https://github.com/user-attachments/assets/38d400ff-08aa-4f27-ab35-11df6891251a)
-
-
-
-
-
+> 1. Show auto lock screen unlocking via fingerprint.
+> 2. show auto lock screen unlocking via password.
 
 ### Settings
 
