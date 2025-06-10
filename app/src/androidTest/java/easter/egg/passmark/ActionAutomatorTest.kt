@@ -1,6 +1,7 @@
 package easter.egg.passmark
 
 import android.content.Intent
+import android.util.Log
 import android.view.KeyEvent
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -490,4 +491,100 @@ class ActionAutomatorTest {
         enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD)
         resetUser()
     }
+
+    @Test
+    fun timedScript() {
+        val tag = "LapTime"
+        var finalOutput = ""
+        runBlocking(
+            context = Dispatchers.Default,
+            block = {
+                var lastLap = System.currentTimeMillis()
+                fun setLapTime(title: String) {
+                    val now = System.currentTimeMillis()
+
+                    val lapData = "Lap time for " +
+                            title.padEnd(length = 40, padChar = '-') +
+                            " | ${now - lastLap} ms"
+                    Log.d(tag, lapData)
+                    finalOutput += "\n$lapData"
+
+                    lastLap = now
+                }
+
+                launchApp()
+                selectGoogleAccount()
+                enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
+                setLapTime(title = "Login using google")
+
+                drawerFunctionality(toOpen = true)
+                val vaultNameToReplace = "Game"
+                createVault(testVault = TestingObjects.testVault.copy(name = vaultNameToReplace))
+                setLapTime(title = "Vault creation")
+
+                updateVault(
+                    oldVaultName = vaultNameToReplace,
+                    newVaultName = TestingObjects.testVault.name
+                )
+                setLapTime(title = "Vault update")
+
+                drawerFunctionality(toOpen = false)
+                createPassword(testPasswordData = TestingObjects.testPasswordData)
+                setLapTime(title = "Password creation")
+
+                repeat(
+                    times = 2,
+                    action = {
+                        updatePassword(
+                            passwordTitleToUpdate = TestingObjects.testPasswordData.title,
+                            newPassword = TestingObjects.getTestingPassword(index = it + 1)
+                        )
+                        setLapTime(title = "Password update")
+                    }
+                )
+
+                viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
+                setLapTime(title = "View and delete password")
+
+                sortPasswordList()
+                search()
+                filterUsingVault()
+                setLapTime(title = "Search, sort and filter")
+
+                changeToNewPassword()
+                setLapTime(title = "Change master password")
+
+                enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD)
+                setLapTime(title = "Re-login")
+
+                resetUser()
+                setLapTime(title = "User reset")
+            }
+        )
+        Log.d(tag, "Lap time list :-$finalOutput")
+    }
+
+    suspend fun holdFor(
+        time: Long,
+        action: () -> Unit
+    ) = withContext(Dispatchers.IO) {
+        // TODO: test
+        val holder = async { delay(timeMillis = time) }
+        action()
+        holder.await()
+    }
 }
+
+/*
+Lap time for Login using google---------------------- | 23582 ms
+Lap time for Vault creation-------------------------- | 12038 ms
+Lap time for Vault update---------------------------- | 10738 ms
+Lap time for Password creation----------------------- | 21419 ms
+Lap time for Password update------------------------- | 16094 ms
+Lap time for Password update------------------------- | 16063 ms
+Lap time for View and delete password---------------- | 18425 ms
+Lap time for Search, sort and filter----------------- | 11157 ms
+Lap time for Change master password------------------ | 22188 ms
+Lap time for Re-login-------------------------------- | 9585 ms
+Lap time for User reset------------------------------ | 15988 ms
+*/
