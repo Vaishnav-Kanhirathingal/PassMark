@@ -18,6 +18,7 @@ import easter.egg.passmark.ui.main.change_password.ChangeMasterPasswordViewModel
 import easter.egg.passmark.ui.main.change_password.ReEncryptionStates
 import easter.egg.passmark.ui.main.settings.DeletionStages
 import easter.egg.passmark.ui.main.settings.SettingsViewModel
+import easter.egg.passmark.utils.testing.PassMarkConfig
 import easter.egg.passmark.utils.testing.TestTags
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -32,8 +33,7 @@ import kotlin.math.absoluteValue
 
 @RunWith(AndroidJUnit4::class)
 class ActionAutomatorTest {
-    // TODO: replace all theme home screen images since search changed
-    // TODO: bug in edit from view. not updating in view
+    // TODO: replace all themed home screen images from readme, since search and icon changed
 
     enum class CustomDelay(private val delay: Long) {
         APP_LAUNCH(delay = 3_000L),
@@ -45,8 +45,8 @@ class ActionAutomatorTest {
         /** for dialogs, bottom sheets, etc */
         SMALL_ANIMATION(delay = 1_200L),
         NAVIGATION(delay = 2_500L),
-        SINGLE_API_CALL(delay = 3_000L + TestTags.TIME_OUT),
-        AUTH_LOADING(delay = 3_000 + (2 * TestTags.TIME_OUT)),
+        SINGLE_API_CALL(delay = 3_000L + PassMarkConfig.TIME_OUT),
+        AUTH_LOADING(delay = 3_000 + (2 * PassMarkConfig.TIME_OUT)),
         FINGERPRINT(delay = 5_000L),
         CHANGE_PASSWORD(
             delay = 3_000 + ((ChangeMasterPasswordViewModel.LOOP_DELAY + 500) * ReEncryptionStates.entries.size)
