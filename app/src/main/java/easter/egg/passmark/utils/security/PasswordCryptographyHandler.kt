@@ -72,7 +72,6 @@ class PasswordCryptographyHandler private constructor(
             .let { String(it) }
     }
 
-    // TODO: rename
     fun encryptSensitiveContent(sensitiveContent: SensitiveContent): String {
         return encrypt(input = Gson().toJson(sensitiveContent))
     }

@@ -60,6 +60,7 @@ import easter.egg.passmark.ui.main.settings.SettingsScreen
 import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.testing.PassMarkConfig
 import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkFonts
@@ -401,7 +402,7 @@ object ChangeMasterPasswordScreen {
                         .fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = false,
-//                        keyboardType = KeyboardType.Password // TODO: enable password option
+                        keyboardType = PassMarkConfig.getKeyboardTypeForPasswords()
                     ),
                     label = { Text(text = label) },
                     colors = TextFieldDefaults.colors(

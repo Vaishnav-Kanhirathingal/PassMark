@@ -7,7 +7,6 @@ import androidx.compose.ui.semantics.semantics
 import easter.egg.passmark.data.models.password.PasswordSortingOptions
 
 object TestTags {
-    // TODO: remove this after testing
     fun Modifier.applyTag(testTag: String): Modifier = this
         .testTag(tag = testTag)
         .semantics { this.contentDescription = testTag }
@@ -117,6 +116,9 @@ object TestTags {
     }
 
     enum class AutoLock {
-        PASSWORD_TEXT_FIELD, VISIBILITY_BUTTON, FINGERPRINT_BUTTON, CONFIRM_BUTTON
+        PASSWORD_TEXT_FIELD,
+        VISIBILITY_BUTTON,
+        FINGERPRINT_BUTTON,
+        CONFIRM_BUTTON
     }
 }

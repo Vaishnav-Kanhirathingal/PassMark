@@ -80,6 +80,7 @@ import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.extensions.customTopBarModifier
+import easter.egg.passmark.utils.testing.PassMarkConfig
 import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
@@ -779,7 +780,7 @@ object PasswordEditScreen {
                         )),
                         keyboardType = when (inputOption) {
                             InputOption.EMAIL -> KeyboardType.Email
-                            InputOption.PASSWORD -> KeyboardType.Text // TODO: use this after testing: [KeyboardType.Password]
+                            InputOption.PASSWORD ->PassMarkConfig.getKeyboardTypeForPasswords()
                             InputOption.WEBSITE -> KeyboardType.Uri
                             InputOption.USERNAME, InputOption.TITLE, InputOption.NOTES -> KeyboardType.Text
                         },

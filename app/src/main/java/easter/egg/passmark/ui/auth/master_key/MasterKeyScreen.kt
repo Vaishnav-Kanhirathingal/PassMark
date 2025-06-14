@@ -44,6 +44,7 @@ import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.testing.PassMarkConfig
 import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkFonts
@@ -152,7 +153,7 @@ object MasterKeyScreen {
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = false,
-//                        keyboardType = KeyboardType.Password, // TODO: ensure this is fixed before release
+                        keyboardType = PassMarkConfig.getKeyboardTypeForPasswords()
                     )
                 )
                 val applicationContext = LocalContext.current.applicationContext

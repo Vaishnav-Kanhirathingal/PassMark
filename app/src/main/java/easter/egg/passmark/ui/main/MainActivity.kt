@@ -66,6 +66,7 @@ import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.extensions.findPassword
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
+import easter.egg.passmark.utils.testing.PassMarkConfig
 import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
@@ -222,7 +223,7 @@ class MainActivity : FragmentActivity() {
                     enabled = !screenState.isLoading,
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = false,
-                        keyboardType = KeyboardType.Text, // TODO: KeyboardType.Password
+                        keyboardType =PassMarkConfig.getKeyboardTypeForPasswords()
                     )
                 )
 
