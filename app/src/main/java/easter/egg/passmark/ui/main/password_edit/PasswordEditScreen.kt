@@ -780,7 +780,7 @@ object PasswordEditScreen {
                         )),
                         keyboardType = when (inputOption) {
                             InputOption.EMAIL -> KeyboardType.Email
-                            InputOption.PASSWORD ->PassMarkConfig.getKeyboardTypeForPasswords()
+                            InputOption.PASSWORD -> PassMarkConfig.getKeyboardTypeForPasswords()
                             InputOption.WEBSITE -> KeyboardType.Uri
                             InputOption.USERNAME, InputOption.TITLE, InputOption.NOTES -> KeyboardType.Text
                         },

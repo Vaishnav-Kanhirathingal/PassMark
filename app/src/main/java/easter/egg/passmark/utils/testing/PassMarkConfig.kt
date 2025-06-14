@@ -7,10 +7,20 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 object PassMarkConfig {
+    // TODO: add a line about these configs, secure activity, keyboard type, auto-lock
     // TODO: re-config for production release
+    /** This is the time by which api call results are delayed. Purpose is to allow animations to
+     * have enough time to show or beautification of the app */
     const val TIME_OUT = 2000L
+
+    /** Should the app lock itself if it is pushed to recent apps or minimised */
     const val AUTO_LOCK_ENABLED = true
+
+    /** This is used to change keyboard type for passwords. Makes it possible to record screen */
     private const val USE_PASSWORD_KEYBOARD_TYPE = false
+
+    /** Secure activity disallows users to peak on the screen content from the recent apps tab */
+    const val USE_SECURE_ACTIVITY = false
 
     /** pass a task lambda whose result has to be delayed */
     suspend fun <T> holdForDelay(task: suspend () -> T): T = withContext(context = Dispatchers.IO) {
