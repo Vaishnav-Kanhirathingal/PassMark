@@ -11,7 +11,7 @@ object PassMarkConfig {
     // TODO: re-config for production release
     /** This is the time by which api call results are delayed. Purpose is to allow animations to
      * have enough time to show or beautification of the app */
-    const val TIME_OUT = 2000L
+    const val TIME_OUT = 2_000L
 
     /** Should the app lock itself if it is pushed to recent apps or minimised */
     const val AUTO_LOCK_ENABLED = true

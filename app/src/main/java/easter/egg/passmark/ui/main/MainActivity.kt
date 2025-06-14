@@ -223,7 +223,7 @@ class MainActivity : FragmentActivity() {
                     enabled = !screenState.isLoading,
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = false,
-                        keyboardType =PassMarkConfig.getKeyboardTypeForPasswords()
+                        keyboardType = PassMarkConfig.getKeyboardTypeForPasswords()
                     )
                 )
 
