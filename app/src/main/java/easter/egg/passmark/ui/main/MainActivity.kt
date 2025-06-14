@@ -1,6 +1,7 @@
 package easter.egg.passmark.ui.main
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -39,7 +40,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -107,9 +107,7 @@ class MainActivity : FragmentActivity() {
                                 .collectAsState()
                                 .value
 
-                            // TODO: ensure fingerprint lock is enabled
-//                            if ((verificationState as? ScreenState.Loaded)?.result == true) {
-                            if (true) {
+                            if (((verificationState as? ScreenState.Loaded)?.result == true) || !PassMarkConfig.AutoLockConfig.IS_ENABLED) {
                                 MainActivityNavHost(
                                     modifier = Modifier.padding(paddingValues = innerPadding),
                                     navController = navController
@@ -131,11 +129,12 @@ class MainActivity : FragmentActivity() {
                 }
             }
         )
-        // TODO: ensure this is enabled post testing
-//        window?.setFlags(
-//            WindowManager.LayoutParams.FLAG_SECURE,
-//            WindowManager.LayoutParams.FLAG_SECURE
-//        )
+        if (PassMarkConfig.USE_SECURE_ACTIVITY) {
+            window?.setFlags(
+                WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE
+            )
+        }
     }
 
     @Composable

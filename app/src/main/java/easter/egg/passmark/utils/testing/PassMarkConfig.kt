@@ -13,8 +13,13 @@ object PassMarkConfig {
      * have enough time to show or beautification of the app */
     const val TIME_OUT = 2_000L
 
-    /** Should the app lock itself if it is pushed to recent apps or minimised */
-    const val AUTO_LOCK_ENABLED = true
+    object AutoLockConfig {
+        /** Should the app lock itself if it is pushed to recent apps or minimised */
+        const val IS_ENABLED = false
+
+        /** delay to lock once pushed to recent tab */
+        const val LOCK_DELAY = 3_000L
+    }
 
     /** This is used to change keyboard type for passwords. Makes it possible to record screen */
     private const val USE_PASSWORD_KEYBOARD_TYPE = false

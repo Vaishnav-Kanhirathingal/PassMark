@@ -141,7 +141,7 @@ class MainViewModel @Inject constructor(
     fun startAppLockLambda() {
         lockingTask?.cancel()
         lockingTask = viewModelScope.launch {
-            delay(timeMillis = 3_000)
+            delay(timeMillis = PassMarkConfig.AutoLockConfig.LOCK_DELAY)
             job.cancelChildren()
             this@MainViewModel._passwordVerificationState.value = ScreenState.PreCall()
             this@MainViewModel.passwordEntered.value = ""
