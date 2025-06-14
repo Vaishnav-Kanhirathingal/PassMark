@@ -5,27 +5,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import easter.egg.passmark.data.models.password.PasswordSortingOptions
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 
 object TestTags {
     // TODO: remove this after testing
     fun Modifier.applyTag(testTag: String): Modifier = this
         .testTag(tag = testTag)
         .semantics { this.contentDescription = testTag }
-
-    const val TIME_OUT = 2000L // TODO: remove in production
-
-    // TODO: remove this after testing
-    /** pass a task lambda whose result has to be delayed */
-    suspend fun <T> holdForDelay(task: suspend () -> T): T = withContext(context = Dispatchers.IO) {
-        val holder = async { delay(TIME_OUT) }
-        val result = task()
-        holder.await()
-        return@withContext result
-    }
 
     enum class Login {
         GOOGLE_BUTTON
@@ -132,6 +117,6 @@ object TestTags {
     }
 
     enum class AutoLock {
-        PASSWORD_TEXT_FIELD, VISIBILITY_BUTTON, FINGERPRINT_BUTTON,CONFIRM_BUTTON
+        PASSWORD_TEXT_FIELD, VISIBILITY_BUTTON, FINGERPRINT_BUTTON, CONFIRM_BUTTON
     }
 }

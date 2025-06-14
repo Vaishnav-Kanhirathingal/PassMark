@@ -21,7 +21,7 @@ import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
-import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.PassMarkConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -163,7 +163,7 @@ class MainViewModel @Inject constructor(
         this._passwordVerificationState.value = ScreenState.Loading()
         customScope.launch {
             val newState = try {
-                TestTags.holdForDelay(
+                PassMarkConfig.holdForDelay(
                     task = {
                         ScreenState.Loaded(
                             result = PasswordCryptographyHandler.verifyPassword(

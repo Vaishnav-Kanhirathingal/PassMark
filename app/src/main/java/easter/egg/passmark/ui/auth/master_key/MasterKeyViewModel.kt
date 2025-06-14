@@ -11,7 +11,7 @@ import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
-import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.PassMarkConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -55,7 +55,7 @@ class MasterKeyViewModel @Inject constructor(
             val password = this@MasterKeyViewModel.masterPasswordText.value
             Log.d(TAG, "password = $password")
 
-            val newState: ScreenState<Unit> = TestTags.holdForDelay(
+            val newState: ScreenState<Unit> = PassMarkConfig.holdForDelay(
                 task = {
                     try {
                         val authId = this@MasterKeyViewModel.supabaseAccountHelper.getId()

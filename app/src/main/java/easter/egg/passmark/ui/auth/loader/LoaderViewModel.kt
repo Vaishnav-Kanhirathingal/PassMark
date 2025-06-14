@@ -11,7 +11,7 @@ import easter.egg.passmark.data.supabase.account.SupabaseAccountHelper
 import easter.egg.passmark.data.supabase.api.UserApi
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
-import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.PassMarkConfig
 import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,7 +60,7 @@ class LoaderViewModel @Inject constructor(
     }
 
     private suspend fun verifyKeyState() {
-        this@LoaderViewModel._screenState.value = TestTags.holdForDelay(
+        this@LoaderViewModel._screenState.value = PassMarkConfig.holdForDelay(
             task = {
                 try {
                     val user = userApi.getUser()

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import dagger.hilt.android.lifecycle.HiltViewModel
 import easter.egg.passmark.utils.ScreenState
-import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.PassMarkConfig
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.Google
@@ -31,7 +31,7 @@ class LoginViewModel @Inject constructor(
     fun login(credentialResponse: GetCredentialResponse) {
         this@LoginViewModel._screenState.value = ScreenState.Loading()
         viewModelScope.launch {
-            val newState: ScreenState<Unit> = TestTags.holdForDelay(
+            val newState: ScreenState<Unit> = PassMarkConfig.holdForDelay(
                 task = {
                     try {
                         val googleIdToken =

@@ -9,7 +9,7 @@ import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
-import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.testing.PassMarkConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -35,7 +35,7 @@ class PasswordViewViewModel @Inject constructor(
     fun delete(password: Password) {
         _deleteDialogState.value = ScreenState.Loading()
         viewModelScope.launch {
-            _deleteDialogState.value = TestTags.holdForDelay(
+            _deleteDialogState.value = PassMarkConfig.holdForDelay(
                 task = {
                     try {
                         if (password.cloudId != null) {
