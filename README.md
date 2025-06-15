@@ -36,6 +36,8 @@ Majority of the features are listed below. There may be additional features not 
 | Grouping/Collection formation | Passwords can be grouped to form collections known as `vaults`. Users can further use these vaults as a filter mechanism or, also to delete all passwords associated with that vault.                                                                |
 | Auto lock                     | Auto lock is a feature where the application locks itself after being pushed to the background. This is paired with the `FLAG_SECURE` parameter for the activity. Meaning, the app locks itself while also hiding it's content from the recents tab. |
 | Re-encryption                 | If the user decides to change their password, the entire list of passwords is re-encrypted using the key generate from the new password.                                                                                                             |
+| Secure activity               | App content is not viewable from the recent page (cannot peak app's content from recent)                                                                                                                                                             |
+| Secure Screen                 | When typing passwords, screen recording and screenshots are not allowed for security purposes                                                                                                                                                        |
 
 ## Material-You theming
 
