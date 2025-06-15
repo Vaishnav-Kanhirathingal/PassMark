@@ -98,7 +98,7 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
-    private val themeName: String = "Timed"
+    private val flowName: String? = null // "Timed"
 
     @Before
     fun startRecording() {
@@ -106,17 +106,20 @@ class ActionAutomatorTest {
         assert(PassMarkConfig.getKeyboardTypeForPasswords() != KeyboardType.Password)
         assert(!PassMarkConfig.USE_SECURE_ACTIVITY)
 
-        val command = "screenrecord /sdcard/TestRecordings/${themeName}Flow.mp4"
-        InstrumentationRegistry.getInstrumentation().uiAutomation.let {
-            it.executeShellCommand("mkdir -p /sdcard/TestRecordings")
-            it.executeShellCommand(command)
+
+        if (flowName != null) {
+            InstrumentationRegistry.getInstrumentation().uiAutomation.let {
+                it.executeShellCommand("mkdir -p /sdcard/TestRecordings")
+                it.executeShellCommand("screenrecord /sdcard/TestRecordings/${flowName}Flow.mp4")
+            }
         }
     }
 
     @After
     fun stopRecording() {
-        InstrumentationRegistry.getInstrumentation().uiAutomation
-            .executeShellCommand("pkill -l2 screenrecord")
+        if (flowName != null) {
+            InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("pkill -l2 screenrecord")
+        }
     }
 
     //---------------------------------------------------------------------------------------utility
@@ -515,7 +518,7 @@ class ActionAutomatorTest {
                 val vaultNameToReplace = "Game"
                 holdFor(
                     taskName = "Create vault",
-                    estimatedTime = 12_000, //13
+                    estimatedTime = 13_000,
                     action = {
                         drawerFunctionality(toOpen = true)
                         createVault(testVault = TestingObjects.testVault.copy(name = vaultNameToReplace))
@@ -633,6 +636,7 @@ class ActionAutomatorTest {
                     taskName.padEnd(length = 40, padChar = '-') +
                     " | Actual = ${totalTime.millisPadded()}" +
                     " | Expected = ${estimatedTime.millisPadded()}" +
+                    " | Difference = ${(estimatedTime - totalTime).millisPadded()}" +
                     (if ((estimatedTime - totalTime) > 2_000) " | [Check]" else "")
         )
 
@@ -640,20 +644,3 @@ class ActionAutomatorTest {
         holder.await()
     }
 }
-
-/*
-Lap time for Login using google---------------------- | 23582 ms
-Lap time for Vault creation-------------------------- | 12038 ms
-Lap time for Vault update---------------------------- | 10738 ms
-Lap time for Password creation----------------------- | 21419 ms
-Lap time for Password update------------------------- | 16094 ms
-Lap time for Password update------------------------- | 16063 ms
-Lap time for View and delete password---------------- | 18425 ms
-Lap time for vault delete---------------------------- | 11851 ms
-Lap time for Search, sort and filter----------------- | 11157 ms
-Lap time for app lock-------------------------------- | 16051 ms
-Lap time for logout and login------------------------ | 31726 ms
-Lap time for Change master password------------------ | 22188 ms
-Lap time for Re-login-------------------------------- | 9585 ms
-Lap time for User reset------------------------------ | 15988 ms
-*/
