@@ -209,6 +209,7 @@ class ActionAutomatorTest {
         device.findObject(By.text(oldVaultName)).longClick()
         CustomDelay.SMALL_ANIMATION.hold()
         findObject(testTag = TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name).click()
+        CustomDelay.MICRO_ANIMATION.hold()
         clearText()
         type(text = newVaultName)
         device.pressBack()
@@ -556,10 +557,8 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "View and delete password",
-                    estimatedTime = 22_000,
-                    action = {
-                        viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
-                    }
+                    estimatedTime = 20_000,
+                    action = { viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title) }
                 )
                 holdFor(
                     taskName = "Delete vault",
@@ -572,7 +571,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Sort, search and filter",
-                    estimatedTime = 13_000,
+                    estimatedTime = 11_000,
                     action = {
                         sortPasswordList()
                         search()
@@ -628,16 +627,32 @@ class ActionAutomatorTest {
         val startTime = System.currentTimeMillis()
         action()
         val totalTime = System.currentTimeMillis() - startTime
+        val diffPercentage = ((estimatedTime - totalTime).toFloat() / estimatedTime.toFloat()) * 100
         Log.d(
             "${TAG}:Holder", "Lap time for " +
                     taskName.padEnd(length = 40, padChar = '-') +
                     " | Actual = ${totalTime.millisPadded()}" +
                     " | Expected = ${estimatedTime.millisPadded()}" +
                     " | Difference = ${(estimatedTime - totalTime).millisPadded()}" +
-                    (if ((estimatedTime - totalTime) > 2_000) " | [Check]" else "")
+                    (if (diffPercentage > 10.0) " | [Check for high diff]" else "")
         )
 
         assert(totalTime < estimatedTime)
         holder.await()
     }
 }
+/*
+launch app and login to home------------ | Actual =  22241 ms | 22752 ms
+Create vault---------------------------- | Actual =  10956 ms | 10806 ms
+Update vault---------------------------- | Actual =  11534 ms | 12124 ms
+Create password------------------------- | Actual =  21626 ms | 22003 ms
+Update password------------------------- | Actual =  15780 ms | 16235 ms
+View and delete password---------------- | Actual =  17966 ms | 18133 ms
+Delete vault---------------------------- | Actual =  10957 ms | 10597 ms
+Sort, search and filter----------------- | Actual =   9777 ms | 10148 ms
+Auto-lock and unlock app---------------- | Actual =  15373 ms | 14592 ms
+Logout and login------------------------ | Actual =  30448 ms | 30730 ms
+Change to new password------------------ | Actual =  23016 ms | 22163 ms
+Enter master key------------------------ | Actual =   9601 ms |  9846 ms
+Reset user------------------------------ | Actual =  15683 ms | 15866 ms
+*/
