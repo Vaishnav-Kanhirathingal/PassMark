@@ -154,10 +154,6 @@ class ActionAutomatorTest {
         device.pressDelete()
     }
 
-    private fun UiObject2.visibleClick() {
-        this.click(300)
-    }
-
     //-------------------------------------------------------------------------------------start-app
     private fun launchApp() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -352,12 +348,12 @@ class ActionAutomatorTest {
     private fun sortPasswordList() {
         findObject(testTag = TestTags.Home.TopBar.SORTING_BUTTON.name).click()
         CustomDelay.SMALL_ANIMATION.hold()
-        findObject(testTag = TestTags.Home.Sorting.getSortOptionTag(passwordSortingOptions = PasswordSortingOptions.NAME)).visibleClick()
+        findObject(testTag = TestTags.Home.Sorting.getSortOptionTag(passwordSortingOptions = PasswordSortingOptions.NAME)).click()
         CustomDelay.SMALL_ANIMATION.hold()
     }
 
     private fun search() {
-        findObject(testTag = TestTags.Home.TopBar.SEARCH_BUTTON.name).visibleClick()
+        findObject(testTag = TestTags.Home.TopBar.SEARCH_BUTTON.name).click()
         CustomDelay.MICRO_ANIMATION.hold()
         "goo".forEach {
             type(text = it.toString())
@@ -374,7 +370,7 @@ class ActionAutomatorTest {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         drawerFunctionality(toOpen = true)
         device.wait(Until.hasObject(By.text(TestVault.WORK_VAULT)), 1_000)
-        device.findObject(By.text(TestVault.WORK_VAULT)).visibleClick()
+        device.findObject(By.text(TestVault.WORK_VAULT)).click()
         CustomDelay.SMALL_ANIMATION.hold()
     }
 
@@ -448,16 +444,16 @@ class ActionAutomatorTest {
      * @param passwordToUse keep null for fingerprint */
     private fun unlockApp(passwordToUse: String?) {
         if (passwordToUse == null) {
-            findObject(testTag = TestTags.AutoLock.FINGERPRINT_BUTTON.name).visibleClick()
+            findObject(testTag = TestTags.AutoLock.FINGERPRINT_BUTTON.name).click()
             CustomDelay.FINGERPRINT.hold()
         } else {
-            findObject(testTag = TestTags.AutoLock.VISIBILITY_BUTTON.name).visibleClick()
+            findObject(testTag = TestTags.AutoLock.VISIBILITY_BUTTON.name).click()
             CustomDelay.MICRO_ANIMATION.hold()
             type(
                 testTag = TestTags.AutoLock.PASSWORD_TEXT_FIELD.name,
                 text = passwordToUse
             )
-            findObject(testTag = TestTags.AutoLock.CONFIRM_BUTTON.name).visibleClick()
+            findObject(testTag = TestTags.AutoLock.CONFIRM_BUTTON.name).click()
             CustomDelay.SINGLE_API_CALL.hold()
         }
     }
