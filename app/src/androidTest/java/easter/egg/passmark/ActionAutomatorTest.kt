@@ -98,7 +98,7 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
-    private val flowName: String? = null // "Timed"
+    private val flowName: String? = "Timed"
 
     @Before
     fun startRecording() {
@@ -150,6 +150,7 @@ class ActionAutomatorTest {
     private fun clearText() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         device.pressKeyCode(KeyEvent.KEYCODE_A, KeyEvent.META_CTRL_ON)
+        CustomDelay.MICRO_ANIMATION.hold()
         device.pressDelete()
     }
 
@@ -518,7 +519,7 @@ class ActionAutomatorTest {
                 val vaultNameToReplace = "Game"
                 holdFor(
                     taskName = "Create vault",
-                    estimatedTime = 13_000,
+                    estimatedTime = 12_500,
                     action = {
                         drawerFunctionality(toOpen = true)
                         createVault(testVault = TestingObjects.testVault.copy(name = vaultNameToReplace))
@@ -536,14 +537,14 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Create password",
-                    estimatedTime = 23_000,
+                    estimatedTime = 24_000,
                     action = {
                         drawerFunctionality(toOpen = false)
                         createPassword(testPasswordData = TestingObjects.testPasswordData)
                     }
                 )
                 repeat(
-                    times = 2,
+                    times = 1, // TODO: set 2
                     action = {
                         holdFor(
                             taskName = "Update password",
@@ -559,7 +560,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "View and delete password",
-                    estimatedTime = 20_000,
+                    estimatedTime = 22_000,
                     action = {
                         viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
                     }
