@@ -33,6 +33,7 @@ import kotlin.math.absoluteValue
 
 @RunWith(AndroidJUnit4::class)
 class ActionAutomatorTest {
+    private val TAG = this::class.simpleName
     // TODO: replace all themed home screen images from readme, since search and icon changed
 
     enum class CustomDelay(private val delay: Long) {
@@ -45,6 +46,7 @@ class ActionAutomatorTest {
         /** for dialogs, bottom sheets, etc */
         SMALL_ANIMATION(delay = 1_200L),
         NAVIGATION(delay = 2_500L),
+        GOOGLE_ACCOUNT_SELECT(delay = 1_400L),
         SINGLE_API_CALL(delay = 3_000L + PassMarkConfig.TIME_OUT),
         AUTH_LOADING(delay = 3_000 + (2 * PassMarkConfig.TIME_OUT)),
         FINGERPRINT(delay = 5_000L),
@@ -163,7 +165,7 @@ class ActionAutomatorTest {
     private fun selectGoogleAccount() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         findObject(TestTags.Login.GOOGLE_BUTTON.name).click()
-        CustomDelay.NAVIGATION.hold()
+        CustomDelay.GOOGLE_ACCOUNT_SELECT.hold()
         device.findObject(By.text("vaishnav.kanhira@gmail.com")).click()
         CustomDelay.AUTH_LOADING.hold()
     }
