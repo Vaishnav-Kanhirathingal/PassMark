@@ -14,7 +14,7 @@ object PassMarkConfig {
 
     object AutoLockConfig {
         /** Should the app lock itself if it is pushed to recent apps or minimised */
-        const val IS_ENABLED = false
+        const val IS_ENABLED = true
 
         /** delay to lock once pushed to recent tab */
         const val LOCK_DELAY = 3_000L

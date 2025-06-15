@@ -505,7 +505,7 @@ class ActionAutomatorTest {
             block = {
                 holdFor(
                     taskName = "launch app and login to home",
-                    time = 25_000,
+                    time = 24_000,
                     action = {
                         launchApp()
                         selectGoogleAccount()
@@ -515,7 +515,7 @@ class ActionAutomatorTest {
                 val vaultNameToReplace = "Game"
                 holdFor(
                     taskName = "Create vault",
-                    time = 14_000,
+                    time = 12_000,
                     action = {
                         drawerFunctionality(toOpen = true)
                         createVault(testVault = TestingObjects.testVault.copy(name = vaultNameToReplace))
@@ -523,7 +523,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Update vault",
-                    time = 12_000,
+                    time = 13_000,
                     action = {
                         updateVault(
                             oldVaultName = vaultNameToReplace,
@@ -563,7 +563,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Delete vault",
-                    time = 13_000,
+                    time = 12_000,
                     action = {
                         drawerFunctionality(toOpen = true)
                         deleteVault(name = TestingObjects.testVault.name)
@@ -581,7 +581,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Auto-lock and unlock app",
-                    time = 18_000,
+                    time = 16_000,
                     action = {
                         lockApp()
                         unlockApp(passwordToUse = MasterPasswords.OLD_PASSWORD)
@@ -589,7 +589,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Logout and login",
-                    time = 34_000,
+                    time = 33_000,
                     action = {
                         turnOnSwitchesAndLogout()
                         selectGoogleAccount()
@@ -608,7 +608,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Reset user",
-                    time = 18_000,
+                    time = 17_000,
                     action = { resetUser() }
                 )
             }
