@@ -505,7 +505,7 @@ class ActionAutomatorTest {
             block = {
                 holdFor(
                     taskName = "launch app and login to home",
-                    time = 24_000,
+                    estimatedTime = 24_000,
                     action = {
                         launchApp()
                         selectGoogleAccount()
@@ -515,7 +515,7 @@ class ActionAutomatorTest {
                 val vaultNameToReplace = "Game"
                 holdFor(
                     taskName = "Create vault",
-                    time = 12_000,
+                    estimatedTime = 12_000, //13
                     action = {
                         drawerFunctionality(toOpen = true)
                         createVault(testVault = TestingObjects.testVault.copy(name = vaultNameToReplace))
@@ -523,7 +523,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Update vault",
-                    time = 13_000,
+                    estimatedTime = 13_000,
                     action = {
                         updateVault(
                             oldVaultName = vaultNameToReplace,
@@ -533,7 +533,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Create password",
-                    time = 23_000,
+                    estimatedTime = 23_000,
                     action = {
                         drawerFunctionality(toOpen = false)
                         createPassword(testPasswordData = TestingObjects.testPasswordData)
@@ -544,7 +544,7 @@ class ActionAutomatorTest {
                     action = {
                         holdFor(
                             taskName = "Update password",
-                            time = 18_000,
+                            estimatedTime = 18_000,
                             action = {
                                 updatePassword(
                                     passwordTitleToUpdate = TestingObjects.testPasswordData.title,
@@ -556,14 +556,14 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "View and delete password",
-                    time = 20_000,
+                    estimatedTime = 20_000,
                     action = {
                         viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
                     }
                 )
                 holdFor(
                     taskName = "Delete vault",
-                    time = 12_000,
+                    estimatedTime = 12_000,
                     action = {
                         drawerFunctionality(toOpen = true)
                         deleteVault(name = TestingObjects.testVault.name)
@@ -572,7 +572,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Sort, search and filter",
-                    time = 13_000,
+                    estimatedTime = 13_000,
                     action = {
                         sortPasswordList()
                         search()
@@ -581,7 +581,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Auto-lock and unlock app",
-                    time = 16_000,
+                    estimatedTime = 16_000,
                     action = {
                         lockApp()
                         unlockApp(passwordToUse = MasterPasswords.OLD_PASSWORD)
@@ -589,7 +589,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Logout and login",
-                    time = 33_000,
+                    estimatedTime = 33_000,
                     action = {
                         turnOnSwitchesAndLogout()
                         selectGoogleAccount()
@@ -598,17 +598,17 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Change to new password",
-                    time = 24_000,
+                    estimatedTime = 24_000,
                     action = { changeToNewPassword() }
                 )
                 holdFor(
                     taskName = "Enter master key",
-                    time = 11_000,
+                    estimatedTime = 11_000,
                     action = { enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD) }
                 )
                 holdFor(
                     taskName = "Reset user",
-                    time = 17_000,
+                    estimatedTime = 17_000,
                     action = { resetUser() }
                 )
             }
@@ -617,14 +617,14 @@ class ActionAutomatorTest {
 
     private suspend fun holdFor(
         taskName: String,
-        time: Long,
+        estimatedTime: Long,
         action: () -> Unit
     ) = withContext(Dispatchers.IO) {
         fun Long.millisPadded(): String {
             return "${this.toString().padStart(length = 6, padChar = ' ')} ms"
         }
 
-        val holder = async { delay(timeMillis = time) }
+        val holder = async { delay(timeMillis = estimatedTime) }
         val startTime = System.currentTimeMillis()
         action()
         val totalTime = System.currentTimeMillis() - startTime
@@ -632,11 +632,11 @@ class ActionAutomatorTest {
             "${TAG}:Holder", "Lap time for " +
                     taskName.padEnd(length = 40, padChar = '-') +
                     " | Actual = ${totalTime.millisPadded()}" +
-                    " | Expected = ${time.millisPadded()}" +
-                    (if ((time - totalTime) > 2_000) " | [Check]" else "")
+                    " | Expected = ${estimatedTime.millisPadded()}" +
+                    (if ((estimatedTime - totalTime) > 2_000) " | [Check]" else "")
         )
 
-        assert(totalTime < time)
+        assert(totalTime < estimatedTime)
         holder.await()
     }
 }
