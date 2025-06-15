@@ -620,20 +620,23 @@ class ActionAutomatorTest {
         time: Long,
         action: () -> Unit
     ) = withContext(Dispatchers.IO) {
-
-        val holder = async { delay(timeMillis = time) }
-        val start = System.currentTimeMillis()
-        action()
-
         fun Long.millisPadded(): String {
             return "${this.toString().padStart(length = 6, padChar = ' ')} ms"
         }
+
+        val holder = async { delay(timeMillis = time) }
+        val startTime = System.currentTimeMillis()
+        action()
+        val totalTime = System.currentTimeMillis() - startTime
         Log.d(
             "${TAG}:Holder", "Lap time for " +
-                    taskName.padEnd(length = 40, padChar = '-') + " | Actual = " +
-                    (System.currentTimeMillis() - start).millisPadded() + " | Expected = " +
-                    time.millisPadded()
+                    taskName.padEnd(length = 40, padChar = '-') +
+                    " | Actual = ${totalTime.millisPadded()}" +
+                    " | Expected = ${time.millisPadded()}" +
+                    (if ((time - totalTime) > 2_000) " | [Check]" else "")
         )
+
+        assert(totalTime < time)
         holder.await()
     }
 }
