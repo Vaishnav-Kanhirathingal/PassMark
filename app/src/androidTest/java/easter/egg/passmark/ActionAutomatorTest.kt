@@ -3,6 +3,7 @@ package easter.egg.passmark
 import android.content.Intent
 import android.util.Log
 import android.view.KeyEvent
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
@@ -97,16 +98,19 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
-    private val themeName: String = "AppLock"
+    private val themeName: String = "Timed"
 
     @Before
     fun startRecording() {
+        assert(PassMarkConfig.AutoLockConfig.IS_ENABLED)
+        assert(PassMarkConfig.getKeyboardTypeForPasswords() != KeyboardType.Password)
+        assert(!PassMarkConfig.USE_SECURE_ACTIVITY)
+
         val command = "screenrecord /sdcard/TestRecordings/${themeName}Flow.mp4"
         InstrumentationRegistry.getInstrumentation().uiAutomation.let {
             it.executeShellCommand("mkdir -p /sdcard/TestRecordings")
             it.executeShellCommand(command)
         }
-
     }
 
     @After
@@ -551,7 +555,7 @@ class ActionAutomatorTest {
                     }
                 )
                 holdFor(
-                    taskName = "View and delete passwword",
+                    taskName = "View and delete password",
                     time = 20_000,
                     action = {
                         viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
