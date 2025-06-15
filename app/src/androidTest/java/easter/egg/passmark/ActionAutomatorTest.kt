@@ -496,24 +496,11 @@ class ActionAutomatorTest {
 
     @Test
     fun timedScript() {
-        val tag = "LapTime"
-        var finalOutput = ""
         runBlocking(
             context = Dispatchers.Default,
             block = {
-                var lastLap = System.currentTimeMillis()
-                fun setLapTime(title: String) {
-                    val now = System.currentTimeMillis()
-
-                    val lapData = "Lap time for " +
-                            title.padEnd(length = 40, padChar = '-') +
-                            " | ${now - lastLap} ms"
-                    Log.d(tag, lapData)
-                    finalOutput += "\n$lapData"
-
-                    lastLap = now
-                }
                 holdFor(
+                    taskName = "launch app and login to home",
                     time = 25_000,
                     action = {
                         launchApp()
@@ -523,6 +510,7 @@ class ActionAutomatorTest {
                 )
                 val vaultNameToReplace = "Game"
                 holdFor(
+                    taskName = "Create vault",
                     time = 14_000,
                     action = {
                         drawerFunctionality(toOpen = true)
@@ -530,6 +518,7 @@ class ActionAutomatorTest {
                     }
                 )
                 holdFor(
+                    taskName = "Update vault",
                     time = 12_000,
                     action = {
                         updateVault(
@@ -539,6 +528,7 @@ class ActionAutomatorTest {
                     }
                 )
                 holdFor(
+                    taskName = "Create password",
                     time = 23_000,
                     action = {
                         drawerFunctionality(toOpen = false)
@@ -549,6 +539,7 @@ class ActionAutomatorTest {
                     times = 2,
                     action = {
                         holdFor(
+                            taskName = "Update password",
                             time = 18_000,
                             action = {
                                 updatePassword(
@@ -560,12 +551,14 @@ class ActionAutomatorTest {
                     }
                 )
                 holdFor(
+                    taskName = "View and delete passwword",
                     time = 20_000,
                     action = {
                         viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title)
                     }
                 )
                 holdFor(
+                    taskName = "Delete vault",
                     time = 13_000,
                     action = {
                         drawerFunctionality(toOpen = true)
@@ -574,6 +567,7 @@ class ActionAutomatorTest {
                     }
                 )
                 holdFor(
+                    taskName = "Sort, search and filter",
                     time = 13_000,
                     action = {
                         sortPasswordList()
@@ -582,6 +576,7 @@ class ActionAutomatorTest {
                     }
                 )
                 holdFor(
+                    taskName = "Auto-lock and unlock app",
                     time = 18_000,
                     action = {
                         lockApp()
@@ -589,6 +584,7 @@ class ActionAutomatorTest {
                     }
                 )
                 holdFor(
+                    taskName = "Logout and login",
                     time = 34_000,
                     action = {
                         turnOnSwitchesAndLogout()
@@ -596,31 +592,44 @@ class ActionAutomatorTest {
                         enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
                     }
                 )
-
                 holdFor(
+                    taskName = "Change to new password",
                     time = 24_000,
                     action = { changeToNewPassword() }
                 )
                 holdFor(
+                    taskName = "Enter master key",
                     time = 11_000,
                     action = { enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD) }
                 )
                 holdFor(
+                    taskName = "Reset user",
                     time = 18_000,
                     action = { resetUser() }
                 )
             }
         )
-        Log.d(tag, "Lap time list :-$finalOutput")
     }
 
     private suspend fun holdFor(
+        taskName: String,
         time: Long,
         action: () -> Unit
     ) = withContext(Dispatchers.IO) {
-        // TODO: test
+
         val holder = async { delay(timeMillis = time) }
+        val start = System.currentTimeMillis()
         action()
+
+        fun Long.millisPadded(): String {
+            return "${this.toString().padStart(length = 6, padChar = ' ')} ms"
+        }
+        Log.d(
+            "${TAG}:Holder", "Lap time for " +
+                    taskName.padEnd(length = 40, padChar = '-') + " | Actual = " +
+                    (System.currentTimeMillis() - start).millisPadded() + " | Expected = " +
+                    time.millisPadded()
+        )
         holder.await()
     }
 }

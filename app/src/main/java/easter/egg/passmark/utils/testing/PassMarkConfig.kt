@@ -7,7 +7,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 object PassMarkConfig {
-    // TODO: add a line about these configs, secure activity, keyboard type, auto-lock
     // TODO: re-config for production release
     /** This is the time by which api call results are delayed. Purpose is to allow animations to
      * have enough time to show or beautification of the app */
