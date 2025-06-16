@@ -125,7 +125,7 @@ class ActionAutomatorTest {
     //---------------------------------------------------------------------------------------utility
     private fun findObject(testTag: String): UiObject2 {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        device.wait(Until.hasObject(By.desc(testTag)), 500)
+        device.wait(Until.hasObject(By.desc(testTag)), 400)
         return device.findObject(By.desc(testTag))
     }
 
@@ -557,7 +557,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "View and delete password",
-                    estimatedTime = 21_000,
+                    estimatedTime = 22_000,
                     action = { viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title) }
                 )
                 holdFor(
@@ -643,18 +643,58 @@ class ActionAutomatorTest {
         holder.await()
     }
 }
+
 /*
-launch app and login to home------------ | Actual =  22241 ms | 22752 ms | recorded =  24354 ms
-Create vault---------------------------- | Actual =  10956 ms | 10806 ms | recorded =  12018 ms
-Update vault---------------------------- | Actual =  11534 ms | 12124 ms | recorded =  12564 ms
-Create password------------------------- | Actual =  21626 ms | 22003 ms | recorded =  26711 ms
-Update password------------------------- | Actual =  15780 ms | 16235 ms | recorded =  16254 ms
-View and delete password---------------- | Actual =  17966 ms | 18133 ms | recorded =  19163 ms
-Delete vault---------------------------- | Actual =  10957 ms | 10597 ms | recorded =  13026 ms
-Sort, search and filter----------------- | Actual =   9777 ms | 10148 ms | recorded =  11533 ms
-Auto-lock and unlock app---------------- | Actual =  15373 ms | 14592 ms | recorded =  14853 ms
-Logout and login------------------------ | Actual =  30448 ms | 30730 ms | recorded =  33134 ms
-Change to new password------------------ | Actual =  23016 ms | 22163 ms | recorded =  22512 ms
-Enter master key------------------------ | Actual =   9601 ms |  9846 ms | recorded =  10047 ms
-Reset user------------------------------ | Actual =  15683 ms | 15866 ms | recorded =  16111 ms
+launch app and login to home------------ | 24354 ms | 23679 ms | 23905 ms | 23903 ms
+Create vault---------------------------- | 12018 ms | 12580 ms | 11881 ms | 11875 ms
+Update vault---------------------------- | 12564 ms | 12614 ms | 11948 ms | 11940 ms
+Create password------------------------- | 26711 ms | 28216 ms | 23600 ms | 23586 ms
+Update password------------------------- | 16254 ms | 18244 ms | 16744 ms | 16791 ms
+View and delete password---------------- | 19163 ms | 20944 ms | 18828 ms | 20745 ms
+Delete vault---------------------------- | 13026 ms | 13383 ms | 11225 ms | 11160 ms
+Sort, search and filter----------------- | 11533 ms | 11860 ms | 10673 ms | 10661 ms
+Auto-lock and unlock app---------------- | 14853 ms | 15706 ms | 15518 ms | 15551 ms
+Logout and login------------------------ | 33134 ms | 33885 ms | 32653 ms | 31804 ms
+Change to new password------------------ | 22512 ms | 23487 ms | 22284 ms | 22281 ms
+Enter master key------------------------ | 10047 ms | 10080 ms |  9858 ms |  9819 ms
+Reset user------------------------------ | 16111 ms | 18194 ms | 15969 ms | 15979 ms
 */
+
+fun main() {
+    val input = """launch app and login to home------------ | 24354 ms | 23679 ms | 23905 ms | 23903 ms
+Create vault---------------------------- | 12018 ms | 12580 ms | 11881 ms | 11875 ms
+Update vault---------------------------- | 12564 ms | 12614 ms | 11948 ms | 11940 ms
+Create password------------------------- | 26711 ms | 28216 ms | 23600 ms | 23586 ms
+Update password------------------------- | 16254 ms | 18244 ms | 16744 ms | 16791 ms
+View and delete password---------------- | 19163 ms | 20944 ms | 18828 ms | 20745 ms
+Delete vault---------------------------- | 13026 ms | 13383 ms | 11225 ms | 11160 ms
+Sort, search and filter----------------- | 11533 ms | 11860 ms | 10673 ms | 10661 ms
+Auto-lock and unlock app---------------- | 14853 ms | 15706 ms | 15518 ms | 15551 ms
+Logout and login------------------------ | 33134 ms | 33885 ms | 32653 ms | 31804 ms
+Change to new password------------------ | 22512 ms | 23487 ms | 22284 ms | 22281 ms
+Enter master key------------------------ | 10047 ms | 10080 ms |  9858 ms |  9819 ms
+Reset user------------------------------ | 16111 ms | 18194 ms | 15969 ms | 15979 ms"""
+        .trimIndent()
+        .split('\n')
+        .forEach { entry ->
+            val splitStr = entry.split('|').map { it.trim() }
+            val timeValues = splitStr.drop(1).map { it.dropLast(n = 3).toLong() }.sorted()
+
+            val average = timeValues.let { tv ->
+                var total = 0L
+                tv.forEach { total += it }
+                return@let (total / tv.size)
+            }
+
+            fun Long.padded(): String {
+                return this.toString().padStart(length = 5, padChar = ' ')
+            }
+
+            println(
+                "${splitStr.first()} | " +
+                        "average = ${average.padded()} | " +
+                        "min = ${timeValues.first().padded()} | " +
+                        "max = ${timeValues.last().padded()}"
+            )
+        }
+}
