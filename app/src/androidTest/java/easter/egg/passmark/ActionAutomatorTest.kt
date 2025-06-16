@@ -634,12 +634,12 @@ class ActionAutomatorTest {
                     else "")
         )
 
-//        assert(totalTime < estimatedTime)
+        assert(totalTime < estimatedTime) // TODO: keep enabled
         holder.await()
     }
 }
 
-/*
+/* 4:09 |
 launch app and login to home------------ | 24354 ms | 23679 ms | 23905 ms | 23903 ms
 Create vault---------------------------- | 12018 ms | 12580 ms | 11881 ms | 11875 ms
 Update vault---------------------------- | 12564 ms | 12614 ms | 11948 ms | 11940 ms
