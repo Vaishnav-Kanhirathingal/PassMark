@@ -540,18 +540,13 @@ class ActionAutomatorTest {
                         createPassword(testPasswordData = TestingObjects.testPasswordData)
                     }
                 )
-                repeat(
-                    times = 1, // TODO: set 2
+                holdFor(
+                    taskName = "Update password",
+                    estimatedTime = 18_000,
                     action = {
-                        holdFor(
-                            taskName = "Update password",
-                            estimatedTime = 18_000,
-                            action = {
-                                updatePassword(
-                                    passwordTitleToUpdate = TestingObjects.testPasswordData.title,
-                                    newPassword = TestingObjects.getTestingPassword(index = it + 1)
-                                )
-                            }
+                        updatePassword(
+                            passwordTitleToUpdate = TestingObjects.testPasswordData.title,
+                            newPassword = TestingObjects.getTestingPassword(index = 1)
                         )
                     }
                 )
