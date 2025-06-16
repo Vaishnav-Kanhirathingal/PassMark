@@ -98,7 +98,7 @@ class ActionAutomatorTest {
 
     //-------------------------------------------------------------------------------------recording
 
-    private val flowName: String? = "Timed"
+    private val flowName: String? = null // "Timed"
 
     @Before
     fun startRecording() {
@@ -661,7 +661,8 @@ Reset user------------------------------ | 16111 ms | 18194 ms | 15969 ms | 1597
 */
 
 fun main() {
-    val input = """launch app and login to home------------ | 24354 ms | 23679 ms | 23905 ms | 23903 ms
+    val input =
+        """launch app and login to home------------ | 24354 ms | 23679 ms | 23905 ms | 23903 ms
 Create vault---------------------------- | 12018 ms | 12580 ms | 11881 ms | 11875 ms
 Update vault---------------------------- | 12564 ms | 12614 ms | 11948 ms | 11940 ms
 Create password------------------------- | 26711 ms | 28216 ms | 23600 ms | 23586 ms
@@ -674,27 +675,27 @@ Logout and login------------------------ | 33134 ms | 33885 ms | 32653 ms | 3180
 Change to new password------------------ | 22512 ms | 23487 ms | 22284 ms | 22281 ms
 Enter master key------------------------ | 10047 ms | 10080 ms |  9858 ms |  9819 ms
 Reset user------------------------------ | 16111 ms | 18194 ms | 15969 ms | 15979 ms"""
-        .trimIndent()
-        .split('\n')
-        .forEach { entry ->
-            val splitStr = entry.split('|').map { it.trim() }
-            val timeValues = splitStr.drop(1).map { it.dropLast(n = 3).toLong() }.sorted()
+            .trimIndent()
+            .split('\n')
+            .forEach { entry ->
+                val splitStr = entry.split('|').map { it.trim() }
+                val timeValues = splitStr.drop(1).map { it.dropLast(n = 3).toLong() }.sorted()
 
-            val average = timeValues.let { tv ->
-                var total = 0L
-                tv.forEach { total += it }
-                return@let (total / tv.size)
+                val average = timeValues.let { tv ->
+                    var total = 0L
+                    tv.forEach { total += it }
+                    return@let (total / tv.size)
+                }
+
+                fun Long.padded(): String {
+                    return this.toString().padStart(length = 5, padChar = ' ')
+                }
+
+                println(
+                    "${splitStr.first()} | " +
+                            "average = ${average.padded()} | " +
+                            "min = ${timeValues.first().padded()} | " +
+                            "max = ${timeValues.last().padded()}"
+                )
             }
-
-            fun Long.padded(): String {
-                return this.toString().padStart(length = 5, padChar = ' ')
-            }
-
-            println(
-                "${splitStr.first()} | " +
-                        "average = ${average.padded()} | " +
-                        "min = ${timeValues.first().padded()} | " +
-                        "max = ${timeValues.last().padded()}"
-            )
-        }
 }
