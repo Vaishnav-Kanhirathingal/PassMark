@@ -411,7 +411,6 @@ object HomeContent {
                     content = {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             contentDescription = null,
                         )
                     }
