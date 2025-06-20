@@ -582,10 +582,16 @@ class ActionAutomatorTest {
                     }
                 )
                 holdFor(
-                    taskName = "Logout and login",
-                    estimatedTime = 35_000,
+                    taskName = "turn on switches and logout",
+                    estimatedTime = 17_500,
                     action = {
                         turnOnSwitchesAndLogout()
+                    }
+                )
+                holdFor(
+                    taskName = "select account and login",
+                    estimatedTime = 21_500,
+                    action = {
                         selectGoogleAccount()
                         enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
                     }
@@ -597,7 +603,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Enter master key",
-                    estimatedTime = 11_000,
+                    estimatedTime = 12_000,
                     action = { enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD) }
                 )
                 holdFor(
