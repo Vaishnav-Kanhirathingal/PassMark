@@ -628,8 +628,8 @@ class ActionAutomatorTest {
                 " | Actual = ${totalTime.millisPadded()}" +
                 " | Expected = ${estimatedTime.millisPadded()}" +
                 " | Difference = ${(estimatedTime - totalTime).millisPadded()}" +
-                (if (diffPercentage > 12.0) " | Check for high diff"
-                else if (diffPercentage < 5.0) " | check for low diff"
+                (if (diffPercentage > 16.0) " | Check for high diff"
+                else if (diffPercentage < 8.0) " | check for low diff"
                 else "")).let { msg ->
             if (totalTime < estimatedTime) {
                 Log.d(TAG, msg)
