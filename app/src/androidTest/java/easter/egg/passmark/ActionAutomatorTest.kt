@@ -642,58 +642,74 @@ class ActionAutomatorTest {
     }
 }
 
-/* 4:09 |
-launch app and login to home------------ | 24354 ms | 23679 ms | 23905 ms | 23903 ms
-Create vault---------------------------- | 12018 ms | 12580 ms | 11881 ms | 11875 ms
-Update vault---------------------------- | 12564 ms | 12614 ms | 11948 ms | 11940 ms
-Create password------------------------- | 26711 ms | 28216 ms | 23600 ms | 23586 ms
-Update password------------------------- | 16254 ms | 18244 ms | 16744 ms | 16791 ms
-View and delete password---------------- | 19163 ms | 20944 ms | 18828 ms | 20745 ms
-Delete vault---------------------------- | 13026 ms | 13383 ms | 11225 ms | 11160 ms
-Sort, search and filter----------------- | 11533 ms | 11860 ms | 10673 ms | 10661 ms
-Auto-lock and unlock app---------------- | 14853 ms | 15706 ms | 15518 ms | 15551 ms
-Logout and login------------------------ | 33134 ms | 33885 ms | 32653 ms | 31804 ms
-Change to new password------------------ | 22512 ms | 23487 ms | 22284 ms | 22281 ms
-Enter master key------------------------ | 10047 ms | 10080 ms |  9858 ms |  9819 ms
-Reset user------------------------------ | 16111 ms | 18194 ms | 15969 ms | 15979 ms
-*/
-
 fun main() {
-    val input =
-        """launch app and login to home------------ | 24354 ms | 23679 ms | 23905 ms | 23903 ms
-Create vault---------------------------- | 12018 ms | 12580 ms | 11881 ms | 11875 ms
-Update vault---------------------------- | 12564 ms | 12614 ms | 11948 ms | 11940 ms
-Create password------------------------- | 26711 ms | 28216 ms | 23600 ms | 23586 ms
-Update password------------------------- | 16254 ms | 18244 ms | 16744 ms | 16791 ms
-View and delete password---------------- | 19163 ms | 20944 ms | 18828 ms | 20745 ms
-Delete vault---------------------------- | 13026 ms | 13383 ms | 11225 ms | 11160 ms
-Sort, search and filter----------------- | 11533 ms | 11860 ms | 10673 ms | 10661 ms
-Auto-lock and unlock app---------------- | 14853 ms | 15706 ms | 15518 ms | 15551 ms
-Logout and login------------------------ | 33134 ms | 33885 ms | 32653 ms | 31804 ms
-Change to new password------------------ | 22512 ms | 23487 ms | 22284 ms | 22281 ms
-Enter master key------------------------ | 10047 ms | 10080 ms |  9858 ms |  9819 ms
-Reset user------------------------------ | 16111 ms | 18194 ms | 15969 ms | 15979 ms"""
-            .trimIndent()
-            .split('\n')
-            .forEach { entry ->
-                val splitStr = entry.split('|').map { it.trim() }
-                val timeValues = splitStr.drop(1).map { it.dropLast(n = 3).toLong() }.sorted()
+    fun printRow(
+        title: String,
+        lapTimeEntries: List<Long>?,
+        padChar: Char = ' ',
+        vararg columns: String,
+    ) {
+        println(
+            "${title.padEnd(length = 40, padChar = padChar)} | " +
+                    columns.joinToString(
+                        separator = " | ",
+                        transform = { it.padStart(length = 9, padChar = padChar) },
+                    ) +
+                    " || " +
+                    lapTimeEntries.let { lt ->
+                        lt?.joinToString(
+                            separator = ", ",
+                            transform = { it.toString().padStart(length = 5, padChar = ' ') }
+                        ) ?: "Timeline"
+                    }
+        )
+    }
 
-                val average = timeValues.let { tv ->
-                    var total = 0L
-                    tv.forEach { total += it }
-                    return@let (total / tv.size)
-                }
+    printRow(
+        title = "Lap Time",
+        lapTimeEntries = null,
+        padChar = '-',
+        columns = arrayOf("Average", "Lowest", "Highest")
+    )
 
-                fun Long.padded(): String {
-                    return this.toString().padStart(length = 5, padChar = ' ')
-                }
+    """
+launch app and login to home           | 24354 ms | 23679 ms | 23905 ms | 23903 ms | 23213 ms | 23351 ms
+Create vault                           | 12018 ms | 12580 ms | 11881 ms | 11875 ms | 13316 ms | 12348 ms
+Update vault                           | 12564 ms | 12614 ms | 11948 ms | 11940 ms | 12314 ms | 13417 ms
+Create password                        | 26711 ms | 28216 ms | 23600 ms | 23586 ms | 22939 ms | 23077 ms
+Update password                        | 16254 ms | 18244 ms | 16744 ms | 16791 ms | 16162 ms | 16213 ms
+View and delete password               | 19163 ms | 20944 ms | 18828 ms | 20745 ms | 19078 ms | 20712 ms
+Delete vault                           | 13026 ms | 13383 ms | 11225 ms | 11160 ms | 10588 ms | 11179 ms
+Sort, search and filter                | 11533 ms | 11860 ms | 10673 ms | 10661 ms | 10789 ms | 11157 ms
+Auto-lock and unlock app               | 14853 ms | 15706 ms | 15518 ms | 15551 ms | 15423 ms | 15969 ms
+Logout and login                       | 33134 ms | 33885 ms | 32653 ms | 31804 ms | 32606 ms | 32196 ms
+Change to new password                 | 22512 ms | 23487 ms | 22284 ms | 22281 ms | 23030 ms | 22763 ms
+Enter master key                       | 10047 ms | 10080 ms |  9858 ms |  9819 ms |  9737 ms | 10365 ms
+Reset user                             | 16111 ms | 18194 ms | 15969 ms | 15979 ms | 16747 ms | 16449 ms
+"""
+        .trimIndent()
+        .split('\n')
+        .forEach { entry ->
+            val splitStr = entry.split('|').map { it.trim() }
+            val timeValues = splitStr.drop(1).map { it.dropLast(n = 3).toLong() }.sorted()
 
-                println(
-                    "${splitStr.first()} | " +
-                            "average = ${average.padded()} | " +
-                            "min = ${timeValues.first().padded()} | " +
-                            "max = ${timeValues.last().padded()}"
-                )
+            val average = timeValues.let { tv ->
+                var total = 0L
+                tv.forEach { total += it }
+                return@let (total / tv.size)
             }
+
+            fun Long.millisTransformed(): String {
+                return this.toString().padStart(length = 5, padChar = ' ')
+            }
+            printRow(
+                title = splitStr.first().trim(),
+                lapTimeEntries = timeValues,
+                columns = arrayOf(
+                    average.millisTransformed(),
+                    timeValues.first().millisTransformed(),
+                    timeValues.last().millisTransformed()
+                )
+            )
+        }
 }
