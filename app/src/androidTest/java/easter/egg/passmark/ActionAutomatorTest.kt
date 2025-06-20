@@ -524,7 +524,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Update vault",
-                    estimatedTime = 14_500,
+                    estimatedTime = 15_000,
                     action = {
                         updateVault(
                             oldVaultName = vaultNameToReplace,
@@ -534,7 +534,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Create password",
-                    estimatedTime = 26_500,
+                    estimatedTime = 28_000,
                     action = {
                         drawerFunctionality(toOpen = false)
                         createPassword(testPasswordData = TestingObjects.testPasswordData)
@@ -542,7 +542,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Update password",
-                    estimatedTime = 18_500,
+                    estimatedTime = 19_000,
                     action = {
                         updatePassword(
                             passwordTitleToUpdate = TestingObjects.testPasswordData.title,
@@ -557,7 +557,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Delete vault",
-                    estimatedTime = 15_000,
+                    estimatedTime = 14_000,
                     action = {
                         drawerFunctionality(toOpen = true)
                         deleteVault(name = TestingObjects.testVault.name)
@@ -566,7 +566,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Sort, search and filter",
-                    estimatedTime = 13_000,
+                    estimatedTime = 13_500,
                     action = {
                         sortPasswordList()
                         search()
@@ -583,7 +583,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "turn on switches and logout",
-                    estimatedTime = 17_500,
+                    estimatedTime = 15_500,
                     action = {
                         turnOnSwitchesAndLogout()
                     }
@@ -608,7 +608,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Reset user",
-                    estimatedTime = 18_500,
+                    estimatedTime = 19_000,
                     action = { resetUser() }
                 )
             }

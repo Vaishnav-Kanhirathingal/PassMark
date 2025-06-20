@@ -81,7 +81,7 @@ data class TestPasswordData(
             ),
             TestPasswordData(
                 vault = null,
-                title = "spotify",
+                title = "Spotify",
                 email = EMAIL,
                 userName = "jd",
                 password = "spoty_123",
