@@ -516,7 +516,7 @@ class ActionAutomatorTest {
                 val vaultNameToReplace = "Game"
                 holdFor(
                     taskName = "Create vault",
-                    estimatedTime = 13_000,
+                    estimatedTime = 14_500,
                     action = {
                         drawerFunctionality(toOpen = true)
                         createVault(testVault = TestingObjects.testVault.copy(name = vaultNameToReplace))
@@ -524,7 +524,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Update vault",
-                    estimatedTime = 13_500,
+                    estimatedTime = 14_500,
                     action = {
                         updateVault(
                             oldVaultName = vaultNameToReplace,
@@ -534,7 +534,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Create password",
-                    estimatedTime = 25_000,
+                    estimatedTime = 26_500,
                     action = {
                         drawerFunctionality(toOpen = false)
                         createPassword(testPasswordData = TestingObjects.testPasswordData)
@@ -542,7 +542,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Update password",
-                    estimatedTime = 18_000,
+                    estimatedTime = 18_500,
                     action = {
                         updatePassword(
                             passwordTitleToUpdate = TestingObjects.testPasswordData.title,
@@ -557,7 +557,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Delete vault",
-                    estimatedTime = 14_500,
+                    estimatedTime = 15_000,
                     action = {
                         drawerFunctionality(toOpen = true)
                         deleteVault(name = TestingObjects.testVault.name)
@@ -592,7 +592,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Change to new password",
-                    estimatedTime = 24_000,
+                    estimatedTime = 25_000,
                     action = { changeToNewPassword() }
                 )
                 holdFor(
@@ -602,7 +602,7 @@ class ActionAutomatorTest {
                 )
                 holdFor(
                     taskName = "Reset user",
-                    estimatedTime = 17_000,
+                    estimatedTime = 18_500,
                     action = { resetUser() }
                 )
             }
