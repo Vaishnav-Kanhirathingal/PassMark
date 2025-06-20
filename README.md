@@ -58,8 +58,14 @@ the below video contains the majority of the actions documented. Refer the docum
 
 [multiple full flow video with unique themes themes]
 
+> Themes to use (TODO - remove)
+> 1. dark_monochrome
+> 2. dark_green_blue
+> 3. light_yellow_pink
+> 4. light_green_blue
+
 > Timeline -
-> 1. TODO
+> 1. 00:00 - login...TODO
 
 ## Documentation
 
