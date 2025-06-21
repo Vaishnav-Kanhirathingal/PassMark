@@ -17,15 +17,15 @@ Themed app icons change colors based on the theme selected in the system. This i
 support for this is optional. While some apps skip out on this, Passmark has this baked in. These are the themed icons
 which will appear on devices with themed icon enabled.
 
-<img src="https://github.com/user-attachments/assets/f5c8f8e5-64c0-4dbd-8631-a5526de00717" alt="themed icon sample" width="90">
-<img src="https://github.com/user-attachments/assets/d3f97fa6-88d3-4e7f-a89f-86ee9ac57172" alt="themed icon sample" width="90">
-<img src="https://github.com/user-attachments/assets/4850a3a8-61ee-411c-8be7-26c14ae5816f" alt="themed icon sample" width="90">
-<img src="https://github.com/user-attachments/assets/837d9fa3-1c46-4da0-b052-18fa93ee86e6" alt="themed icon sample" width="90">
-<img src="https://github.com/user-attachments/assets/032c13a7-620f-416e-b7d2-82515136b62f" alt="themed icon sample" width="90">
-<img src="https://github.com/user-attachments/assets/dff2801b-5c88-478d-adbf-60fec26649d5" alt="themed icon sample" width="90">
-<img src="https://github.com/user-attachments/assets/953b74b8-e9db-47c2-83bb-6b36fc71f548" alt="themed icon sample" width="90">
-<img src="https://github.com/user-attachments/assets/44c7e43e-6813-4ace-8156-e3949f174981" alt="themed icon sample" width="90">
-<img src="https://github.com/user-attachments/assets/56e4dda4-cd02-4e8d-81df-03d1a833a57b" alt="themed icon sample" width="90">
+<img src="https://github.com/user-attachments/assets/f5c8f8e5-64c0-4dbd-8631-a5526de00717" alt="themed icon sample" width="89">
+<img src="https://github.com/user-attachments/assets/d3f97fa6-88d3-4e7f-a89f-86ee9ac57172" alt="themed icon sample" width="89">
+<img src="https://github.com/user-attachments/assets/4850a3a8-61ee-411c-8be7-26c14ae5816f" alt="themed icon sample" width="89">
+<img src="https://github.com/user-attachments/assets/837d9fa3-1c46-4da0-b052-18fa93ee86e6" alt="themed icon sample" width="89">
+<img src="https://github.com/user-attachments/assets/032c13a7-620f-416e-b7d2-82515136b62f" alt="themed icon sample" width="89">
+<img src="https://github.com/user-attachments/assets/dff2801b-5c88-478d-adbf-60fec26649d5" alt="themed icon sample" width="89">
+<img src="https://github.com/user-attachments/assets/953b74b8-e9db-47c2-83bb-6b36fc71f548" alt="themed icon sample" width="89">
+<img src="https://github.com/user-attachments/assets/44c7e43e-6813-4ace-8156-e3949f174981" alt="themed icon sample" width="89">
+<img src="https://github.com/user-attachments/assets/56e4dda4-cd02-4e8d-81df-03d1a833a57b" alt="themed icon sample" width="89">
 
 > Themed app icon sampled
 
