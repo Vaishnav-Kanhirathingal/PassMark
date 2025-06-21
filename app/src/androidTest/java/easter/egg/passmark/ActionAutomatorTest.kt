@@ -675,25 +675,27 @@ fun main() {
         title = "Lap Time",
         lapTimeEntries = null,
         padChar = '-',
-        columns = arrayOf("Average", "Lowest", "Highest")
+        columns = arrayOf("Average", "Lowest", "Highest", "Diff")
     )
-    """
-launch app and login to home             | 23585 ms
-Create vault                             | 12606 ms
-Update vault                             | 12187 ms
-Create password                          | 23318 ms
-Update password                          | 16525 ms
-View and delete password                 | 19508 ms
-Delete vault                             | 11047 ms
-Sort, search and filter                  | 10905 ms
-Auto-lock and unlock app                 | 15276 ms
-turn on switches and logout              | 12347 ms
-select account and login                 | 18942 ms
-Change to new password                   | 22956 ms
-Enter master key                         | 10534 ms
-Reset user                               | 15688 ms
+
+    /** dark_blue_green | dark_monochrome | light_blue_green (3 high diffs) | light_yellow_pink */
+    val timeline = """
+launch app and login to home             | 23585 ms | 23110 ms | 23101 ms | 23408 ms 
+Create vault                             | 12606 ms | 11977 ms | 13751 ms | 12312 ms 
+Update vault                             | 12187 ms | 12551 ms | 12522 ms | 11935 ms 
+Create password                          | 23318 ms | 23620 ms | 27526 ms | 25090 ms 
+Update password                          | 16525 ms | 16838 ms | 16675 ms | 17192 ms 
+View and delete password                 | 19508 ms | 18796 ms | 19676 ms | 19276 ms 
+Delete vault                             | 11047 ms | 11398 ms | 11114 ms | 11706 ms 
+Sort, search and filter                  | 10905 ms | 11223 ms | 12069 ms | 10975 ms 
+Auto-lock and unlock app                 | 15276 ms | 15730 ms | 15402 ms | 15002 ms 
+turn on switches and logout              | 12347 ms | 12666 ms | 12505 ms | 12069 ms 
+select account and login                 | 18942 ms | 19470 ms | 19074 ms | 19735 ms 
+Change to new password                   | 22956 ms | 22330 ms | 24189 ms | 22778 ms 
+Enter master key                         | 10534 ms |  9882 ms |  9749 ms | 10375 ms 
+Reset user                               | 15688 ms | 17988 ms | 16860 ms | 16417 ms 
 """
-        .trimIndent()
+    timeline.trimIndent()
         .split('\n')
         .forEach { entry ->
             val splitStr = entry.split('|').map { it.trim() }
@@ -708,13 +710,17 @@ Reset user                               | 15688 ms
             fun Long.millisTransformed(): String {
                 return this.toString().padStart(length = 5, padChar = ' ')
             }
+
+            val lowest = timeValues.first()
+            val highest = timeValues.last()
             printRow(
                 title = splitStr.first().trim(),
                 lapTimeEntries = timeValues,
                 columns = arrayOf(
                     average.millisTransformed(),
-                    timeValues.first().millisTransformed(),
-                    timeValues.last().millisTransformed()
+                    lowest.millisTransformed(),
+                    highest.millisTransformed(),
+                    (highest - lowest).millisTransformed()
                 )
             )
         }
