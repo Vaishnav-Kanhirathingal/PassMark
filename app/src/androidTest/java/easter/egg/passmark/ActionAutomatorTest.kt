@@ -678,22 +678,22 @@ fun main() {
         columns = arrayOf("Average", "Lowest", "Highest", "Diff")
     )
 
-    /** dark_blue_green | dark_monochrome | light_blue_green (3 high diffs) | light_yellow_pink */
+    /** dark_blue_green | dark_monochrome | light_blue_green | light_yellow_pink */
     val timeline = """
-launch app and login to home             | 23585 ms | 23110 ms | 23101 ms | 23408 ms 
-Create vault                             | 12606 ms | 11977 ms | 13751 ms | 12312 ms 
-Update vault                             | 12187 ms | 12551 ms | 12522 ms | 11935 ms 
-Create password                          | 23318 ms | 23620 ms | 27526 ms | 25090 ms 
-Update password                          | 16525 ms | 16838 ms | 16675 ms | 17192 ms 
-View and delete password                 | 19508 ms | 18796 ms | 19676 ms | 19276 ms 
-Delete vault                             | 11047 ms | 11398 ms | 11114 ms | 11706 ms 
-Sort, search and filter                  | 10905 ms | 11223 ms | 12069 ms | 10975 ms 
-Auto-lock and unlock app                 | 15276 ms | 15730 ms | 15402 ms | 15002 ms 
-turn on switches and logout              | 12347 ms | 12666 ms | 12505 ms | 12069 ms 
-select account and login                 | 18942 ms | 19470 ms | 19074 ms | 19735 ms 
-Change to new password                   | 22956 ms | 22330 ms | 24189 ms | 22778 ms 
-Enter master key                         | 10534 ms |  9882 ms |  9749 ms | 10375 ms 
-Reset user                               | 15688 ms | 17988 ms | 16860 ms | 16417 ms 
+launch app and login to home             | 23585 ms | 23110 ms | 23081 ms | 23408 ms 
+Create vault                             | 12606 ms | 11977 ms | 11964 ms | 12312 ms 
+Update vault                             | 12187 ms | 12551 ms | 13581 ms | 11935 ms 
+Create password                          | 23318 ms | 23620 ms | 22706 ms | 25090 ms 
+Update password                          | 16525 ms | 16838 ms | 15852 ms | 17192 ms 
+View and delete password                 | 19508 ms | 18796 ms | 18947 ms | 19276 ms 
+Delete vault                             | 11047 ms | 11398 ms | 10406 ms | 11706 ms 
+Sort, search and filter                  | 10905 ms | 11223 ms | 10279 ms | 10975 ms 
+Auto-lock and unlock app                 | 15276 ms | 15730 ms | 14648 ms | 15002 ms 
+turn on switches and logout              | 12347 ms | 12666 ms | 12741 ms | 12069 ms 
+select account and login                 | 18942 ms | 19470 ms | 19475 ms | 19735 ms 
+Change to new password                   | 22956 ms | 22330 ms | 22395 ms | 22778 ms 
+Enter master key                         | 10534 ms |  9882 ms | 10038 ms | 10375 ms 
+Reset user                               | 15688 ms | 17988 ms | 16174 ms | 16417 ms 
 """
     timeline.trimIndent()
         .split('\n')
