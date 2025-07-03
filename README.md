@@ -27,8 +27,6 @@ which will appear on devices with themed icon enabled.
 <img src="https://github.com/user-attachments/assets/44c7e43e-6813-4ace-8156-e3949f174981" alt="themed icon sample" width="88">
 <img src="https://github.com/user-attachments/assets/56e4dda4-cd02-4e8d-81df-03d1a833a57b" alt="themed icon sample" width="88">
 
-> Themed app icon sampled
-
 ## Features
 
 Majority of the features are listed below. There may be additional features not listed below.
