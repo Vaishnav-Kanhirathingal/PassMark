@@ -6,9 +6,9 @@ constraintlayoutCompose = "1.1.1"
 coreSplashscreen = "1.0.1"
 datastorePreferences = "1.1.7"
 gson = "2.13.1"
-hiltAndroid = "2.51.1"
+hiltAndroid = "2.56.2"
 hiltNavigationCompose = "1.2.0"
-kotlin = "2.1.10"
+kotlin = "2.2.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -18,7 +18,7 @@ ktorClientAndroid = "3.2.1"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
 composeBom = "2025.06.01"
-googleGmsGoogleServices = "4.4.2"
+googleGmsGoogleServices = "4.4.3"
 credentials = "1.5.0"
 credentialsPlayServicesAuth = "1.5.0"
 googleid = "1.1.1"
@@ -26,6 +26,7 @@ materialIconsExtended = "1.7.8"
 navigationCompose = "2.9.1"
 roomRuntime = "2.7.2"
 supabaseVersion = "3.2.0"
+uiautomator = "2.3.0"
 
 [libraries]
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
@@ -38,6 +39,7 @@ androidx-material-icons-extended = { module = "androidx.compose.material:materia
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilVersion" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilVersion" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
