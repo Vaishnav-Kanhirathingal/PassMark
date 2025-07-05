@@ -60,6 +60,13 @@ change your phone's system color and the app would match it. Assuming dynamic co
 
 the below video contains the majority of the actions documented. Refer the documentation section for deeper details
 
+
+![Untitled design](https://github.com/user-attachments/assets/1bcc788a-36c8-4636-a0f9-b5ec8074aa1e)
+
+
+
+
+
 https://github.com/Vaishnav-Kanhirathingal/PassMark/raw/refs/heads/main/Additional%20Resources/1400pHigh.mp4
 
 [multiple full flow video with unique themes themes]
