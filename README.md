@@ -1,11 +1,16 @@
-# PassMark [PENDING]
+# PassMark
 
-TODO - description
+PassMark is a password storage solution which uses password based encryption meaning only the user can generate the key
+used for decryption. No copy saved anywhere on the cloud anc the key can't be retrieved once lost/forgotten. This makes
+it more secure in the sense that there is no key to be stolen by attackers. It has more security features and user
+options listed below.
 
-icon - <https://uxwing.com/shield-lock-line-icon/>
+> Note : This project might not have some security features enabled for demo purposes. Do check first before installing.
+> Check `easter.egg.passmark.utils.testing.PassMarkConfig` just to be sure.
 
 ## App icon
 
+[//]: # (icon - <https://uxwing.com/shield-lock-line-icon/>)
 This is the normal icon which will be displayed on devices with themed icon disabled (to enable, you might be able to
 find the setting under personalization or home screen settings)
 
@@ -58,18 +63,16 @@ change your phone's system color and the app would match it. Assuming dynamic co
 
 ## Full Flow -
 
-the below video contains the majority of the actions documented. Refer the documentation section for deeper details
+the below video contains the majority of the actions documented. Refer the documentation section for
+deeper details
 
 <a href="https://vaishnav-kanhirathingal.github.io/PassMarkAssets/">
   <img src="https://github.com/user-attachments/assets/1bcc788a-36c8-4636-a0f9-b5ec8074aa1e" alt="Complete Demo Video link">
 </a>
 
-> Themes used
->
-> 1. dark_monochrome
-> 2. dark_green_blue
-> 3. light_yellow_pink
-> 4. light_green_blue
+> ### Themes used :
+>| Green/Blue (Light) | MonoChrome (Dark) | Yellow/Brown (Light) | Green/Blue (Dark) |
+>|--------------------|-------------------|----------------------|-------------------|
 
 ## Documentation
 
