@@ -2,7 +2,7 @@
 
 TODO - description
 
-icon - https://uxwing.com/shield-lock-line-icon/
+icon - <https://uxwing.com/shield-lock-line-icon/>
 
 ## App icon
 
@@ -60,25 +60,16 @@ change your phone's system color and the app would match it. Assuming dynamic co
 
 the below video contains the majority of the actions documented. Refer the documentation section for deeper details
 
+<a href="https://vaishnav-kanhirathingal.github.io/PassMarkAssets/">
+  <img src="https://github.com/user-attachments/assets/1bcc788a-36c8-4636-a0f9-b5ec8074aa1e" alt="Complete Demo Video link">
+</a>
 
-![Untitled design](https://github.com/user-attachments/assets/1bcc788a-36c8-4636-a0f9-b5ec8074aa1e)
-
-
-
-
-
-https://github.com/Vaishnav-Kanhirathingal/PassMark/raw/refs/heads/main/Additional%20Resources/1400pHigh.mp4
-
-[multiple full flow video with unique themes themes]
-
-> Themes to use (TODO - remove)
+> Themes used
+>
 > 1. dark_monochrome
 > 2. dark_green_blue
 > 3. light_yellow_pink
 > 4. light_green_blue
-
-> Timeline -
-> 1. 00:00 - login...TODO
 
 ## Documentation
 
