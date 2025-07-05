@@ -50,8 +50,8 @@ Majority of the features are listed below. There may be additional features not 
 
 ## Material-You theming
 
-this app implements Material-You theming which means it has dynamic color support for UI elements. To make use of this,
-change your phone's system color and the app would match it. Assuming dynamic colors is enabled on device
+This app implements Material-You theming which means it has dynamic color support for UI elements. To make use of this,
+change your phone's system color and the app would match it. Assuming dynamic colors is enabled on device.
 
 <img src="https://github.com/user-attachments/assets/08490913-800e-49ff-b1da-c84b816199c1" alt="Empty home screenshot" width="273">
 <img src="https://github.com/user-attachments/assets/f020d0de-3e8b-456a-bc26-7540d2bb46a5" alt="Empty home screenshot" width="273">
@@ -63,8 +63,7 @@ change your phone's system color and the app would match it. Assuming dynamic co
 
 ## Full Flow -
 
-the below video contains the majority of the actions documented. Refer the documentation section for
-deeper details
+The below video contains the majority of the actions documented. Refer the documentation section for deeper details.
 
 <a href="https://vaishnav-kanhirathingal.github.io/PassMarkAssets/">
   <img src="https://github.com/user-attachments/assets/1bcc788a-36c8-4636-a0f9-b5ec8074aa1e" alt="Complete Demo Video link">
@@ -76,11 +75,11 @@ deeper details
 
 ## Documentation
 
-below is a step-by-step guide for everything
+below is a step-by-step guide for everything.
 
 ### Authentication (Login screen -> Create master password screen -> Home)
 
-Google login is the only option. click on the login button and select your Google account .depending on your account, if
+Google login is the only option. Click on the login button and select your Google account. Depending on your account, if
 you are a new user, you would be asked to create a new Master Password. Make sure the password is between 8 and 32
 characters long. otherwise it shows an error. If you already had an account, you would be asked to enter your master
 password for verification during re-login (mentioned below)
@@ -112,8 +111,7 @@ vaults.
 Once Authentication is completed, you would be taken to the home screen. Now, you can create a new password by using the
 create-new-password `+` floating action button. Create a new password by adding necessary details. Title and password
 are compulsory details. The last 2 options are security features. Warnings might occur if details are improper/
-incomplete. In that case once all warnings are sorted, click the save
-button.
+incomplete. In that case once all warnings are sorted, click the save button.
 
 > Passmark allows you to do 2 additional things, `require fingerprint authentication` to copy your password and second
 > is a `keep on device` only option. This way the current password is saved locally only. It would survive logouts but
@@ -166,7 +164,7 @@ displayed below. Searching has also been implemented as usual.
 
 ### Auto lock
 
-The app auto locks itself if pushed to recents. The locking has a delay set to ensure it wasn't user error (accidentally
+The app auto locks itself if pushed to recents. The locking has a delay set to ensure it wasn't user error. (accidentally
 exiting the app just to re-enter instantly)
 
 <img src="https://github.com/user-attachments/assets/392ca41a-a4d4-4a72-9349-739108cc9e24" alt="show auto lock screen unlocking via fingerprint" width="410">
@@ -184,7 +182,7 @@ the process. Reset account option can be used to destroy everything associated w
 This is a self retrying function. So, it will retry the step where an error occurs. Example showcased in the error
 section below.
 
-<img src="https://github.com/user-attachments/assets/b2ce209c-548f-44cd-80aa-b50c9778f07f" alt="settings screen nav and switches and logout" width="273">
+<img src="https://github.com/user-attachments/assets/b2ce209c-548f-44cd-80aa-b50c9778f07f" alt="settings screen navigation, switches and logout" width="273">
 <img src="https://github.com/user-attachments/assets/57937c31-6fcc-4cf0-9e24-6a8ac8121dc6" alt="change password gif" width="273">
 <img src="https://github.com/user-attachments/assets/cda0ab53-7e59-4fbe-bf5c-0a3f9ed59527" alt="reset user git" width="273">
 
@@ -208,7 +206,7 @@ actions just display a toast when an error is encountered.
 ### Full Screen Error
 
 Actions like authenticating user in loading screen, loading the passwords and vaults from the api are full screen
-actions and do require a separate UI. here, They are given that separate UI.
+actions and do require a separate UI. Here, they are given that separate UI.
 
 <img src="https://github.com/user-attachments/assets/3ec1ae88-ad29-44d1-9eb7-1719f7cf7312" alt="Authentication error" width="410">
 <img src="https://github.com/user-attachments/assets/97b60a73-9315-4af8-8c7b-3d13ba9ae0b3" alt="Password loading error" width="410">
@@ -226,7 +224,3 @@ stage if an error occurs. In such a case, it would go into a loop of retrying un
 
 > 1. Error occurred while trying to change password. Will keep retrying in a loop with a delay.
 > 2. Error occurred while trying to reset user account. Will keep retrying in a loop with a delay.
-
-## Easter eggs [PENDING]
-
-> TODO
