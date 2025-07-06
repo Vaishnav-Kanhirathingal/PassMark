@@ -35,7 +35,6 @@ import kotlin.math.absoluteValue
 @RunWith(AndroidJUnit4::class)
 class ActionAutomatorTest {
     private val TAG = this::class.simpleName
-    // TODO: replace all themed home screen images from readme, since search and icon changed
 
     enum class CustomDelay(private val delay: Long) {
         APP_LAUNCH(delay = 3_000L),
@@ -643,7 +642,6 @@ class ActionAutomatorTest {
                 Log.e(TAG, msg)
             }
         }
-//        assert(totalTime < estimatedTime) // TODO: keep enabled
         holder.await()
     }
 }
