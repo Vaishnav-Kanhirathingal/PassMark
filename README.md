@@ -53,15 +53,15 @@ Majority of the features are listed below. There may be additional features not 
 This app implements Material-You theming which means it has dynamic color support for UI elements. To make use of this,
 change your phone's system color and the app would match it. Assuming dynamic colors is enabled on device.
 
-<img src="https://github.com/user-attachments/assets/5b82f15f-3e92-40a0-9cd1-276e4da83c8b" alt="Empty home screenshot" width="205">
-<img src="https://github.com/user-attachments/assets/4bae02d5-0622-4250-aa3d-0bf925e1907e" alt="Empty home screenshot" width="205">
-<img src="https://github.com/user-attachments/assets/3f717312-3a20-4186-bcdb-78ecefe53e79" alt="Empty home screenshot" width="205">
-<img src="https://github.com/user-attachments/assets/a65b810a-1329-4890-869c-2ee63cbb6d26" alt="Empty home screenshot" width="205">
+<img src="https://github.com/user-attachments/assets/5b82f15f-3e92-40a0-9cd1-276e4da83c8b" alt="Empty home screenshot" width="204">
+<img src="https://github.com/user-attachments/assets/4bae02d5-0622-4250-aa3d-0bf925e1907e" alt="Empty home screenshot" width="204">
+<img src="https://github.com/user-attachments/assets/3f717312-3a20-4186-bcdb-78ecefe53e79" alt="Empty home screenshot" width="204">
+<img src="https://github.com/user-attachments/assets/a65b810a-1329-4890-869c-2ee63cbb6d26" alt="Empty home screenshot" width="204">
 
-<img src="https://github.com/user-attachments/assets/5b10767e-8e53-40b5-8267-314b99d3cb91" alt="Empty home screenshot" width="205">
-<img src="https://github.com/user-attachments/assets/8120614f-52e3-4d19-94b7-882a8f86c82e" alt="Empty home screenshot" width="205">
-<img src="https://github.com/user-attachments/assets/3bf6e887-54cf-4426-8399-19914ff86099" alt="Empty home screenshot" width="205">
-<img src="https://github.com/user-attachments/assets/a9b4d328-257e-47a3-a694-fdd03384204e" alt="Empty home screenshot" width="205">
+<img src="https://github.com/user-attachments/assets/5b10767e-8e53-40b5-8267-314b99d3cb91" alt="Empty home screenshot" width="204">
+<img src="https://github.com/user-attachments/assets/8120614f-52e3-4d19-94b7-882a8f86c82e" alt="Empty home screenshot" width="204">
+<img src="https://github.com/user-attachments/assets/3bf6e887-54cf-4426-8399-19914ff86099" alt="Empty home screenshot" width="204">
+<img src="https://github.com/user-attachments/assets/a9b4d328-257e-47a3-a694-fdd03384204e" alt="Empty home screenshot" width="204">
 
 ## Full Flow -
 
