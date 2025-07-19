@@ -14,6 +14,8 @@ import androidx.test.uiautomator.UiDevice
 import easter.egg.passmark.data.TestPasswordData
 import easter.egg.passmark.data.TestVault
 import easter.egg.passmark.ui.auth.AuthActivity
+import easter.egg.passmark.utils.accessibility.Describable
+import easter.egg.passmark.utils.accessibility.login.LoginDescribable
 import easter.egg.passmark.utils.testing.TestTags
 import org.junit.Rule
 import org.junit.Test
@@ -25,6 +27,15 @@ class ComposeFastSetupTest {
 
     @get:Rule
     val composeRule = createAndroidComposeRule<AuthActivity>()
+
+    @OptIn(ExperimentalTestApi::class)
+    fun onNodeWithTag(describable: Describable): SemanticsNodeInteraction {
+        composeRule.waitUntilAtLeastOneExists(
+            matcher = hasTestTag(testTag = describable.desc),
+            timeoutMillis = 20_000
+        )
+        return composeRule.onNodeWithTag(testTag = describable.desc)
+    }
 
     /** logs in the user and places them in the home screen */
     @OptIn(ExperimentalTestApi::class)
