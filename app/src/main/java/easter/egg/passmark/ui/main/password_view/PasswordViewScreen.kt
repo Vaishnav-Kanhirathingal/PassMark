@@ -87,6 +87,7 @@ import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.shared_components.ConfirmationDialog
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.extensions.customTopBarModifier
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.testing.TestTags
@@ -936,6 +937,7 @@ object PasswordViewScreen {
     }
 }
 
+@PreviewRestricted
 @Composable
 @Preview(
     widthDp = 360,
@@ -961,6 +963,7 @@ private fun PasswordViewScreenPreview() {
     )
 }
 
+@PreviewRestricted
 @Preview(
     widthDp = 360,
     heightDp = 360,

@@ -2,6 +2,7 @@ package easter.egg.passmark.utils.annotation
 
 import androidx.compose.ui.tooling.preview.Preview
 
+@PreviewRestricted
 @Preview(
     widthDp = 780,
     heightDp = 360,

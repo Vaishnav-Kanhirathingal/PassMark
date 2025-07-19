@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 import kotlin.math.absoluteValue
 
 object CustomLoader {
@@ -157,12 +158,14 @@ object CustomLoader {
 }
 
 @Composable
+@PreviewRestricted
 @Preview(widthDp = 100, heightDp = 100, showBackground = true)
 private fun FullScreenLoaderPreview() {
     CustomLoader.FullScreenLoader(modifier = Modifier.fillMaxSize())
 }
 
 @Composable
+@PreviewRestricted
 @Preview(widthDp = 200, heightDp = 48, showBackground = true)
 private fun CustomLoaderPreview() {
     Box(

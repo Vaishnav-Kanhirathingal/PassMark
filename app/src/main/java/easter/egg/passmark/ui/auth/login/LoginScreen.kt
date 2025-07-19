@@ -48,6 +48,7 @@ import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkFonts
@@ -234,6 +235,7 @@ object LoginScreen {
     }
 }
 
+@PreviewRestricted
 @Composable
 @MobilePreview
 private fun LoginScreenPrev() {

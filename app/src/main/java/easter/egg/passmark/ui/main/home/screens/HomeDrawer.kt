@@ -71,6 +71,7 @@ import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
@@ -682,6 +683,7 @@ object HomeDrawer {
     }
 }
 
+@PreviewRestricted
 @Composable
 @MobilePreview
 @MobileHorizontalPreview
@@ -698,8 +700,9 @@ private fun HomeScreenDrawerPreview() {
 }
 
 @Composable
+@PreviewRestricted
 @Preview(widthDp = 360, heightDp = 360, showBackground = true)
-fun VaultDialogPreview() {
+private fun VaultDialogPreview() {
     HomeDrawer.VaultDialog(
         modifier = Modifier.fillMaxWidth(),
         homeViewModel = HomeViewModel.getTestViewModel(),

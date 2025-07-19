@@ -44,6 +44,7 @@ import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.testing.PassMarkConfig
 import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.testing.TestTags.applyTag
@@ -201,6 +202,7 @@ object MasterKeyScreen {
     }
 }
 
+@PreviewRestricted
 @Composable
 @MobilePreview
 @MobileHorizontalPreview

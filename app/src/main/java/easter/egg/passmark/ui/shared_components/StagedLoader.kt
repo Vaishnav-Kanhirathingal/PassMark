@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.ui.main.settings.DeletionStages
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 
@@ -128,6 +129,7 @@ private fun CustomStagedLoader(
     )
 }
 
+@PreviewRestricted
 @Composable
 @MobilePreview
 private fun DeleteProgressDialogPreview() {

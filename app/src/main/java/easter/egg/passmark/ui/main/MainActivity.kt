@@ -64,6 +64,7 @@ import easter.egg.passmark.ui.theme.PassMarkTheme
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.extensions.findPassword
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.testing.PassMarkConfig
@@ -473,6 +474,7 @@ private sealed class MainScreens {
     data object ChangeMasterPassword : MainScreens()
 }
 
+@PreviewRestricted
 @MobilePreview
 @MobileHorizontalPreview
 @Composable

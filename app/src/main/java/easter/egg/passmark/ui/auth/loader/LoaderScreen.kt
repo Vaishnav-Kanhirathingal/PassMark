@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.auth.loader
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -15,6 +16,7 @@ import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.ui.shared_components.ErrorScreen
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 
 object LoaderScreen {
     @Composable
@@ -63,9 +65,11 @@ object LoaderScreen {
 
 }
 
+@PreviewRestricted
+@SuppressLint("ViewModelConstructorInComposable")
 @Composable
 @MobilePreview
-fun LoaderScreenPreview() {
+private fun LoaderScreenPreview() {
     val context = LocalContext.current.applicationContext
     LoaderScreen.Screen(
         modifier = Modifier.fillMaxSize(),

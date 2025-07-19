@@ -79,6 +79,7 @@ import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.extensions.customTopBarModifier
 import easter.egg.passmark.utils.testing.PassMarkConfig
 import easter.egg.passmark.utils.testing.TestTags
@@ -875,6 +876,7 @@ object PasswordEditScreen {
     }
 }
 
+@PreviewRestricted
 @Composable
 @MobilePreview
 private fun PasswordEditScreenPreview() {
@@ -888,6 +890,7 @@ private fun PasswordEditScreenPreview() {
     )
 }
 
+@PreviewRestricted
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @MobilePreview

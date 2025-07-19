@@ -86,6 +86,7 @@ import easter.egg.passmark.ui.main.home.SecurityPromptState
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.testing.TestTags.applyTag
@@ -715,10 +716,11 @@ object HomeContent {
     }
 }
 
+@OptIn(PreviewRestricted::class)
 @Composable
 @MobilePreview
 @MobileHorizontalPreview
-fun HomeContentPreview() {
+private fun HomeContentPreview() {
     HomeContent.HomeContent(
         modifier = Modifier.fillMaxSize(),
         mainViewModel = MainViewModel.getTestViewModel(),
@@ -728,12 +730,13 @@ fun HomeContentPreview() {
     )
 }
 
+@PreviewRestricted
 @Composable
 @Preview(
     widthDp = 360, heightDp = 120,
     showBackground = true
 )
-fun PasswordListItemPreview() {
+private fun PasswordListItemPreview() {
     HomeContent.PasswordListItem(
         modifier = Modifier
             .fillMaxWidth()
@@ -752,6 +755,7 @@ fun PasswordListItemPreview() {
     )
 }
 
+@PreviewRestricted
 @Composable
 @MobilePreview
 @MobileHorizontalPreview
@@ -763,6 +767,8 @@ private fun EmptyState() {
     )
 }
 
+@Deprecated(message = "Do not use in production")
+@PreviewRestricted
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @MobilePreview

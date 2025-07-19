@@ -22,6 +22,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
@@ -187,6 +188,7 @@ fun ConfirmationDialog(
     )
 }
 
+@PreviewRestricted
 @Composable
 @MobilePreview
 private fun ConfirmationDialogPreview() {

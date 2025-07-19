@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkFonts
@@ -110,6 +111,7 @@ object ErrorScreen {
     }
 }
 
+@PreviewRestricted
 @MobilePreview
 @MobileHorizontalPreview
 @Composable

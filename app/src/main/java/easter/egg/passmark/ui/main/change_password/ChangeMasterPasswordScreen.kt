@@ -60,6 +60,7 @@ import easter.egg.passmark.ui.main.settings.SettingsScreen
 import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.testing.PassMarkConfig
 import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.testing.TestTags.applyTag
@@ -440,6 +441,7 @@ object ChangeMasterPasswordScreen {
     }
 }
 
+@PreviewRestricted
 @Composable
 @MobilePreview
 private fun ChangePasswordScreenPreview() {

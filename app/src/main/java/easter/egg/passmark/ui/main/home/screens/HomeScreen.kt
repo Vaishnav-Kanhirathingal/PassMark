@@ -70,6 +70,7 @@ import easter.egg.passmark.ui.shared_components.ErrorScreen
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
+import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.testing.TestTags
 import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
@@ -501,6 +502,7 @@ object HomeScreen {
     }
 }
 
+@PreviewRestricted
 @Composable
 @MobilePreview
 @MobileHorizontalPreview
