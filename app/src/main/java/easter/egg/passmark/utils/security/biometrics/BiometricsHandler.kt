@@ -20,7 +20,7 @@ object BiometricsHandler {
             successMessage: String? = "Authentication success"
         ) {
             when (this) {
-                ERROR -> "Biometrics error has ocurred"
+                ERROR -> "Biometrics error has occurred"
                 FAILED -> "Failed to verify biometrics"
                 AUTHENTICATED -> successMessage
             }?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }

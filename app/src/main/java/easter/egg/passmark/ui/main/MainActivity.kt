@@ -76,7 +76,6 @@ import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
-    private val TAG = this::class.simpleName
     private val mainViewModel: MainViewModel by viewModels()
 
     companion object {

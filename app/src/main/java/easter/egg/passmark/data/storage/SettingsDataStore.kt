@@ -22,8 +22,6 @@ class SettingsDataStore(
         private val isIncreasingOrderKey = booleanPreferencesKey("sorting_order")
     }
 
-    private val TAG = this::class.simpleName
-
     //-----------------------------------------------------------------------------------------store
     suspend fun changeBiometricsPreference(
         biometricsEnabledByDefault: Boolean,

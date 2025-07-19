@@ -29,7 +29,6 @@ import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
 class AuthActivity : ComponentActivity() {
-    private val TAG = this::class.simpleName
     private val authViewModel by viewModels<AuthViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {

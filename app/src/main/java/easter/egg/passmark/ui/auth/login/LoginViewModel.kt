@@ -22,8 +22,6 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val supabaseClient: SupabaseClient
 ) : ViewModel() {
-    private val TAG = this::class.simpleName
-
     private val _screenState: MutableStateFlow<ScreenState<Unit>> =
         MutableStateFlow(ScreenState.PreCall())
     val screenState: StateFlow<ScreenState<Unit>> get() = _screenState

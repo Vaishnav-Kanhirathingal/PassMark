@@ -47,7 +47,6 @@ data class Vault(
         )
 
         const val VAULT_NAME_FOR_ALL_ITEMS = "All items"
-        val allItemsIcon = iconList.first()
 
         fun Vault?.getIcon(): ImageVector {
             return this?.iconChoice?.let { iconList.getOrNull(index = it) } ?: iconList.first()

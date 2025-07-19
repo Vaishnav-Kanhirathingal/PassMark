@@ -51,8 +51,6 @@ import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 
 object MasterKeyScreen {
-    private val TAG = this::class.simpleName
-
     @Composable
     fun Screen(
         modifier: Modifier,

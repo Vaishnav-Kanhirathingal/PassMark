@@ -154,7 +154,7 @@ object HomeContent {
             val securityPromptState = homeViewModel.securityPromptState.collectAsState().value
 
             if (securityPromptState != null) {
-                TODO("show master password prompt")
+                TODO("show master password prompt and use ${securityPromptState.action.name} for performing an action")
             }
 
             val listingModifier = Modifier

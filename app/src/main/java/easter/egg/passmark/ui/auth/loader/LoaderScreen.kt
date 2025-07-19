@@ -17,8 +17,6 @@ import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.annotation.MobilePreview
 
 object LoaderScreen {
-    private val TAG = this::class.simpleName
-
     @Composable
     fun Screen(
         modifier: Modifier,

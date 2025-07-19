@@ -503,7 +503,7 @@ object HomeDrawer {
                             placeholder = { Text(text = "Vault ABC") },
                             leadingIcon = {
                                 Icon(
-                                    imageVector = Vault.iconList.get(iconSelected),
+                                    imageVector = Vault.iconList[iconSelected],
                                     contentDescription = null
                                 )
                             },

@@ -91,8 +91,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 object PasswordEditScreen {
-    private val TAG = this::class.simpleName
-
     @Composable
     fun Screen(
         modifier: Modifier,

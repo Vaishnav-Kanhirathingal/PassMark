@@ -5,9 +5,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import javax.inject.Inject
 
-class VaultApi @Inject constructor(
-    private val supabaseClient: SupabaseClient
-) {
+class VaultApi @Inject constructor(supabaseClient: SupabaseClient) {
     private val table = supabaseClient.from(table = "vaults")
 
     suspend fun getVaultList(): List<Vault> = table.select().decodeList<Vault>()

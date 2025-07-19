@@ -442,7 +442,7 @@ object ChangeMasterPasswordScreen {
 
 @Composable
 @MobilePreview
-fun ChangePasswordScreenPreview() {
+private fun ChangePasswordScreenPreview() {
     val client = SupabaseModule.mockClient
     ChangeMasterPasswordScreen.Screen(
         modifier = Modifier.fillMaxSize(),

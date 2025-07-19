@@ -54,8 +54,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 object SettingsScreen {
-    private val TAG = this::class.simpleName
-
     private const val RESET_DESCRIPTION = "Resetting your account is permanent and would delete " +
             "all the Vaults and Passwords (even offline ones) along with all your data. This " +
             "process is unrecoverable."
