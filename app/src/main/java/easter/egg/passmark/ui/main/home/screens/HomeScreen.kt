@@ -68,6 +68,8 @@ import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.ui.shared_components.ErrorScreen
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
+import easter.egg.passmark.utils.accessibility.home.HomeDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
@@ -216,7 +218,8 @@ object HomeScreen {
                     },
                     floatingActionButton = {
                         FloatingActionButton(
-                            modifier = Modifier.applyTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name),
+                            modifier = Modifier
+                                .setDescription(describable = HomeDescribable.CREATE_NEW_PASSWORD),
                             onClick = { toPasswordEditScreen(null) },
                             content = {
                                 Icon(
@@ -380,6 +383,7 @@ object HomeScreen {
 
                 ConstraintLayout(
                     modifier = Modifier
+                        .setDescription(describable = HomeDescribable.TopBar.SORTING)
                         .applyTag(testTag = TestTags.Home.TopBar.SORTING_BUTTON.name)
                         .size(size = componentHeight)
                         .clip(shape = CircleShape)

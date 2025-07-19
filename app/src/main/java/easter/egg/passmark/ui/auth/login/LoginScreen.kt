@@ -47,10 +47,10 @@ import easter.egg.passmark.R
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
+import easter.egg.passmark.utils.accessibility.login.LoginDescribable
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
-import easter.egg.passmark.utils.testing.TestTags
-import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 import kotlinx.coroutines.Dispatchers
@@ -155,7 +155,7 @@ object LoginScreen {
         val context = LocalContext.current
         Box(
             modifier = modifier
-                .applyTag(testTag = TestTags.Login.GOOGLE_BUTTON.name)
+                .setDescription(describable = LoginDescribable.GOOGLE_LOGIN_BUTTON)
                 .setSizeLimitation()
                 .clip(shape = RoundedCornerShape(size = 16.dp))
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)

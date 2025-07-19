@@ -7,8 +7,9 @@ import androidx.compose.ui.semantics.semantics
 
 interface Describable {
     val desc: String
-    companion object{
-        fun Modifier.setDescription(describable: Descriptions.Describable): Modifier {
+
+    companion object {
+        fun Modifier.setDescription(describable: Describable): Modifier {
             return this
                 .semantics { this.contentDescription = describable.desc }
                 .testTag(tag = describable.desc)

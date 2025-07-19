@@ -42,6 +42,8 @@ import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.auth.AuthViewModel
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
+import easter.egg.passmark.utils.accessibility.master_key.MasterKeyDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
@@ -117,7 +119,11 @@ object MasterKeyScreen {
                 )
                 OutlinedTextField(
                     modifier = Modifier
-                        .applyTag(testTag = TestTags.CreateMasterKey.TEXT_FIELD.name)
+                        .setDescription(
+                            describable =
+                                if (isNewUser) MasterKeyDescribable.CREATE_MASTER_KEY_TEXT_FIELD
+                                else MasterKeyDescribable.ENTER_MASTER_KEY_TEXT_FIELD
+                        )
                         .fillMaxWidth(),
                     enabled = !isLoading,
                     value = viewModel.masterPasswordText.collectAsState().value,
@@ -133,14 +139,19 @@ object MasterKeyScreen {
                         )
                     },
                     trailingIcon = {
+                        val visible = viewModel.visible.collectAsState().value
                         IconButton(
-                            modifier = Modifier.applyTag(testTag = TestTags.CreateMasterKey.VISIBILITY_BUTTON.name),
+                            modifier = Modifier.setDescription(
+                                describable =
+                                    if (visible) MasterKeyDescribable.VISIBILITY_OFF
+                                    else MasterKeyDescribable.VISIBILITY_ON
+                            ),
                             onClick = viewModel::switchVisibility,
                             content = {
                                 Icon(
-                                    imageVector = viewModel.visible.collectAsState().value.let {
-                                        if (it) Icons.Default.Visibility else Icons.Default.VisibilityOff
-                                    },
+                                    imageVector =
+                                        if (visible) Icons.Default.Visibility
+                                        else Icons.Default.VisibilityOff,
                                     contentDescription = null
                                 )
                             }
@@ -159,6 +170,10 @@ object MasterKeyScreen {
 
                 Box(
                     modifier = Modifier
+                        .setDescription(
+                            describable = if (isNewUser) MasterKeyDescribable.CREATE_BUTTON
+                            else MasterKeyDescribable.CONFIRM_BUTTON
+                        )
                         .applyTag(testTag = TestTags.CreateMasterKey.CONFIRM_BUTTON.name)
                         .setSizeLimitation()
                         .clip(shape = RoundedCornerShape(size = 16.dp))
