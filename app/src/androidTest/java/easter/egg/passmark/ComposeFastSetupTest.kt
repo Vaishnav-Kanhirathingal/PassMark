@@ -1,8 +1,10 @@
 package easter.egg.passmark
 
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -15,8 +17,10 @@ import easter.egg.passmark.data.TestPasswordData
 import easter.egg.passmark.data.TestVault
 import easter.egg.passmark.ui.auth.AuthActivity
 import easter.egg.passmark.utils.accessibility.Describable
+import easter.egg.passmark.utils.accessibility.home.HomeDescribable
 import easter.egg.passmark.utils.accessibility.login.LoginDescribable
-import easter.egg.passmark.utils.testing.TestTags
+import easter.egg.passmark.utils.accessibility.master_key.MasterKeyDescribable
+import easter.egg.passmark.utils.accessibility.screens.PasswordEditDescribable
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,30 +44,52 @@ class ComposeFastSetupTest {
     /** logs in the user and places them in the home screen */
     @OptIn(ExperimentalTestApi::class)
     fun createANewUser() {
-        // login screen
-        composeRule.waitUntilAtLeastOneExists(
-            matcher = hasTestTag(testTag = TestTags.Login.GOOGLE_BUTTON.name),
-            timeoutMillis = 5_000
-        )
-
-        composeRule.onNodeWithTag(TestTags.Login.GOOGLE_BUTTON.name).performClick()
-
-        Thread.sleep(2_000)
+        onNodeWithTag(describable = LoginDescribable.GOOGLE_LOGIN_BUTTON).performClick()
+        Thread.sleep(3_000)
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
             .findObject(By.text("vaishnav.kanhira@gmail.com"))
             .click()
-
-        composeRule.waitUntilAtLeastOneExists(
-            matcher = hasTestTag(testTag = TestTags.CreateMasterKey.CONFIRM_BUTTON.name),
-            timeoutMillis = 10_000
+        composeRule.waitUntil(
+            timeoutMillis = 20_000,
+            condition = {
+                composeRule
+                    .onAllNodesWithTag(MasterKeyDescribable.ENTER_MASTER_KEY_TEXT_FIELD.desc)
+                    .fetchSemanticsNodes().isNotEmpty() ||
+                        composeRule
+                            .onAllNodesWithTag(MasterKeyDescribable.CREATE_MASTER_KEY_TEXT_FIELD.desc)
+                            .fetchSemanticsNodes().isNotEmpty()
+            }
         )
-        composeRule.onNodeWithTag(testTag = TestTags.CreateMasterKey.TEXT_FIELD.name)
-            .performTextInput("123456789")
-        composeRule.onNodeWithTag(testTag = TestTags.CreateMasterKey.CONFIRM_BUTTON.name)
+
+        val isNewUser = when {
+            composeRule
+                .onAllNodesWithTag(MasterKeyDescribable.CREATE_MASTER_KEY_TEXT_FIELD.desc)
+                .fetchSemanticsNodes().isNotEmpty() -> true
+
+            composeRule
+                .onAllNodesWithTag(MasterKeyDescribable.ENTER_MASTER_KEY_TEXT_FIELD.desc)
+                .fetchSemanticsNodes().isNotEmpty() -> false
+
+            else -> throw IllegalStateException("one of these should have been null")
+        }
+
+        onNodeWithTag(
+            describable =
+                if (isNewUser) MasterKeyDescribable.CREATE_MASTER_KEY_TEXT_FIELD
+                else MasterKeyDescribable.ENTER_MASTER_KEY_TEXT_FIELD
+        ).performTextInput("123456789")
+
+
+
+        onNodeWithTag(
+            describable =
+                if (isNewUser) MasterKeyDescribable.CREATE_BUTTON
+                else MasterKeyDescribable.CONFIRM_BUTTON
+        )
             .performClick()
 
         composeRule.waitUntilAtLeastOneExists(
-            matcher = hasTestTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name),
+            matcher = hasTestTag(testTag = HomeDescribable.CREATE_NEW_PASSWORD.desc),
             timeoutMillis = 5_000
         )
     }
@@ -71,48 +97,42 @@ class ComposeFastSetupTest {
     /** ensure that this is called while on home screen with the create new password button visible */
     @OptIn(ExperimentalTestApi::class)
     private fun createAndSaveNewPassword(password: TestPasswordData) {
-        composeRule
-            .onNodeWithTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name)
-            .performClick()
-        composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.EditPassword.DISMISS.name))
+        onNodeWithTag(describable = HomeDescribable.CREATE_NEW_PASSWORD).performClick()
         password.vault?.let {
-            composeRule
-                .onNodeWithTag(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name)
-                .performClick()
-            composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.EditPassword.SELECT_VAULT_DIALOG_CHOOSE_VAULT.name))
+            onNodeWithTag(describable = PasswordEditDescribable.SELECT_VAULT_BUTTON).performClick()
+
+            composeRule.waitUntilAtLeastOneExists(
+                matcher = hasTestTag(testTag = PasswordEditDescribable.SELECT_VAULT_DIALOG_CHOOSE_VAULT_TITLE.desc),
+                timeoutMillis = 5_000
+            )
             composeRule.onNodeWithText(text = it).performClick()
-            composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.EditPassword.DISMISS.name))
+            composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = PasswordEditDescribable.DISMISS.desc))
         }
 
-        fun type(testTag: String, text: String?) {
-            text?.let { composeRule.onNodeWithTag(testTag = testTag).performTextInput(text = it) }
+        fun type(describable: Describable, text: String?) {
+            text?.let {
+                onNodeWithTag(describable = describable).performTextInput(text = it)
+            }
         }
 
-        type(testTag = TestTags.EditPassword.TITLE_TEXT_FIELD.name, text = password.title)
-        type(testTag = TestTags.EditPassword.EMAIL_TEXT_FIELD.name, text = password.email)
-        type(testTag = TestTags.EditPassword.USER_NAME_TEXT_FIELD.name, text = password.userName)
-        type(testTag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name, text = password.password)
-        type(testTag = TestTags.EditPassword.WEBSITE_TEXT_FIELD.name, text = password.website)
-        type(testTag = TestTags.EditPassword.NOTES_TEXT_FIELD.name, text = password.note)
+        type(describable = PasswordEditDescribable.TITLE_TEXT_FIELD, text = password.title)
+        type(describable = PasswordEditDescribable.EMAIL_TEXT_FIELD, text = password.email)
+        type(describable = PasswordEditDescribable.USER_NAME_TEXT_FIELD, text = password.userName)
+        type(describable = PasswordEditDescribable.PASSWORD_TEXT_FIELD, text = password.password)
+        type(describable = PasswordEditDescribable.WEBSITE_TEXT_FIELD, text = password.website)
+        type(describable = PasswordEditDescribable.NOTES_TEXT_FIELD, text = password.note)
 
         if (password.useFingerprint) {
-            composeRule
-                .onNodeWithTag(testTag = TestTags.EditPassword.USE_FINGERPRINT_SWITCH.name)
-                .performClick()
+            onNodeWithTag(describable = PasswordEditDescribable.USE_FINGERPRINT_SWITCH).performClick()
         }
         if (password.useLocalStorage) {
-            composeRule
-                .onNodeWithTag(testTag = TestTags.EditPassword.KEEP_LOCAL_SWITCH.name)
-                .performClick()
+            onNodeWithTag(describable = PasswordEditDescribable.KEEP_LOCAL_SWITCH).performClick()
         }
 
+        onNodeWithTag(describable = PasswordEditDescribable.SAVE_BUTTON).performClick()
+
         composeRule.waitUntilAtLeastOneExists(
-            matcher = hasTestTag(testTag = TestTags.EditPassword.SAVE_BUTTON.name),
-            timeoutMillis = 8_000
-        )
-        composeRule.onNodeWithTag(testTag = TestTags.EditPassword.SAVE_BUTTON.name).performClick()
-        composeRule.waitUntilAtLeastOneExists(
-            matcher = hasTestTag(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name),
+            matcher = hasTestTag(HomeDescribable.CREATE_NEW_PASSWORD.desc),
             timeoutMillis = 5_000
         )
     }
@@ -122,21 +142,16 @@ class ComposeFastSetupTest {
     private fun createVault(
         testVault: TestVault
     ) {
-        composeRule
-            .onNodeWithTag(testTag = TestTags.Home.Drawer.CREATE_NEW_VAULT_BUTTON.name)
+        onNodeWithTag(describable = HomeDescribable.Drawer.CREATE_NEW_VAULT_BUTTON)
             .performClick()
-        composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name))
-        composeRule
-            .onNodeWithTag(testTag = TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name)
+        onNodeWithTag(describable = HomeDescribable.Drawer.VaultDialog.TEXT_FIELD)
             .performTextInput(text = testVault.name)
-        composeRule
-            .onNodeWithTag(testTag = TestTags.Home.Drawer.VaultDialog.getIconTag(index = testVault.iconIndex))
+        onNodeWithTag(describable = HomeDescribable.Drawer.VaultDialog.getIconDescribable(index = testVault.iconIndex))
             .performClick()
-        composeRule
-            .onNodeWithTag(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name)
+        onNodeWithTag(describable = HomeDescribable.Drawer.VaultDialog.CREATE_BUTTON)
             .performClick()
         composeRule.waitUntilDoesNotExist(
-            matcher = hasTestTag(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name),
+            matcher = hasTestTag(testTag = HomeDescribable.Drawer.VaultDialog.CREATE_BUTTON.desc),
             timeoutMillis = 5_000
         )
     }
@@ -145,18 +160,12 @@ class ComposeFastSetupTest {
     @Test
     fun loginAndSavePasswordsAndVaults() {
         this.createANewUser()
-        composeRule
-            .onNodeWithTag(testTag = TestTags.Home.TopBar.OPEN_DRAWER_BUTTON.name)
-            .performClick()
-        composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.Drawer.TOP_TITLE.name))
+
+        onNodeWithTag(describable = HomeDescribable.TopBar.OPEN_DRAWER_BUTTON).performClick()
+        composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = HomeDescribable.Drawer.SETTINGS.desc))
         TestVault.vaultTestList.forEach(action = this::createVault)
 
-        composeRule.waitUntilAtLeastOneExists(matcher = hasTestTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name))
-
-        composeRule
-            .onNodeWithTag(testTag = TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name)
-            .performClick()
-
+        onNodeWithTag(describable = HomeDescribable.CREATE_NEW_PASSWORD).performClick()
         TestPasswordData.testList.forEach(this::createAndSaveNewPassword)
     }
 }

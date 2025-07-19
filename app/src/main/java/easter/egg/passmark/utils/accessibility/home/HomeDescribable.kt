@@ -54,7 +54,7 @@ enum class HomeDescribable(override val desc: String) : Describable {
     }
 
     enum class Drawer(override val desc: String) : Describable {
-        CREATE_NEW_VAULT_BUTTON(desc = "Create vault"),
+        CREATE_NEW_VAULT_BUTTON(desc = "Create a new vault"),
         SETTINGS(desc = "Settings"),
         DOCUMENTATION(desc = "Documentation"),
         EXIT(desc = "Exit");
