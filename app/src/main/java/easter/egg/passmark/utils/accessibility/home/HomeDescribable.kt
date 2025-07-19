@@ -1,9 +1,25 @@
 package easter.egg.passmark.utils.accessibility.home
 
+import easter.egg.passmark.data.models.Vault
+import easter.egg.passmark.data.models.password.PasswordSortingOptions
 import easter.egg.passmark.utils.accessibility.Describable
 
 enum class HomeDescribable(override val desc: String) : Describable {
     CREATE_NEW_PASSWORD(desc = "Create a new password");
+
+    companion object {
+        fun getPasswordDescribable(name: String): Describable {
+            return object : Describable {
+                override val desc: String get() = "$name password"
+            }
+        }
+
+        fun getPasswordOptionsDescribable(name: String): Describable {
+            return object : Describable {
+                override val desc: String get() = "$name options"
+            }
+        }
+    }
 
     enum class TopBar(override val desc: String) : Describable {
         SORTING(desc = "Sorting options"),
@@ -19,19 +35,16 @@ enum class HomeDescribable(override val desc: String) : Describable {
             USAGE(desc = "Sort by usage"),
             LAST_USED(desc = "Sort by last used"),
             CREATED(desc = "Sort by time");
-        }
-    }
 
-    companion object {
-        fun getPasswordTag(name: String): Describable {
-            return object : Describable {
-                override val desc: String get() = "$name password"
-            }
-        }
-
-        fun getPasswordOptionsTag(name: String): Describable {
-            return object : Describable {
-                override val desc: String get() = "$name options"
+            companion object {
+                fun getSortOptionDescribable(passwordSortingOptions: PasswordSortingOptions): Sorting {
+                    return when (passwordSortingOptions) {
+                        PasswordSortingOptions.NAME -> NAME
+                        PasswordSortingOptions.CREATED -> CREATED
+                        PasswordSortingOptions.USAGE -> USAGE
+                        PasswordSortingOptions.LAST_USED -> LAST_USED
+                    }
+                }
             }
         }
     }
@@ -58,16 +71,15 @@ enum class HomeDescribable(override val desc: String) : Describable {
         enum class VaultDialog(override val desc: String) : Describable {
             TEXT_FIELD(desc = "Vault name"),
             CREATE_BUTTON(desc = "Create vault"),
-            UPDATE_BUTTON(desc = "Update vault");
+            UPDATE_BUTTON(desc = "Update vault"),
+            DELETE_VAULT_BUTTON(desc = "Delete Vault");
 
             companion object {
-                fun deleteVaultDescribable(vaultName: String): Describable {
-                    return object : Describable {
-                        override val desc: String get() = "Delete Vault $vaultName"
-                    }
-                }
+                fun getIconDescribable(index: Int) = object : Describable {
+                    override val desc: String
+                        get() = "Vault Icon ${Vault.iconList.getOrNull(index = index)?.name}"
 
-//                    fun getIconDescription(index: Int) = "icon_$index"
+                }
             }
         }
     }
