@@ -5,9 +5,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import javax.inject.Inject
 
-class UserApi @Inject constructor(
-    supabaseClient: SupabaseClient,
-) {
+class UserApi @Inject constructor(supabaseClient: SupabaseClient) {
     private val table = supabaseClient.from(table = "users")
 
     suspend fun getUser(): User? = table.select().decodeSingleOrNull<User>()

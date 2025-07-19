@@ -7,9 +7,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import javax.inject.Inject
 
-class PasswordApi @Inject constructor(
-    supabaseClient: SupabaseClient
-) {
+class PasswordApi @Inject constructor(supabaseClient: SupabaseClient) {
     private val table = supabaseClient.from("passwords")
 
     suspend fun savePassword(passwordCapsule: PasswordCapsule): PasswordCapsule {
