@@ -78,12 +78,13 @@ import easter.egg.passmark.data.models.password.Password
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable
+import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
+import easter.egg.passmark.utils.accessibility.screens.PasswordEditDescribable
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.extensions.customTopBarModifier
 import easter.egg.passmark.utils.testing.PassMarkConfig
-import easter.egg.passmark.utils.testing.TestTags
-import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -190,7 +191,7 @@ object PasswordEditScreen {
             content = {
                 Box(
                     modifier = Modifier
-                        .applyTag(testTag = TestTags.EditPassword.DISMISS.name)
+                        .setDescription(describable = PasswordEditDescribable.DISMISS)
                         .size(size = PassMarkDimensions.minTouchSize)
                         .clip(shape = CircleShape)
                         .clickable(
@@ -220,7 +221,7 @@ object PasswordEditScreen {
                 val coroutineScope = rememberCoroutineScope()
                 Row(
                     modifier = Modifier
-                        .applyTag(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name)
+                        .setDescription(describable = PasswordEditDescribable.SELECT_VAULT_BUTTON)
                         .setSizeLimitation()
                         .clip(shape = pillShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
@@ -292,7 +293,7 @@ object PasswordEditScreen {
                 val isLoading = passwordEditViewModel.screenState.collectAsState().value.isLoading
                 Box(
                     modifier = Modifier
-                        .applyTag(testTag = TestTags.EditPassword.SAVE_BUTTON.name)
+                        .setDescription(describable = PasswordEditDescribable.SAVE_BUTTON)
                         .setSizeLimitation()
                         .clip(shape = pillShape)
                         .background(color = MaterialTheme.colorScheme.primary)
@@ -441,7 +442,7 @@ object PasswordEditScreen {
             content = {
                 Text(
                     modifier = Modifier
-                        .applyTag(testTag = TestTags.EditPassword.SELECT_VAULT_DIALOG_CHOOSE_VAULT.name)
+                        .setDescription(describable = PasswordEditDescribable.SELECT_VAULT_DIALOG_CHOOSE_VAULT_TITLE)
                         .fillMaxWidth(),
                     text = "Choose Vault",
                     maxLines = 2,
@@ -466,11 +467,11 @@ object PasswordEditScreen {
                             itemContent = {
                                 Selectable(
                                     modifier = Modifier
-                                        .applyTag(
-                                            testTag = TestTags.EditPassword.ChooseVault
+                                        .setDescription(
+                                            describable = PasswordEditDescribable
                                                 .getVaultTestTag(
-                                                    vaultName =
-                                                        it?.name ?: Vault.VAULT_NAME_FOR_ALL_ITEMS
+                                                    vaultName = it?.name
+                                                        ?: Vault.VAULT_NAME_FOR_ALL_ITEMS
                                                 )
                                         )
                                         .fillMaxWidth(),
@@ -596,7 +597,7 @@ object PasswordEditScreen {
                             textStyle = LocalTextStyle.current.copy(fontSize = PassMarkFonts.Title.large),
                             isEnabled = !isLoading,
                             inputOption = InputOption.TITLE,
-                            testTag = TestTags.EditPassword.TITLE_TEXT_FIELD.name
+                            describable = PasswordEditDescribable.TITLE_TEXT_FIELD
                         )
                     }
                 )
@@ -618,7 +619,7 @@ object PasswordEditScreen {
                             onTextChange = { viewModel.email.value = it },
                             isEnabled = !isLoading,
                             inputOption = InputOption.EMAIL,
-                            testTag = TestTags.EditPassword.EMAIL_TEXT_FIELD.name
+                            describable = PasswordEditDescribable.EMAIL_TEXT_FIELD
                         )
                         HorizontalDivider(
                             thickness = 1.dp,
@@ -634,7 +635,7 @@ object PasswordEditScreen {
                             onTextChange = { viewModel.userName.value = it },
                             isEnabled = !isLoading,
                             inputOption = InputOption.USERNAME,
-                            testTag = TestTags.EditPassword.USER_NAME_TEXT_FIELD.name
+                            describable = PasswordEditDescribable.USER_NAME_TEXT_FIELD
                         )
                         HorizontalDivider(
                             thickness = 1.dp,
@@ -650,7 +651,7 @@ object PasswordEditScreen {
                             onTextChange = { viewModel.password.value = it },
                             isEnabled = !isLoading,
                             inputOption = InputOption.PASSWORD,
-                            testTag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name
+                            describable = PasswordEditDescribable.PASSWORD_TEXT_FIELD
                         )
                     }
                 )
@@ -667,7 +668,7 @@ object PasswordEditScreen {
                             onTextChange = { viewModel.website.value = it },
                             isEnabled = !isLoading,
                             inputOption = InputOption.WEBSITE,
-                            testTag = TestTags.EditPassword.WEBSITE_TEXT_FIELD.name
+                            describable = PasswordEditDescribable.WEBSITE_TEXT_FIELD
                         )
                     }
                 )
@@ -685,7 +686,7 @@ object PasswordEditScreen {
                             isEnabled = !isLoading,
                             inputOption = InputOption.NOTES,
                             singleLine = false,
-                            testTag = TestTags.EditPassword.NOTES_TEXT_FIELD.name
+                            describable = PasswordEditDescribable.NOTES_TEXT_FIELD
                         )
                     }
                 )
@@ -696,7 +697,7 @@ object PasswordEditScreen {
                     isChecked = viewModel.useFingerPrint.collectAsState().value,
                     onCheckedChange = { viewModel.useFingerPrint.value = it },
                     isEnabled = !isLoading,
-                    testTag = TestTags.EditPassword.USE_FINGERPRINT_SWITCH.name
+                    describable = PasswordEditDescribable.USE_FINGERPRINT_SWITCH
                 )
                 //--------------------------------------------------------------------on-device-only
                 CustomSwitch(
@@ -705,7 +706,7 @@ object PasswordEditScreen {
                     isChecked = viewModel.saveToLocalOnly.collectAsState().value,
                     onCheckedChange = { viewModel.saveToLocalOnly.value = it },
                     isEnabled = !isLoading,
-                    testTag = TestTags.EditPassword.KEEP_LOCAL_SWITCH.name
+                    describable = PasswordEditDescribable.KEEP_LOCAL_SWITCH
                 )
                 Spacer(
                     modifier = Modifier
@@ -762,7 +763,7 @@ object PasswordEditScreen {
         isEnabled: Boolean,
         inputOption: InputOption,
         singleLine: Boolean = true,
-        testTag: String
+        describable: PasswordEditDescribable
     ) {
         Box(
             modifier = modifier,
@@ -771,7 +772,7 @@ object PasswordEditScreen {
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .applyTag(testTag = testTag),
+                        .setDescription(describable = describable),
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = (inputOption !in listOf(
                             InputOption.USERNAME,
@@ -834,7 +835,7 @@ object PasswordEditScreen {
         isChecked: Boolean,
         onCheckedChange: (Boolean) -> Unit,
         isEnabled: Boolean,
-        testTag: String? = null
+        describable: Describable
     ) {
         DefaultCard(
             modifier = modifier,
@@ -864,7 +865,7 @@ object PasswordEditScreen {
                             text = text
                         )
                         Switch(
-                            modifier = if (testTag == null) Modifier else Modifier.applyTag(testTag = testTag),
+                            modifier = Modifier.setDescription(describable = describable),
                             enabled = isEnabled,
                             checked = isChecked,
                             onCheckedChange = onCheckedChange
