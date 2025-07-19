@@ -21,6 +21,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class ComposeFastSetupTest {
+    // TODO: switch to describable
 
     @get:Rule
     val composeRule = createAndroidComposeRule<AuthActivity>()

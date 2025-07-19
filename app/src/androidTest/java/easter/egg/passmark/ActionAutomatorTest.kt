@@ -34,6 +34,7 @@ import kotlin.math.absoluteValue
 
 @RunWith(AndroidJUnit4::class)
 class ActionAutomatorTest {
+    // TODO: switch to describable
     private val TAG = this::class.simpleName
 
     enum class CustomDelay(private val delay: Long) {

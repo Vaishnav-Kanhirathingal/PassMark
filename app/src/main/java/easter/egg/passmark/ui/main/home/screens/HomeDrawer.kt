@@ -69,11 +69,11 @@ import easter.egg.passmark.ui.main.home.VaultDialogActionOptions
 import easter.egg.passmark.ui.main.home.VaultDialogResult
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
+import easter.egg.passmark.utils.accessibility.home.HomeDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
-import easter.egg.passmark.utils.testing.TestTags
-import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -103,7 +103,6 @@ object HomeDrawer {
                     content = {
                         Row(
                             modifier = Modifier
-                                .applyTag(testTag = TestTags.Home.Drawer.TOP_TITLE.name)
                                 .fillMaxWidth()
                                 .padding(
                                     top = 24.dp,
@@ -191,7 +190,7 @@ object HomeDrawer {
                             )
                         }
                         DrawerButton(
-                            modifier = Modifier.applyTag(testTag = TestTags.Home.Drawer.SETTINGS.name),
+                            modifier = Modifier.setDescription(describable = HomeDescribable.Drawer.SETTINGS),
                             text = "Settings",
                             icon = Icons.Default.Settings,
                             onclick = toSettingsScreen
@@ -199,6 +198,7 @@ object HomeDrawer {
                         val activity = LocalActivity.current
                         val uriHandler = LocalUriHandler.current
                         DrawerButton(
+                            modifier = Modifier.setDescription(describable = HomeDescribable.Drawer.DOCUMENTATION),
                             text = "Documentation",
                             icon = Icons.Default.Info,
                             onclick = {
@@ -206,6 +206,7 @@ object HomeDrawer {
                             }
                         )
                         DrawerButton(
+                            modifier = Modifier.setDescription(describable = HomeDescribable.Drawer.EXIT),
                             text = "Exit",
                             icon = Icons.AutoMirrored.Filled.ExitToApp,
                             onclick = { activity?.finishAffinity() }
@@ -272,7 +273,7 @@ object HomeDrawer {
                 if (vaultList.size < 5) {
                     Box(
                         modifier = Modifier
-                            .applyTag(testTag = TestTags.Home.Drawer.CREATE_NEW_VAULT_BUTTON.name)
+                            .setDescription(describable = HomeDescribable.Drawer.CREATE_NEW_VAULT_BUTTON)
                             .padding(end = 8.dp)
                             .size(size = 60.dp)
                             .setSizeLimitation()
@@ -497,7 +498,7 @@ object HomeDrawer {
                         val dialogText = homeViewModel.vaultDialogState.text.collectAsState().value
                         OutlinedTextField(
                             modifier = Modifier
-                                .applyTag(testTag = TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name)
+                                .setDescription(describable = HomeDescribable.Drawer.VaultDialog.TEXT_FIELD)
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp),
                             label = { Text(text = "Name") },
@@ -530,9 +531,11 @@ object HomeDrawer {
                                             content = {
                                                 Box(
                                                     modifier = Modifier
-                                                        .applyTag(
-                                                            testTag = TestTags.Home.Drawer
-                                                                .VaultDialog.getIconTag(index = it)
+                                                        .setDescription(
+                                                            describable = HomeDescribable
+                                                                .Drawer
+                                                                .VaultDialog
+                                                                .getIconDescribable(index = it)
                                                         )
                                                         .size(size = PassMarkDimensions.minTouchSize)
                                                         .clip(shape = CircleShape)
@@ -587,7 +590,7 @@ object HomeDrawer {
                                 if (isSavedAlready) {
                                     Box(
                                         modifier = Modifier
-                                            .applyTag(testTag = TestTags.Home.Drawer.VaultDialog.DELETE_BUTTON.name)
+                                            .setDescription(describable = HomeDescribable.Drawer.VaultDialog.DELETE_VAULT_BUTTON)
                                             .size(size = PassMarkDimensions.minTouchSize)
                                             .clip(shape = CircleShape)
                                             .background(color = MaterialTheme.colorScheme.errorContainer)
@@ -667,7 +670,11 @@ object HomeDrawer {
                                 )
                                 CustomTextButton(
                                     modifier = Modifier
-                                        .applyTag(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name)
+                                        .setDescription(
+                                            describable =
+                                                if (isSavedAlready) HomeDescribable.Drawer.VaultDialog.UPDATE_BUTTON
+                                                else HomeDescribable.Drawer.VaultDialog.CREATE_BUTTON
+                                        )
                                         .setSizeLimitation(),
                                     text = if (isSavedAlready) "Update" else "Create",
                                     enabled = (!screenState.isLoading && (dialogText.isNotBlank())),

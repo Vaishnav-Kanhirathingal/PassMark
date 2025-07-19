@@ -268,7 +268,7 @@ object HomeScreen {
                 if (searchText == null) {
                     Box(
                         modifier = Modifier
-                            .applyTag(testTag = TestTags.Home.TopBar.OPEN_DRAWER_BUTTON.name)
+                            .setDescription(describable = HomeDescribable.TopBar.OPEN_DRAWER_BUTTON)
                             .size(size = componentHeight)
                             .clip(shape = CircleShape)
                             .background(color = MaterialTheme.colorScheme.primaryContainer)
@@ -293,7 +293,7 @@ object HomeScreen {
                     )
                     Row(
                         modifier = Modifier
-                            .applyTag(testTag = TestTags.Home.TopBar.SEARCH_BUTTON.name)
+                            .setDescription(describable = HomeDescribable.TopBar.SEARCH_BUTTON)
                             .height(height = componentHeight)
                             .weight(1f)
                             .padding(horizontal = 8.dp)
@@ -331,7 +331,7 @@ object HomeScreen {
                 } else {
                     Box(
                         modifier = Modifier
-                            .applyTag(testTag = TestTags.Home.TopBar.BACK_BUTTON.name)
+                            .setDescription(describable = HomeDescribable.TopBar.BACK_BUTTON)
                             .size(size = componentHeight)
                             .clip(shape = CircleShape)
                             .background(color = MaterialTheme.colorScheme.surfaceContainer)
@@ -347,7 +347,7 @@ object HomeScreen {
                     )
                     BasicTextField(
                         modifier = Modifier
-                            .applyTag(testTag = TestTags.Home.TopBar.SEARCH_TEXT_FIELD.name)
+                            .setDescription(describable = HomeDescribable.TopBar.SEARCH_TEXT_FIELD)
                             .weight(1f)
                             .heightIn(min = PassMarkDimensions.minTouchSize)
                             .focusRequester(focusRequester = focusRequester),
@@ -441,10 +441,10 @@ object HomeScreen {
                                         fun SortButton(forAscending: Boolean) {
                                             Box(
                                                 modifier = Modifier
-                                                    .applyTag(
-                                                        testTag =
-                                                            if (forAscending) TestTags.Home.Sorting.INCREASING_ORDER.name
-                                                            else TestTags.Home.Sorting.DECREASING_ORDER.name
+                                                    .setDescription(
+                                                        describable =
+                                                            if (forAscending) HomeDescribable.TopBar.Sorting.INCREASING_ORDER
+                                                            else HomeDescribable.TopBar.Sorting.DECREASING_ORDER
                                                     )
                                                     .setSizeLimitation()
                                                     .weight(1f)
@@ -477,8 +477,8 @@ object HomeScreen {
                                 )
                                 PasswordSortingOptions.entries.forEach { passwordSortingOptions: PasswordSortingOptions ->
                                     DropdownMenuItem(
-                                        modifier = Modifier.applyTag(
-                                            testTag = TestTags.Home.Sorting.getSortOptionTag(
+                                        modifier = Modifier.setDescription(
+                                            describable = HomeDescribable.TopBar.Sorting.getSortOptionDescribable(
                                                 passwordSortingOptions = passwordSortingOptions
                                             )
                                         ),

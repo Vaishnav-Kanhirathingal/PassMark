@@ -84,12 +84,12 @@ import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.main.home.PasswordOptionChoices
 import easter.egg.passmark.ui.main.home.SecurityPromptState
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
+import easter.egg.passmark.utils.accessibility.home.HomeDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
-import easter.egg.passmark.utils.testing.TestTags
-import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -177,8 +177,8 @@ object HomeContent {
                         items = passwordList ?: listOf(),
                         itemContent = {
                             PasswordListItem(
-                                modifier = listingModifier.applyTag(
-                                    testTag = TestTags.Home.getPasswordTag(
+                                modifier = listingModifier.setDescription(
+                                    describable = HomeDescribable.getPasswordDescribable(
                                         name = it.data.title
                                     )
                                 ),
@@ -398,7 +398,7 @@ object HomeContent {
 
                 IconButton(
                     modifier = Modifier
-                        .applyTag(testTag = TestTags.Home.getPasswordOptionsTag(name = password.data.title))
+                        .setDescription(describable = HomeDescribable.getPasswordOptionsDescribable(name = password.data.title))
                         .size(size = iconSize)
                         .constrainAs(
                             ref = optionButton,
@@ -650,9 +650,10 @@ object HomeContent {
                                         if (password.data.useFingerPrint) Icons.Default.Fingerprint
                                         else Icons.Default.ContentCopy,
                                 )
-
                                 SheetButton(
-                                    modifier = Modifier.applyTag(testTag = TestTags.Home.PasswordOptionsBottomSheet.EDIT_BUTTON.name),
+                                    modifier = Modifier.setDescription(
+                                        describable = HomeDescribable.PasswordOptionsBottomSheet.EDIT_BUTTON
+                                    ),
                                     mainIcon = Icons.Default.Edit,
                                     text = "Edit Password",
                                     onClick = {
