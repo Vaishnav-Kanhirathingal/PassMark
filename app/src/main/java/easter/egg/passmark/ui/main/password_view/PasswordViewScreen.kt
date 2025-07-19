@@ -86,12 +86,12 @@ import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.shared_components.ConfirmationDialog
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
+import easter.egg.passmark.utils.accessibility.screens.PasswordViewDescribable
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.extensions.customTopBarModifier
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
-import easter.egg.passmark.utils.testing.TestTags
-import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -351,7 +351,8 @@ object PasswordViewScreen {
                                         titleText = "Email",
                                         fieldText = email,
                                         endIcon = Icons.Default.ContentCopy,
-                                        endIconOnClick = { copy(str = email) }
+                                        endIconOnClick = { copy(str = email) },
+                                        endIconDescribable = PasswordViewDescribable.EMAIL_COPY_BUTTON
                                     )
                                 }
                             )
@@ -365,7 +366,8 @@ object PasswordViewScreen {
                                         titleText = "Username",
                                         fieldText = username,
                                         endIcon = Icons.Default.ContentCopy,
-                                        endIconOnClick = { copy(str = username) }
+                                        endIconOnClick = { copy(str = username) },
+                                        endIconDescribable = PasswordViewDescribable.USER_NAME_COPY_BUTTON
                                     )
                                 }
                             )
@@ -388,7 +390,9 @@ object PasswordViewScreen {
                                         if (accessGranted.value) copy(str = password.data.password)
                                         else showBiometricPrompt(forHistory = false)
                                     },
-                                    endIconTestTag = TestTags.ViewPassword.FINGERPRINT_BUTTON.name,
+                                    endIconDescribable =
+                                        if (accessGranted.value) PasswordViewDescribable.PASSWORD_COPY_BUTTON
+                                        else PasswordViewDescribable.PASSWORD_FINGERPRINT_VERIFICATION_BUTTON,
                                     onShowPasswordHistory = {
                                         if (accessGranted.value) {
                                             showHistory.value = true
@@ -412,7 +416,8 @@ object PasswordViewScreen {
                                 titleText = "Website",
                                 fieldText = website,
                                 endIcon = Icons.Default.ContentCopy,
-                                endIconOnClick = { copy(str = website) }
+                                endIconOnClick = { copy(str = website) },
+                                endIconDescribable = PasswordViewDescribable.WEBSITE_COPY_BUTTON
                             )
                         }
                     )
@@ -426,7 +431,8 @@ object PasswordViewScreen {
                                 startIcon = Icons.Default.EditNote,
                                 titleText = "Notes",
                                 fieldText = notes,
-                                singleLine = false
+                                singleLine = false,
+                                endIconDescribable = null
                             )
                         }
                     )
@@ -439,7 +445,8 @@ object PasswordViewScreen {
                                 modifier = Modifier.fillMaxWidth(),
                                 startIcon = Icons.Default.Cloud,
                                 titleText = "Storage Type",
-                                fieldText = if (password.localId != null) "Saved to device only" else "Saved on the cloud"
+                                fieldText = if (password.localId != null) "Saved to device only" else "Saved on the cloud",
+                                endIconDescribable = null
                             )
                         },
                         {
@@ -447,7 +454,8 @@ object PasswordViewScreen {
                                 modifier = Modifier.fillMaxWidth(),
                                 startIcon = Icons.Default.Fingerprint,
                                 titleText = "Fingerprint Authentication",
-                                fieldText = if (password.data.useFingerPrint) "Enabled" else "Disabled"
+                                fieldText = if (password.data.useFingerPrint) "Enabled" else "Disabled",
+                                endIconDescribable = null
                             )
                         }
                     ),
@@ -462,7 +470,8 @@ object PasswordViewScreen {
                                     modifier = displayFieldContentModifier,
                                     startIcon = Icons.Default.CalendarToday,
                                     titleText = "Created",
-                                    fieldText = password.created.formatToTime()
+                                    fieldText = password.created.formatToTime(),
+                                    endIconDescribable = null
                                 )
                             }
                         )
@@ -472,7 +481,8 @@ object PasswordViewScreen {
                                     modifier = displayFieldContentModifier,
                                     startIcon = Icons.Default.EditCalendar,
                                     titleText = "Updated",
-                                    fieldText = password.lastModified.formatToTime()
+                                    fieldText = password.lastModified.formatToTime(),
+                                    endIconDescribable = null
                                 )
                             }
                         )
@@ -483,7 +493,8 @@ object PasswordViewScreen {
                                     startIcon = Icons.Default.EventRepeat,
                                     titleText = "Last Used",
                                     fieldText = (lastUpdatedTimeBeforeUpdate ?: password.lastUsed)
-                                        .formatToTime()
+                                        .formatToTime(),
+                                    endIconDescribable = null
                                 )
                             }
                         )
@@ -491,7 +502,7 @@ object PasswordViewScreen {
                 )
                 Box(
                     modifier = Modifier
-                        .applyTag(testTag = TestTags.ViewPassword.DELETE_BUTTON.name)
+                        .setDescription(describable = PasswordViewDescribable.DELETE_PASSWORD_BUTTON)
                         .align(alignment = Alignment.End)
                         .setSizeLimitation()
                         .padding(horizontal = 16.dp)
@@ -701,7 +712,7 @@ object PasswordViewScreen {
         endIcon: ImageVector? = null,
         endIconOnClick: (() -> Unit)? = null,
         singleLine: Boolean = true,
-        endIconTestTag: String? = null,
+        endIconDescribable: PasswordViewDescribable?,
         onShowPasswordHistory: (() -> Unit)? = null
     ) {
         Row(
@@ -751,7 +762,7 @@ object PasswordViewScreen {
                 onShowPasswordHistory?.let {
                     IconButton(
                         modifier = Modifier
-                            .applyTag(testTag = TestTags.ViewPassword.PASSWORD_HISTORY_BUTTON.name)
+                            .setDescription(describable = PasswordViewDescribable.PASSWORD_HISTORY_BUTTON)
                             .setSizeLimitation(),
                         onClick = it,
                         content = {
@@ -765,8 +776,8 @@ object PasswordViewScreen {
                 endIcon?.let { icon ->
                     IconButton(
                         modifier = (
-                                if (endIconTestTag == null) Modifier
-                                else Modifier.applyTag(testTag = endIconTestTag)
+                                if (endIconDescribable == null) Modifier
+                                else Modifier.setDescription(describable = endIconDescribable)
                                 )
                             .setSizeLimitation(),
                         onClick = { endIconOnClick?.invoke() },
