@@ -19,6 +19,15 @@ import easter.egg.passmark.ui.main.change_password.ChangeMasterPasswordViewModel
 import easter.egg.passmark.ui.main.change_password.ReEncryptionStates
 import easter.egg.passmark.ui.main.settings.DeletionStages
 import easter.egg.passmark.ui.main.settings.SettingsViewModel
+import easter.egg.passmark.utils.accessibility.Describable
+import easter.egg.passmark.utils.accessibility.auth.LoginDescribable
+import easter.egg.passmark.utils.accessibility.auth.MasterKeyDescribable
+import easter.egg.passmark.utils.accessibility.main.AutoLockDescribable
+import easter.egg.passmark.utils.accessibility.main.ChangePasswordDescribable
+import easter.egg.passmark.utils.accessibility.main.HomeDescribable
+import easter.egg.passmark.utils.accessibility.main.PasswordEditDescribable
+import easter.egg.passmark.utils.accessibility.main.PasswordViewDescribable
+import easter.egg.passmark.utils.accessibility.main.SettingsDescribable
 import easter.egg.passmark.utils.testing.PassMarkConfig
 import easter.egg.passmark.utils.testing.TestTags
 import kotlinx.coroutines.Dispatchers
