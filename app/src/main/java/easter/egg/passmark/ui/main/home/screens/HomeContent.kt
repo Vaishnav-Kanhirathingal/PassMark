@@ -162,7 +162,7 @@ object HomeContent {
                 .setSizeLimitation()
                 .fillMaxWidth()
             LazyColumn(
-                modifier = modifier,
+                modifier = modifier.setDescription(describable = HomeDescribable.PASSWORD_LIST),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(
                     space = 8.dp,
@@ -177,17 +177,13 @@ object HomeContent {
                         items = passwordList ?: listOf(),
                         itemContent = {
                             PasswordListItem(
-                                modifier = listingModifier.setDescription(
-                                    describable = HomeDescribable.getPasswordDescribable(
-                                        name = it.data.title
-                                    )
-                                ),
+                                modifier = listingModifier,
                                 password = it,
                                 viewPassword = { toViewPasswordScreen(it) },
                                 openOptions = {
                                     optionSheetIsVisible.value = it
                                     coroutineScope.launch { sheetState.show() }
-                                }
+                                },
                             )
                         }
                     )
@@ -288,13 +284,14 @@ object HomeContent {
         modifier: Modifier,
         password: Password,
         viewPassword: () -> Unit,
-        openOptions: () -> Unit
+        openOptions: () -> Unit,
     ) {
         val iconSize: Dp = PassMarkDimensions.minTouchSize
         ConstraintLayout(
             modifier = modifier
                 .clickable(onClick = viewPassword)
-                .padding(vertical = 8.dp),
+                .padding(vertical = 8.dp)
+                .setDescription(describable = HomeDescribable.getPasswordDescribable(name = password.data.title)),
             content = {
                 val (startIcon, title, subtitle, optionButton) = createRefs()
                 Box(
@@ -398,7 +395,11 @@ object HomeContent {
 
                 IconButton(
                     modifier = Modifier
-                        .setDescription(describable = HomeDescribable.getPasswordOptionsDescribable(name = password.data.title))
+                        .setDescription(
+                            describable = HomeDescribable.getPasswordOptionsDescribable(
+                                name = password.data.title
+                            )
+                        )
                         .size(size = iconSize)
                         .constrainAs(
                             ref = optionButton,

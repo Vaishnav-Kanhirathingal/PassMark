@@ -69,6 +69,7 @@ import easter.egg.passmark.ui.main.home.VaultDialogActionOptions
 import easter.egg.passmark.ui.main.home.VaultDialogResult
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.accessibility.home.HomeDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -267,7 +268,10 @@ object HomeDrawer {
                             vault?.let { v ->
                                 homeViewModel.vaultDialogState.showDialog(vault = v)
                             }
-                        }
+                        },
+                        describable = HomeDescribable.Drawer.getVaultDescribable(
+                            vaultName = vault?.name ?: Vault.VAULT_NAME_FOR_ALL_ITEMS
+                        )
                     )
                 }
                 if (vaultList.size < 5) {
@@ -343,7 +347,8 @@ object HomeDrawer {
         isSelected: Boolean,
         cornerSize: Dp,
         onClick: () -> Unit,
-        onLongPressed: () -> Unit
+        onLongPressed: () -> Unit,
+        describable: Describable
     ) {
         val onContainerColor =
             if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
@@ -362,7 +367,8 @@ object HomeDrawer {
                     onLongClick = onLongPressed,
                     onClick = onClick
                 )
-                .padding(horizontal = 16.dp, vertical = 16.dp),
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .setDescription(describable = describable),
             content = {
                 val (icon, title, subTitle) = createRefs()
                 Icon(

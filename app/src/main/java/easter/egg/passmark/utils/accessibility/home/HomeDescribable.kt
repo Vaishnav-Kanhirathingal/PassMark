@@ -5,7 +5,8 @@ import easter.egg.passmark.data.models.password.PasswordSortingOptions
 import easter.egg.passmark.utils.accessibility.Describable
 
 enum class HomeDescribable(override val desc: String) : Describable {
-    CREATE_NEW_PASSWORD(desc = "Create a new password");
+    PASSWORD_LIST(desc = "password list"),
+    CREATE_NEW_PASSWORD(desc = "create a new password");
 
     companion object {
         fun getPasswordDescribable(name: String): Describable {
