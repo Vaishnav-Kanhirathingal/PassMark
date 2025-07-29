@@ -130,12 +130,6 @@ class ActionAutomatorTest {
     }
 
     //---------------------------------------------------------------------------------------utility
-    private fun findObject(testTag: String): UiObject2 {
-        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        device.wait(Until.hasObject(By.desc(testTag)), 400)
-        return device.findObject(By.desc(testTag))
-    }
-
     private fun findObject(describable: Describable): UiObject2 {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         device.wait(Until.hasObject(By.desc(describable.desc)), 400)
@@ -151,14 +145,6 @@ class ActionAutomatorTest {
         InstrumentationRegistry.getInstrumentation().sendStringSync(text)
     }
 
-    private fun type(
-        testTag: String,
-        text: String
-    ) {
-        findObject(testTag = testTag).click()
-        CustomDelay.MICRO_ANIMATION.hold()
-        type(text = text)
-    }
     private fun type(
         describable: Describable,
         text: String
