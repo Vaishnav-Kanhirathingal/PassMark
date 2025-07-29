@@ -42,6 +42,7 @@ import easter.egg.passmark.ui.shared_components.ConfirmationDialog
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.accessibility.screens.SettingsDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -196,7 +197,8 @@ object SettingsScreen {
                     contentText = CHANGE_PASSWORD_DESCRIPTION,
                     buttonText = "Change Password",
                     onClick = toChangePasswordScreen,
-                    testTag = TestTags.Settings.CHANGE_PASSWORD_BUTTON.name
+                    testTag = TestTags.Settings.CHANGE_PASSWORD_BUTTON.name,
+                    describable = SettingsDescribable.CHANGE_PASSWORD_BUTTON
                 )
                 val logoutState = settingsViewModel.logoutScreenState.collectAsState()
                 val context = LocalContext.current
@@ -222,7 +224,8 @@ object SettingsScreen {
                     buttonText = "Log out",
                     onClick = settingsViewModel::logout,
                     isLoading = logoutState.value.isLoading,
-                    testTag = TestTags.Settings.LOG_OUT.name
+                    testTag = TestTags.Settings.LOG_OUT.name,
+                    describable = SettingsDescribable.LOG_OUT_BUTTON
                 )
                 ActionCard(
                     modifier = Modifier.fillMaxWidth(),
@@ -230,7 +233,8 @@ object SettingsScreen {
                     contentText = RESET_DESCRIPTION,
                     buttonText = "Reset account",
                     onClick = { settingsViewModel.setResetConfirmationDialogVisibility(visible = true) },
-                    testTag = TestTags.Settings.RESET_ACCOUNT_BUTTON.name
+                    testTag = TestTags.Settings.RESET_ACCOUNT_BUTTON.name,
+                    describable = SettingsDescribable.RESET_ACCOUNT_BUTTON
                 )
                 Spacer(
                     modifier = Modifier
@@ -311,7 +315,8 @@ object SettingsScreen {
         buttonText: String,
         onClick: () -> Unit,
         isLoading: Boolean = false,
-        testTag: String
+        testTag: String,
+        describable: SettingsDescribable
     ) {
         PasswordEditScreen.DefaultCard(
             modifier = modifier,
@@ -350,7 +355,8 @@ object SettingsScreen {
                             shape = RoundedCornerShape(size = 12.dp)
                         )
                         .clickable(onClick = onClick)
-                        .align(alignment = Alignment.End),
+                        .align(alignment = Alignment.End)
+                        .setDescription(describable = describable),
                     contentAlignment = Alignment.Center,
                     content = {
                         Text(

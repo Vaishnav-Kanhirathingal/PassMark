@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.main.change_password
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.LocalActivity
@@ -59,6 +60,8 @@ import easter.egg.passmark.ui.auth.master_key.PasswordTextState
 import easter.egg.passmark.ui.main.settings.SettingsScreen
 import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
+import easter.egg.passmark.utils.accessibility.screens.ChangePasswordDescribable
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.testing.PassMarkConfig
@@ -224,7 +227,8 @@ object ChangeMasterPasswordScreen {
                                 changeMasterPasswordViewModel.oldPassword.value = it
                             },
                             isEnabled = !screenState.isLoading,
-                            testTag = TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name
+                            testTag = TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name,
+                            describable = ChangePasswordDescribable.ENTER_CURRENT_PASSWORD
                         )
                     }
                 )
@@ -288,7 +292,8 @@ object ChangeMasterPasswordScreen {
                                 changeMasterPasswordViewModel.newPassword.value = it
                             },
                             isEnabled = !screenState.isLoading,
-                            testTag = TestTags.ChangePassword.NEW_PASSWORD_TEXT_FIELD.name
+                            testTag = TestTags.ChangePassword.NEW_PASSWORD_TEXT_FIELD.name,
+                            describable = ChangePasswordDescribable.ENTER_NEW_PASSWORD
                         )
                         HorizontalDivider(
                             modifier = Modifier.fillMaxWidth(),
@@ -303,7 +308,8 @@ object ChangeMasterPasswordScreen {
                                 changeMasterPasswordViewModel.newPasswordRepeated.value = it
                             },
                             isEnabled = !screenState.isLoading,
-                            testTag = TestTags.ChangePassword.NEW_PASSWORD_REPEATED_TEXT_FIELD.name
+                            testTag = TestTags.ChangePassword.NEW_PASSWORD_REPEATED_TEXT_FIELD.name,
+                            describable = ChangePasswordDescribable.REPEAT_NEW_PASSWORD
                         )
                     }
                 )
@@ -321,7 +327,8 @@ object ChangeMasterPasswordScreen {
                             modifier: Modifier = Modifier,
                             isPrimary: Boolean,
                             text: String,
-                            onClick: () -> Unit
+                            onClick: () -> Unit,
+                            describable: ChangePasswordDescribable
                         ) {
                             Box(
                                 modifier = modifier
@@ -336,7 +343,8 @@ object ChangeMasterPasswordScreen {
                                     .clickable(
                                         enabled = !screenState.isLoading,
                                         onClick = onClick
-                                    ),
+                                    )
+                                    .setDescription(describable = describable),
                                 contentAlignment = Alignment.Center,
                                 content = {
                                     Text(
@@ -359,7 +367,8 @@ object ChangeMasterPasswordScreen {
                         CustomButton(
                             isPrimary = false,
                             text = "Cancel",
-                            onClick = navigateUp
+                            onClick = navigateUp,
+                            describable = ChangePasswordDescribable.CANCEL
                         )
                         CustomButton(
                             modifier = Modifier.applyTag(testTag = TestTags.ChangePassword.CONFIRM_BUTTON.name),
@@ -376,7 +385,8 @@ object ChangeMasterPasswordScreen {
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
-                            }
+                            },
+                            describable = ChangePasswordDescribable.CONFIRM
                         )
                     }
                 )
@@ -392,6 +402,7 @@ object ChangeMasterPasswordScreen {
         onTextChanged: (String) -> Unit,
         isEnabled: Boolean,
         testTag: String,
+        describable: ChangePasswordDescribable
     ) {
         Box(
             modifier = modifier,
@@ -400,7 +411,8 @@ object ChangeMasterPasswordScreen {
                 TextField(
                     modifier = Modifier
                         .applyTag(testTag = testTag)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .setDescription(describable = describable),
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = false,
                         keyboardType = PassMarkConfig.getKeyboardTypeForPasswords()
@@ -441,6 +453,7 @@ object ChangeMasterPasswordScreen {
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @PreviewRestricted
 @Composable
 @MobilePreview
