@@ -4,7 +4,7 @@ import easter.egg.passmark.utils.accessibility.Describable
 
 // TODO: add others too
 enum class PasswordViewDescribable(override val desc: String) : Describable {
-    EMAIL_COPY_BUTTON(desc ="Copy email" ),
+    EMAIL_COPY_BUTTON(desc = "Copy email"),
     USER_NAME_COPY_BUTTON(desc = "Copy user name"),
     PASSWORD_HISTORY_BUTTON(desc = "View password history"),
     PASSWORD_COPY_BUTTON(desc = "Copy password"),
