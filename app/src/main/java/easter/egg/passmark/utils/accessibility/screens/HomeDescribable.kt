@@ -1,4 +1,4 @@
-package easter.egg.passmark.utils.accessibility.home
+package easter.egg.passmark.utils.accessibility.screens
 
 import easter.egg.passmark.data.models.Vault
 import easter.egg.passmark.data.models.password.PasswordSortingOptions
@@ -78,7 +78,7 @@ enum class HomeDescribable(override val desc: String) : Describable {
             companion object {
                 fun getIconDescribable(index: Int) = object : Describable {
                     override val desc: String
-                        get() = "Vault Icon ${Vault.iconList.getOrNull(index = index)?.name}"
+                        get() = "Vault Icon ${Vault.Companion.iconList.getOrNull(index = index)?.name}"
 
                 }
             }

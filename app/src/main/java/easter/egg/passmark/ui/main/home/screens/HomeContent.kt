@@ -85,7 +85,7 @@ import easter.egg.passmark.ui.main.home.PasswordOptionChoices
 import easter.egg.passmark.ui.main.home.SecurityPromptState
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
-import easter.egg.passmark.utils.accessibility.home.HomeDescribable
+import easter.egg.passmark.utils.accessibility.screens.HomeDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
