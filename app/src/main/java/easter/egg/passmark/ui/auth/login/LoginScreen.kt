@@ -48,7 +48,7 @@ import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
-import easter.egg.passmark.utils.accessibility.login.LoginDescribable
+import easter.egg.passmark.utils.accessibility.auth.LoginDescribable
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.values.PassMarkFonts

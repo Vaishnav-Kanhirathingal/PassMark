@@ -43,7 +43,7 @@ import easter.egg.passmark.ui.auth.AuthViewModel
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
-import easter.egg.passmark.utils.accessibility.master_key.MasterKeyDescribable
+import easter.egg.passmark.utils.accessibility.auth.MasterKeyDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted

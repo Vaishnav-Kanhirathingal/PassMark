@@ -1,4 +1,4 @@
-package easter.egg.passmark.utils.accessibility.login
+package easter.egg.passmark.utils.accessibility.auth
 
 import easter.egg.passmark.utils.accessibility.Describable
 

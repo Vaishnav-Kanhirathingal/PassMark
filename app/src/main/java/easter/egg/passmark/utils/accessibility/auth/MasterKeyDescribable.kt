@@ -1,4 +1,4 @@
-package easter.egg.passmark.utils.accessibility.master_key
+package easter.egg.passmark.utils.accessibility.auth
 
 import easter.egg.passmark.utils.accessibility.Describable
 

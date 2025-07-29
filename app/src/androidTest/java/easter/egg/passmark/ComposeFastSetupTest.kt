@@ -18,8 +18,8 @@ import easter.egg.passmark.data.TestVault
 import easter.egg.passmark.ui.auth.AuthActivity
 import easter.egg.passmark.utils.accessibility.Describable
 import easter.egg.passmark.utils.accessibility.home.HomeDescribable
-import easter.egg.passmark.utils.accessibility.login.LoginDescribable
-import easter.egg.passmark.utils.accessibility.master_key.MasterKeyDescribable
+import easter.egg.passmark.utils.accessibility.auth.LoginDescribable
+import easter.egg.passmark.utils.accessibility.auth.MasterKeyDescribable
 import easter.egg.passmark.utils.accessibility.screens.PasswordEditDescribable
 import org.junit.Rule
 import org.junit.Test
