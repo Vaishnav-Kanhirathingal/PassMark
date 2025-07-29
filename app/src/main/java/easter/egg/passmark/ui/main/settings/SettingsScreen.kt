@@ -43,7 +43,7 @@ import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
-import easter.egg.passmark.utils.accessibility.screens.SettingsDescribable
+import easter.egg.passmark.utils.accessibility.main.SettingsDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted

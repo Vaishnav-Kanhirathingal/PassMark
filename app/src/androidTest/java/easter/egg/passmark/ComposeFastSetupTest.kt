@@ -17,10 +17,10 @@ import easter.egg.passmark.data.TestPasswordData
 import easter.egg.passmark.data.TestVault
 import easter.egg.passmark.ui.auth.AuthActivity
 import easter.egg.passmark.utils.accessibility.Describable
-import easter.egg.passmark.utils.accessibility.screens.HomeDescribable
+import easter.egg.passmark.utils.accessibility.main.HomeDescribable
 import easter.egg.passmark.utils.accessibility.auth.LoginDescribable
 import easter.egg.passmark.utils.accessibility.auth.MasterKeyDescribable
-import easter.egg.passmark.utils.accessibility.screens.PasswordEditDescribable
+import easter.egg.passmark.utils.accessibility.main.PasswordEditDescribable
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

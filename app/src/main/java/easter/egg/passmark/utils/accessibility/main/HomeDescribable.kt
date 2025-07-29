@@ -1,4 +1,4 @@
-package easter.egg.passmark.utils.accessibility.screens
+package easter.egg.passmark.utils.accessibility.main
 
 import easter.egg.passmark.data.models.Vault
 import easter.egg.passmark.data.models.password.PasswordSortingOptions

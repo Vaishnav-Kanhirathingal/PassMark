@@ -80,7 +80,7 @@ import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.accessibility.Describable
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
-import easter.egg.passmark.utils.accessibility.screens.PasswordEditDescribable
+import easter.egg.passmark.utils.accessibility.main.PasswordEditDescribable
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.extensions.customTopBarModifier
