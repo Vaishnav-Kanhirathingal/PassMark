@@ -4,7 +4,6 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -49,44 +48,13 @@ class ComposeFastSetupTest {
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
             .findObject(By.text("vaishnav.kanhira@gmail.com"))
             .click()
-        composeRule.waitUntil(
-            timeoutMillis = 20_000,
-            condition = {
-                composeRule
-                    .onAllNodesWithTag(MasterKeyDescribable.ENTER_MASTER_KEY_TEXT_FIELD.desc)
-                    .fetchSemanticsNodes().isNotEmpty() ||
-                        composeRule
-                            .onAllNodesWithTag(MasterKeyDescribable.CREATE_MASTER_KEY_TEXT_FIELD.desc)
-                            .fetchSemanticsNodes().isNotEmpty()
-            }
+
+        composeRule.waitUntilAtLeastOneExists(
+            matcher = hasTestTag(testTag = MasterKeyDescribable.MASTER_KEY_TEXT_FIELD.desc),
+            timeoutMillis = 10_000
         )
-
-        val isNewUser = when {
-            composeRule
-                .onAllNodesWithTag(MasterKeyDescribable.CREATE_MASTER_KEY_TEXT_FIELD.desc)
-                .fetchSemanticsNodes().isNotEmpty() -> true
-
-            composeRule
-                .onAllNodesWithTag(MasterKeyDescribable.ENTER_MASTER_KEY_TEXT_FIELD.desc)
-                .fetchSemanticsNodes().isNotEmpty() -> false
-
-            else -> throw IllegalStateException("one of these should have been null")
-        }
-
-        onNodeWithTag(
-            describable =
-                if (isNewUser) MasterKeyDescribable.CREATE_MASTER_KEY_TEXT_FIELD
-                else MasterKeyDescribable.ENTER_MASTER_KEY_TEXT_FIELD
-        ).performTextInput("123456789")
-
-
-
-        onNodeWithTag(
-            describable =
-                if (isNewUser) MasterKeyDescribable.CREATE_BUTTON
-                else MasterKeyDescribable.CONFIRM_BUTTON
-        )
-            .performClick()
+        onNodeWithTag(describable = MasterKeyDescribable.MASTER_KEY_TEXT_FIELD).performTextInput("123456789")
+        onNodeWithTag(describable = MasterKeyDescribable.CREATE_BUTTON).performClick()
 
         composeRule.waitUntilAtLeastOneExists(
             matcher = hasTestTag(testTag = HomeDescribable.CREATE_NEW_PASSWORD.desc),

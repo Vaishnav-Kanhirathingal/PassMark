@@ -10,5 +10,10 @@ enum class PasswordViewDescribable(override val desc: String) : Describable {
     PASSWORD_COPY_BUTTON(desc = "Copy password"),
     PASSWORD_FINGERPRINT_VERIFICATION_BUTTON(desc = "Biometric verification before viewing password"),
     WEBSITE_COPY_BUTTON(desc = "Copy website url"),
-    DELETE_PASSWORD_BUTTON(desc = "Delete password")
+    DELETE_PASSWORD_BUTTON(desc = "Delete password");
+
+    enum class DeletePasswordDialog(override val desc: String) : Describable {
+        DELETE_BUTTON(desc = "Delete password"),
+        CANCEL_BUTTON(desc = "Cancel")
+    }
 }

@@ -7,5 +7,10 @@ enum class SettingsDescribable(override val desc: String) : Describable {
     FINGERPRINT_AUTHENTICATION_SWITCH(desc = "Require fingerprint authentication by default"),
     CHANGE_PASSWORD_BUTTON(desc = "Change password"),
     LOG_OUT_BUTTON(desc = "Log out"),
-    RESET_ACCOUNT_BUTTON(desc = "Reset your account")
+    RESET_ACCOUNT_BUTTON(desc = "Reset your account");
+
+    enum class ResetUserAccountDialog(override val desc: String) : Describable {
+        RESET_USER_BUTTON(desc = "Reset user"),
+        CANCEL_BUTTON(desc = "Cancel")
+    }
 }
