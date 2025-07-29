@@ -129,6 +129,12 @@ class ActionAutomatorTest {
         return device.findObject(By.desc(testTag))
     }
 
+    private fun findObject(describable: Describable): UiObject2 {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        device.wait(Until.hasObject(By.desc(describable.desc)), 400)
+        return device.findObject(By.desc(describable.desc))
+    }
+
     private fun hasObjectByText(text: String) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         device.wait(Until.hasObject(By.text(text)), 500)
@@ -143,6 +149,14 @@ class ActionAutomatorTest {
         text: String
     ) {
         findObject(testTag = testTag).click()
+        CustomDelay.MICRO_ANIMATION.hold()
+        type(text = text)
+    }
+    private fun type(
+        describable: Describable,
+        text: String
+    ) {
+        findObject(describable = describable).click()
         CustomDelay.MICRO_ANIMATION.hold()
         type(text = text)
     }
@@ -168,35 +182,35 @@ class ActionAutomatorTest {
     //------------------------------------------------------------------------------------------auth
     private fun selectGoogleAccount() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        findObject(TestTags.Login.GOOGLE_BUTTON.name).click()
+        findObject(describable = LoginDescribable.GOOGLE_LOGIN_BUTTON).click()
         CustomDelay.GOOGLE_ACCOUNT_SELECT.hold()
         device.findObject(By.text("vaishnav.kanhira@gmail.com")).click()
         CustomDelay.AUTH_LOADING.hold()
     }
 
     private fun enterMasterKey(masterPassword: String) {
-        findObject(testTag = TestTags.CreateMasterKey.VISIBILITY_BUTTON.name).click()
+        findObject(describable = MasterKeyDescribable.VISIBILITY_ON).click()
         CustomDelay.MICRO_ANIMATION.hold()
         type(
-            testTag = TestTags.CreateMasterKey.TEXT_FIELD.name,
+            describable = MasterKeyDescribable.MASTER_KEY_TEXT_FIELD,
             text = masterPassword
         )
         CustomDelay.MICRO_ANIMATION.hold()
-        findObject(TestTags.CreateMasterKey.CONFIRM_BUTTON.name).click()
+        findObject(describable = MasterKeyDescribable.CONFIRM_BUTTON).click()
         CustomDelay.AUTH_LOADING.hold()
     }
 
     //-------------------------------------------------------------------passwords-&-vaults-creation
     /** call with an open home drawer and completes with an open drawer (is repeatable) */
     private fun createVault(testVault: TestVault) {
-        findObject(TestTags.Home.Drawer.CREATE_NEW_VAULT_BUTTON.name).click()
+        findObject(describable = HomeDescribable.Drawer.CREATE_NEW_VAULT_BUTTON).click()
         CustomDelay.SMALL_ANIMATION.hold()
         type(
-            testTag = TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name,
+            describable = HomeDescribable.Drawer.VaultDialog.TEXT_FIELD,
             text = testVault.name
         )
-        findObject(TestTags.Home.Drawer.VaultDialog.getIconTag(index = testVault.iconIndex)).click()
-        findObject(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name).click()
+        findObject(describable = HomeDescribable.Drawer.VaultDialog.getIconDescribable(index = testVault.iconIndex)).click()
+        findObject(describable = HomeDescribable.Drawer.VaultDialog.CREATE_BUTTON).click()
         CustomDelay.SINGLE_API_CALL.hold()
     }
 
@@ -208,12 +222,12 @@ class ActionAutomatorTest {
         hasObjectByText(text = oldVaultName)
         device.findObject(By.text(oldVaultName)).longClick()
         CustomDelay.SMALL_ANIMATION.hold()
-        findObject(testTag = TestTags.Home.Drawer.VaultDialog.TEXT_FIELD.name).click()
+        findObject(describable = HomeDescribable.Drawer.VaultDialog.TEXT_FIELD).click()
         CustomDelay.MICRO_ANIMATION.hold()
         clearText()
         type(text = newVaultName)
         device.pressBack()
-        findObject(testTag = TestTags.Home.Drawer.VaultDialog.CONFIRM_BUTTON.name).click()
+        findObject(describable = HomeDescribable.Drawer.VaultDialog.UPDATE_BUTTON).click()
         CustomDelay.SINGLE_API_CALL.hold()
     }
 
@@ -229,17 +243,20 @@ class ActionAutomatorTest {
     /** called from home screen, exits to home screen (is repeatable) */
     private fun createPassword(testPasswordData: TestPasswordData) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
-        device.wait(Until.hasObject(By.desc(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name)), 2_000)
-        findObject(TestTags.Home.CREATE_NEW_PASSWORD_BUTTON.name).click()
+        device.wait(
+            Until.hasObject(
+                By.desc(HomeDescribable.CREATE_NEW_PASSWORD.desc)
+            ), 2_000
+        )
+        findObject(describable = HomeDescribable.CREATE_NEW_PASSWORD).click()
         CustomDelay.NAVIGATION.hold()
 
         testPasswordData.vault?.let {
             device.wait(
-                Until.hasObject(By.desc(TestTags.EditPassword.SELECT_VAULT_BUTTON.name)),
+                Until.hasObject(By.desc(PasswordEditDescribable.SELECT_VAULT_BUTTON.desc)),
                 2_000
             )
-            this.findObject(testTag = TestTags.EditPassword.SELECT_VAULT_BUTTON.name).click()
+            findObject(describable = PasswordEditDescribable.SELECT_VAULT_BUTTON).click()
 
             CustomDelay.SMALL_ANIMATION.hold()
             device.findObject(By.text(it)).click()
@@ -247,45 +264,45 @@ class ActionAutomatorTest {
         }
 
         fun textHandler(
-            testTag: String,
+            describable: Describable,
             text: String?
         ) {
-            text?.let { type(testTag = testTag, text = it) }
+            text?.let { type(describable = describable, text = it) }
         }
         textHandler(
-            testTag = TestTags.EditPassword.TITLE_TEXT_FIELD.name,
+            describable = PasswordEditDescribable.TITLE_TEXT_FIELD,
             text = testPasswordData.title
         )
         textHandler(
-            testTag = TestTags.EditPassword.EMAIL_TEXT_FIELD.name,
+            describable = PasswordEditDescribable.EMAIL_TEXT_FIELD,
             text = testPasswordData.email
         )
         textHandler(
-            testTag = TestTags.EditPassword.USER_NAME_TEXT_FIELD.name,
+            describable = PasswordEditDescribable.USER_NAME_TEXT_FIELD,
             text = testPasswordData.userName
         )
         textHandler(
-            testTag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name,
+            describable = PasswordEditDescribable.PASSWORD_TEXT_FIELD,
             text = testPasswordData.password
         )
         textHandler(
-            testTag = TestTags.EditPassword.WEBSITE_TEXT_FIELD.name,
+            describable = PasswordEditDescribable.WEBSITE_TEXT_FIELD,
             text = testPasswordData.website
         )
         textHandler(
-            testTag = TestTags.EditPassword.NOTES_TEXT_FIELD.name,
+            describable = PasswordEditDescribable.NOTES_TEXT_FIELD,
             text = testPasswordData.note
         )
         device.pressBack()
 
         if (testPasswordData.useFingerprint) {
-            findObject(testTag = TestTags.EditPassword.USE_FINGERPRINT_SWITCH.name).click()
+            findObject(describable = PasswordEditDescribable.USE_FINGERPRINT_SWITCH).click()
         }
         if (testPasswordData.useLocalStorage) {
-            findObject(testTag = TestTags.EditPassword.KEEP_LOCAL_SWITCH.name).click()
+            findObject(describable = PasswordEditDescribable.KEEP_LOCAL_SWITCH).click()
         }
 
-        findObject(testTag = TestTags.EditPassword.SAVE_BUTTON.name).click()
+        findObject(describable = PasswordEditDescribable.SAVE_BUTTON).click()
         CustomDelay.SINGLE_API_CALL.hold()
     }
 

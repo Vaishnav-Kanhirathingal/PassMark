@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -65,8 +64,6 @@ import easter.egg.passmark.utils.accessibility.main.ChangePasswordDescribable
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.testing.PassMarkConfig
-import easter.egg.passmark.utils.testing.TestTags
-import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 import kotlinx.coroutines.delay
@@ -227,7 +224,6 @@ object ChangeMasterPasswordScreen {
                                 changeMasterPasswordViewModel.oldPassword.value = it
                             },
                             isEnabled = !screenState.isLoading,
-                            testTag = TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name,
                             describable = ChangePasswordDescribable.ENTER_CURRENT_PASSWORD
                         )
                     }
@@ -292,7 +288,6 @@ object ChangeMasterPasswordScreen {
                                 changeMasterPasswordViewModel.newPassword.value = it
                             },
                             isEnabled = !screenState.isLoading,
-                            testTag = TestTags.ChangePassword.NEW_PASSWORD_TEXT_FIELD.name,
                             describable = ChangePasswordDescribable.ENTER_NEW_PASSWORD
                         )
                         HorizontalDivider(
@@ -308,7 +303,6 @@ object ChangeMasterPasswordScreen {
                                 changeMasterPasswordViewModel.newPasswordRepeated.value = it
                             },
                             isEnabled = !screenState.isLoading,
-                            testTag = TestTags.ChangePassword.NEW_PASSWORD_REPEATED_TEXT_FIELD.name,
                             describable = ChangePasswordDescribable.REPEAT_NEW_PASSWORD
                         )
                     }
@@ -323,7 +317,7 @@ object ChangeMasterPasswordScreen {
                     verticalAlignment = Alignment.CenterVertically,
                     content = {
                         @Composable
-                        fun RowScope.CustomButton(
+                        fun CustomButton(
                             modifier: Modifier = Modifier,
                             isPrimary: Boolean,
                             text: String,
@@ -333,7 +327,6 @@ object ChangeMasterPasswordScreen {
                             Box(
                                 modifier = modifier
                                     .setSizeLimitation()
-                                    .weight(weight = 1f)
                                     .clip(shape = RoundedCornerShape(size = corners))
                                     .background(
                                         color =
@@ -365,13 +358,14 @@ object ChangeMasterPasswordScreen {
                         }
 
                         CustomButton(
+                            modifier = Modifier.weight(weight = 1f),
                             isPrimary = false,
                             text = "Cancel",
                             onClick = navigateUp,
                             describable = ChangePasswordDescribable.CANCEL
                         )
                         CustomButton(
-                            modifier = Modifier.applyTag(testTag = TestTags.ChangePassword.CONFIRM_BUTTON.name),
+                            modifier = Modifier.weight(weight = 1f),
                             isPrimary = true,
                             text = "Confirm",
                             onClick = {
@@ -401,7 +395,6 @@ object ChangeMasterPasswordScreen {
         text: String,
         onTextChanged: (String) -> Unit,
         isEnabled: Boolean,
-        testTag: String,
         describable: ChangePasswordDescribable
     ) {
         Box(
@@ -410,7 +403,6 @@ object ChangeMasterPasswordScreen {
             content = {
                 TextField(
                     modifier = Modifier
-                        .applyTag(testTag = testTag)
                         .fillMaxWidth()
                         .setDescription(describable = describable),
                     keyboardOptions = KeyboardOptions(

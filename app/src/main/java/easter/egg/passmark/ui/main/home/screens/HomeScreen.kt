@@ -73,8 +73,6 @@ import easter.egg.passmark.utils.accessibility.main.HomeDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
-import easter.egg.passmark.utils.testing.TestTags
-import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.setSizeLimitation
 import kotlinx.coroutines.delay
@@ -384,7 +382,6 @@ object HomeScreen {
                 ConstraintLayout(
                     modifier = Modifier
                         .setDescription(describable = HomeDescribable.TopBar.SORTING)
-                        .applyTag(testTag = TestTags.Home.TopBar.SORTING_BUTTON.name)
                         .size(size = componentHeight)
                         .clip(shape = CircleShape)
                         .clickable(onClick = { showSortMenu.value = true }),
