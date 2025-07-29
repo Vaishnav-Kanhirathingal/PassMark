@@ -62,14 +62,14 @@ import easter.egg.passmark.ui.main.settings.SettingsScreen
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
+import easter.egg.passmark.utils.accessibility.main.AutoLockDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.extensions.findPassword
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.testing.PassMarkConfig
-import easter.egg.passmark.utils.testing.TestTags
-import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -181,7 +181,7 @@ class MainActivity : FragmentActivity() {
                 )
                 OutlinedTextField(
                     modifier = Modifier
-                        .applyTag(testTag = TestTags.AutoLock.PASSWORD_TEXT_FIELD.name)
+                        .setDescription(describable = AutoLockDescribable.PASSWORD_TEXT_FIELD)
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     value = text,
@@ -196,7 +196,7 @@ class MainActivity : FragmentActivity() {
                     },
                     trailingIcon = {
                         IconButton(
-                            modifier = Modifier.applyTag(testTag = TestTags.AutoLock.VISIBILITY_BUTTON.name),
+                            modifier = Modifier.setDescription(describable = AutoLockDescribable.VISIBILITY_BUTTON),
                             onClick = { passwordVisible.value = !passwordVisible.value },
                             content = {
                                 Icon(
@@ -239,7 +239,7 @@ class MainActivity : FragmentActivity() {
                         val context = LocalContext.current
                         Box(
                             modifier = Modifier
-                                .applyTag(testTag = TestTags.AutoLock.FINGERPRINT_BUTTON.name)
+                                .setDescription(describable = AutoLockDescribable.FINGERPRINT_BUTTON)
                                 .size(size = PassMarkDimensions.minTouchSize)
                                 .clip(shape = RoundedCornerShape(16.dp))
                                 .background(color = MaterialTheme.colorScheme.surfaceContainer)
@@ -281,7 +281,7 @@ class MainActivity : FragmentActivity() {
                         )
                         Box(
                             modifier = Modifier
-                                .applyTag(testTag = TestTags.AutoLock.CONFIRM_BUTTON.name)
+                                .setDescription(describable = AutoLockDescribable.CONFIRM_BUTTON)
                                 .setSizeLimitation()
                                 .clip(shape = RoundedCornerShape(size = 16.dp))
                                 .background(

@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.main.password_view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.util.Log
@@ -144,10 +145,12 @@ object PasswordViewScreen {
                                 "You can instead transfer this password to another vault if " +
                                 "you wish so.",
                         negativeButtonText = "Cancel",
+                        negativeDescribable = PasswordViewDescribable.DeletePasswordDialog.CANCEL_BUTTON,
                         onNegativeClicked = {
                             passwordViewViewModel.setDeleteDialogVisibility(visibility = false)
                         },
                         positiveButtonText = "Delete",
+                        positiveDescribable = PasswordViewDescribable.DeletePasswordDialog.DELETE_BUTTON,
                         onPositiveClicked = { passwordViewViewModel.delete(password = password) },
                         screenState = dialogState
                     )
@@ -948,6 +951,7 @@ object PasswordViewScreen {
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @PreviewRestricted
 @Composable
 @Preview(

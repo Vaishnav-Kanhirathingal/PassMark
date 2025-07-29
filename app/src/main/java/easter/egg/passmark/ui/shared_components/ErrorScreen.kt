@@ -23,11 +23,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
+import easter.egg.passmark.utils.accessibility.main.ErrorDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
-import easter.egg.passmark.utils.testing.TestTags
-import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
 
@@ -89,7 +89,7 @@ object ErrorScreen {
                 )
                 Box(
                     modifier = Modifier
-                        .applyTag(testTag = TestTags.ErrorScreen.RETRY_BUTTON.name)
+                        .setDescription(describable = ErrorDescribable.RETRY_BUTTON)
                         .setSizeLimitation()
                         .clip(shape = RoundedCornerShape(size = 16.dp))
                         .background(color = MaterialTheme.colorScheme.primaryContainer)

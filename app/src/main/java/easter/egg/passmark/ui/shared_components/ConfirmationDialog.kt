@@ -21,10 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable
+import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
-import easter.egg.passmark.utils.testing.TestTags
-import easter.egg.passmark.utils.testing.TestTags.applyTag
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
@@ -36,8 +36,10 @@ fun ConfirmationDialog(
     titleText: String,
     contentText: String,
     negativeButtonText: String,
+    negativeDescribable: Describable,
     onNegativeClicked: () -> Unit,
     positiveButtonText: String,
+    positiveDescribable: Describable,
     onPositiveClicked: () -> Unit,
     screenState: ScreenState<Unit>
 ) {
@@ -151,7 +153,8 @@ fun ConfirmationDialog(
                                     )
                                     width = Dimension.fillToConstraints
                                 }
-                            ),
+                            )
+                            .setDescription(describable = negativeDescribable),
                         text = negativeButtonText,
                         isLoading = false,
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -162,7 +165,6 @@ fun ConfirmationDialog(
 
                     CustomButton(
                         modifier = Modifier
-                            .applyTag(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name)
                             .constrainAs(
                                 ref = positiveButtonRef,
                                 constrainBlock = {
@@ -175,7 +177,8 @@ fun ConfirmationDialog(
                                     this.bottom.linkTo(negativeButtonRef.bottom)
                                     width = Dimension.fillToConstraints
                                 }
-                            ),
+                            )
+                            .setDescription(describable = positiveDescribable),
                         text = positiveButtonText,
                         isLoading = screenState.isLoading,
                         containerColor = MaterialTheme.colorScheme.errorContainer,
@@ -199,8 +202,14 @@ private fun ConfirmationDialogPreview() {
         titleText = "Delete?",
         contentText = "Deletion is permanent",
         negativeButtonText = "cancel",
+        negativeDescribable = object : Describable {
+            override val desc: String get() = "negative"
+        },
         onNegativeClicked = {},
         positiveButtonText = "Delete",
+        positiveDescribable = object : Describable {
+            override val desc: String get() = "positive"
+        },
         onPositiveClicked = {},
         screenState = ScreenState.PreCall(),
     )
