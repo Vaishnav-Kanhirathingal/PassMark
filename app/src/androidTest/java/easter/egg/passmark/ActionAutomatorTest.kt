@@ -245,7 +245,7 @@ class ActionAutomatorTest {
         hasObjectByText(text = name)
         device.findObject(By.text(name)).longClick()
         CustomDelay.SMALL_ANIMATION.hold()
-        findObject(testTag = TestTags.Home.Drawer.VaultDialog.DELETE_BUTTON.name).click()
+        findObject(describable = HomeDescribable.Drawer.VaultDialog.DELETE_VAULT_BUTTON).click()
         CustomDelay.SINGLE_API_CALL.hold()
     }
 
@@ -321,14 +321,14 @@ class ActionAutomatorTest {
     ) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        findObject(testTag = TestTags.Home.getPasswordOptionsTag(name = passwordTitleToUpdate)).click()
+        findObject(describable = HomeDescribable.getPasswordOptionsDescribable(name = passwordTitleToUpdate)).click()
         CustomDelay.SMALL_ANIMATION.hold()
 
         device.swipe(1080, 2700, 240, 2700, 50)
-        findObject(testTag = TestTags.Home.PasswordOptionsBottomSheet.EDIT_BUTTON.name).click()
+        findObject(describable = HomeDescribable.PasswordOptionsBottomSheet.EDIT_BUTTON).click()
         CustomDelay.FINGERPRINT.hold()
 
-        findObject(testTag = TestTags.EditPassword.PASSWORD_TEXT_FIELD.name).click()
+        findObject(describable = PasswordEditDescribable.PASSWORD_TEXT_FIELD).click()
         CustomDelay.MICRO_ANIMATION.hold()
 
         clearText()
@@ -336,27 +336,30 @@ class ActionAutomatorTest {
         CustomDelay.MICRO_ANIMATION.hold()
         type(newPassword)
         CustomDelay.MICRO_ANIMATION.hold()
-        findObject(testTag = TestTags.EditPassword.SAVE_BUTTON.name).click()
+        findObject(describable = PasswordEditDescribable.SAVE_BUTTON).click()
         CustomDelay.SINGLE_API_CALL.hold()
     }
 
     private fun viewAndDeletePassword(passwordName: String) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        findObject(testTag = TestTags.Home.getPasswordTag(name = passwordName)).click()
+        findObject(describable = HomeDescribable.getPasswordDescribable(name = passwordName)).click()
         CustomDelay.NAVIGATION.hold()
 
-        findObject(testTag = TestTags.ViewPassword.PASSWORD_HISTORY_BUTTON.name).click()
+        findObject(describable = PasswordViewDescribable.PASSWORD_HISTORY_BUTTON).click()
         CustomDelay.FINGERPRINT.hold()
 
         device.click(630, 2580)
         CustomDelay.SMALL_ANIMATION.hold()
 
         UiScrollable(UiSelector().scrollable(true)).scrollToEnd(1)
-        device.wait(Until.hasObject(By.desc(TestTags.ViewPassword.DELETE_BUTTON.name)), 3_000)
-        findObject(testTag = TestTags.ViewPassword.DELETE_BUTTON.name).click()
+        device.wait(
+            Until.hasObject(By.desc(PasswordViewDescribable.DELETE_PASSWORD_BUTTON.desc)),
+            3_000
+        )
+        findObject(describable = PasswordViewDescribable.DELETE_PASSWORD_BUTTON).click()
 
         CustomDelay.SMALL_ANIMATION.hold()
-        findObject(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name).click()
+        findObject(describable = PasswordViewDescribable.DeletePasswordDialog.DELETE_BUTTON).click()
         CustomDelay.SINGLE_API_CALL.hold()
     }
 
@@ -365,7 +368,7 @@ class ActionAutomatorTest {
     private fun drawerFunctionality(toOpen: Boolean) {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         if (toOpen) {
-            findObject(testTag = TestTags.Home.TopBar.OPEN_DRAWER_BUTTON.name).click()
+            findObject(describable = HomeDescribable.TopBar.OPEN_DRAWER_BUTTON).click()
         } else {
             device.click(1080, 1440)
         }
@@ -373,14 +376,18 @@ class ActionAutomatorTest {
     }
 
     private fun sortPasswordList() {
-        findObject(testTag = TestTags.Home.TopBar.SORTING_BUTTON.name).click()
+        findObject(describable = HomeDescribable.TopBar.SORTING).click()
         CustomDelay.SMALL_ANIMATION.hold()
-        findObject(testTag = TestTags.Home.Sorting.getSortOptionTag(passwordSortingOptions = PasswordSortingOptions.NAME)).click()
+        findObject(
+            describable = HomeDescribable.TopBar.Sorting.getSortOptionDescribable(
+                passwordSortingOptions = PasswordSortingOptions.NAME
+            )
+        ).click()
         CustomDelay.SMALL_ANIMATION.hold()
     }
 
     private fun search() {
-        findObject(testTag = TestTags.Home.TopBar.SEARCH_BUTTON.name).click()
+        findObject(describable = HomeDescribable.TopBar.SEARCH_BUTTON).click()
         CustomDelay.MICRO_ANIMATION.hold()
         "goo".forEach {
             type(text = it.toString())
@@ -389,7 +396,7 @@ class ActionAutomatorTest {
 
         CustomDelay.SMALL_ANIMATION.hold()
 
-        findObject(testTag = TestTags.Home.TopBar.BACK_BUTTON.name).click()
+        findObject(describable = HomeDescribable.TopBar.BACK_BUTTON).click()
         CustomDelay.SMALL_ANIMATION.hold()
     }
 
