@@ -29,9 +29,7 @@ import easter.egg.passmark.utils.accessibility.main.PasswordEditDescribable
 import easter.egg.passmark.utils.accessibility.main.PasswordViewDescribable
 import easter.egg.passmark.utils.accessibility.main.SettingsDescribable
 import easter.egg.passmark.utils.testing.PassMarkConfig
-import easter.egg.passmark.utils.testing.TestTags
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -413,55 +411,55 @@ class ActionAutomatorTest {
     private fun changeToNewPassword() {
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         drawerFunctionality(toOpen = true)
-        findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
+        findObject(describable = HomeDescribable.Drawer.SETTINGS).click()
         CustomDelay.NAVIGATION.hold()
-        findObject(testTag = TestTags.Settings.CHANGE_PASSWORD_BUTTON.name).click()
+        findObject(describable = SettingsDescribable.CHANGE_PASSWORD_BUTTON).click()
         CustomDelay.NAVIGATION.hold()
 
         device.wait(
-            Until.hasObject(By.desc(TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name)),
+            Until.hasObject(By.desc(ChangePasswordDescribable.ENTER_CURRENT_PASSWORD.desc)),
             3_000
         )
 
         type(
-            testTag = TestTags.ChangePassword.ORIGINAL_PASSWORD_TEXT_FIELD.name,
+            describable = ChangePasswordDescribable.ENTER_CURRENT_PASSWORD,
             text = MasterPasswords.OLD_PASSWORD
         )
         type(
-            testTag = TestTags.ChangePassword.NEW_PASSWORD_TEXT_FIELD.name,
+            describable = ChangePasswordDescribable.ENTER_NEW_PASSWORD,
             text = MasterPasswords.NEW_PASSWORD
         )
         type(
-            testTag = TestTags.ChangePassword.NEW_PASSWORD_REPEATED_TEXT_FIELD.name,
+            describable = ChangePasswordDescribable.REPEAT_NEW_PASSWORD,
             text = MasterPasswords.NEW_PASSWORD
         )
         device.pressBack()
         CustomDelay.MICRO_ANIMATION.hold()
-        findObject(testTag = TestTags.ChangePassword.CONFIRM_BUTTON.name).click()
+        findObject(describable = ChangePasswordDescribable.CONFIRM).click()
         CustomDelay.CHANGE_PASSWORD.hold()
     }
 
     /** call from home screen with closed drawer */
     private fun resetUser() {
         drawerFunctionality(toOpen = true)
-        findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
+        findObject(describable = HomeDescribable.Drawer.SETTINGS).click()
         CustomDelay.NAVIGATION.hold()
-        findObject(testTag = TestTags.Settings.RESET_ACCOUNT_BUTTON.name).click()
+        findObject(describable = SettingsDescribable.RESET_ACCOUNT_BUTTON).click()
         CustomDelay.SMALL_ANIMATION.hold()
-        findObject(testTag = TestTags.ConfirmationDialog.POSITIVE_BUTTON.name).click()
+        findObject(describable = SettingsDescribable.ResetUserAccountDialog.RESET_USER_BUTTON).click()
         CustomDelay.RESET_USER.hold()
     }
 
     /** call from home screen with closed drawer */
     private fun turnOnSwitchesAndLogout() {
         drawerFunctionality(toOpen = true)
-        findObject(testTag = TestTags.Home.Drawer.SETTINGS.name).click()
+        findObject(describable = HomeDescribable.Drawer.SETTINGS).click()
         CustomDelay.NAVIGATION.hold()
-        findObject(testTag = TestTags.Settings.FINGERPRINT_AUTHENTICATION_SWITCH.name).click()
+        findObject(describable = SettingsDescribable.FINGERPRINT_AUTHENTICATION_SWITCH).click()
         CustomDelay.SMALL_ANIMATION.hold()
-        findObject(testTag = TestTags.Settings.LOCAL_STORAGE_SWITCH.name).click()
+        findObject(describable = SettingsDescribable.LOCAL_STORAGE_SWITCH).click()
         CustomDelay.SMALL_ANIMATION.hold()
-        findObject(testTag = TestTags.Settings.LOG_OUT.name).click()
+        findObject(describable = SettingsDescribable.LOG_OUT_BUTTON).click()
         CustomDelay.SINGLE_API_CALL.hold()
     }
 
@@ -478,16 +476,16 @@ class ActionAutomatorTest {
      * @param passwordToUse keep null for fingerprint */
     private fun unlockApp(passwordToUse: String?) {
         if (passwordToUse == null) {
-            findObject(testTag = TestTags.AutoLock.FINGERPRINT_BUTTON.name).click()
+            findObject(describable = AutoLockDescribable.FINGERPRINT_BUTTON).click()
             CustomDelay.FINGERPRINT.hold()
         } else {
-            findObject(testTag = TestTags.AutoLock.VISIBILITY_BUTTON.name).click()
+            findObject(describable = AutoLockDescribable.VISIBILITY_BUTTON).click()
             CustomDelay.MICRO_ANIMATION.hold()
             type(
-                testTag = TestTags.AutoLock.PASSWORD_TEXT_FIELD.name,
+                describable = AutoLockDescribable.PASSWORD_TEXT_FIELD,
                 text = passwordToUse
             )
-            findObject(testTag = TestTags.AutoLock.CONFIRM_BUTTON.name).click()
+            findObject(describable = AutoLockDescribable.CONFIRM_BUTTON).click()
             CustomDelay.SINGLE_API_CALL.hold()
         }
     }
@@ -537,45 +535,40 @@ class ActionAutomatorTest {
         runBlocking(
             context = Dispatchers.Default,
             block = {
-                holdFor(
+                performTask(
                     taskName = "launch app and login to home",
-                    estimatedTime = 26_000,
                     action = {
                         launchApp()
                         selectGoogleAccount()
                         enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
                     }
                 )
-                val vaultNameToReplace = "Game"
-                holdFor(
-                    taskName = "Create vault",
-                    estimatedTime = 14_500,
-                    action = {
-                        drawerFunctionality(toOpen = true)
-                        createVault(testVault = TestingObjects.testVault.copy(name = vaultNameToReplace))
-                    }
-                )
-                holdFor(
-                    taskName = "Update vault",
-                    estimatedTime = 15_000,
-                    action = {
-                        updateVault(
-                            oldVaultName = vaultNameToReplace,
-                            newVaultName = TestingObjects.testVault.name
-                        )
-                    }
-                )
-                holdFor(
+//                val vaultNameToReplace = "Game"
+//                performTask(
+//                    taskName = "Create vault",
+//                    action = {
+//                        drawerFunctionality(toOpen = true)
+//                        createVault(testVault = TestingObjects.testVault.copy(name = vaultNameToReplace))
+//                    }
+//                )
+//                performTask(
+//                    taskName = "Update vault",
+//                    action = {
+//                        updateVault(
+//                            oldVaultName = vaultNameToReplace,
+//                            newVaultName = TestingObjects.testVault.name
+//                        )
+//                    }
+//                )
+                performTask(
                     taskName = "Create password",
-                    estimatedTime = 28_000,
                     action = {
                         drawerFunctionality(toOpen = false)
                         createPassword(testPasswordData = TestingObjects.testPasswordData)
                     }
                 )
-                holdFor(
+                performTask(
                     taskName = "Update password",
-                    estimatedTime = 19_000,
                     action = {
                         updatePassword(
                             passwordTitleToUpdate = TestingObjects.testPasswordData.title,
@@ -583,177 +576,78 @@ class ActionAutomatorTest {
                         )
                     }
                 )
-                holdFor(
+                performTask(
                     taskName = "View and delete password",
-                    estimatedTime = 22_000,
                     action = { viewAndDeletePassword(passwordName = TestingObjects.testPasswordData.title) }
                 )
-                holdFor(
+                performTask(
                     taskName = "Delete vault",
-                    estimatedTime = 14_000,
                     action = {
                         drawerFunctionality(toOpen = true)
                         deleteVault(name = TestingObjects.testVault.name)
                         drawerFunctionality(toOpen = false)
                     }
                 )
-                holdFor(
+                performTask(
                     taskName = "Sort, search and filter",
-                    estimatedTime = 13_500,
                     action = {
                         sortPasswordList()
                         search()
                         filterUsingVault()
                     }
                 )
-                holdFor(
+                performTask(
                     taskName = "Auto-lock and unlock app",
-                    estimatedTime = 17_000,
                     action = {
                         lockApp()
                         unlockApp(passwordToUse = MasterPasswords.OLD_PASSWORD)
                     }
                 )
-                holdFor(
+                performTask(
                     taskName = "turn on switches and logout",
-                    estimatedTime = 15_500,
                     action = {
                         turnOnSwitchesAndLogout()
                     }
                 )
-                holdFor(
+                performTask(
                     taskName = "select account and login",
-                    estimatedTime = 21_500,
                     action = {
                         selectGoogleAccount()
                         enterMasterKey(masterPassword = MasterPasswords.OLD_PASSWORD)
                     }
                 )
-                holdFor(
+                performTask(
                     taskName = "Change to new password",
-                    estimatedTime = 25_000,
                     action = { changeToNewPassword() }
                 )
-                holdFor(
+                performTask(
                     taskName = "Enter master key",
-                    estimatedTime = 12_000,
                     action = { enterMasterKey(masterPassword = MasterPasswords.NEW_PASSWORD) }
                 )
-                holdFor(
+                performTask(
                     taskName = "Reset user",
-                    estimatedTime = 21_000,
                     action = { resetUser() }
                 )
             }
         )
     }
 
-    private suspend fun holdFor(
+    private suspend fun performTask(
         taskName: String,
-        estimatedTime: Long,
         action: () -> Unit
     ) = withContext(Dispatchers.IO) {
         fun Long.millisPadded(): String {
             return "${this.toString().padStart(length = 6, padChar = ' ')} ms"
         }
 
-        val holder = async { delay(timeMillis = estimatedTime) }
         val startTime = System.currentTimeMillis()
         action()
+        delay(timeMillis = 1_000) // spacer between tasks
         val totalTime = System.currentTimeMillis() - startTime
-        val diffPercentage = ((estimatedTime - totalTime).toFloat() / estimatedTime.toFloat()) * 100
         ("Lap time for " +
                 taskName.padEnd(length = 40, padChar = '-') +
-                " | Actual = ${totalTime.millisPadded()}" +
-                " | Expected = ${estimatedTime.millisPadded()}" +
-                " | Difference = ${(estimatedTime - totalTime).millisPadded()}" +
-                (if (diffPercentage > 16.0) " | Check for high diff"
-                else if (diffPercentage < 8.0) " | check for low diff"
-                else "")).let { msg ->
-            if (totalTime < estimatedTime) {
-                Log.d(TAG, msg)
-            } else {
-                Log.e(TAG, msg)
-            }
+                " | Actual = ${totalTime.millisPadded()}").let { msg ->
+            Log.d(TAG, msg)
         }
-        holder.await()
     }
-}
-
-fun main() {
-    fun printRow(
-        title: String,
-        lapTimeEntries: List<Long>?,
-        padChar: Char = ' ',
-        vararg columns: String,
-    ) {
-        println(
-            "${title.padEnd(length = 40, padChar = padChar)} | " +
-                    columns.joinToString(
-                        separator = " | ",
-                        transform = { it.padStart(length = 9, padChar = padChar) },
-                    ) +
-                    " || " +
-                    lapTimeEntries.let { lt ->
-                        lt?.joinToString(
-                            separator = ", ",
-                            transform = { it.toString().padStart(length = 5, padChar = ' ') }
-                        ) ?: "Timeline"
-                    }
-        )
-    }
-
-    printRow(
-        title = "Lap Time",
-        lapTimeEntries = null,
-        padChar = '-',
-        columns = arrayOf("Average", "Lowest", "Highest", "Diff")
-    )
-
-    /** dark_blue_green | dark_monochrome | light_blue_green | light_yellow_pink */
-    val timeline = """
-launch app and login to home             | 23585 ms | 23110 ms | 23081 ms | 23408 ms 
-Create vault                             | 12606 ms | 11977 ms | 11964 ms | 12312 ms 
-Update vault                             | 12187 ms | 12551 ms | 13581 ms | 11935 ms 
-Create password                          | 23318 ms | 23620 ms | 22706 ms | 25090 ms 
-Update password                          | 16525 ms | 16838 ms | 15852 ms | 17192 ms 
-View and delete password                 | 19508 ms | 18796 ms | 18947 ms | 19276 ms 
-Delete vault                             | 11047 ms | 11398 ms | 10406 ms | 11706 ms 
-Sort, search and filter                  | 10905 ms | 11223 ms | 10279 ms | 10975 ms 
-Auto-lock and unlock app                 | 15276 ms | 15730 ms | 14648 ms | 15002 ms 
-turn on switches and logout              | 12347 ms | 12666 ms | 12741 ms | 12069 ms 
-select account and login                 | 18942 ms | 19470 ms | 19475 ms | 19735 ms 
-Change to new password                   | 22956 ms | 22330 ms | 22395 ms | 22778 ms 
-Enter master key                         | 10534 ms |  9882 ms | 10038 ms | 10375 ms 
-Reset user                               | 15688 ms | 17988 ms | 16174 ms | 16417 ms 
-"""
-    timeline.trimIndent()
-        .split('\n')
-        .forEach { entry ->
-            val splitStr = entry.split('|').map { it.trim() }
-            val timeValues = splitStr.drop(1).map { it.dropLast(n = 3).toLong() }.sorted()
-
-            val average = timeValues.let { tv ->
-                var total = 0L
-                tv.forEach { total += it }
-                return@let (total / tv.size)
-            }
-
-            fun Long.millisTransformed(): String {
-                return this.toString().padStart(length = 5, padChar = ' ')
-            }
-
-            val lowest = timeValues.first()
-            val highest = timeValues.last()
-            printRow(
-                title = splitStr.first().trim(),
-                lapTimeEntries = timeValues,
-                columns = arrayOf(
-                    average.millisTransformed(),
-                    lowest.millisTransformed(),
-                    highest.millisTransformed(),
-                    (highest - lowest).millisTransformed()
-                )
-            )
-        }
 }
