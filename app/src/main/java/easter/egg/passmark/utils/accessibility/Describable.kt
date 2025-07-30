@@ -2,7 +2,9 @@ package easter.egg.passmark.utils.accessibility
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
 
 interface Describable {
@@ -13,6 +15,10 @@ interface Describable {
             return this
                 .semantics { this.contentDescription = describable.desc }
                 .testTag(tag = describable.desc)
+        }
+
+        fun Modifier.hideFromAccessibility(): Modifier {
+            return this.clearAndSetSemantics { hideFromAccessibility() }
         }
     }
 }

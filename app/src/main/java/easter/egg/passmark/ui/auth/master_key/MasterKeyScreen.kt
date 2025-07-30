@@ -1,5 +1,6 @@
 package easter.egg.passmark.ui.auth.master_key
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +43,7 @@ import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.auth.AuthViewModel
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.hideFromAccessibility
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.accessibility.auth.MasterKeyDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -122,7 +124,12 @@ object MasterKeyScreen {
                     enabled = !isLoading,
                     value = viewModel.masterPasswordText.collectAsState().value,
                     onValueChange = viewModel::updateMasterPasswordText,
-                    label = { Text(text = "Master Password") },
+                    label = {
+                        Text(
+                            modifier = Modifier.hideFromAccessibility(),
+                            text = "Master Password"
+                        )
+                    },
                     placeholder = { Text(text = "Secure Password") },
                     isError = (viewModel.showError.collectAsState().value && (passwordTextState != PasswordTextState.OK_LENGTH)),
                     supportingText = { Text(text = passwordTextState.getMessage()) },
@@ -185,7 +192,9 @@ object MasterKeyScreen {
                     contentAlignment = Alignment.Center,
                     content = {
                         Text(
-                            modifier = Modifier.alpha(alpha = if (isLoading) 0f else 1f),
+                            modifier = Modifier
+                                .alpha(alpha = if (isLoading) 0f else 1f)
+                                .hideFromAccessibility(),
                             color = MaterialTheme.colorScheme.onPrimary,
                             text = if (isNewUser) "Create" else "Confirm",
                             fontFamily = PassMarkFonts.font,

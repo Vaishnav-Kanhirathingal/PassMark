@@ -47,6 +47,7 @@ import easter.egg.passmark.R
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.hideFromAccessibility
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.accessibility.auth.LoginDescribable
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -216,6 +217,7 @@ object LoginScreen {
                             contentDescription = null
                         )
                         Text(
+                            modifier = Modifier.hideFromAccessibility(),
                             text = "Google",
                             fontFamily = PassMarkFonts.font,
                             fontSize = PassMarkFonts.Body.medium,
