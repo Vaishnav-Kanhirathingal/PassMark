@@ -87,6 +87,7 @@ import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.shared_components.ConfirmationDialog
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.hideFromAccessibility
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.accessibility.main.PasswordViewDescribable
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -207,7 +208,8 @@ object PasswordViewScreen {
                         .size(size = barSize)
                         .clip(shape = CircleShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
-                        .clickable(onClick = navigateUp),
+                        .clickable(onClick = navigateUp)
+                        .setDescription(describable = PasswordViewDescribable.BACK_BUTTON),
                     contentAlignment = Alignment.Center,
                     content = {
                         Icon(
@@ -250,7 +252,8 @@ object PasswordViewScreen {
                         .padding(
                             start = 20.dp,
                             end = 24.dp
-                        ),
+                        )
+                        .setDescription(describable = PasswordViewDescribable.EDIT_BUTTON),
                     horizontalArrangement = Arrangement.spacedBy(
                         space = 8.dp,
                         alignment = Alignment.CenterHorizontally
@@ -263,6 +266,7 @@ object PasswordViewScreen {
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                         Text(
+                            modifier = Modifier.hideFromAccessibility(),
                             text = "Edit",
                             fontFamily = PassMarkFonts.font,
                             fontSize = PassMarkFonts.Title.medium,
@@ -609,6 +613,7 @@ object PasswordViewScreen {
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                val vaultName = associatedVault?.name ?: Vault.VAULT_NAME_FOR_ALL_ITEMS
                 Row(
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(size = 24.dp))
@@ -624,6 +629,9 @@ object PasswordViewScreen {
                                 this.top.linkTo(anchor = title.bottom)
                                 width = Dimension.wrapContent
                             }
+                        )
+                        .setDescription(
+                            describable = PasswordViewDescribable.getVaultDescribable(vaultName = vaultName)
                         ),
                     horizontalArrangement = Arrangement.spacedBy(
                         space = 4.dp,
@@ -640,10 +648,11 @@ object PasswordViewScreen {
                         Text(
                             modifier = Modifier
                                 .padding(end = 4.dp)
-                                .widthIn(max = 120.dp),
+                                .widthIn(max = 120.dp)
+                                .hideFromAccessibility(),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            text = associatedVault?.name ?: Vault.VAULT_NAME_FOR_ALL_ITEMS,
+                            text = vaultName,
                             fontFamily = PassMarkFonts.font,
                             fontSize = PassMarkFonts.Label.small,
                             lineHeight = PassMarkFonts.Label.small,
@@ -739,7 +748,9 @@ object PasswordViewScreen {
                     verticalArrangement = Arrangement.Center,
                     content = {
                         Text(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .hideFromAccessibility(),
                             textAlign = TextAlign.Start,
                             color = MaterialTheme.colorScheme.onSurface,
                             fontFamily = PassMarkFonts.font,
