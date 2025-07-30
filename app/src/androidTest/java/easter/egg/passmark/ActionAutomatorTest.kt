@@ -182,7 +182,7 @@ class ActionAutomatorTest {
     }
 
     private fun enterMasterKey(masterPassword: String) {
-        findObject(describable = MasterKeyDescribable.VISIBILITY_ON).click()
+        findObject(describable = MasterKeyDescribable.VISIBILITY).click()
         CustomDelay.MICRO_ANIMATION.hold()
         type(
             describable = MasterKeyDescribable.MASTER_KEY_TEXT_FIELD,

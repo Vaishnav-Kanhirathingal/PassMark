@@ -135,11 +135,7 @@ object MasterKeyScreen {
                     trailingIcon = {
                         val visible = viewModel.visible.collectAsState().value
                         IconButton(
-                            modifier = Modifier.setDescription(
-                                describable =
-                                    if (visible) MasterKeyDescribable.VISIBILITY_OFF
-                                    else MasterKeyDescribable.VISIBILITY_ON
-                            ),
+                            modifier = Modifier.setDescription(describable = MasterKeyDescribable.VISIBILITY),
                             onClick = viewModel::switchVisibility,
                             content = {
                                 Icon(
@@ -210,6 +206,7 @@ object MasterKeyScreen {
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @PreviewRestricted
 @Composable
 @MobilePreview
