@@ -59,6 +59,7 @@ import easter.egg.passmark.ui.auth.master_key.PasswordTextState
 import easter.egg.passmark.ui.main.settings.SettingsScreen
 import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.hideFromAccessibility
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.accessibility.main.ChangePasswordDescribable
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -159,7 +160,9 @@ object ChangeMasterPasswordScreen {
                 )
                 CustomSpacer()
                 Text(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .hideFromAccessibility(),
                     text = "Change Password?",
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Headline.medium,
@@ -341,10 +344,12 @@ object ChangeMasterPasswordScreen {
                                 contentAlignment = Alignment.Center,
                                 content = {
                                     Text(
-                                        modifier = Modifier.padding(
-                                            horizontal = 16.dp,
-                                            vertical = 4.dp
-                                        ),
+                                        modifier = Modifier
+                                            .padding(
+                                                horizontal = 16.dp,
+                                                vertical = 4.dp
+                                            )
+                                            .hideFromAccessibility(),
                                         text = text,
                                         fontFamily = PassMarkFonts.font,
                                         fontSize = PassMarkFonts.Title.medium,
@@ -409,7 +414,12 @@ object ChangeMasterPasswordScreen {
                         autoCorrectEnabled = false,
                         keyboardType = PassMarkConfig.getKeyboardTypeForPasswords()
                     ),
-                    label = { Text(text = label) },
+                    label = {
+                        Text(
+                            modifier = Modifier.hideFromAccessibility(),
+                            text = label
+                        )
+                    },
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
