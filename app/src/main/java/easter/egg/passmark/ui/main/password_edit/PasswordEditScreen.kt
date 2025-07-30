@@ -79,6 +79,7 @@ import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.accessibility.Describable
+import easter.egg.passmark.utils.accessibility.Describable.Companion.hideFromAccessibility
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.accessibility.main.PasswordEditDescribable
 import easter.egg.passmark.utils.annotation.MobilePreview
@@ -313,7 +314,9 @@ object PasswordEditScreen {
                     contentAlignment = Alignment.Center,
                     content = {
                         Text(
-                            modifier = Modifier.alpha(alpha = if (isLoading) 0f else 1f),
+                            modifier = Modifier
+                                .alpha(alpha = if (isLoading) 0f else 1f)
+                                .hideFromAccessibility(),
                             text = "Save",
                             color = MaterialTheme.colorScheme.onPrimary,
                             fontSize = PassMarkFonts.Body.medium,
@@ -390,19 +393,21 @@ object PasswordEditScreen {
                         chainStyle = ChainStyle.Packed
                     )
                     Text(
-                        modifier = Modifier.constrainAs(
-                            ref = name,
-                            constrainBlock = {
-                                this.top.linkTo(parent.top)
-                                this.start.linkTo(
-                                    anchor = vaultIcon.end,
-                                    margin = 16.dp
-                                )
-                                this.bottom.linkTo(subtitle.top)
-                                this.end.linkTo(parent.end)
-                                this.width = Dimension.fillToConstraints
-                            }
-                        ),
+                        modifier = Modifier
+                            .constrainAs(
+                                ref = name,
+                                constrainBlock = {
+                                    this.top.linkTo(parent.top)
+                                    this.start.linkTo(
+                                        anchor = vaultIcon.end,
+                                        margin = 16.dp
+                                    )
+                                    this.bottom.linkTo(subtitle.top)
+                                    this.end.linkTo(parent.end)
+                                    this.width = Dimension.fillToConstraints
+                                }
+                            )
+                            .hideFromAccessibility(),
                         text = vault?.name ?: Vault.VAULT_NAME_FOR_ALL_ITEMS,
                         maxLines = 1,
                         fontFamily = PassMarkFonts.font,
@@ -442,7 +447,6 @@ object PasswordEditScreen {
             content = {
                 Text(
                     modifier = Modifier
-                        .setDescription(describable = PasswordEditDescribable.SELECT_VAULT_DIALOG_CHOOSE_VAULT_TITLE)
                         .fillMaxWidth(),
                     text = "Choose Vault",
                     maxLines = 2,
@@ -455,7 +459,8 @@ object PasswordEditScreen {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 16.dp)
-                        .clip(shape = RoundedCornerShape(size = 16.dp)),
+                        .clip(shape = RoundedCornerShape(size = 16.dp))
+                        .setDescription(describable = PasswordEditDescribable.VAULT_LIST),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top,
                     content = {
@@ -786,8 +791,18 @@ object PasswordEditScreen {
                         },
                     ),
                     enabled = isEnabled,
-                    label = { Text(text = label) },
-                    placeholder = { Text(text = placeHolder) },
+                    label = {
+                        Text(
+                            modifier = Modifier.hideFromAccessibility(),
+                            text = label
+                        )
+                    },
+                    placeholder = {
+                        Text(
+                            modifier = Modifier.hideFromAccessibility(),
+                            text = placeHolder
+                        )
+                    },
                     leadingIcon = leadingIcon?.let {
                         {
                             Icon(

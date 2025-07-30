@@ -3,9 +3,9 @@ package easter.egg.passmark.utils.accessibility.main
 import easter.egg.passmark.utils.accessibility.Describable
 
 enum class PasswordEditDescribable(override val desc: String) : Describable {
-    DISMISS(desc = "Cancel"),
-    SELECT_VAULT_BUTTON(desc = "Select Vault"),
-    SELECT_VAULT_DIALOG_CHOOSE_VAULT_TITLE(desc = "Select Vault"),
+    DISMISS(desc = "Cancel password creation"),
+    SELECT_VAULT_BUTTON(desc = "select vault to store password in"),
+    VAULT_LIST(desc = "vault list"),
     SAVE_BUTTON(desc = "Save Password"),
     TITLE_TEXT_FIELD(desc = "Title"),
     EMAIL_TEXT_FIELD(desc = "Email"),

@@ -70,6 +70,7 @@ import easter.egg.passmark.ui.main.home.VaultDialogResult
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.accessibility.Describable
+import easter.egg.passmark.utils.accessibility.Describable.Companion.hideFromAccessibility
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.accessibility.main.HomeDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -123,6 +124,7 @@ object HomeDrawer {
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
+                                    modifier = Modifier.hideFromAccessibility(),
                                     fontSize = PassMarkFonts.Headline.medium,
                                     fontWeight = FontWeight.SemiBold,
                                     fontFamily = PassMarkFonts.font,
@@ -135,7 +137,8 @@ object HomeDrawer {
                             Text(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                                    .hideFromAccessibility(),
                                 fontFamily = PassMarkFonts.font,
                                 fontSize = PassMarkFonts.Title.medium,
                                 fontWeight = FontWeight.SemiBold,
@@ -180,7 +183,9 @@ object HomeDrawer {
                                         contentDescription = null
                                     )
                                     Text(
-                                        modifier = Modifier.weight(1f),
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .hideFromAccessibility(),
                                         fontSize = PassMarkFonts.Body.medium,
                                         fontFamily = PassMarkFonts.font,
                                         fontWeight = FontWeight.SemiBold,
@@ -226,7 +231,7 @@ object HomeDrawer {
         selectVault: (vaultId: Int?) -> Unit
     ) {
         Column(
-            modifier = modifier,
+            modifier = modifier.setDescription(describable = HomeDescribable.Drawer.VAULT_LIST),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
                 space = 8.dp,
@@ -401,7 +406,8 @@ object HomeDrawer {
                                 this.end.linkTo(parent.end)
                                 width = Dimension.fillToConstraints
                             }
-                        ),
+                        )
+                        .hideFromAccessibility(),
                     fontSize = PassMarkFonts.Title.large,
                     lineHeight = PassMarkFonts.Title.large,
                     fontWeight = FontWeight.SemiBold,

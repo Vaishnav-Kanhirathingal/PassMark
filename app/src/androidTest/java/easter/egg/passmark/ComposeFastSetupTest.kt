@@ -70,7 +70,7 @@ class ComposeFastSetupTest {
             onNodeWithTag(describable = PasswordEditDescribable.SELECT_VAULT_BUTTON).performClick()
 
             composeRule.waitUntilAtLeastOneExists(
-                matcher = hasTestTag(testTag = PasswordEditDescribable.SELECT_VAULT_DIALOG_CHOOSE_VAULT_TITLE.desc),
+                matcher = hasTestTag(testTag = PasswordEditDescribable.VAULT_LIST.desc),
                 timeoutMillis = 5_000
             )
             composeRule.onNodeWithText(text = it).performClick()
