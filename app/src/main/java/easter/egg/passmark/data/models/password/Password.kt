@@ -57,7 +57,7 @@ enum class PasswordSortingOptions {
     NAME, USAGE, LAST_USED, CREATED;
 
     fun getMenuDisplayText(): String = when (this) {
-        NAME -> "Name (asc)"
+        NAME -> "Name"
         USAGE -> "Usage"
         LAST_USED -> "Last Used"
         CREATED -> "Created time"

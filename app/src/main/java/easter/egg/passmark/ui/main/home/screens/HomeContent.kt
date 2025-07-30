@@ -84,6 +84,7 @@ import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.main.home.PasswordOptionChoices
 import easter.egg.passmark.ui.main.home.SecurityPromptState
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.hideFromAccessibility
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.accessibility.main.HomeDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -355,7 +356,8 @@ object HomeContent {
                                 this.end.linkTo(optionButton.start, margin = horizontalPadding)
                                 width = Dimension.fillToConstraints
                             }
-                        ),
+                        )
+                        .hideFromAccessibility(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     text = password.data.title,

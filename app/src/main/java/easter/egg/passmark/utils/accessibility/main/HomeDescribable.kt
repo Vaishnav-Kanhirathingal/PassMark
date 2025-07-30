@@ -5,7 +5,7 @@ import easter.egg.passmark.data.models.password.PasswordSortingOptions
 import easter.egg.passmark.utils.accessibility.Describable
 
 enum class HomeDescribable(override val desc: String) : Describable {
-    PASSWORD_LIST(desc = "password list"),
+    PASSWORD_LIST(desc = "passwords"),
     CREATE_NEW_PASSWORD(desc = "create a new password");
 
     companion object {
@@ -24,18 +24,18 @@ enum class HomeDescribable(override val desc: String) : Describable {
 
     enum class TopBar(override val desc: String) : Describable {
         SORTING(desc = "Sorting options"),
-        SEARCH_BUTTON(desc = "Search"),
+        SEARCH_BUTTON(desc = "start your search"),
         SEARCH_TEXT_FIELD(desc = "Search box"),
         BACK_BUTTON(desc = "Back"),
         OPEN_DRAWER_BUTTON(desc = "Open drawer");
 
         enum class Sorting(override val desc: String) : Describable {
-            INCREASING_ORDER(desc = "Increasing"),
-            DECREASING_ORDER(desc = "Decreasing"),
-            NAME(desc = "Sort by name"),
-            USAGE(desc = "Sort by usage"),
-            LAST_USED(desc = "Sort by last used"),
-            CREATED(desc = "Sort by time");
+            INCREASING_ORDER(desc = "sort in increasing order"),
+            DECREASING_ORDER(desc = "sort in decreasing order"),
+            NAME(desc = "sort by name"),
+            USAGE(desc = "sort by usage"),
+            LAST_USED(desc = "sort by last used"),
+            CREATED(desc = "sort by time");
 
             companion object {
                 fun getSortOptionDescribable(passwordSortingOptions: PasswordSortingOptions): Sorting {
