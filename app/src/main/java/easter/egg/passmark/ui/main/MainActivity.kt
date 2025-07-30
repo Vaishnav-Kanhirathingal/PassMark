@@ -62,6 +62,7 @@ import easter.egg.passmark.ui.main.settings.SettingsScreen
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.ui.theme.PassMarkTheme
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.hideFromAccessibility
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.accessibility.main.AutoLockDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -186,7 +187,12 @@ class MainActivity : FragmentActivity() {
                         .padding(horizontal = 16.dp),
                     value = text,
                     onValueChange = onTextChanged,
-                    label = { Text(text = "Enter your Password") },
+                    label = {
+                        Text(
+                            modifier = Modifier.hideFromAccessibility(),
+                            text = "Enter your Password"
+                        )
+                    },
                     placeholder = { Text(text = "Password123") },
                     leadingIcon = {
                         Icon(
@@ -212,10 +218,14 @@ class MainActivity : FragmentActivity() {
                         if (passwordVisible.value) VisualTransformation.None
                         else PasswordVisualTransformation(),
                     supportingText = {
+                        val isPasswordIncorrect =
+                            (screenState as? ScreenState.Loaded)?.result == false
                         Text(
-                            text =
-                                if ((screenState as? ScreenState.Loaded)?.result == false) "Password is incorrect"
-                                else "Enter your password"
+                            modifier = Modifier
+                                .takeUnless { isPasswordIncorrect }
+                                ?.hideFromAccessibility()
+                                ?: Modifier,
+                            text = if (isPasswordIncorrect) "Password is incorrect" else "Enter your password"
                         )
                     },
                     isError = ((screenState as? ScreenState.Loaded)?.result == false),
