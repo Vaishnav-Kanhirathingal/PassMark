@@ -42,6 +42,7 @@ import easter.egg.passmark.ui.shared_components.ConfirmationDialog
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.ui.shared_components.StagedLoaderDialog
 import easter.egg.passmark.utils.ScreenState
+import easter.egg.passmark.utils.accessibility.Describable.Companion.hideFromAccessibility
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.accessibility.main.SettingsDescribable
 import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
@@ -112,7 +113,8 @@ object SettingsScreen {
                         .size(size = PassMarkDimensions.minTouchSize)
                         .clip(shape = CircleShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
-                        .clickable(onClick = navigateUp),
+                        .clickable(onClick = navigateUp)
+                        .setDescription(describable = SettingsDescribable.BACK_BUTTON),
                     contentAlignment = Alignment.Center,
                     content = {
                         Icon(
@@ -123,7 +125,9 @@ object SettingsScreen {
                     }
                 )
                 Text(
-                    modifier = Modifier.weight(weight = 1f),
+                    modifier = Modifier
+                        .weight(weight = 1f)
+                        .hideFromAccessibility(),
                     text = "Settings",
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Title.medium,
@@ -357,7 +361,8 @@ object SettingsScreen {
                         Text(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
-                                .alpha(alpha = if (isLoading) 0f else 1f),
+                                .alpha(alpha = if (isLoading) 0f else 1f)
+                                .hideFromAccessibility(),
                             text = buttonText,
                             fontFamily = PassMarkFonts.font,
                             fontSize = PassMarkFonts.Body.medium,

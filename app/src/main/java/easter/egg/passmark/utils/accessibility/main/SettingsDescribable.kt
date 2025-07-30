@@ -3,6 +3,7 @@ package easter.egg.passmark.utils.accessibility.main
 import easter.egg.passmark.utils.accessibility.Describable
 
 enum class SettingsDescribable(override val desc: String) : Describable {
+    BACK_BUTTON(desc = "exit settings screen"),
     LOCAL_STORAGE_SWITCH(desc = "Choose local storage by default"),
     FINGERPRINT_AUTHENTICATION_SWITCH(desc = "Require fingerprint authentication by default"),
     CHANGE_PASSWORD_BUTTON(desc = "Change password"),

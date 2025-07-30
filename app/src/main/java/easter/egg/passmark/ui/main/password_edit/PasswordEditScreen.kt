@@ -869,7 +869,9 @@ object PasswordEditScreen {
                     verticalAlignment = Alignment.CenterVertically,
                     content = {
                         Text(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier
+                                .weight(1f)
+                                .hideFromAccessibility(),
                             fontSize = PassMarkFonts.Body.medium,
                             lineHeight = PassMarkFonts.Body.medium,
                             fontFamily = PassMarkFonts.font,
