@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,13 +32,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
@@ -439,11 +440,21 @@ object HomeContent {
         ModalBottomSheet(
             onDismissRequest = dismissSheet,
             sheetState = sheetState,
+            dragHandle = {
+                Box(
+                    modifier = Modifier
+                        .width(width = PassMarkDimensions.minTouchSize)
+                        .padding(top = 16.dp)
+                        .height(height = 4.dp)
+                        .clip(CircleShape)
+                        .background(color = MaterialTheme.colorScheme.outline)
+                )
+            },
             content = {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .padding(all = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     content = {
@@ -517,7 +528,7 @@ object HomeContent {
                                     contentAlignment = Alignment.Center,
                                     content = {
                                         Icon(
-                                            imageVector = Icons.Default.ArrowDropDown,
+                                            imageVector = Icons.Default.KeyboardDoubleArrowDown,
                                             contentDescription = null,
                                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -705,10 +716,7 @@ object HomeContent {
                         LazyVerticalGrid(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(
-                                    bottom = 16.dp,
-                                    top = 8.dp
-                                ),
+                                .padding(top = 8.dp),
                             columns = GridCells.Fixed(count = 2),
                             horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
                             verticalArrangement = Arrangement.spacedBy(space = 8.dp),
@@ -781,7 +789,7 @@ object HomeContent {
                         .border(
                             width = 1.dp,
                             color =
-                                if (useErrorColor) MaterialTheme.colorScheme.surfaceContainerHighest
+                                if (useErrorColor) MaterialTheme.colorScheme.errorContainer
                                 else MaterialTheme.colorScheme.surfaceContainerHighest,
                             shape = RoundedCornerShape(size = 16.dp)
                         )
