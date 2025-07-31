@@ -31,6 +31,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
@@ -464,38 +465,70 @@ object HomeContent {
                             return null
                         }
 
-                        Text(
-                            modifier = Modifier,
-                            maxLines = 1,
-                            fontFamily = PassMarkFonts.font,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = PassMarkFonts.Headline.medium,
-                            lineHeight = PassMarkFonts.Display.medium,
-                            text = passwordData.data.title,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        passwordData.data.getSubTitle()?.let {
-                            Text(
-                                modifier = Modifier,
-                                maxLines = 1,
-                                fontFamily = PassMarkFonts.font,
-                                fontSize = PassMarkFonts.Body.medium,
-                                lineHeight = PassMarkFonts.Body.medium,
-                                fontWeight = FontWeight.Normal,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                text = it,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                        Spacer(
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(height = 8.dp)
+                                .padding(bottom = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(space = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = {
+                                Column(
+                                    modifier = Modifier.weight(weight = 1f),
+                                    horizontalAlignment = Alignment.Start,
+                                    verticalArrangement = Arrangement.Center,
+                                    content = {
+                                        Text(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            maxLines = 1,
+                                            fontFamily = PassMarkFonts.font,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = PassMarkFonts.Headline.medium,
+                                            lineHeight = PassMarkFonts.Headline.medium,
+                                            text = passwordData.data.title,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        passwordData.data.getSubTitle()?.let {
+                                            Text(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                maxLines = 1,
+                                                fontFamily = PassMarkFonts.font,
+                                                fontSize = PassMarkFonts.Body.medium,
+                                                lineHeight = PassMarkFonts.Body.medium,
+                                                fontWeight = FontWeight.Normal,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                text = it,
+                                            )
+                                        }
+                                    }
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .setSizeLimitation()
+                                        .clip(shape = CircleShape)
+                                        .background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
+                                        .border(
+                                            width = 1.dp,
+                                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                            shape = CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center,
+                                    content = {
+                                        Icon(
+                                            imageVector = Icons.Default.ArrowDropDown,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                )
+                            }
                         )
+
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
+                            horizontalArrangement = Arrangement.spacedBy(
+                                space = 8.dp,
+                                alignment = Alignment.CenterHorizontally
+                            ),
                             verticalAlignment = Alignment.CenterVertically,
                             content = {
                                 val commonModifier = Modifier.weight(weight = 1f)
@@ -536,9 +569,7 @@ object HomeContent {
                                         else Icons.Default.ContentCopy,
                                 )
                                 SheetButton(
-                                    modifier = commonModifier.setDescription(
-                                        describable = HomeDescribable.PasswordOptionsBottomSheet.EDIT_BUTTON
-                                    ),
+                                    modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.EDIT_BUTTON),
                                     mainIcon = Icons.Default.Edit,
                                     text = "Edit Password",
                                     onClick = {
@@ -585,7 +616,7 @@ object HomeContent {
                             }
                         )
                         @Composable
-                        fun TextButton(
+                        fun GridButton(
                             modifier: Modifier,
                             text: String,
                             onClick: () -> Unit
@@ -623,11 +654,6 @@ object HomeContent {
                                 }
                             )
                         }
-                        Spacer(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(height = 8.dp)
-                        )
                         LazyVerticalGrid(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -643,7 +669,7 @@ object HomeContent {
                                 val commonModifier = Modifier.weight(weight = 1f)
                                 passwordData.data.website?.let { website ->
                                     item {
-                                        TextButton(
+                                        GridButton(
                                             modifier = commonModifier,
                                             text = "Website",
                                             onClick = { copy(str = website) },
@@ -653,7 +679,7 @@ object HomeContent {
                                 }
                                 passwordData.data.email?.let { email ->
                                     item {
-                                        TextButton(
+                                        GridButton(
                                             modifier = commonModifier,
                                             text = "Email",
                                             onClick = { copy(str = email) },
@@ -663,7 +689,7 @@ object HomeContent {
                                 }
                                 passwordData.data.userName?.let { userName ->
                                     item {
-                                        TextButton(
+                                        GridButton(
                                             modifier = commonModifier,
                                             text = "Username",
                                             onClick = { copy(str = userName) },
@@ -690,13 +716,13 @@ object HomeContent {
     ) {
         Column(
             modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(space = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(space = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             content = {
                 ConstraintLayout(
                     modifier = Modifier
                         .setSizeLimitation()
-                        .widthIn(max = PassMarkDimensions.minTouchSize * 2)
+                        .widthIn(max = PassMarkDimensions.minTouchSize * 3)
                         .fillMaxWidth()
                         .aspectRatio(1f)
                         .clip(shape = RoundedCornerShape(size = 16.dp))
@@ -707,7 +733,7 @@ object HomeContent {
                         .border(
                             width = 1.dp,
                             color =
-                                if (useErrorColor) MaterialTheme.colorScheme.onErrorContainer
+                                if (useErrorColor) MaterialTheme.colorScheme.surfaceContainerHighest
                                 else MaterialTheme.colorScheme.surfaceContainerHighest,
                             shape = RoundedCornerShape(size = 16.dp)
                         )
@@ -770,7 +796,7 @@ object HomeContent {
                     overflow = TextOverflow.Ellipsis,
                     color =
                         if (useErrorColor) MaterialTheme.colorScheme.onErrorContainer
-                        else MaterialTheme.colorScheme.onSurface,
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
                 )
             }
@@ -856,22 +882,5 @@ private fun PasswordOptionDrawerPreview() {
         dismissSheet = {},
         toPasswordEditScreen = {},
         setPromptState = {}
-    )
-}
-
-@Preview(widthDp = 200, heightDp = 200, showBackground = true)
-@Composable
-private fun SheetButtonPreview() {
-    Box(
-        contentAlignment = Alignment.Center,
-        content = {
-            HomeContent.SheetButton(
-                modifier = Modifier,
-                mainIcon = Icons.Default.Email,
-                text = "Copy email",
-                actionIcon = Icons.Default.ContentCopy,
-                onClick = {}
-            )
-        }
     )
 }
