@@ -502,7 +502,9 @@ object HomeContent {
                                         )
                                         passwordData.data.getSubTitle()?.let {
                                             Text(
-                                                modifier = Modifier.fillMaxWidth(),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .hideFromAccessibility(),
                                                 maxLines = 1,
                                                 fontFamily = PassMarkFonts.font,
                                                 fontSize = PassMarkFonts.Body.medium,
@@ -524,7 +526,8 @@ object HomeContent {
                                             color = MaterialTheme.colorScheme.surfaceContainerHighest,
                                             shape = CircleShape
                                         )
-                                        .clickable(onClick = dismissSheet),
+                                        .clickable(onClick = dismissSheet)
+                                        .setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.DISMISS),
                                     contentAlignment = Alignment.Center,
                                     content = {
                                         Icon(
@@ -547,7 +550,7 @@ object HomeContent {
                             content = {
                                 val commonModifier = Modifier.weight(weight = 1f)
                                 BigCardButton(
-                                    modifier = commonModifier,
+                                    modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.COPY_PASSWORD),
                                     mainIcon = Icons.Default.Password,
                                     text = "Copy password",
                                     onClick = {
@@ -583,7 +586,7 @@ object HomeContent {
                                         else Icons.Default.ContentCopy,
                                 )
                                 BigCardButton(
-                                    modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.EDIT_BUTTON),
+                                    modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.EDIT_PASSWORD),
                                     mainIcon = Icons.Default.Edit,
                                     text = "Edit Password",
                                     onClick = {
@@ -620,7 +623,7 @@ object HomeContent {
                                     actionIcon = Icons.AutoMirrored.Filled.ArrowRight
                                 )
                                 BigCardButton(
-                                    modifier = commonModifier,
+                                    modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.DELETE_PASSWORD),
                                     mainIcon = Icons.Default.Delete,
                                     text = "Delete",
                                     actionIcon = Icons.Default.Clear,
@@ -726,7 +729,7 @@ object HomeContent {
                                 passwordData.data.website?.let { website ->
                                     item {
                                         GridButton(
-                                            modifier = commonModifier,
+                                            modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.COPY_WEBSITE),
                                             text = "Website",
                                             onClick = { copy(str = website) },
                                             contentIcon = Icons.Default.Web,
@@ -736,7 +739,7 @@ object HomeContent {
                                 passwordData.data.email?.let { email ->
                                     item {
                                         GridButton(
-                                            modifier = commonModifier,
+                                            modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.COPY_EMAIL),
                                             text = "Email",
                                             onClick = { copy(str = email) },
                                             contentIcon = Icons.Default.Email
@@ -746,7 +749,7 @@ object HomeContent {
                                 passwordData.data.userName?.let { userName ->
                                     item {
                                         GridButton(
-                                            modifier = commonModifier,
+                                            modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.COPY_USERNAME),
                                             text = "Username",
                                             onClick = { copy(str = userName) },
                                             contentIcon = Icons.Default.Person,

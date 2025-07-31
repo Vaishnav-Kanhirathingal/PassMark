@@ -51,7 +51,13 @@ enum class HomeDescribable(override val desc: String) : Describable {
     }
 
     enum class PasswordOptionsBottomSheet(override val desc: String) : Describable {
-        EDIT_BUTTON(desc = "Edit password"), // TODO: add others
+        DISMISS(desc = "dismiss password options"),
+        COPY_PASSWORD(desc = "copy password"),
+        EDIT_PASSWORD(desc = "edit password"), // TODO: add others
+        DELETE_PASSWORD(desc = "delete password"),
+        COPY_WEBSITE(desc = "copy website"),
+        COPY_EMAIL(desc = "copy email"),
+        COPY_USERNAME(desc = "copy username")
     }
 
     enum class Drawer(override val desc: String) : Describable {

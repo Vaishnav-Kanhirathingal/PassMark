@@ -309,7 +309,7 @@ class ActionAutomatorTest {
         CustomDelay.SMALL_ANIMATION.hold()
 
         device.swipe(1080, 2700, 240, 2700, 50)
-        findObject(describable = HomeDescribable.PasswordOptionsBottomSheet.EDIT_BUTTON).click()
+        findObject(describable = HomeDescribable.PasswordOptionsBottomSheet.EDIT_PASSWORD).click()
         CustomDelay.FINGERPRINT.hold()
 
         findObject(describable = PasswordEditDescribable.PASSWORD_TEXT_FIELD).click()
