@@ -9,23 +9,24 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -36,8 +37,6 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Password
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Web
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -437,42 +436,12 @@ object HomeContent {
             sheetState = sheetState,
             content = {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     content = {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    end = 16.dp,
-                                    start = 16.dp,
-                                    bottom = 8.dp
-                                ),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            content = {
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    fontFamily = PassMarkFonts.font,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = PassMarkFonts.Headline.medium,
-                                    text = passwordData.data.title,
-                                )
-                                passwordData.data.getSubTitle()?.let {
-                                    Text(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        maxLines = 1,
-                                        fontFamily = PassMarkFonts.font,
-                                        fontSize = PassMarkFonts.Label.medium,
-                                        fontWeight = FontWeight.Normal,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        text = it
-                                    )
-                                }
-                            }
-                        )
 
                         val clipboardManager = LocalClipboardManager.current
                         val context = LocalContext.current
@@ -483,50 +452,49 @@ object HomeContent {
                                 str = str
                             )
                         }
+
+                        fun Context.findFragmentActivity(): FragmentActivity? {
+                            var ctx = this
+                            while (ctx is ContextWrapper) {
+                                if (ctx is FragmentActivity) return ctx
+                                ctx = ctx.baseContext
+                            }
+                            return null
+                        }
+
+                        Text(
+                            modifier = Modifier,
+                            maxLines = 1,
+                            fontFamily = PassMarkFonts.font,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = PassMarkFonts.Headline.medium,
+                            lineHeight = PassMarkFonts.Display.medium,
+                            text = passwordData.data.title,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        passwordData.data.getSubTitle()?.let {
+                            Text(
+                                modifier = Modifier,
+                                maxLines = 1,
+                                fontFamily = PassMarkFonts.font,
+                                fontSize = PassMarkFonts.Body.medium,
+                                lineHeight = PassMarkFonts.Body.medium,
+                                fontWeight = FontWeight.Normal,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                text = it,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                        Spacer(modifier = Modifier.fillMaxWidth().height(height = 8.dp))
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .horizontalScroll(state = rememberScrollState())
-                                .padding(
-                                    top = 8.dp,
-                                    bottom = 16.dp
-                                ),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically,
                             content = {
-                                passwordData.data.website?.let { website ->
-                                    SheetButton(
-                                        mainIcon = Icons.Default.Web,
-                                        text = "Website",
-                                        onClick = { copy(str = website) },
-                                        actionIcon = Icons.Default.ContentCopy,
-                                    )
-                                }
-                                passwordData.data.email?.let { email ->
-                                    SheetButton(
-                                        mainIcon = Icons.Default.Email,
-                                        text = "Copy email",
-                                        onClick = { copy(str = email) },
-                                        actionIcon = Icons.Default.ContentCopy
-                                    )
-                                }
-                                passwordData.data.userName?.let { userName ->
-                                    SheetButton(
-                                        mainIcon = Icons.Default.Person,
-                                        text = "Copy user name",
-                                        onClick = { copy(str = userName) },
-                                        actionIcon = Icons.Default.ContentCopy,
-                                    )
-                                }
-                                fun Context.findFragmentActivity(): FragmentActivity? {
-                                    var ctx = this
-                                    while (ctx is ContextWrapper) {
-                                        if (ctx is FragmentActivity) return ctx
-                                        ctx = ctx.baseContext
-                                    }
-                                    return null
-                                }
+                                val commonModifier = Modifier.weight(weight = 1f)
                                 SheetButton(
+                                    modifier = commonModifier,
                                     mainIcon = Icons.Default.Password,
                                     text = "Copy password",
                                     onClick = {
@@ -562,7 +530,7 @@ object HomeContent {
                                         else Icons.Default.ContentCopy,
                                 )
                                 SheetButton(
-                                    modifier = Modifier.setDescription(
+                                    modifier = commonModifier.setDescription(
                                         describable = HomeDescribable.PasswordOptionsBottomSheet.EDIT_BUTTON
                                     ),
                                     mainIcon = Icons.Default.Edit,
@@ -602,6 +570,91 @@ object HomeContent {
                                 )
                             }
                         )
+                        @Composable
+                        fun TextButton(
+                            modifier: Modifier,
+                            text: String,
+                            onClick: () -> Unit
+                        ) {
+                            Row(
+                                modifier = modifier
+                                    .setSizeLimitation()
+                                    .clip(shape = RoundedCornerShape(size = 16.dp))
+                                    .background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
+                                    .border(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                        shape = RoundedCornerShape(size = 16.dp)
+                                    )
+                                    .clickable(onClick = onClick)
+                                    .padding(horizontal = 16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(
+                                    space = 4.dp,
+                                    alignment = Alignment.Start
+                                ),
+                                verticalAlignment = Alignment.CenterVertically,
+                                content = {
+                                    Icon(
+                                        imageVector = Icons.Default.ContentCopy,
+                                        contentDescription = null
+                                    )
+                                    Text(
+                                        modifier = Modifier.padding(all = 8.dp),
+                                        fontFamily = PassMarkFonts.font,
+                                        text = text,
+                                        fontSize = PassMarkFonts.Body.medium,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            )
+                        }
+                        Spacer(modifier = Modifier.fillMaxWidth().height(height = 8.dp))
+                        LazyVerticalGrid(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    bottom = 16.dp,
+                                    top = 8.dp
+                                ),
+                            columns = GridCells.Fixed(count = 2),
+                            horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(space = 8.dp),
+                            userScrollEnabled = false,
+                            content = {
+                                val commonModifier = Modifier.weight(weight = 1f)
+                                passwordData.data.website?.let { website ->
+                                    item {
+                                        TextButton(
+                                            modifier = commonModifier,
+                                            text = "Website",
+                                            onClick = { copy(str = website) },
+//                                        actionIcon = Icons.Default.ContentCopy,
+                                        )
+                                    }
+                                }
+                                passwordData.data.email?.let { email ->
+                                    item {
+                                        TextButton(
+                                            modifier = commonModifier,
+                                            text = "Email",
+                                            onClick = { copy(str = email) },
+//                                        actionIcon = Icons.Default.ContentCopy
+                                        )
+                                    }
+                                }
+                                passwordData.data.userName?.let { userName ->
+                                    item {
+                                        TextButton(
+                                            modifier = commonModifier,
+                                            text = "Username",
+                                            onClick = { copy(str = userName) },
+//                                        actionIcon = Icons.Default.ContentCopy,
+                                        )
+                                    }
+                                }
+                            }
+                        )
                     }
                 )
             }
@@ -610,48 +663,43 @@ object HomeContent {
 
     @Composable
     fun SheetButton(
-        modifier: Modifier = Modifier,
+        modifier: Modifier,
         mainIcon: ImageVector,
         text: String,
         actionIcon: ImageVector,
         onClick: () -> Unit,
     ) {
         Column(
-            modifier = modifier.width(width = PassMarkDimensions.minTouchSize * 2),
-            verticalArrangement = Arrangement.Center,
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(space = 4.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             content = {
                 ConstraintLayout(
                     modifier = Modifier
                         .setSizeLimitation()
+                        .widthIn(max = PassMarkDimensions.minTouchSize * 2)
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
                         .clip(shape = RoundedCornerShape(size = 16.dp))
-                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            shape = RoundedCornerShape(size = 16.dp)
+                        )
                         .clickable(onClick = onClick),
                     content = {
                         val (mainIconRef, secondaryIconRef) = createRefs()
                         Icon(
                             modifier = Modifier
-                                .size(size = 36.dp)
+                                .fillMaxSize(fraction = 0.5f)
                                 .constrainAs(
                                     ref = mainIconRef,
                                     constrainBlock = {
-                                        val margin = 16.dp
-                                        this.top.linkTo(
-                                            anchor = parent.top,
-                                            margin = margin
-                                        )
-                                        this.bottom.linkTo(
-                                            anchor = parent.bottom,
-                                            margin = margin
-                                        )
-                                        this.start.linkTo(
-                                            anchor = parent.start,
-                                            margin = margin
-                                        )
-                                        this.end.linkTo(
-                                            anchor = parent.end,
-                                            margin = margin
-                                        )
+                                        this.top.linkTo(anchor = parent.top)
+                                        this.bottom.linkTo(anchor = parent.bottom)
+                                        this.start.linkTo(anchor = parent.start)
+                                        this.end.linkTo(anchor = parent.end)
                                     }
                                 ),
                             imageVector = mainIcon,
@@ -661,9 +709,9 @@ object HomeContent {
 
                         Icon(
                             modifier = Modifier
-                                .size(size = 24.dp)
+                                .fillMaxSize(fraction = 0.25f)
                                 .clip(shape = CircleShape)
-                                .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                                .background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
                                 .padding(all = 4.dp)
                                 .constrainAs(
                                     ref = secondaryIconRef,
@@ -681,16 +729,14 @@ object HomeContent {
                     }
                 )
                 Text(
-                    modifier = Modifier
-                        .setSizeLimitation()
-                        .padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = 4.dp),
                     text = text,
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Body.small,
                     lineHeight = PassMarkFonts.Body.small,
                     fontWeight = FontWeight.Medium,
-                    maxLines = 2,
-                    minLines = 2,
+                    maxLines = 1,
+                    minLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center
@@ -766,6 +812,12 @@ private fun EmptyState() {
     showBackground = true
 )
 private fun PasswordOptionDrawerPreview() {
+    val passwordData = PasswordData.testPasswordData.copy(
+        data = PasswordData.testPasswordData.data.copy(
+            website = null,
+            email = null
+        )
+    )
     HomeContent.PasswordOptionBottomSheet(
         passwordData = PasswordData.testPasswordData,
         sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
