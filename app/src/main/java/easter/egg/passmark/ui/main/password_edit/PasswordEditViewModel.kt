@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import easter.egg.passmark.data.models.Vault
-import easter.egg.passmark.data.models.password.Password
+import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.data.models.password.sensitive.SensitiveContent
 import easter.egg.passmark.data.storage.SettingsDataStore
 import easter.egg.passmark.data.storage.database.PasswordDao
@@ -68,17 +68,17 @@ class PasswordEditViewModel @Inject constructor(
 
     // TODO: on account reset, only delete user associated password room data
     //---------------------------------------------------------------------------------loaded-values
-    private var _oldPassword: Password? = null
+    private var _oldPasswordData: PasswordData? = null
     private var _loaded = false
 
     fun loadInitialData(
-        password: Password?,
+        passwordData: PasswordData?,
         vault: Vault?
     ) {
         if (_loaded) {
             Log.d(TAG, "password already loaded")
         } else {
-            if (password == null) {
+            if (passwordData == null) {
                 viewModelScope.launch {
                     this@PasswordEditViewModel.useFingerPrint.value =
                         dataStore.getBiometricEnabledFlow().first()
@@ -86,15 +86,15 @@ class PasswordEditViewModel @Inject constructor(
                         dataStore.getOfflineStorageFlow().first()
                 }
             } else {
-                this.title.value = password.data.title
-                this.email.value = password.data.email ?: ""
-                this.userName.value = password.data.userName ?: ""
-                this.password.value = password.data.password
-                this.website.value = password.data.website ?: ""
-                this.notes.value = password.data.notes ?: ""
-                this.useFingerPrint.value = password.data.useFingerPrint
-                this.saveToLocalOnly.value = password.localId != null
-                this._oldPassword = password
+                this.title.value = passwordData.data.title
+                this.email.value = passwordData.data.email ?: ""
+                this.userName.value = passwordData.data.userName ?: ""
+                this.password.value = passwordData.data.password
+                this.website.value = passwordData.data.website ?: ""
+                this.notes.value = passwordData.data.notes ?: ""
+                this.useFingerPrint.value = passwordData.data.useFingerPrint
+                this.saveToLocalOnly.value = passwordData.localId != null
+                this._oldPasswordData = passwordData
             }
             this._selectedVault.value = vault
             _loaded = true
@@ -103,9 +103,9 @@ class PasswordEditViewModel @Inject constructor(
     //-----------------------------------------------------------------------------------------state
 
     /** result should be the title of the password stored */
-    private val _screenState: MutableStateFlow<ScreenState<Password>> =
+    private val _screenState: MutableStateFlow<ScreenState<PasswordData>> =
         MutableStateFlow(ScreenState.PreCall())
-    val screenState: StateFlow<ScreenState<Password>> get() = _screenState
+    val screenState: StateFlow<ScreenState<PasswordData>> get() = _screenState
 
     /** tracks if delete has been completed in case of failure to avoid further issues */
     private var _deleteCompleted: Boolean = false
@@ -116,9 +116,9 @@ class PasswordEditViewModel @Inject constructor(
         val now = System.currentTimeMillis()
         val saveToStorage = this.saveToLocalOnly.value
 
-        val passwordCapsuleToSave = Password(
-            cloudId = if (saveToStorage) null else _oldPassword?.cloudId,
-            localId = if (saveToStorage) _oldPassword?.localId else null,
+        val passwordDataCapsuleToSave = PasswordData(
+            cloudId = if (saveToStorage) null else _oldPasswordData?.cloudId,
+            localId = if (saveToStorage) _oldPasswordData?.localId else null,
             vaultId = selectedVault.value?.id,
             data = SensitiveContent(
                 title = title.value,
@@ -128,7 +128,7 @@ class PasswordEditViewModel @Inject constructor(
                 website = website.value.nullIfBlank(),
                 notes = notes.value.nullIfBlank(),
                 useFingerPrint = useFingerPrint.value,
-                passwordHistory = this._oldPassword?.let {
+                passwordHistory = this._oldPasswordData?.let {
                     if (it.data.password != password.value) {
                         it.data.passwordHistory.toMutableList().apply {
                             this.add(element = it.currentPasswordAsPasswordHistory())
@@ -138,18 +138,18 @@ class PasswordEditViewModel @Inject constructor(
                     }
                 } ?: listOf()
             ),
-            lastUsed = _oldPassword?.lastUsed ?: now,
-            created = _oldPassword?.created ?: now,
+            lastUsed = _oldPasswordData?.lastUsed ?: now,
+            created = _oldPasswordData?.created ?: now,
             lastModified = now,
             usedCount = 0,
         ).toPasswordCapsule(passwordCryptographyHandler = passwordCryptographyHandler)
 
         viewModelScope.launch {
-            val newState: ScreenState<Password> = PassMarkConfig.holdForDelay(
+            val newState: ScreenState<PasswordData> = PassMarkConfig.holdForDelay(
                 task = {
                     try {
                         val savedPasswordCapsule = if (saveToStorage) {
-                            _oldPassword?.cloudId
+                            _oldPasswordData?.cloudId
                                 ?.takeUnless { _deleteCompleted }
                                 ?.let { id -> // deletes cloud version if switching to local
                                     Log.d(TAG, "deleting cloud version")
@@ -158,16 +158,16 @@ class PasswordEditViewModel @Inject constructor(
                                 }
 
                             val id =
-                                passwordDao.upsert(passwordCapsule = passwordCapsuleToSave).toInt()
+                                passwordDao.upsert(passwordCapsule = passwordDataCapsuleToSave).toInt()
                             passwordDao.getById(id = id)
                         } else {
-                            _oldPassword?.localId
+                            _oldPasswordData?.localId
                                 ?.takeUnless { _deleteCompleted }
                                 ?.let { localId -> // deletes local version if switching to cloud
                                     passwordDao.deleteById(localId = localId)
                                     _deleteCompleted = true
                                 }
-                            passwordApi.savePassword(passwordCapsule = passwordCapsuleToSave)
+                            passwordApi.savePassword(passwordCapsule = passwordDataCapsuleToSave)
                         }
 
                         val res = savedPasswordCapsule.toPassword(

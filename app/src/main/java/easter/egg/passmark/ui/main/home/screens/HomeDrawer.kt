@@ -253,7 +253,7 @@ object HomeDrawer {
                 val vaultSelectableModifier = Modifier.fillMaxWidth()
                 vaultList.forEach { vault ->
                     var size = 0
-                    val passwordList = result?.passwordListState?.collectAsState()?.value
+                    val passwordList = result?.passwordDataListState?.collectAsState()?.value
                     if (vault?.id == null) {
                         size = passwordList?.size ?: 0
                     } else {

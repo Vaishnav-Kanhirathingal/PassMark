@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import easter.egg.passmark.data.models.password.Password
+import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.utils.ScreenState
@@ -32,16 +32,16 @@ class PasswordViewViewModel @Inject constructor(
         MutableStateFlow(ScreenState.PreCall())
     val deleteDialogState: StateFlow<ScreenState<Unit>> = _deleteDialogState
 
-    fun delete(password: Password) {
+    fun delete(passwordData: PasswordData) {
         _deleteDialogState.value = ScreenState.Loading()
         viewModelScope.launch {
             _deleteDialogState.value = PassMarkConfig.holdForDelay(
                 task = {
                     try {
-                        if (password.cloudId != null) {
-                            passwordApi.deletePassword(passwordId = password.cloudId)
+                        if (passwordData.cloudId != null) {
+                            passwordApi.deletePassword(passwordId = passwordData.cloudId)
                         } else {
-                            passwordDao.deleteById(localId = password.localId!!)
+                            passwordDao.deleteById(localId = passwordData.localId!!)
                         }
                         ScreenState.Loaded(Unit)
                     } catch (e: Exception) {
@@ -58,40 +58,40 @@ class PasswordViewViewModel @Inject constructor(
 
     private var _updated = false
     suspend fun updateUsageStats(
-        password: Password,
+        passwordData: PasswordData,
         passwordCryptographyHandler: PasswordCryptographyHandler,
-        onComplete: (Password) -> Unit
+        onComplete: (PasswordData) -> Unit
     ) {
         if (_updated) {
             Log.d(TAG, "usage has been updated")
         } else {
-            this._lastUpdatedTimeBeforeCall = password.lastUsed
+            this._lastUpdatedTimeBeforeCall = passwordData.lastUsed
             val now = System.currentTimeMillis()
             try {
-                val newPassword: Password = when {
-                    password.localId != null -> {
+                val newPasswordData: PasswordData = when {
+                    passwordData.localId != null -> {
                         passwordDao.updateUsageStat(
                             lastUsed = now,
-                            usedCount = password.usedCount + 1,
-                            localId = password.localId
+                            usedCount = passwordData.usedCount + 1,
+                            localId = passwordData.localId
                         )
 
-                        passwordDao.getById(id = password.localId)
+                        passwordDao.getById(id = passwordData.localId)
 
                     }
 
-                    password.cloudId != null -> {
+                    passwordData.cloudId != null -> {
                         passwordApi.updateUsageStat(
                             lastUsed = now,
-                            usedCount = password.usedCount + 1,
-                            cloudId = password.cloudId
+                            usedCount = passwordData.usedCount + 1,
+                            cloudId = passwordData.cloudId
                         )
                     }
 
                     else -> throw IllegalStateException("either the cloud or local ID should be non-null")
                 }.toPassword(passwordCryptographyHandler = passwordCryptographyHandler)
 
-                onComplete(newPassword)
+                onComplete(newPasswordData)
                 _updated = true
                 Log.d(TAG, "password usage updated")
             } catch (e: Exception) {

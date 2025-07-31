@@ -79,7 +79,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import easter.egg.passmark.data.models.Vault
 import easter.egg.passmark.data.models.Vault.Companion.getIcon
-import easter.egg.passmark.data.models.password.Password
+import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.data.models.password.sensitive.PasswordHistory
 import easter.egg.passmark.data.storage.database.PasswordDao
 import easter.egg.passmark.data.supabase.api.PasswordApi
@@ -105,7 +105,7 @@ object PasswordViewScreen {
     @Composable
     fun Screen(
         modifier: Modifier,
-        password: Password,
+        passwordData: PasswordData,
         navigateUp: () -> Unit,
         toEditScreen: () -> Unit,
         associatedVault: Vault?,
@@ -116,7 +116,7 @@ object PasswordViewScreen {
             key1 = Unit,
             block = {
                 passwordViewViewModel.updateUsageStats(
-                    password = password,
+                    passwordData = passwordData,
                     passwordCryptographyHandler = mainViewModel.passwordCryptographyHandler,
                     onComplete = {
                         (mainViewModel.screenState.value as? ScreenState.Loaded)
@@ -133,7 +133,7 @@ object PasswordViewScreen {
                     modifier = Modifier.customTopBarModifier(),
                     navigateUp = navigateUp,
                     toEditScreen = toEditScreen,
-                    requireFingerprint = password.data.useFingerPrint
+                    requireFingerprint = passwordData.data.useFingerPrint
                 )
             },
             content = {
@@ -152,7 +152,7 @@ object PasswordViewScreen {
                         },
                         positiveButtonText = "Delete",
                         positiveDescribable = PasswordViewDescribable.DeletePasswordDialog.DELETE_BUTTON,
-                        onPositiveClicked = { passwordViewViewModel.delete(password = password) },
+                        onPositiveClicked = { passwordViewViewModel.delete(passwordData = passwordData) },
                         screenState = dialogState
                     )
                 }
@@ -166,7 +166,7 @@ object PasswordViewScreen {
                             is ScreenState.ApiError -> dialogState.manageToastActions(context = context)
                             is ScreenState.Loaded -> {
                                 (mainViewModel.screenState.value as? ScreenState.Loaded)
-                                    ?.result?.deletePassword(password = password)
+                                    ?.result?.deletePassword(passwordData = passwordData)
                                 passwordViewViewModel.setDeleteDialogVisibility(visibility = false)
                                 navigateUp()
                             }
@@ -178,7 +178,7 @@ object PasswordViewScreen {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues = it),
-                    password = password,
+                    passwordData = passwordData,
                     lastUpdatedTimeBeforeUpdate = passwordViewViewModel.lastUpdatedTimeBeforeCall,
                     associatedVault = associatedVault,
                     showDialog = { passwordViewViewModel.setDeleteDialogVisibility(visibility = true) }
@@ -282,7 +282,7 @@ object PasswordViewScreen {
     @Composable
     private fun PasswordViewContent(
         modifier: Modifier,
-        password: Password,
+        passwordData: PasswordData,
         lastUpdatedTimeBeforeUpdate: Long?,
         associatedVault: Vault?,
         showDialog: () -> Unit
@@ -322,8 +322,8 @@ object PasswordViewScreen {
                 if (showHistory.value) {
                     PasswordHistoryDialog(
                         modifier = Modifier.fillMaxWidth(),
-                        passwordHistory = password.data.passwordHistory.toMutableList().apply {
-                            this.add(element = password.currentPasswordAsPasswordHistory())
+                        passwordHistory = passwordData.data.passwordHistory.toMutableList().apply {
+                            this.add(element = passwordData.currentPasswordAsPasswordHistory())
                         }.reversed(),
                         dismiss = { showHistory.value = false }
                     )
@@ -331,7 +331,7 @@ object PasswordViewScreen {
 
                 Heading(
                     modifier = Modifier.fillMaxWidth(),
-                    password = password,
+                    passwordData = passwordData,
                     associatedVault = associatedVault
                 )
                 val itemModifier = Modifier
@@ -349,7 +349,7 @@ object PasswordViewScreen {
                 PropertyListCard(
                     modifier = itemModifier,
                     itemList = mutableListOf<@Composable () -> Unit>().apply {
-                        password.data.email?.let { email ->
+                        passwordData.data.email?.let { email ->
                             this.add(
                                 element = {
                                     DisplayFieldContent(
@@ -364,7 +364,7 @@ object PasswordViewScreen {
                                 }
                             )
                         }
-                        password.data.userName?.let { username ->
+                        passwordData.data.userName?.let { username ->
                             this.add(
                                 element = {
                                     DisplayFieldContent(
@@ -382,19 +382,19 @@ object PasswordViewScreen {
                         this.add(
                             element = {
                                 val accessGranted =
-                                    derivedStateOf { biometricAuthenticated.value || !password.data.useFingerPrint }
+                                    derivedStateOf { biometricAuthenticated.value || !passwordData.data.useFingerPrint }
                                 DisplayFieldContent(
                                     modifier = displayFieldContentModifier,
                                     startIcon = Icons.Default.Password,
                                     titleText = "Password",
                                     fieldText =
-                                        if (accessGranted.value) password.data.password
+                                        if (accessGranted.value) passwordData.data.password
                                         else "*".repeat(n = 12),
                                     endIcon =
                                         if (accessGranted.value) Icons.Default.ContentCopy
                                         else Icons.Default.Fingerprint,
                                     endIconOnClick = {
-                                        if (accessGranted.value) copy(str = password.data.password)
+                                        if (accessGranted.value) copy(str = passwordData.data.password)
                                         else showBiometricPrompt(forHistory = false)
                                     },
                                     endIconDescribable =
@@ -413,7 +413,7 @@ object PasswordViewScreen {
                     },
                 )
 
-                password.data.website?.let { website ->
+                passwordData.data.website?.let { website ->
                     DefaultCard(
                         modifier = itemModifier,
                         content = {
@@ -429,7 +429,7 @@ object PasswordViewScreen {
                         }
                     )
                 }
-                password.data.notes?.let { notes ->
+                passwordData.data.notes?.let { notes ->
                     DefaultCard(
                         modifier = itemModifier,
                         content = {
@@ -452,7 +452,7 @@ object PasswordViewScreen {
                                 modifier = Modifier.fillMaxWidth(),
                                 startIcon = Icons.Default.Cloud,
                                 titleText = "Storage Type",
-                                fieldText = if (password.localId != null) "Saved to device only" else "Saved on the cloud",
+                                fieldText = if (passwordData.localId != null) "Saved to device only" else "Saved on the cloud",
                                 endIconDescribable = null
                             )
                         },
@@ -461,7 +461,7 @@ object PasswordViewScreen {
                                 modifier = Modifier.fillMaxWidth(),
                                 startIcon = Icons.Default.Fingerprint,
                                 titleText = "Fingerprint Authentication",
-                                fieldText = if (password.data.useFingerPrint) "Enabled" else "Disabled",
+                                fieldText = if (passwordData.data.useFingerPrint) "Enabled" else "Disabled",
                                 endIconDescribable = null
                             )
                         }
@@ -477,7 +477,7 @@ object PasswordViewScreen {
                                     modifier = displayFieldContentModifier,
                                     startIcon = Icons.Default.CalendarToday,
                                     titleText = "Created",
-                                    fieldText = password.created.formatToTime(),
+                                    fieldText = passwordData.created.formatToTime(),
                                     endIconDescribable = null
                                 )
                             }
@@ -488,7 +488,7 @@ object PasswordViewScreen {
                                     modifier = displayFieldContentModifier,
                                     startIcon = Icons.Default.EditCalendar,
                                     titleText = "Updated",
-                                    fieldText = password.lastModified.formatToTime(),
+                                    fieldText = passwordData.lastModified.formatToTime(),
                                     endIconDescribable = null
                                 )
                             }
@@ -499,7 +499,7 @@ object PasswordViewScreen {
                                     modifier = displayFieldContentModifier,
                                     startIcon = Icons.Default.EventRepeat,
                                     titleText = "Last Used",
-                                    fieldText = (lastUpdatedTimeBeforeUpdate ?: password.lastUsed)
+                                    fieldText = (lastUpdatedTimeBeforeUpdate ?: passwordData.lastUsed)
                                         .formatToTime(),
                                     endIconDescribable = null
                                 )
@@ -540,7 +540,7 @@ object PasswordViewScreen {
 
     @Composable
     private fun Heading(
-        password: Password,
+        passwordData: PasswordData,
         modifier: Modifier,
         associatedVault: Vault?
     ) {
@@ -554,7 +554,7 @@ object PasswordViewScreen {
                         .clip(shape = RoundedCornerShape(size = 24.dp))
                         .background(color = MaterialTheme.colorScheme.surfaceContainer)
                         .border(
-                            width = if (password.localId != null) 2.dp else 0.dp,
+                            width = if (passwordData.localId != null) 2.dp else 0.dp,
                             color = MaterialTheme.colorScheme.surfaceContainerHighest,
                             shape = RoundedCornerShape(size = 24.dp)
                         )
@@ -571,7 +571,7 @@ object PasswordViewScreen {
                         val showText: MutableState<Boolean> =
                             remember { mutableStateOf(true) }
                         val model = ImageRequest.Builder(LocalContext.current)
-                            .data(password.data.getFavicon())
+                            .data(passwordData.data.getFavicon())
                             .crossfade(true)
                             .listener(onSuccess = { _, _ -> showText.value = false })
                             .build()
@@ -581,7 +581,7 @@ object PasswordViewScreen {
                                 fontFamily = PassMarkFonts.font,
                                 fontSize = PassMarkFonts.Display.medium,
                                 fontWeight = FontWeight.Bold,
-                                text = password.data.getShortName(),
+                                text = passwordData.data.getShortName(),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -605,7 +605,7 @@ object PasswordViewScreen {
                             width = Dimension.fillToConstraints
                         }
                     ),
-                    text = password.data.title,
+                    text = passwordData.data.title,
                     fontFamily = PassMarkFonts.font,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = PassMarkFonts.Display.medium,
@@ -974,7 +974,7 @@ object PasswordViewScreen {
 private fun PasswordViewScreenPreview() {
     PasswordViewScreen.Screen(
         modifier = Modifier.fillMaxSize(),
-        password = Password.testPassword.copy(
+        passwordData = PasswordData.testPasswordData.copy(
             localId = 0,
             cloudId = null
         ),

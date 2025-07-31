@@ -74,7 +74,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import easter.egg.passmark.data.models.Vault
 import easter.egg.passmark.data.models.Vault.Companion.getIcon
-import easter.egg.passmark.data.models.password.Password
+import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
@@ -100,7 +100,7 @@ object PasswordEditScreen {
         viewModel: PasswordEditViewModel,
         mainViewModel: MainViewModel,
         navigateBack: () -> Unit,
-        passwordToEdit: Password?,
+        passwordDataToEdit: PasswordData?,
         defaultVaultId: Int?
     ) {
         LaunchedEffect(
@@ -109,9 +109,9 @@ object PasswordEditScreen {
                 val vaultList = (mainViewModel.screenState.value as? ScreenState.Loaded)
                     ?.result?.vaultListState?.value
                 viewModel.loadInitialData(
-                    password = passwordToEdit,
+                    passwordData = passwordDataToEdit,
                     vault = vaultList?.find { v ->
-                        v.id == (if (passwordToEdit == null) defaultVaultId else passwordToEdit.vaultId)
+                        v.id == (if (passwordDataToEdit == null) defaultVaultId else passwordDataToEdit.vaultId)
                     }
                 )
             }
@@ -127,12 +127,12 @@ object PasswordEditScreen {
                         val result =
                             (mainViewModel.screenState.value as? ScreenState.Loaded)?.result
 
-                        passwordToEdit?.let {
-                            if (passwordToEdit.localId != state.result.localId || passwordToEdit.cloudId != state.result.cloudId) {
-                                result?.deletePassword(password = it)
+                        passwordDataToEdit?.let {
+                            if (passwordDataToEdit.localId != state.result.localId || passwordDataToEdit.cloudId != state.result.cloudId) {
+                                result?.deletePassword(passwordData = it)
                             }
                         }
-                        result?.upsertPassword(password = state.result)
+                        result?.upsertPassword(passwordData = state.result)
                         navigateBack()
                     }
 
@@ -273,7 +273,7 @@ object PasswordEditScreen {
                         if (sheetIsVisible.value) {
                             val passwordList =
                                 (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
-                                    ?.result?.passwordListState?.collectAsState()?.value
+                                    ?.result?.passwordDataListState?.collectAsState()?.value
                             VaultSelectionBottomSheet(
                                 dismissDropDown = {
                                     coroutineScope
@@ -283,7 +283,7 @@ object PasswordEditScreen {
                                 vaultList = (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
                                     ?.result?.vaultListState?.collectAsState()?.value
                                     ?: listOf(),
-                                passwordList = passwordList ?: listOf(),
+                                passwordDataList = passwordList ?: listOf(),
                                 sheetState = sheetState,
                                 passwordEditViewModel = passwordEditViewModel
                             )
@@ -340,7 +340,7 @@ object PasswordEditScreen {
     fun VaultSelectionBottomSheet(
         dismissDropDown: () -> Unit,
         vaultList: List<Vault>,
-        passwordList: List<Password>,
+        passwordDataList: List<PasswordData>,
         sheetState: SheetState,
         passwordEditViewModel: PasswordEditViewModel
     ) {
@@ -349,7 +349,7 @@ object PasswordEditScreen {
             modifier: Modifier,
             vault: Vault?
         ) {
-            val passwordCount = passwordList.filter { it.vaultId == vault?.id }.size
+            val passwordCount = passwordDataList.filter { it.vaultId == vault?.id }.size
             val isSelected =
                 vault?.id == passwordEditViewModel.selectedVault.collectAsState().value?.id
             ConstraintLayout(
@@ -903,7 +903,7 @@ private fun PasswordEditScreenPreview() {
         viewModel = PasswordEditViewModel.getTestViewModel(),
         navigateBack = {},
         mainViewModel = MainViewModel.getTestViewModel(),
-        passwordToEdit = null,
+        passwordDataToEdit = null,
         defaultVaultId = null
     )
 }
@@ -920,7 +920,7 @@ private fun VaultSelectionBottomSheetPreview() {
             Vault(id = 3, name = "Shopping", iconChoice = 8),
             Vault(id = 4, name = "OTT", iconChoice = 11),
         ),
-        passwordList = listOf(),
+        passwordDataList = listOf(),
         sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
         passwordEditViewModel = PasswordEditViewModel.getTestViewModel()
     )

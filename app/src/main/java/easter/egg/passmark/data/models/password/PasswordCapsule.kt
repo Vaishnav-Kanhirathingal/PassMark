@@ -24,7 +24,6 @@ data class PasswordCapsule(
     @ColumnInfo(Keys.LAST_USED_KEY) @SerialName(value = Keys.LAST_USED_KEY) val lastUsed: Long,
     @ColumnInfo(Keys.LAST_MODIFIED_KEY) @SerialName(value = Keys.LAST_MODIFIED_KEY) val lastModified: Long,
     @ColumnInfo(Keys.USED_COUNT_KEY) @SerialName(value = Keys.USED_COUNT_KEY) val usedCount: Int,
-//    @ColumnInfo(Keys.USER_ID) @SerialName(value = Keys.USER_ID) val userId: String
 ) {
     constructor(
         localId: Int?,
@@ -34,7 +33,6 @@ data class PasswordCapsule(
         lastUsed: Long,
         lastModified: Long,
         usedCount: Int,
-//        userId: String
     ) : this(
         cloudId = null,
         localId = localId,
@@ -44,12 +42,11 @@ data class PasswordCapsule(
         lastUsed = lastUsed,
         lastModified = lastModified,
         usedCount = usedCount,
-//        userId = userId
     )
 
     fun toPassword(
         passwordCryptographyHandler: PasswordCryptographyHandler
-    ) = Password(
+    ) = PasswordData(
         localId = localId,
         cloudId = cloudId,
         vaultId = vaultId,
@@ -58,7 +55,6 @@ data class PasswordCapsule(
         lastUsed = lastUsed,
         lastModified = lastModified,
         usedCount = usedCount,
-//        userId = userId
     )
 
     companion object {
@@ -71,7 +67,6 @@ data class PasswordCapsule(
             const val LAST_USED_KEY = "last_used"
             const val LAST_MODIFIED_KEY = "last_modified"
             const val USED_COUNT_KEY = "used_count"
-//            const val USER_ID = "user_id"
         }
     }
 }

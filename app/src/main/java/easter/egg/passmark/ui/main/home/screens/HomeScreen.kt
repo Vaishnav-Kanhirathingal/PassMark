@@ -61,7 +61,7 @@ import com.google.gson.GsonBuilder
 import easter.egg.passmark.R
 import easter.egg.passmark.data.models.Vault
 import easter.egg.passmark.data.models.Vault.Companion.getIcon
-import easter.egg.passmark.data.models.password.Password
+import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.data.models.password.PasswordSortingOptions
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
@@ -84,9 +84,9 @@ object HomeScreen {
     @Composable
     fun Screen(
         modifier: Modifier,
-        toPasswordEditScreen: (password: Password?) -> Unit,
+        toPasswordEditScreen: (passwordData: PasswordData?) -> Unit,
         mainViewModel: MainViewModel,
-        toViewPasswordScreen: (password: Password) -> Unit,
+        toViewPasswordScreen: (passwordData: PasswordData) -> Unit,
         homeViewModel: HomeViewModel,
         toSettingsScreen: () -> Unit
     ) {
@@ -136,9 +136,9 @@ object HomeScreen {
     @Composable
     private fun MainScreen(
         modifier: Modifier,
-        toPasswordEditScreen: (password: Password?) -> Unit,
+        toPasswordEditScreen: (passwordData: PasswordData?) -> Unit,
         mainViewModel: MainViewModel,
-        toViewPasswordScreen: (password: Password) -> Unit,
+        toViewPasswordScreen: (passwordData: PasswordData) -> Unit,
         homeViewModel: HomeViewModel,
         toSettingsScreen: () -> Unit
     ) {

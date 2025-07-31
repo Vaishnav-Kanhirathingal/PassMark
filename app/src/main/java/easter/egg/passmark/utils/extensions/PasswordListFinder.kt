@@ -1,12 +1,12 @@
 package easter.egg.passmark.utils.extensions
 
-import easter.egg.passmark.data.models.password.Password
+import easter.egg.passmark.data.models.password.PasswordData
 
 /** note that only one of the given arguments [localId] or [cloudId] should be non null */
-fun List<Password>.findPassword(
+fun List<PasswordData>.findPassword(
     localId: Int?,
     cloudId: Int?
-): Password? {
+): PasswordData? {
     val useCloudId = cloudId != null
     val useLocalId = localId != null
     return this.find { p ->

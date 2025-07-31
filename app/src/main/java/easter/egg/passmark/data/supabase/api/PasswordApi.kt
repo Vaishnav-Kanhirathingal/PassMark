@@ -1,6 +1,6 @@
 package easter.egg.passmark.data.supabase.api
 
-import easter.egg.passmark.data.models.password.Password
+import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.data.models.password.PasswordCapsule
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 import io.github.jan.supabase.SupabaseClient
@@ -16,7 +16,7 @@ class PasswordApi @Inject constructor(supabaseClient: SupabaseClient) {
             .decodeSingle<PasswordCapsule>()
     }
 
-    suspend fun getPasswordList(passwordCryptographyHandler: PasswordCryptographyHandler): List<Password> {
+    suspend fun getPasswordList(passwordCryptographyHandler: PasswordCryptographyHandler): List<PasswordData> {
         return table.select().decodeList<PasswordCapsule>().map {
             it.toPassword(passwordCryptographyHandler = passwordCryptographyHandler)
         }

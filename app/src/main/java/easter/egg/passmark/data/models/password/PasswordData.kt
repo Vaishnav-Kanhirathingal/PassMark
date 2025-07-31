@@ -6,7 +6,7 @@ import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 
 // TODO: rename to PasswordData
 /** to be used to display stuff and only to be stored in memory */
-data class Password(
+data class PasswordData(
     val localId: Int?,
     val cloudId: Int?,
     val vaultId: Int? = null,
@@ -18,7 +18,7 @@ data class Password(
 ) {
     companion object {
         private val now = System.currentTimeMillis()
-        val testPassword = Password(
+        val testPasswordData = PasswordData(
             localId = null,
             cloudId = 0,
             data = SensitiveContent.testData,

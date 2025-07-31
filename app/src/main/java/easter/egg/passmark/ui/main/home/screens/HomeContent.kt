@@ -77,7 +77,7 @@ import androidx.constraintlayout.compose.Visibility
 import androidx.fragment.app.FragmentActivity
 import coil3.compose.SubcomposeAsyncImage
 import easter.egg.passmark.R
-import easter.egg.passmark.data.models.password.Password
+import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.data.models.password.sensitive.SensitiveContent
 import easter.egg.passmark.ui.main.MainViewModel
 import easter.egg.passmark.ui.main.home.HomeViewModel
@@ -106,8 +106,8 @@ object HomeContent {
         modifier: Modifier,
         mainViewModel: MainViewModel,
         homeViewModel: HomeViewModel,
-        toViewPasswordScreen: (password: Password) -> Unit,
-        toPasswordEditScreen: (password: Password?) -> Unit,
+        toViewPasswordScreen: (passwordData: PasswordData) -> Unit,
+        toPasswordEditScreen: (passwordData: PasswordData?) -> Unit,
     ) {
         val vaultId = homeViewModel.vaultIdSelected.collectAsState().value
         val homeResult = (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
@@ -131,11 +131,11 @@ object HomeContent {
             )
         } else {
             val sheetState = rememberModalBottomSheetState()
-            val optionSheetIsVisible: MutableState<Password?> = remember { mutableStateOf(null) }
+            val optionSheetIsVisible: MutableState<PasswordData?> = remember { mutableStateOf(null) }
             val coroutineScope = rememberCoroutineScope()
             optionSheetIsVisible.value?.let { password ->
                 PasswordOptionBottomSheet(
-                    password = password,
+                    passwordData = password,
                     sheetState = sheetState,
                     dismissSheet = {
                         coroutineScope
@@ -179,7 +179,7 @@ object HomeContent {
                         itemContent = {
                             PasswordListItem(
                                 modifier = listingModifier,
-                                password = it,
+                                passwordData = it,
                                 viewPassword = { toViewPasswordScreen(it) },
                                 openOptions = {
                                     optionSheetIsVisible.value = it
@@ -283,7 +283,7 @@ object HomeContent {
     @Composable
     fun PasswordListItem(
         modifier: Modifier,
-        password: Password,
+        passwordData: PasswordData,
         viewPassword: () -> Unit,
         openOptions: () -> Unit,
     ) {
@@ -292,7 +292,7 @@ object HomeContent {
             modifier = modifier
                 .clickable(onClick = viewPassword)
                 .padding(vertical = 8.dp)
-                .setDescription(describable = HomeDescribable.getPasswordDescribable(name = password.data.title)),
+                .setDescription(describable = HomeDescribable.getPasswordDescribable(name = passwordData.data.title)),
             content = {
                 val (startIcon, title, subtitle, optionButton) = createRefs()
                 Box(
@@ -302,7 +302,7 @@ object HomeContent {
                         .background(color = MaterialTheme.colorScheme.surfaceContainer)
                         .border(
                             width = 1.dp,
-                            color = if (password.localId == null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHighest,
+                            color = if (passwordData.localId == null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHighest,
                             shape = RoundedCornerShape(size = 12.dp)
                         )
                         .constrainAs(
@@ -323,11 +323,11 @@ object HomeContent {
                                 fontSize = PassMarkFonts.Title.medium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                text = password.data.getShortName()
+                                text = passwordData.data.getShortName()
                             )
                         }
                         SubcomposeAsyncImage(
-                            model = password.data.getFavicon(),
+                            model = passwordData.data.getFavicon(),
                             contentDescription = null,
                             loading = { PassTextIcon() },
                             error = { PassTextIcon() },
@@ -360,14 +360,14 @@ object HomeContent {
                         .hideFromAccessibility(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    text = password.data.title,
+                    text = passwordData.data.title,
                     fontFamily = PassMarkFonts.font,
                     fontSize = PassMarkFonts.Title.large,
                     lineHeight = PassMarkFonts.Title.large,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                val titleText = password.data.getSubTitle()
+                val titleText = passwordData.data.getSubTitle()
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -399,7 +399,7 @@ object HomeContent {
                     modifier = Modifier
                         .setDescription(
                             describable = HomeDescribable.getPasswordOptionsDescribable(
-                                name = password.data.title
+                                name = passwordData.data.title
                             )
                         )
                         .size(size = iconSize)
@@ -426,7 +426,7 @@ object HomeContent {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun PasswordOptionBottomSheet(
-        password: Password,
+        passwordData: PasswordData,
         sheetState: SheetState,
         dismissSheet: () -> Unit,
         toPasswordEditScreen: () -> Unit,
@@ -458,9 +458,9 @@ object HomeContent {
                                     fontFamily = PassMarkFonts.font,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = PassMarkFonts.Headline.medium,
-                                    text = password.data.title,
+                                    text = passwordData.data.title,
                                 )
-                                password.data.getSubTitle()?.let {
+                                passwordData.data.getSubTitle()?.let {
                                     Text(
                                         modifier = Modifier.fillMaxWidth(),
                                         maxLines = 1,
@@ -586,7 +586,7 @@ object HomeContent {
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically,
                             content = {
-                                password.data.website?.let { website ->
+                                passwordData.data.website?.let { website ->
                                     SheetButton(
                                         mainIcon = Icons.Default.Web,
                                         text = "Website",
@@ -594,7 +594,7 @@ object HomeContent {
                                         actionIcon = Icons.Default.ContentCopy,
                                     )
                                 }
-                                password.data.email?.let { email ->
+                                passwordData.data.email?.let { email ->
                                     SheetButton(
                                         mainIcon = Icons.Default.Email,
                                         text = "Copy email",
@@ -602,7 +602,7 @@ object HomeContent {
                                         actionIcon = Icons.Default.ContentCopy
                                     )
                                 }
-                                password.data.userName?.let { userName ->
+                                passwordData.data.userName?.let { userName ->
                                     SheetButton(
                                         mainIcon = Icons.Default.Person,
                                         text = "Copy user name",
@@ -622,14 +622,14 @@ object HomeContent {
                                     mainIcon = Icons.Default.Password,
                                     text = "Copy password",
                                     onClick = {
-                                        if (password.data.useFingerPrint) {
+                                        if (passwordData.data.useFingerPrint) {
                                             (context.findFragmentActivity())?.let { activity ->
                                                 BiometricsHandler.performBiometricAuthentication(
                                                     context = context,
                                                     activity = activity,
                                                     onComplete = {
                                                         if (it == BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED) {
-                                                            copy(str = password.data.password)
+                                                            copy(str = passwordData.data.password)
                                                         } else {
                                                             it.handleToast(context = context)
                                                         }
@@ -637,7 +637,7 @@ object HomeContent {
                                                     onBiometricsNotPresent = {
                                                         setPromptState(
                                                             SecurityPromptState(
-                                                                password = password.data.password,
+                                                                password = passwordData.data.password,
                                                                 action = PasswordOptionChoices.COPY
                                                             )
                                                         )
@@ -645,12 +645,12 @@ object HomeContent {
                                                 )
                                             }
                                         } else {
-                                            copy(str = password.data.password)
+                                            copy(str = passwordData.data.password)
                                         }
                                         dismissSheet()
                                     },
                                     actionIcon =
-                                        if (password.data.useFingerPrint) Icons.Default.Fingerprint
+                                        if (passwordData.data.useFingerPrint) Icons.Default.Fingerprint
                                         else Icons.Default.ContentCopy,
                                 )
                                 SheetButton(
@@ -660,7 +660,7 @@ object HomeContent {
                                     mainIcon = Icons.Default.Edit,
                                     text = "Edit Password",
                                     onClick = {
-                                        if (password.data.useFingerPrint) {
+                                        if (passwordData.data.useFingerPrint) {
                                             Log.d(TAG, "requires fingerprint")
                                             (context.findFragmentActivity())?.let {
                                                 Log.d(TAG, "fingerprint prompt opening")
@@ -679,7 +679,7 @@ object HomeContent {
                                                     onBiometricsNotPresent = {
                                                         setPromptState(
                                                             SecurityPromptState(
-                                                                password = password.data.password,
+                                                                password = passwordData.data.password,
                                                                 action = PasswordOptionChoices.EDIT
                                                             )
                                                         )
@@ -746,7 +746,7 @@ private fun PasswordListItemPreview() {
             .fillMaxWidth()
             .setSizeLimitation()
             .wrapContentHeight(),
-        password = Password.testPassword.copy(
+        passwordData = PasswordData.testPasswordData.copy(
             data = SensitiveContent.testData.copy(
                 title = "Google",
                 email = "sample@gmail.com",
@@ -783,7 +783,7 @@ private fun EmptyState() {
 )
 private fun PasswordOptionDrawerPreview() {
     HomeContent.PasswordOptionBottomSheet(
-        password = Password.testPassword,
+        passwordData = PasswordData.testPasswordData,
         sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
         dismissSheet = {},
         toPasswordEditScreen = {},

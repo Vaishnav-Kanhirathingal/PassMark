@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import easter.egg.passmark.data.models.Vault
-import easter.egg.passmark.data.models.password.Password
+import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.data.models.password.PasswordSortingOptions
 import easter.egg.passmark.data.storage.PassMarkDataStore
 import easter.egg.passmark.data.storage.database.PasswordDao
@@ -98,10 +98,10 @@ class MainViewModel @Inject constructor(
                 val vaultListDeferred: Deferred<List<Vault>> = async {
                     vaultApi.getVaultList()
                 }
-                val remotePasswordDeferred: Deferred<List<Password>> = async {
+                val remotePasswordDataDeferred: Deferred<List<PasswordData>> = async {
                     passwordApi.getPasswordList(passwordCryptographyHandler = passwordCryptographyHandler)
                 }
-                val localPasswordDeferred: Deferred<List<Password>> = async {
+                val localPasswordDataDeferred: Deferred<List<PasswordData>> = async {
                     passwordDao.getAll().mapNotNull { passwordCapsule ->
                         try {
                             passwordCapsule.toPassword(passwordCryptographyHandler = passwordCryptographyHandler)
@@ -114,8 +114,8 @@ class MainViewModel @Inject constructor(
                 ScreenState.Loaded(
                     result = HomeListData(
                         vaultList = vaultListDeferred.await().toMutableList(),
-                        passwordList = remotePasswordDeferred.await().toMutableList()
-                            .apply { this.addAll(elements = localPasswordDeferred.await()) }
+                        passwordDataList = remotePasswordDataDeferred.await().toMutableList()
+                            .apply { this.addAll(elements = localPasswordDataDeferred.await()) }
                     )
                 )
             } catch (e: Exception) {
@@ -207,16 +207,16 @@ class MainViewModel @Inject constructor(
 
 class HomeListData(
     vaultList: MutableList<Vault>,
-    passwordList: MutableList<Password>
+    passwordDataList: MutableList<PasswordData>
 ) {
     private val TAG = this::class.simpleName
 
     private val _vaultListState: MutableStateFlow<List<Vault>> = MutableStateFlow(vaultList)
     val vaultListState: StateFlow<List<Vault>> = _vaultListState
 
-    private val _passwordListState: MutableStateFlow<List<Password>> =
-        MutableStateFlow(passwordList)
-    val passwordListState: StateFlow<List<Password>> get() = _passwordListState
+    private val _passwordDataListState: MutableStateFlow<List<PasswordData>> =
+        MutableStateFlow(passwordDataList)
+    val passwordDataListState: StateFlow<List<PasswordData>> get() = _passwordDataListState
 
     @Composable
     fun getVaultById(vaultId: Int): Vault? {
@@ -228,8 +228,8 @@ class HomeListData(
         searchString: String?,
         passwordSortingOptions: PasswordSortingOptions,
         increasingOrder: Boolean
-    ): Flow<List<Password>> {
-        return this._passwordListState.map { list ->
+    ): Flow<List<PasswordData>> {
+        return this._passwordDataListState.map { list ->
             list
                 .filter { p ->
                     (vaultId?.let { v -> v == p.vaultId } ?: true) &&
@@ -240,25 +240,25 @@ class HomeListData(
                 .let { passList ->
                     when (passwordSortingOptions) {
                         PasswordSortingOptions.NAME -> {
-                            val selector = { password: Password -> password.data.title.lowercase() }
+                            val selector = { passwordData: PasswordData -> passwordData.data.title.lowercase() }
                             if (increasingOrder) passList.sortedBy(selector = selector)
                             else passList.sortedByDescending(selector)
                         }
 
                         PasswordSortingOptions.USAGE -> {
-                            val selector = { password: Password -> password.usedCount }
+                            val selector = { passwordData: PasswordData -> passwordData.usedCount }
                             if (!increasingOrder) passList.sortedBy(selector = selector)
                             else passList.sortedByDescending(selector)
                         }
 
                         PasswordSortingOptions.CREATED -> {
-                            val selector = { password: Password -> password.created }
+                            val selector = { passwordData: PasswordData -> passwordData.created }
                             if (!increasingOrder) passList.sortedBy(selector = selector)
                             else passList.sortedByDescending(selector)
                         }
 
                         PasswordSortingOptions.LAST_USED -> {
-                            val selector = { password: Password -> password.lastUsed }
+                            val selector = { passwordData: PasswordData -> passwordData.lastUsed }
                             if (!increasingOrder) passList.sortedBy(selector = selector)
                             else passList.sortedByDescending(selector)
                         }
@@ -267,29 +267,29 @@ class HomeListData(
         }
     }
 
-    fun upsertPassword(password: Password) {
-        val newList = this._passwordListState.value.toMutableList()
+    fun upsertPassword(passwordData: PasswordData) {
+        val newList = this._passwordDataListState.value.toMutableList()
 
-        val useCloudId = password.cloudId != null
+        val useCloudId = passwordData.cloudId != null
         newList
             .indexOfLast { p ->
                 if (useCloudId) {
-                    p.cloudId == password.cloudId
+                    p.cloudId == passwordData.cloudId
                 } else {
-                    p.localId == password.localId
+                    p.localId == passwordData.localId
                 }
             }
             .takeUnless { it == -1 }
             .let {
                 if (it == null) {
-                    newList.add(password)
+                    newList.add(passwordData)
                     Log.d(TAG, "password is new, adding")
                 } else {
-                    newList.set(index = it, element = password)
+                    newList.set(index = it, element = passwordData)
                     Log.d(TAG, "password already exists, updating")
                 }
             }
-        this._passwordListState.value = newList
+        this._passwordDataListState.value = newList
     }
 
     fun upsertNewVault(vault: Vault) {
@@ -303,18 +303,18 @@ class HomeListData(
     }
 
     fun deletePassword(
-        password: Password
+        passwordData: PasswordData
     ) {
-        val useCloudId = password.cloudId != null
-        val useLocalId = password.localId != null
-        this._passwordListState.value = this._passwordListState.value
+        val useCloudId = passwordData.cloudId != null
+        val useLocalId = passwordData.localId != null
+        this._passwordDataListState.value = this._passwordDataListState.value
             .toMutableList()
             .apply {
                 this.removeIf {
                     if (useCloudId) {
-                        it.cloudId == password.cloudId
+                        it.cloudId == passwordData.cloudId
                     } else if (useLocalId) {
-                        it.localId == password.localId
+                        it.localId == passwordData.localId
                     } else {
                         false
                     }
@@ -324,7 +324,7 @@ class HomeListData(
 
     /** deletes the vault and associated passwords from cache */
     fun deleteVaultAndAssociates(vaultId: Int) {
-        this._passwordListState.value = this._passwordListState.value
+        this._passwordDataListState.value = this._passwordDataListState.value
             .toMutableList()
             .apply { removeAll { it.vaultId == vaultId } }
         this._vaultListState.value = this._vaultListState.value

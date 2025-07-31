@@ -52,7 +52,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import easter.egg.passmark.data.models.password.Password
+import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.ui.main.change_password.ChangeMasterPasswordScreen
 import easter.egg.passmark.ui.main.home.HomeViewModel
 import easter.egg.passmark.ui.main.home.screens.HomeScreen
@@ -339,7 +339,7 @@ class MainActivity : FragmentActivity() {
         val result =
             (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
                 ?.result
-        val passwordList = result?.passwordListState?.collectAsState()?.value
+        val passwordList = result?.passwordDataListState?.collectAsState()?.value
         val vaultList = result?.vaultListState?.collectAsState()?.value
         NavHost(
             modifier = modifier.fillMaxSize(),
@@ -352,20 +352,20 @@ class MainActivity : FragmentActivity() {
                         val homeViewModel: HomeViewModel = hiltViewModel(viewModelStoreOwner = it)
                         HomeScreen.Screen(
                             modifier = composableModifier,
-                            toPasswordEditScreen = { password: Password? ->
+                            toPasswordEditScreen = { passwordData: PasswordData? ->
                                 navController.navigate(
                                     route = MainScreens.PasswordEdit(
-                                        localId = password?.localId,
-                                        cloudId = password?.cloudId,
+                                        localId = passwordData?.localId,
+                                        cloudId = passwordData?.cloudId,
                                         defaultVaultId = homeViewModel.vaultIdSelected.value
                                     )
                                 )
                             },
                             mainViewModel = mainViewModel,
-                            toViewPasswordScreen = { password: Password ->
+                            toViewPasswordScreen = { passwordData: PasswordData ->
                                 navController.navigate(
                                     route = MainScreens.PasswordView(
-                                        passwordJson = Gson().toJson(password)
+                                        passwordJson = Gson().toJson(passwordData)
                                     )
                                 )
                             },
@@ -381,7 +381,7 @@ class MainActivity : FragmentActivity() {
                             viewModel = hiltViewModel(viewModelStoreOwner = it),
                             mainViewModel = mainViewModel,
                             navigateBack = navController::navigateUp,
-                            passwordToEdit = it.arguments?.let { args ->
+                            passwordDataToEdit = it.arguments?.let { args ->
                                 passwordList?.findPassword(
                                     cloudId = args
                                         .getInt(MainScreens.PasswordEdit::cloudId.name, -1)
@@ -399,17 +399,17 @@ class MainActivity : FragmentActivity() {
                 )
                 composable<MainScreens.PasswordView>(
                     content = { navBackStackEntry ->
-                        val defaultPassword = Gson().fromJson(
+                        val defaultPasswordData = Gson().fromJson(
                             navBackStackEntry.arguments!!.getString(MainScreens.PasswordView::passwordJson.name)!!,
-                            Password::class.java
+                            PasswordData::class.java
                         )
                         val password = passwordList?.findPassword(
-                            localId = defaultPassword.localId,
-                            cloudId = defaultPassword.cloudId
-                        ) ?: defaultPassword
+                            localId = defaultPasswordData.localId,
+                            cloudId = defaultPasswordData.cloudId
+                        ) ?: defaultPasswordData
                         PasswordViewScreen.Screen(
                             modifier = composableModifier,
-                            password = password,
+                            passwordData = password,
                             navigateUp = navController::navigateUp,
                             toEditScreen = {
                                 navController.navigate(
