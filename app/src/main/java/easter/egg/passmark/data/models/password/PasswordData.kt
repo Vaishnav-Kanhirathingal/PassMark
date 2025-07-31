@@ -4,7 +4,6 @@ import easter.egg.passmark.data.models.password.sensitive.PasswordHistory
 import easter.egg.passmark.data.models.password.sensitive.SensitiveContent
 import easter.egg.passmark.utils.security.PasswordCryptographyHandler
 
-// TODO: rename to PasswordData
 /** to be used to display stuff and only to be stored in memory */
 data class PasswordData(
     val localId: Int?,

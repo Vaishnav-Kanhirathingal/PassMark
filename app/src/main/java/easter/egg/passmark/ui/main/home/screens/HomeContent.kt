@@ -87,7 +87,6 @@ import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.accessibility.Describable.Companion.hideFromAccessibility
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.accessibility.main.HomeDescribable
-import easter.egg.passmark.utils.annotation.MobileHorizontalPreview
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
@@ -131,7 +130,8 @@ object HomeContent {
             )
         } else {
             val sheetState = rememberModalBottomSheetState()
-            val optionSheetIsVisible: MutableState<PasswordData?> = remember { mutableStateOf(null) }
+            val optionSheetIsVisible: MutableState<PasswordData?> =
+                remember { mutableStateOf(null) }
             val coroutineScope = rememberCoroutineScope()
             optionSheetIsVisible.value?.let { password ->
                 PasswordOptionBottomSheet(
@@ -474,98 +474,6 @@ object HomeContent {
                             }
                         )
 
-                        @Composable
-                        fun SheetButton(
-                            modifier: Modifier = Modifier,
-                            mainIcon: ImageVector,
-                            text: String,
-                            actionIcon: ImageVector,
-                            onClick: () -> Unit,
-                        ) {
-                            Column(
-                                modifier = modifier.width(width = PassMarkDimensions.minTouchSize * 2),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                content = {
-                                    ConstraintLayout(
-                                        modifier = Modifier
-                                            .clip(shape = CircleShape)
-                                            .background(MaterialTheme.colorScheme.primaryContainer)
-                                            .clickable(onClick = onClick),
-                                        content = {
-                                            val (mainIconRef, secondaryIconRef) = createRefs()
-
-
-                                            Icon(
-                                                modifier = Modifier
-                                                    .size(size = 36.dp)
-                                                    .constrainAs(
-                                                        ref = mainIconRef,
-                                                        constrainBlock = {
-                                                            val margin = 16.dp
-                                                            this.top.linkTo(
-                                                                anchor = parent.top,
-                                                                margin = margin
-                                                            )
-                                                            this.bottom.linkTo(
-                                                                anchor = parent.bottom,
-                                                                margin = margin
-                                                            )
-                                                            this.start.linkTo(
-                                                                anchor = parent.start,
-                                                                margin = margin
-                                                            )
-                                                            this.end.linkTo(
-                                                                anchor = parent.end,
-                                                                margin = margin
-                                                            )
-                                                        }
-                                                    ),
-                                                imageVector = mainIcon,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                            )
-
-                                            Icon(
-                                                modifier = Modifier
-                                                    .size(size = 24.dp)
-                                                    .clip(shape = CircleShape)
-                                                    .background(color = MaterialTheme.colorScheme.primaryContainer)
-                                                    .padding(all = 4.dp)
-                                                    .constrainAs(
-                                                        ref = secondaryIconRef,
-                                                        constrainBlock = {
-                                                            this.top.linkTo(mainIconRef.bottom)
-                                                            this.bottom.linkTo(mainIconRef.bottom)
-                                                            this.start.linkTo(mainIconRef.end)
-                                                            this.end.linkTo(mainIconRef.end)
-                                                        }
-                                                    ),
-                                                imageVector = actionIcon,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                            )
-                                        }
-                                    )
-                                    Text(
-                                        modifier = Modifier
-                                            .setSizeLimitation()
-                                            .padding(horizontal = 4.dp),
-                                        text = text,
-                                        fontFamily = PassMarkFonts.font,
-                                        fontSize = PassMarkFonts.Body.medium,
-                                        lineHeight = PassMarkFonts.Body.medium,
-                                        fontWeight = FontWeight.Medium,
-                                        maxLines = 2,
-                                        minLines = 2,
-                                        overflow = TextOverflow.Ellipsis,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-                            )
-                        }
-
                         val clipboardManager = LocalClipboardManager.current
                         val context = LocalContext.current
                         fun copy(str: String) {
@@ -700,6 +608,97 @@ object HomeContent {
         )
     }
 
+    @Composable
+    fun SheetButton(
+        modifier: Modifier = Modifier,
+        mainIcon: ImageVector,
+        text: String,
+        actionIcon: ImageVector,
+        onClick: () -> Unit,
+    ) {
+        Column(
+            modifier = modifier.width(width = PassMarkDimensions.minTouchSize * 2),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            content = {
+                ConstraintLayout(
+                    modifier = Modifier
+                        .setSizeLimitation()
+                        .clip(shape = RoundedCornerShape(size = 16.dp))
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                        .clickable(onClick = onClick),
+                    content = {
+                        val (mainIconRef, secondaryIconRef) = createRefs()
+                        Icon(
+                            modifier = Modifier
+                                .size(size = 36.dp)
+                                .constrainAs(
+                                    ref = mainIconRef,
+                                    constrainBlock = {
+                                        val margin = 16.dp
+                                        this.top.linkTo(
+                                            anchor = parent.top,
+                                            margin = margin
+                                        )
+                                        this.bottom.linkTo(
+                                            anchor = parent.bottom,
+                                            margin = margin
+                                        )
+                                        this.start.linkTo(
+                                            anchor = parent.start,
+                                            margin = margin
+                                        )
+                                        this.end.linkTo(
+                                            anchor = parent.end,
+                                            margin = margin
+                                        )
+                                    }
+                                ),
+                            imageVector = mainIcon,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+
+                        Icon(
+                            modifier = Modifier
+                                .size(size = 24.dp)
+                                .clip(shape = CircleShape)
+                                .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                                .padding(all = 4.dp)
+                                .constrainAs(
+                                    ref = secondaryIconRef,
+                                    constrainBlock = {
+                                        this.top.linkTo(mainIconRef.bottom)
+                                        this.bottom.linkTo(mainIconRef.bottom)
+                                        this.start.linkTo(mainIconRef.end)
+                                        this.end.linkTo(mainIconRef.end)
+                                    }
+                                ),
+                            imageVector = actionIcon,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+                Text(
+                    modifier = Modifier
+                        .setSizeLimitation()
+                        .padding(horizontal = 4.dp),
+                    text = text,
+                    fontFamily = PassMarkFonts.font,
+                    fontSize = PassMarkFonts.Body.small,
+                    lineHeight = PassMarkFonts.Body.small,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 2,
+                    minLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center
+                )
+            }
+        )
+    }
+
     private fun copyToClipBoard(
         clipboardManager: ClipboardManager,
         context: Context,
@@ -718,20 +717,6 @@ object HomeContent {
             Log.d(TAG, "system has it's own toast")
         }
     }
-}
-
-@OptIn(PreviewRestricted::class)
-@Composable
-@MobilePreview
-@MobileHorizontalPreview
-private fun HomeContentPreview() {
-    HomeContent.HomeContent(
-        modifier = Modifier.fillMaxSize(),
-        mainViewModel = MainViewModel.getTestViewModel(),
-        toViewPasswordScreen = {},
-        toPasswordEditScreen = {},
-        homeViewModel = HomeViewModel.getTestViewModel()
-    )
 }
 
 @PreviewRestricted
@@ -762,7 +747,6 @@ private fun PasswordListItemPreview() {
 @PreviewRestricted
 @Composable
 @MobilePreview
-@MobileHorizontalPreview
 private fun EmptyState() {
     HomeContent.EmptyListUI(
         modifier = Modifier.fillMaxSize(),
@@ -788,5 +772,22 @@ private fun PasswordOptionDrawerPreview() {
         dismissSheet = {},
         toPasswordEditScreen = {},
         setPromptState = {}
+    )
+}
+
+@Preview(widthDp = 200, heightDp = 200, showBackground = true)
+@Composable
+private fun SheetButtonPreview() {
+    Box(
+        contentAlignment = Alignment.Center,
+        content = {
+            HomeContent.SheetButton(
+                modifier = Modifier,
+                mainIcon = Icons.Default.Email,
+                text = "Copy email",
+                actionIcon = Icons.Default.ContentCopy,
+                onClick = {}
+            )
+        }
     )
 }
