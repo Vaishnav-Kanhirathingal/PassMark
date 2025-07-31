@@ -31,7 +31,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Fingerprint
@@ -486,7 +488,11 @@ object HomeContent {
                                 textAlign = TextAlign.Center
                             )
                         }
-                        Spacer(modifier = Modifier.fillMaxWidth().height(height = 8.dp))
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(height = 8.dp)
+                        )
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center,
@@ -568,6 +574,14 @@ object HomeContent {
                                     },
                                     actionIcon = Icons.AutoMirrored.Filled.ArrowRight
                                 )
+                                SheetButton(
+                                    modifier = commonModifier,
+                                    mainIcon = Icons.Default.Delete,
+                                    text = "Delete",
+                                    actionIcon = Icons.Default.Clear,
+                                    useErrorColor = true,
+                                    onClick = { TODO("Delete password") }
+                                )
                             }
                         )
                         @Composable
@@ -609,7 +623,11 @@ object HomeContent {
                                 }
                             )
                         }
-                        Spacer(modifier = Modifier.fillMaxWidth().height(height = 8.dp))
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(height = 8.dp)
+                        )
                         LazyVerticalGrid(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -667,6 +685,7 @@ object HomeContent {
         mainIcon: ImageVector,
         text: String,
         actionIcon: ImageVector,
+        useErrorColor: Boolean = false,
         onClick: () -> Unit,
     ) {
         Column(
@@ -681,10 +700,15 @@ object HomeContent {
                         .fillMaxWidth()
                         .aspectRatio(1f)
                         .clip(shape = RoundedCornerShape(size = 16.dp))
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .background(
+                            if (useErrorColor) MaterialTheme.colorScheme.errorContainer
+                            else MaterialTheme.colorScheme.surfaceContainerHigh
+                        )
                         .border(
                             width = 1.dp,
-                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            color =
+                                if (useErrorColor) MaterialTheme.colorScheme.onErrorContainer
+                                else MaterialTheme.colorScheme.surfaceContainerHighest,
                             shape = RoundedCornerShape(size = 16.dp)
                         )
                         .clickable(onClick = onClick),
@@ -704,14 +728,19 @@ object HomeContent {
                                 ),
                             imageVector = mainIcon,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint =
+                                if (useErrorColor) MaterialTheme.colorScheme.onErrorContainer
+                                else MaterialTheme.colorScheme.onSurface
                         )
 
                         Icon(
                             modifier = Modifier
                                 .fillMaxSize(fraction = 0.25f)
                                 .clip(shape = CircleShape)
-                                .background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
+                                .background(
+                                    color = if (useErrorColor) MaterialTheme.colorScheme.errorContainer
+                                    else MaterialTheme.colorScheme.surfaceContainerHigh
+                                )
                                 .padding(all = 4.dp)
                                 .constrainAs(
                                     ref = secondaryIconRef,
@@ -724,7 +753,8 @@ object HomeContent {
                                 ),
                             imageVector = actionIcon,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = if (useErrorColor) MaterialTheme.colorScheme.onErrorContainer
+                            else MaterialTheme.colorScheme.onSurface
                         )
                     }
                 )
@@ -738,7 +768,9 @@ object HomeContent {
                     maxLines = 1,
                     minLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color =
+                        if (useErrorColor) MaterialTheme.colorScheme.onErrorContainer
+                        else MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center
                 )
             }
