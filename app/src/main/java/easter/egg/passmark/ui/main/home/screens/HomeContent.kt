@@ -40,6 +40,8 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Web
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -510,7 +512,8 @@ object HomeContent {
                                             width = 1.dp,
                                             color = MaterialTheme.colorScheme.surfaceContainerHighest,
                                             shape = CircleShape
-                                        ),
+                                        )
+                                        .clickable(onClick = dismissSheet),
                                     contentAlignment = Alignment.Center,
                                     content = {
                                         Icon(
@@ -532,7 +535,7 @@ object HomeContent {
                             verticalAlignment = Alignment.CenterVertically,
                             content = {
                                 val commonModifier = Modifier.weight(weight = 1f)
-                                SheetButton(
+                                BigCardButton(
                                     modifier = commonModifier,
                                     mainIcon = Icons.Default.Password,
                                     text = "Copy password",
@@ -568,7 +571,7 @@ object HomeContent {
                                         if (passwordData.data.useFingerPrint) Icons.Default.Fingerprint
                                         else Icons.Default.ContentCopy,
                                 )
-                                SheetButton(
+                                BigCardButton(
                                     modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.EDIT_BUTTON),
                                     mainIcon = Icons.Default.Edit,
                                     text = "Edit Password",
@@ -605,7 +608,7 @@ object HomeContent {
                                     },
                                     actionIcon = Icons.AutoMirrored.Filled.ArrowRight
                                 )
-                                SheetButton(
+                                BigCardButton(
                                     modifier = commonModifier,
                                     mainIcon = Icons.Default.Delete,
                                     text = "Delete",
@@ -619,6 +622,7 @@ object HomeContent {
                         fun GridButton(
                             modifier: Modifier,
                             text: String,
+                            contentIcon: ImageVector,
                             onClick: () -> Unit
                         ) {
                             Row(
@@ -632,19 +636,63 @@ object HomeContent {
                                         shape = RoundedCornerShape(size = 16.dp)
                                     )
                                     .clickable(onClick = onClick)
-                                    .padding(horizontal = 16.dp),
+                                    .padding(start = 4.dp, end = 16.dp),
                                 horizontalArrangement = Arrangement.spacedBy(
-                                    space = 4.dp,
+                                    space = 8.dp,
                                     alignment = Alignment.Start
                                 ),
                                 verticalAlignment = Alignment.CenterVertically,
                                 content = {
-                                    Icon(
-                                        imageVector = Icons.Default.ContentCopy,
-                                        contentDescription = null
+                                    ConstraintLayout(
+                                        modifier = Modifier.setSizeLimitation(),
+                                        content = {
+                                            val (mainIconRef, copyIconRef) = createRefs()
+                                            Icon(
+                                                modifier = Modifier.constrainAs(
+                                                    ref = mainIconRef,
+                                                    constrainBlock = {
+                                                        top.linkTo(parent.top)
+                                                        bottom.linkTo(parent.bottom)
+                                                        start.linkTo(parent.start)
+                                                        end.linkTo(parent.end)
+//                                                        width = Dimension.
+                                                    }
+                                                ),
+                                                imageVector = contentIcon,
+                                                contentDescription = null
+                                            )
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(size = 20.dp)
+                                                    .clip(shape = CircleShape)
+                                                    .background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
+                                                    .padding(all = 4.dp)
+                                                    .constrainAs(
+                                                        ref = copyIconRef,
+                                                        constrainBlock = {
+                                                            top.linkTo(mainIconRef.bottom)
+                                                            bottom.linkTo(mainIconRef.bottom)
+                                                            start.linkTo(mainIconRef.end)
+                                                            end.linkTo(mainIconRef.end)
+//                                                        width = Dimension.
+                                                        }
+                                                    ),
+                                                contentAlignment = Alignment.Center,
+                                                content = {
+                                                    Icon(
+                                                        modifier = Modifier,
+                                                        imageVector = Icons.Default.ContentCopy,
+                                                        contentDescription = null
+                                                    )
+
+                                                }
+                                            )
+                                        }
                                     )
                                     Text(
-                                        modifier = Modifier.padding(all = 8.dp),
+                                        modifier = Modifier
+                                            .weight(weight = 1f)
+                                            .padding(vertical = 4.dp),
                                         fontFamily = PassMarkFonts.font,
                                         text = text,
                                         fontSize = PassMarkFonts.Body.medium,
@@ -673,7 +721,7 @@ object HomeContent {
                                             modifier = commonModifier,
                                             text = "Website",
                                             onClick = { copy(str = website) },
-//                                        actionIcon = Icons.Default.ContentCopy,
+                                            contentIcon = Icons.Default.Web,
                                         )
                                     }
                                 }
@@ -683,7 +731,7 @@ object HomeContent {
                                             modifier = commonModifier,
                                             text = "Email",
                                             onClick = { copy(str = email) },
-//                                        actionIcon = Icons.Default.ContentCopy
+                                            contentIcon = Icons.Default.Email
                                         )
                                     }
                                 }
@@ -693,7 +741,7 @@ object HomeContent {
                                             modifier = commonModifier,
                                             text = "Username",
                                             onClick = { copy(str = userName) },
-//                                        actionIcon = Icons.Default.ContentCopy,
+                                            contentIcon = Icons.Default.Person,
                                         )
                                     }
                                 }
@@ -706,7 +754,7 @@ object HomeContent {
     }
 
     @Composable
-    fun SheetButton(
+    private fun BigCardButton(
         modifier: Modifier,
         mainIcon: ImageVector,
         text: String,
