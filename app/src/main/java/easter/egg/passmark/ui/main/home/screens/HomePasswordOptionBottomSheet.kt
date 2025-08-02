@@ -74,6 +74,7 @@ import kotlinx.coroutines.runBlocking
 
 object HomePasswordOptionBottomSheet {
     private val TAG = this::class.simpleName
+    private val containerCornerRadius = 16.dp
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -138,9 +139,12 @@ object HomePasswordOptionBottomSheet {
                                 Column(
                                     modifier = Modifier
                                         .weight(weight = 1f)
-                                        .background(
-                                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                            shape = RoundedCornerShape(size = 16.dp)
+                                        .clip(shape = RoundedCornerShape(size = containerCornerRadius))
+                                        .background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
+                                        .border(
+                                            width = 1.dp,
+                                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                            shape = RoundedCornerShape(size = containerCornerRadius)
                                         )
                                         .padding(horizontal = 16.dp, vertical = 8.dp),
                                     horizontalAlignment = Alignment.Start,
@@ -345,12 +349,12 @@ object HomePasswordOptionBottomSheet {
         Row(
             modifier = modifier
                 .setSizeLimitation()
-                .clip(shape = RoundedCornerShape(size = 16.dp))
+                .clip(shape = RoundedCornerShape(size = containerCornerRadius))
                 .background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    shape = RoundedCornerShape(size = 16.dp)
+                    shape = RoundedCornerShape(size = containerCornerRadius)
                 )
                 .clickable(onClick = onClick)
                 .padding(start = 4.dp, end = 16.dp),
@@ -372,7 +376,6 @@ object HomePasswordOptionBottomSheet {
                                     bottom.linkTo(parent.bottom)
                                     start.linkTo(parent.start)
                                     end.linkTo(parent.end)
-//                                                        width = Dimension.
                                 }
                             ),
                             imageVector = contentIcon,
@@ -391,7 +394,6 @@ object HomePasswordOptionBottomSheet {
                                         bottom.linkTo(mainIconRef.bottom)
                                         start.linkTo(mainIconRef.end)
                                         end.linkTo(mainIconRef.end)
-//                                                        width = Dimension.
                                     }
                                 ),
                             contentAlignment = Alignment.Center,
@@ -440,7 +442,7 @@ object HomePasswordOptionBottomSheet {
                         .widthIn(max = PassMarkDimensions.minTouchSize * 3)
                         .fillMaxWidth()
                         .aspectRatio(1f)
-                        .clip(shape = RoundedCornerShape(size = 16.dp))
+                        .clip(shape = RoundedCornerShape(size = containerCornerRadius))
                         .background(
                             if (useErrorColor) MaterialTheme.colorScheme.errorContainer
                             else MaterialTheme.colorScheme.surfaceContainerHigh
@@ -450,7 +452,7 @@ object HomePasswordOptionBottomSheet {
                             color =
                                 if (useErrorColor) MaterialTheme.colorScheme.errorContainer
                                 else MaterialTheme.colorScheme.surfaceContainerHighest,
-                            shape = RoundedCornerShape(size = 16.dp)
+                            shape = RoundedCornerShape(size = containerCornerRadius)
                         )
                         .clickable(onClick = onClick),
                     content = {
