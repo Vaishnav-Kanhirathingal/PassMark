@@ -1,10 +1,6 @@
 package easter.egg.passmark.ui.main.password_view
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.os.Build
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -56,15 +52,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -93,15 +88,15 @@ import easter.egg.passmark.utils.accessibility.main.PasswordViewDescribable
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
 import easter.egg.passmark.utils.extensions.customTopBarModifier
+import easter.egg.passmark.utils.functions.SharedFunctions
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
+import kotlinx.coroutines.launch
 import java.time.ZoneId
 
 object PasswordViewScreen {
-    private val TAG = this::class.simpleName
-
     @Composable
     fun Screen(
         modifier: Modifier,
@@ -334,18 +329,22 @@ object PasswordViewScreen {
                     passwordData = passwordData,
                     associatedVault = associatedVault
                 )
+                val clipboard = LocalClipboard.current
+                val scope = rememberCoroutineScope()
+                fun copy(str: String) {
+                    scope.launch {
+                        SharedFunctions.copyToClipboard(
+                            clipboard = clipboard,
+                            text = str,
+                            context = context
+                        )
+                    }
+                }
+
                 val itemModifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                 val displayFieldContentModifier = Modifier.fillMaxWidth()
-                val clipboardManager = LocalClipboardManager.current
-                fun copy(str: String) {
-                    copyToClipBoard(
-                        clipboardManager = clipboardManager,
-                        context = context,
-                        str = str
-                    )
-                }
                 PropertyListCard(
                     modifier = itemModifier,
                     itemList = mutableListOf<@Composable () -> Unit>().apply {
@@ -499,7 +498,8 @@ object PasswordViewScreen {
                                     modifier = displayFieldContentModifier,
                                     startIcon = Icons.Default.EventRepeat,
                                     titleText = "Last Used",
-                                    fieldText = (lastUpdatedTimeBeforeUpdate ?: passwordData.lastUsed)
+                                    fieldText = (lastUpdatedTimeBeforeUpdate
+                                        ?: passwordData.lastUsed)
                                         .formatToTime(),
                                     endIconDescribable = null
                                 )
@@ -911,16 +911,19 @@ object PasswordViewScreen {
                         )
                     }
                 )
-                val clipboardManager = LocalClipboardManager.current
+                val coroutineScope = rememberCoroutineScope()
+                val clipboard = LocalClipboard.current
                 val context = LocalContext.current
                 IconButton(
                     modifier = Modifier.setSizeLimitation(),
                     onClick = {
-                        copyToClipBoard(
-                            clipboardManager = clipboardManager,
-                            context = context,
-                            str = passwordHistory.password
-                        )
+                        coroutineScope.launch {
+                            SharedFunctions.copyToClipboard(
+                                clipboard = clipboard,
+                                text = passwordHistory.password,
+                                context = context
+                            )
+                        }
                     },
                     content = {
                         Icon(
@@ -931,20 +934,6 @@ object PasswordViewScreen {
                 )
             }
         )
-
-    }
-
-    private fun copyToClipBoard(
-        clipboardManager: ClipboardManager,
-        context: Context,
-        str: String
-    ) {
-        clipboardManager.setText(AnnotatedString(text = str))
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            Toast.makeText(context, "Text copied to clipboard", Toast.LENGTH_LONG).show()
-        } else {
-            Log.d(TAG, "system has it's own toast")
-        }
     }
 
     private fun Long.formatToTime(): String {

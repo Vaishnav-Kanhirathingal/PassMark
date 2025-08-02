@@ -2,9 +2,7 @@ package easter.egg.passmark.ui.main.home.screens
 
 import android.content.Context
 import android.content.ContextWrapper
-import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,14 +42,13 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -67,10 +64,12 @@ import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescript
 import easter.egg.passmark.utils.accessibility.main.HomeDescribable
 import easter.egg.passmark.utils.annotation.MobilePreview
 import easter.egg.passmark.utils.annotation.PreviewRestricted
+import easter.egg.passmark.utils.functions.SharedFunctions
 import easter.egg.passmark.utils.security.biometrics.BiometricsHandler
 import easter.egg.passmark.utils.values.PassMarkDimensions
 import easter.egg.passmark.utils.values.PassMarkFonts
 import easter.egg.passmark.utils.values.setSizeLimitation
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 object HomePasswordOptionBottomSheet {
@@ -107,15 +106,17 @@ object HomePasswordOptionBottomSheet {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     content = {
-
-                        val clipboardManager = LocalClipboardManager.current
                         val context = LocalContext.current
-                        fun copy(str: String) {
-                            copyToClipBoard(
-                                clipboardManager = clipboardManager,
-                                context = context,
-                                str = str
-                            )
+                        val clipboard = LocalClipboard.current
+                        val scope = rememberCoroutineScope()
+                        fun copy(text: String) {
+                            scope.launch {
+                                SharedFunctions.copyToClipboard(
+                                    clipboard = clipboard,
+                                    text = text,
+                                    context = context
+                                )
+                            }
                         }
 
                         fun Context.findFragmentActivity(): FragmentActivity? {
@@ -194,7 +195,6 @@ object HomePasswordOptionBottomSheet {
                                 )
                             }
                         )
-
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(
@@ -216,7 +216,7 @@ object HomePasswordOptionBottomSheet {
                                                     activity = activity,
                                                     onComplete = {
                                                         if (it == BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED) {
-                                                            copy(str = passwordData.data.password)
+                                                            copy(text = passwordData.data.password)
                                                         } else {
                                                             it.handleToast(context = context)
                                                         }
@@ -232,7 +232,7 @@ object HomePasswordOptionBottomSheet {
                                                 )
                                             }
                                         } else {
-                                            copy(str = passwordData.data.password)
+                                            copy(text = passwordData.data.password)
                                         }
                                         dismissSheet()
                                     },
@@ -302,7 +302,7 @@ object HomePasswordOptionBottomSheet {
                                         GridButton(
                                             modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.COPY_WEBSITE),
                                             text = "Website",
-                                            onClick = { copy(str = website) },
+                                            onClick = { copy(text = website) },
                                             contentIcon = Icons.Default.Web,
                                         )
                                     }
@@ -312,7 +312,7 @@ object HomePasswordOptionBottomSheet {
                                         GridButton(
                                             modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.COPY_EMAIL),
                                             text = "Email",
-                                            onClick = { copy(str = email) },
+                                            onClick = { copy(text = email) },
                                             contentIcon = Icons.Default.Email
                                         )
                                     }
@@ -322,7 +322,7 @@ object HomePasswordOptionBottomSheet {
                                         GridButton(
                                             modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.COPY_USERNAME),
                                             text = "Username",
-                                            onClick = { copy(str = userName) },
+                                            onClick = { copy(text = userName) },
                                             contentIcon = Icons.Default.Person,
                                         )
                                     }
@@ -516,25 +516,6 @@ object HomePasswordOptionBottomSheet {
                 )
             }
         )
-    }
-
-    private fun copyToClipBoard(
-        clipboardManager: ClipboardManager,
-        context: Context,
-        str: String
-    ) {
-        clipboardManager.setText(AnnotatedString(text = str))
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            Toast
-                .makeText(
-                    context,
-                    "Text copied to clipboard",
-                    Toast.LENGTH_LONG
-                )
-                .show()
-        } else {
-            Log.d(TAG, "system has it's own toast")
-        }
     }
 }
 
