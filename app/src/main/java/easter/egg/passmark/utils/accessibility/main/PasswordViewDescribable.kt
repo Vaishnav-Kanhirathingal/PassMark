@@ -2,7 +2,6 @@ package easter.egg.passmark.utils.accessibility.main
 
 import easter.egg.passmark.utils.accessibility.Describable
 
-// TODO: add others too
 enum class PasswordViewDescribable(override val desc: String) : Describable {
     BACK_BUTTON("exit view password screen"),
     EDIT_BUTTON("edit current password"),

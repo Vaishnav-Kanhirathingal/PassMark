@@ -437,6 +437,7 @@ object HomeContent {
         toPasswordEditScreen: () -> Unit,
         setPromptState: (SecurityPromptState) -> Unit
     ) {
+        // TODO: maintain open state in viewmodel
         ModalBottomSheet(
             onDismissRequest = dismissSheet,
             sheetState = sheetState,
@@ -486,7 +487,13 @@ object HomeContent {
                             verticalAlignment = Alignment.CenterVertically,
                             content = {
                                 Column(
-                                    modifier = Modifier.weight(weight = 1f),
+                                    modifier = Modifier
+                                        .weight(weight = 1f)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                            shape = RoundedCornerShape(size = 16.dp)
+                                        )
+                                        .padding(horizontal = 16.dp, vertical = 8.dp),
                                     horizontalAlignment = Alignment.Start,
                                     verticalArrangement = Arrangement.Center,
                                     content = {
