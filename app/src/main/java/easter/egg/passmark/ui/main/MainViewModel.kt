@@ -240,7 +240,8 @@ class HomeListData(
                 .let { passList ->
                     when (passwordSortingOptions) {
                         PasswordSortingOptions.NAME -> {
-                            val selector = { passwordData: PasswordData -> passwordData.data.title.lowercase() }
+                            val selector =
+                                { passwordData: PasswordData -> passwordData.data.title.lowercase() }
                             if (increasingOrder) passList.sortedBy(selector = selector)
                             else passList.sortedByDescending(selector)
                         }
