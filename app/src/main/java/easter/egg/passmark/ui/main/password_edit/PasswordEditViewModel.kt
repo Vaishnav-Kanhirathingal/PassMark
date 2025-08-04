@@ -66,6 +66,16 @@ class PasswordEditViewModel @Inject constructor(
         this._selectedVault.value = vault
     }
 
+    private val _vaultSelectionSheetVisible: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val vaultSelectionSheetVisible: StateFlow<Boolean> get() = _vaultSelectionSheetVisible
+    fun showVaultSelectionSheet() {
+        this._vaultSelectionSheetVisible.value = true
+    }
+
+    fun hideVaultSelectionSheet() {
+        this._vaultSelectionSheetVisible.value = false
+    }
+
     // TODO: on account reset, only delete user associated password room data
     //---------------------------------------------------------------------------------loaded-values
     private var _oldPasswordData: PasswordData? = null
@@ -158,7 +168,8 @@ class PasswordEditViewModel @Inject constructor(
                                 }
 
                             val id =
-                                passwordDao.upsert(passwordCapsule = passwordDataCapsuleToSave).toInt()
+                                passwordDao.upsert(passwordCapsule = passwordDataCapsuleToSave)
+                                    .toInt()
                             passwordDao.getById(id = id)
                         } else {
                             _oldPasswordData?.localId

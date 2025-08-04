@@ -53,8 +53,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -216,8 +214,17 @@ object PasswordEditScreen {
                 )
                 val pillShape = RoundedCornerShape(size = PassMarkDimensions.minTouchSize)
 
-                val sheetIsVisible = remember { mutableStateOf(false) }
+                val vaultSheetIsVisible =
+                    passwordEditViewModel.vaultSelectionSheetVisible.collectAsState()
                 val sheetState = rememberModalBottomSheetState()
+
+                LaunchedEffect(
+                    key1 = Unit,
+                    block = {
+                        if (vaultSheetIsVisible.value) sheetState.show()
+                        else sheetState.hide()
+                    }
+                )
 
                 val coroutineScope = rememberCoroutineScope()
                 Row(
@@ -229,7 +236,7 @@ object PasswordEditScreen {
                         .clickable(
                             enabled = !passwordEditViewModel.screenState.collectAsState().value.isLoading,
                             onClick = {
-                                sheetIsVisible.value = true
+                                passwordEditViewModel.showVaultSelectionSheet()
                                 coroutineScope.launch { sheetState.show() }
                             }
                         )
@@ -270,7 +277,7 @@ object PasswordEditScreen {
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
-                        if (sheetIsVisible.value) {
+                        if (vaultSheetIsVisible.value) {
                             val passwordList =
                                 (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
                                     ?.result?.passwordDataListState?.collectAsState()?.value
@@ -278,7 +285,7 @@ object PasswordEditScreen {
                                 dismissDropDown = {
                                     coroutineScope
                                         .launch { sheetState.hide() }
-                                        .invokeOnCompletion { sheetIsVisible.value = false }
+                                        .invokeOnCompletion { passwordEditViewModel.hideVaultSelectionSheet() }
                                 },
                                 vaultList = (mainViewModel.screenState.collectAsState().value as? ScreenState.Loaded)
                                     ?.result?.vaultListState?.collectAsState()?.value
@@ -335,6 +342,7 @@ object PasswordEditScreen {
         )
     }
 
+    // TODO: preserve state
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun VaultSelectionBottomSheet(
