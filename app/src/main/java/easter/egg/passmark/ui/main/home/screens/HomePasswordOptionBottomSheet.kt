@@ -85,7 +85,6 @@ object HomePasswordOptionBottomSheet {
         toPasswordEditScreen: () -> Unit,
         setPromptState: (SecurityPromptState) -> Unit
     ) {
-        // TODO: maintain open state in viewmodel
         ModalBottomSheet(
             onDismissRequest = dismissSheet,
             sheetState = sheetState,
@@ -340,7 +339,7 @@ object HomePasswordOptionBottomSheet {
     }
 
     @Composable
-    fun GridButton(
+    private fun GridButton(
         modifier: Modifier,
         text: String,
         contentIcon: ImageVector,

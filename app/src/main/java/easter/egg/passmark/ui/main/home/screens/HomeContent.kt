@@ -27,10 +27,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -100,24 +98,32 @@ object HomeContent {
             )
         } else {
             val sheetState = rememberModalBottomSheetState()
-            val optionSheetIsVisible: MutableState<PasswordData?> =
-                remember { mutableStateOf(null) }
+            val passwordSheetState = homeViewModel.passwordSheetState.collectAsState()
+
+            LaunchedEffect(
+                key1 = Unit,
+                block = {
+                    if (passwordSheetState.value != null) sheetState.show()
+                    else sheetState.hide()
+                }
+            )
+
             val coroutineScope = rememberCoroutineScope()
-            optionSheetIsVisible.value?.let { password ->
+            passwordSheetState.value?.let { password ->
                 HomePasswordOptionBottomSheet.PasswordOptionBottomSheet(
                     passwordData = password,
                     sheetState = sheetState,
                     dismissSheet = {
                         coroutineScope
                             .launch { sheetState.hide() }
-                            .invokeOnCompletion { optionSheetIsVisible.value = null }
+                            .invokeOnCompletion { homeViewModel.dismissPasswordOptionSheet() }
                     },
                     toPasswordEditScreen = {
                         coroutineScope
                             .launch { sheetState.hide() }
                             .invokeOnCompletion {
                                 toPasswordEditScreen(password)
-                                optionSheetIsVisible.value = null
+                                homeViewModel.dismissPasswordOptionSheet()
                             }
                     },
                     setPromptState = { homeViewModel.securityPromptState.value = it }
@@ -152,7 +158,7 @@ object HomeContent {
                                 passwordData = it,
                                 viewPassword = { toViewPasswordScreen(it) },
                                 openOptions = {
-                                    optionSheetIsVisible.value = it
+                                    homeViewModel.openPasswordOptionSheet(passwordData = it)
                                     coroutineScope.launch { sheetState.show() }
                                 },
                             )

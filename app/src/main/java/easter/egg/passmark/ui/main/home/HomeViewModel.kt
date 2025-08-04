@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import easter.egg.passmark.data.models.Vault
+import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.data.models.password.PasswordSortingOptions
 import easter.egg.passmark.data.storage.SettingsDataStore
 import easter.egg.passmark.data.storage.database.PasswordDao
@@ -74,6 +75,18 @@ class HomeViewModel @Inject constructor(
     val searchText: StateFlow<String?> get() = _searchText
     fun updateSearchText(str: String?) {
         this._searchText.value = str
+    }
+
+    //--------------------------------------------------------------------------password-sheet-state
+    private val _passwordSheetState: MutableStateFlow<PasswordData?> = MutableStateFlow(null)
+    val passwordSheetState: StateFlow<PasswordData?> get() = _passwordSheetState
+
+    fun openPasswordOptionSheet(passwordData: PasswordData) {
+        this._passwordSheetState.value = passwordData
+    }
+
+    fun dismissPasswordOptionSheet() {
+        this._passwordSheetState.value = null
     }
 
     //----------------------------------------------------------------------------vault-dialog-state
