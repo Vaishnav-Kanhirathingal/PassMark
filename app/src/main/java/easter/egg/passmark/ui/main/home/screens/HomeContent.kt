@@ -146,10 +146,13 @@ object HomeContent {
                     alignment = Alignment.Top
                 ),
                 content = {
-                    val spacerModifier = Modifier
-                        .fillMaxWidth()
-                        .height(height = 8.dp)
-                    item { Spacer(modifier = spacerModifier) }
+                    item {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(height = 8.dp)
+                        )
+                    }
                     items(
                         items = passwordList ?: listOf(),
                         itemContent = {
@@ -164,7 +167,13 @@ object HomeContent {
                             )
                         }
                     )
-                    item { Spacer(modifier = spacerModifier) }
+                    item {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(height = PassMarkDimensions.minTouchSize * 2)
+                        )
+                    }
                 }
             )
         }
