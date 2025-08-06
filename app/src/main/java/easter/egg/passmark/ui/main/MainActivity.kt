@@ -265,6 +265,7 @@ class MainActivity : FragmentActivity() {
                                             BiometricsHandler.performBiometricAuthentication(
                                                 context = context,
                                                 activity = act,
+                                                subtitle = "Authenticate to unlock app",
                                                 onComplete = { biometricHandlerOutput ->
                                                     if (biometricHandlerOutput == BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED) {
                                                         onFingerPrintVerification()

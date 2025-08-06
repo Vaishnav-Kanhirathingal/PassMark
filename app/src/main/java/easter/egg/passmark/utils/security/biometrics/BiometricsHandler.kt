@@ -35,6 +35,8 @@ object BiometricsHandler {
     fun performBiometricAuthentication(
         context: Context,
         activity: FragmentActivity,
+        title: String = "Authenticate",
+        subtitle: String,
         onComplete: (BiometricHandlerOutput) -> Unit,
         onBiometricsNotPresent: () -> Unit = { showBiometricsNotPresentToast(context = context) }
     ) {
@@ -64,8 +66,8 @@ object BiometricsHandler {
                 ).authenticate(
                     BiometricPrompt
                         .PromptInfo.Builder()
-                        .setTitle("Authenticate")
-                        .setSubtitle("Authenticate to copy password")
+                        .setTitle(title)
+                        .setSubtitle(subtitle)
                         .setNegativeButtonText("Cancel")
                         .build()
                 )

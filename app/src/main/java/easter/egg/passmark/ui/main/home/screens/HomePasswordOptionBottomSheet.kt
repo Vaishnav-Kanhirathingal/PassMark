@@ -2,7 +2,6 @@ package easter.egg.passmark.ui.main.home.screens
 
 import android.content.Context
 import android.content.ContextWrapper
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -217,6 +216,7 @@ object HomePasswordOptionBottomSheet {
                                                 BiometricsHandler.performBiometricAuthentication(
                                                     context = context,
                                                     activity = activity,
+                                                    subtitle = "Authenticate to copy password",
                                                     onComplete = {
                                                         if (it == BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED) {
                                                             copy(text = passwordData.data.password)
@@ -249,12 +249,11 @@ object HomePasswordOptionBottomSheet {
                                     text = "Edit Password",
                                     onClick = {
                                         if (passwordData.data.useFingerPrint) {
-                                            Log.d(TAG, "requires fingerprint")
                                             (context.findFragmentActivity())?.let {
-                                                Log.d(TAG, "fingerprint prompt opening")
                                                 BiometricsHandler.performBiometricAuthentication(
                                                     context = context,
                                                     activity = it,
+                                                    subtitle = "Authenticate to edit password",
                                                     onComplete = { biometricHandlerOutput ->
                                                         if (biometricHandlerOutput == BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED) {
                                                             toPasswordEditScreen()

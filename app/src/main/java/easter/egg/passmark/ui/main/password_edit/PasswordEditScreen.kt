@@ -342,7 +342,6 @@ object PasswordEditScreen {
         )
     }
 
-    // TODO: preserve state
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun VaultSelectionBottomSheet(

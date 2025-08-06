@@ -49,7 +49,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -96,6 +95,7 @@ import easter.egg.passmark.utils.values.setSizeLimitation
 import kotlinx.coroutines.launch
 import java.time.ZoneId
 
+// TODO: add alternative for fingerprint
 object PasswordViewScreen {
     @Composable
     fun Screen(
@@ -121,14 +121,88 @@ object PasswordViewScreen {
                 )
             }
         )
+        val context = LocalContext.current
+        val clipboard = LocalClipboard.current
+        val scope = rememberCoroutineScope()
+
+        val authenticatedActionState =
+            passwordViewViewModel.authenticatedActionOnHold.collectAsState()
+        val biometricsAuthenticatedState = remember { mutableStateOf(false) }
+        val showHistoryPromptState = remember { mutableStateOf(false) }
+        LaunchedEffect(
+            key1 = authenticatedActionState.value,
+            block = {
+                val action = authenticatedActionState.value
+                if (action == null) {
+                    /* do nothing */
+                } else {
+                    fun performOnAuth() {
+                        when (action) {
+                            AuthenticatedActions.EDIT -> toEditScreen()
+                            AuthenticatedActions.COPY_PASSWORD -> {
+                                scope.launch {
+                                    SharedFunctions.copyToClipboard(
+                                        clipboard = clipboard,
+                                        text = passwordData.data.password,
+                                        context = context
+                                    )
+                                }
+                            }
+
+                            AuthenticatedActions.VIEW_HISTORY -> {
+                                showHistoryPromptState.value = true
+                            }
+
+                            AuthenticatedActions.DELETE_PASSWORD -> TODO()
+                        }
+                        biometricsAuthenticatedState.value = true
+                    }
+
+                    if (biometricsAuthenticatedState.value) {
+                        performOnAuth()
+                        passwordViewViewModel.clearAuthenticatedActionState()
+                    } else {
+                        (context as? FragmentActivity)?.let { fragmentActivity ->
+                            BiometricsHandler.performBiometricAuthentication(
+                                context = context,
+                                activity = fragmentActivity,
+                                subtitle = when (action){
+                                    AuthenticatedActions.EDIT -> "Authenticate to edit password"
+                                    AuthenticatedActions.COPY_PASSWORD -> "Authenticate to copy password"
+                                    AuthenticatedActions.VIEW_HISTORY -> "Authenticate to view password history"
+                                    AuthenticatedActions.DELETE_PASSWORD -> "Authenticate to delete password"
+                                },
+                                onBiometricsNotPresent = { TODO() },
+                                onComplete = {
+                                    when (it) {
+                                        BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED -> performOnAuth()
+
+                                        BiometricsHandler.BiometricHandlerOutput.ERROR,
+                                        BiometricsHandler.BiometricHandlerOutput.FAILED -> {
+                                            it.handleToast(context = context)
+                                        }
+                                    }
+                                    passwordViewViewModel.clearAuthenticatedActionState()
+                                }
+                            )
+                        } ?: TODO()
+                    }
+                }
+            }
+        )
         Scaffold(
             modifier = modifier,
             topBar = {
                 PasswordViewTopBar(
                     modifier = Modifier.customTopBarModifier(),
                     navigateUp = navigateUp,
-                    toEditScreen = toEditScreen,
-                    requireFingerprint = passwordData.data.useFingerPrint
+                    onEditClick = {
+                        if (passwordData.data.useFingerPrint) {
+                            passwordViewViewModel.performAuthenticatedAction(authenticatedAction = AuthenticatedActions.EDIT)
+                        } else {
+                            toEditScreen()
+                        }
+                    }
                 )
             },
             content = {
@@ -147,7 +221,7 @@ object PasswordViewScreen {
                         },
                         positiveButtonText = "Delete",
                         positiveDescribable = PasswordViewDescribable.DeletePasswordDialog.DELETE_BUTTON,
-                        onPositiveClicked = { passwordViewViewModel.delete(passwordData = passwordData) },
+                        onPositiveClicked = { passwordViewViewModel.delete(passwordData = passwordData) }, // TODO: delete should be blocked by fingerprint?
                         screenState = dialogState
                     )
                 }
@@ -176,7 +250,20 @@ object PasswordViewScreen {
                     passwordData = passwordData,
                     lastUpdatedTimeBeforeUpdate = passwordViewViewModel.lastUpdatedTimeBeforeCall,
                     associatedVault = associatedVault,
-                    showDialog = { passwordViewViewModel.setDeleteDialogVisibility(visibility = true) }
+                    showDialog = { passwordViewViewModel.setDeleteDialogVisibility(visibility = true) },
+                    isBiometricsAuthenticated = biometricsAuthenticatedState.value,
+                    showHistoryPrompt = showHistoryPromptState.value,
+                    dismissHistoryPrompt = { showHistoryPromptState.value = false },
+                    onShowPasswordHistory = {
+                        passwordViewViewModel.performAuthenticatedAction(
+                            authenticatedAction = AuthenticatedActions.VIEW_HISTORY
+                        )
+                    },
+                    onPasswordCopyClicked = {
+                        passwordViewViewModel.performAuthenticatedAction(
+                            authenticatedAction = AuthenticatedActions.COPY_PASSWORD
+                        )
+                    }
                 )
             }
         )
@@ -186,8 +273,7 @@ object PasswordViewScreen {
     private fun PasswordViewTopBar(
         modifier: Modifier,
         navigateUp: () -> Unit,
-        toEditScreen: () -> Unit,
-        requireFingerprint: Boolean
+        onEditClick: () -> Unit
     ) {
         val barSize = PassMarkDimensions.minTouchSize
         Row(
@@ -215,7 +301,6 @@ object PasswordViewScreen {
                     }
                 )
                 Spacer(modifier = Modifier.weight(weight = 1f))
-                val context = LocalContext.current
                 Row(
                     modifier = Modifier
                         .setSizeLimitation()
@@ -223,31 +308,8 @@ object PasswordViewScreen {
                         .widthIn(min = barSize)
                         .clip(shape = CircleShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer)
-                        .clickable(
-                            onClick = {
-                                if (requireFingerprint) {
-                                    (context as? FragmentActivity)?.let {
-                                        BiometricsHandler.performBiometricAuthentication(
-                                            context = context,
-                                            activity = it,
-                                            onComplete = { biometricHandlerOutput ->
-                                                if (biometricHandlerOutput == BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED) {
-                                                    toEditScreen()
-                                                } else {
-                                                    biometricHandlerOutput.handleToast(context = context)
-                                                }
-                                            },
-                                        )
-                                    }
-                                } else {
-                                    toEditScreen()
-                                }
-                            }
-                        )
-                        .padding(
-                            start = 20.dp,
-                            end = 24.dp
-                        )
+                        .clickable(onClick = onEditClick)
+                        .padding(start = 20.dp, end = 24.dp)
                         .setDescription(describable = PasswordViewDescribable.EDIT_BUTTON),
                     horizontalArrangement = Arrangement.spacedBy(
                         space = 8.dp,
@@ -280,7 +342,12 @@ object PasswordViewScreen {
         passwordData: PasswordData,
         lastUpdatedTimeBeforeUpdate: Long?,
         associatedVault: Vault?,
-        showDialog: () -> Unit
+        showDialog: () -> Unit,
+        isBiometricsAuthenticated: Boolean,
+        showHistoryPrompt: Boolean,
+        dismissHistoryPrompt: () -> Unit,
+        onShowPasswordHistory: () -> Unit,
+        onPasswordCopyClicked: () -> Unit
     ) {
         Column(
             modifier = modifier.verticalScroll(state = rememberScrollState()),
@@ -290,37 +357,14 @@ object PasswordViewScreen {
                 alignment = Alignment.Top
             ),
             content = {
-                val biometricAuthenticated = remember { mutableStateOf(false) }
-                val showHistory = remember { mutableStateOf(false) }
                 val context = LocalContext.current
-                fun showBiometricPrompt(
-                    forHistory: Boolean
-                ) {
-                    (context as? FragmentActivity)?.let { activity ->
-                        BiometricsHandler.performBiometricAuthentication(
-                            context = context,
-                            activity = activity,
-                            onComplete = { biometricHandlerOutput ->
-                                if (biometricHandlerOutput == BiometricsHandler.BiometricHandlerOutput.AUTHENTICATED) {
-                                    biometricAuthenticated.value = true
-                                    if (forHistory) {
-                                        showHistory.value = true
-                                    }
-                                } else {
-                                    biometricHandlerOutput.handleToast(context = context)
-                                }
-                            },
-                        )
-                    }
-                }
-
-                if (showHistory.value) {
+                if (showHistoryPrompt) {
                     PasswordHistoryDialog(
                         modifier = Modifier.fillMaxWidth(),
                         passwordHistory = passwordData.data.passwordHistory.toMutableList().apply {
                             this.add(element = passwordData.currentPasswordAsPasswordHistory())
                         }.reversed(),
-                        dismiss = { showHistory.value = false }
+                        dismiss = dismissHistoryPrompt
                     )
                 }
 
@@ -381,31 +425,22 @@ object PasswordViewScreen {
                         this.add(
                             element = {
                                 val accessGranted =
-                                    derivedStateOf { biometricAuthenticated.value || !passwordData.data.useFingerPrint }
+                                    (isBiometricsAuthenticated || !passwordData.data.useFingerPrint)
                                 DisplayFieldContent(
                                     modifier = displayFieldContentModifier,
                                     startIcon = Icons.Default.Password,
                                     titleText = "Password",
                                     fieldText =
-                                        if (accessGranted.value) passwordData.data.password
+                                        if (accessGranted) passwordData.data.password
                                         else "*".repeat(n = 12),
                                     endIcon =
-                                        if (accessGranted.value) Icons.Default.ContentCopy
+                                        if (accessGranted) Icons.Default.ContentCopy
                                         else Icons.Default.Fingerprint,
-                                    endIconOnClick = {
-                                        if (accessGranted.value) copy(str = passwordData.data.password)
-                                        else showBiometricPrompt(forHistory = false)
-                                    },
+                                    endIconOnClick = onPasswordCopyClicked,
                                     endIconDescribable =
-                                        if (accessGranted.value) PasswordViewDescribable.PASSWORD_COPY_BUTTON
+                                        if (accessGranted) PasswordViewDescribable.PASSWORD_COPY_BUTTON
                                         else PasswordViewDescribable.PASSWORD_FINGERPRINT_VERIFICATION_BUTTON,
-                                    onShowPasswordHistory = {
-                                        if (accessGranted.value) {
-                                            showHistory.value = true
-                                        } else {
-                                            showBiometricPrompt(forHistory = true)
-                                        }
-                                    }
+                                    onShowPasswordHistory = onShowPasswordHistory
                                 )
                             }
                         )

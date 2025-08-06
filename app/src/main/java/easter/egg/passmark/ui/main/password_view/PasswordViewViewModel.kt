@@ -99,4 +99,18 @@ class PasswordViewViewModel @Inject constructor(
             }
         }
     }
+
+    private val _authenticatedActionOnHold: MutableStateFlow<AuthenticatedActions?> =
+        MutableStateFlow(null)
+    val authenticatedActionOnHold: StateFlow<AuthenticatedActions?> get() = _authenticatedActionOnHold
+
+    fun performAuthenticatedAction(authenticatedAction: AuthenticatedActions) {
+        this._authenticatedActionOnHold.value = authenticatedAction
+    }
+
+    fun clearAuthenticatedActionState() {
+        this._authenticatedActionOnHold.value = null
+    }
 }
+
+enum class AuthenticatedActions { EDIT, COPY_PASSWORD, VIEW_HISTORY, DELETE_PASSWORD }
