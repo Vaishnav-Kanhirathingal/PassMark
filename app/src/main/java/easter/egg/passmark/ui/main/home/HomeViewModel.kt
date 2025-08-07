@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import easter.egg.passmark.data.models.Vault
+import easter.egg.passmark.data.models.password.PasswordCapsule
 import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.data.models.password.PasswordSortingOptions
 import easter.egg.passmark.data.storage.SettingsDataStore
@@ -87,6 +88,16 @@ class HomeViewModel @Inject constructor(
 
     fun dismissPasswordOptionSheet() {
         this._passwordSheetState.value = null
+    }
+
+    //-----------------------------------------------------------------------------password-deletion
+    val deletePasswordScreenState: MutableStateFlow<ScreenState<PasswordCapsule>> get() = _deletePasswordScreenState
+
+    private val _deletePasswordScreenState: MutableStateFlow<ScreenState<PasswordCapsule>> =
+        MutableStateFlow(ScreenState.PreCall())
+
+    fun deletePassword() {
+        TODO()
     }
 
     //----------------------------------------------------------------------------vault-dialog-state
