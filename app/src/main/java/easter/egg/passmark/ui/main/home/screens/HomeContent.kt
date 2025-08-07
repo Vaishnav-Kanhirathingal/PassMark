@@ -97,7 +97,9 @@ object HomeContent {
                 searchUsed = (homeViewModel.searchText.collectAsState().value != null)
             )
         } else {
-            val sheetState = rememberModalBottomSheetState()
+            val sheetState = rememberModalBottomSheetState(
+                confirmValueChange = { !homeViewModel.deletePasswordScreenState.value.isLoading }
+            )
             val passwordSheetState = homeViewModel.passwordSheetState.collectAsState()
 
             LaunchedEffect(
@@ -126,7 +128,9 @@ object HomeContent {
                                 homeViewModel.dismissPasswordOptionSheet()
                             }
                     },
-                    setPromptState = { homeViewModel.securityPromptState.value = it }
+                    setPromptState = { homeViewModel.securityPromptState.value = it },
+                    onDeleteClick = { homeViewModel.deletePassword() },
+                    deleteState = homeViewModel.deletePasswordScreenState.collectAsState()
                 )
             }
             val securityPromptState = homeViewModel.securityPromptState.collectAsState().value

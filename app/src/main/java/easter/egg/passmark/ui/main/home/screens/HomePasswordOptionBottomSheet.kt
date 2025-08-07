@@ -37,10 +37,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,9 +59,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.FragmentActivity
+import easter.egg.passmark.data.models.password.PasswordCapsule
 import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.ui.main.home.PasswordOptionChoices
 import easter.egg.passmark.ui.main.home.SecurityPromptState
+import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.accessibility.Describable.Companion.hideFromAccessibility
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
 import easter.egg.passmark.utils.accessibility.main.HomeDescribable
@@ -82,10 +88,17 @@ object HomePasswordOptionBottomSheet {
         sheetState: SheetState,
         dismissSheet: () -> Unit,
         toPasswordEditScreen: () -> Unit,
-        setPromptState: (SecurityPromptState) -> Unit
+        setPromptState: (SecurityPromptState) -> Unit,
+        onDeleteClick: () -> Unit,
+        deleteState: State<ScreenState<PasswordCapsule>>
     ) {
+        val isLoading = deleteState.value.isLoading
         ModalBottomSheet(
-            onDismissRequest = dismissSheet,
+            onDismissRequest = {
+                if (!deleteState.value.isLoading) {
+                    dismissSheet()
+                }
+            },
             sheetState = sheetState,
             dragHandle = {
                 Box(
@@ -97,6 +110,7 @@ object HomePasswordOptionBottomSheet {
                         .background(color = MaterialTheme.colorScheme.outline)
                 )
             },
+            properties = ModalBottomSheetProperties(shouldDismissOnBackPress = false),
             content = {
                 Column(
                     modifier = Modifier
@@ -184,7 +198,10 @@ object HomePasswordOptionBottomSheet {
                                             color = MaterialTheme.colorScheme.surfaceContainerHighest,
                                             shape = CircleShape
                                         )
-                                        .clickable(onClick = dismissSheet)
+                                        .clickable(
+                                            enabled = !isLoading,
+                                            onClick = dismissSheet
+                                        )
                                         .setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.DISMISS),
                                     contentAlignment = Alignment.Center,
                                     content = {
@@ -210,6 +227,10 @@ object HomePasswordOptionBottomSheet {
                                     modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.COPY_PASSWORD),
                                     mainIcon = Icons.Default.Password,
                                     text = "Copy password",
+                                    actionIcon =
+                                        if (passwordData.data.useFingerPrint) Icons.Default.Fingerprint
+                                        else Icons.Default.ContentCopy,
+                                    enabled = !isLoading,
                                     onClick = {
                                         if (passwordData.data.useFingerPrint) {
                                             (context.findFragmentActivity())?.let { activity ->
@@ -239,14 +260,13 @@ object HomePasswordOptionBottomSheet {
                                         }
                                         dismissSheet()
                                     },
-                                    actionIcon =
-                                        if (passwordData.data.useFingerPrint) Icons.Default.Fingerprint
-                                        else Icons.Default.ContentCopy,
                                 )
                                 BigCardButton(
                                     modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.EDIT_PASSWORD),
                                     mainIcon = Icons.Default.Edit,
                                     text = "Edit Password",
+                                    actionIcon = Icons.AutoMirrored.Filled.ArrowRight,
+                                    enabled = !isLoading,
                                     onClick = {
                                         if (passwordData.data.useFingerPrint) {
                                             (context.findFragmentActivity())?.let {
@@ -277,7 +297,6 @@ object HomePasswordOptionBottomSheet {
                                             toPasswordEditScreen()
                                         }
                                     },
-                                    actionIcon = Icons.AutoMirrored.Filled.ArrowRight
                                 )
                                 BigCardButton(
                                     modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.DELETE_PASSWORD),
@@ -285,7 +304,8 @@ object HomePasswordOptionBottomSheet {
                                     text = "Delete",
                                     actionIcon = Icons.Default.Clear,
                                     useErrorColor = true,
-                                    onClick = { TODO("Delete password") }
+                                    enabled = !isLoading,
+                                    onClick = onDeleteClick
                                 )
                             }
                         )
@@ -306,6 +326,7 @@ object HomePasswordOptionBottomSheet {
                                             text = "Website",
                                             onClick = { copy(text = website) },
                                             contentIcon = Icons.Default.Web,
+                                            enabled = !isLoading
                                         )
                                     }
                                 }
@@ -315,7 +336,8 @@ object HomePasswordOptionBottomSheet {
                                             modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.COPY_EMAIL),
                                             text = "Email",
                                             onClick = { copy(text = email) },
-                                            contentIcon = Icons.Default.Email
+                                            contentIcon = Icons.Default.Email,
+                                            enabled = !isLoading
                                         )
                                     }
                                 }
@@ -326,6 +348,7 @@ object HomePasswordOptionBottomSheet {
                                             text = "Username",
                                             onClick = { copy(text = userName) },
                                             contentIcon = Icons.Default.Person,
+                                            enabled = !isLoading
                                         )
                                     }
                                 }
@@ -342,6 +365,7 @@ object HomePasswordOptionBottomSheet {
         modifier: Modifier,
         text: String,
         contentIcon: ImageVector,
+        enabled: Boolean,
         onClick: () -> Unit
     ) {
         Row(
@@ -354,7 +378,10 @@ object HomePasswordOptionBottomSheet {
                     color = MaterialTheme.colorScheme.surfaceContainerHighest,
                     shape = RoundedCornerShape(size = containerCornerRadius)
                 )
-                .clickable(onClick = onClick)
+                .clickable(
+                    enabled = enabled,
+                    onClick = onClick
+                )
                 .padding(start = 4.dp, end = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(
                 space = 8.dp,
@@ -427,6 +454,7 @@ object HomePasswordOptionBottomSheet {
         text: String,
         actionIcon: ImageVector,
         useErrorColor: Boolean = false,
+        enabled: Boolean,
         onClick: () -> Unit,
     ) {
         Column(
@@ -452,7 +480,10 @@ object HomePasswordOptionBottomSheet {
                                 else MaterialTheme.colorScheme.surfaceContainerHighest,
                             shape = RoundedCornerShape(size = containerCornerRadius)
                         )
-                        .clickable(onClick = onClick),
+                        .clickable(
+                            enabled = enabled,
+                            onClick = onClick
+                        ),
                     content = {
                         val (mainIconRef, secondaryIconRef) = createRefs()
                         Icon(
@@ -535,11 +566,14 @@ private fun PasswordOptionDrawerPreview() {
             email = null
         )
     )
+    val deleteState = remember { mutableStateOf(ScreenState.PreCall<PasswordCapsule>()) }
     HomePasswordOptionBottomSheet.PasswordOptionBottomSheet(
         passwordData = PasswordData.testPasswordData,
         sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
         dismissSheet = {},
         toPasswordEditScreen = {},
-        setPromptState = {}
+        setPromptState = {},
+        onDeleteClick = {},
+        deleteState = deleteState,
     )
 }
