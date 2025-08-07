@@ -153,7 +153,7 @@ object PasswordViewScreen {
                                 showHistoryPromptState.value = true
                             }
 
-                            AuthenticatedActions.DELETE_PASSWORD -> TODO()
+                            AuthenticatedActions.DELETE_PASSWORD -> passwordViewViewModel.setDeleteDialogVisibility(visibility = true)
                         }
                         biometricsAuthenticatedState.value = true
                     }
@@ -166,7 +166,7 @@ object PasswordViewScreen {
                             BiometricsHandler.performBiometricAuthentication(
                                 context = context,
                                 activity = fragmentActivity,
-                                subtitle = when (action){
+                                subtitle = when (action) {
                                     AuthenticatedActions.EDIT -> "Authenticate to edit password"
                                     AuthenticatedActions.COPY_PASSWORD -> "Authenticate to copy password"
                                     AuthenticatedActions.VIEW_HISTORY -> "Authenticate to view password history"
@@ -250,20 +250,11 @@ object PasswordViewScreen {
                     passwordData = passwordData,
                     lastUpdatedTimeBeforeUpdate = passwordViewViewModel.lastUpdatedTimeBeforeCall,
                     associatedVault = associatedVault,
-                    showDialog = { passwordViewViewModel.setDeleteDialogVisibility(visibility = true) },
+                    showDeleteDialog = { passwordViewViewModel.setDeleteDialogVisibility(visibility = true) },
                     isBiometricsAuthenticated = biometricsAuthenticatedState.value,
                     showHistoryPrompt = showHistoryPromptState.value,
                     dismissHistoryPrompt = { showHistoryPromptState.value = false },
-                    onShowPasswordHistory = {
-                        passwordViewViewModel.performAuthenticatedAction(
-                            authenticatedAction = AuthenticatedActions.VIEW_HISTORY
-                        )
-                    },
-                    onPasswordCopyClicked = {
-                        passwordViewViewModel.performAuthenticatedAction(
-                            authenticatedAction = AuthenticatedActions.COPY_PASSWORD
-                        )
-                    }
+                    performAuthActionVerification = passwordViewViewModel::performAuthenticatedAction
                 )
             }
         )
@@ -342,12 +333,11 @@ object PasswordViewScreen {
         passwordData: PasswordData,
         lastUpdatedTimeBeforeUpdate: Long?,
         associatedVault: Vault?,
-        showDialog: () -> Unit,
+        showDeleteDialog: () -> Unit,
         isBiometricsAuthenticated: Boolean,
         showHistoryPrompt: Boolean,
         dismissHistoryPrompt: () -> Unit,
-        onShowPasswordHistory: () -> Unit,
-        onPasswordCopyClicked: () -> Unit
+        performAuthActionVerification: (AuthenticatedActions) -> Unit,
     ) {
         Column(
             modifier = modifier.verticalScroll(state = rememberScrollState()),
@@ -436,11 +426,15 @@ object PasswordViewScreen {
                                     endIcon =
                                         if (accessGranted) Icons.Default.ContentCopy
                                         else Icons.Default.Fingerprint,
-                                    endIconOnClick = onPasswordCopyClicked,
+                                    endIconOnClick = {
+                                        performAuthActionVerification(AuthenticatedActions.COPY_PASSWORD)
+                                    },
                                     endIconDescribable =
                                         if (accessGranted) PasswordViewDescribable.PASSWORD_COPY_BUTTON
                                         else PasswordViewDescribable.PASSWORD_FINGERPRINT_VERIFICATION_BUTTON,
-                                    onShowPasswordHistory = onShowPasswordHistory
+                                    onShowPasswordHistory = {
+                                        performAuthActionVerification(AuthenticatedActions.VIEW_HISTORY)
+                                    }
                                 )
                             }
                         )
@@ -550,7 +544,15 @@ object PasswordViewScreen {
                         .padding(horizontal = 16.dp)
                         .clip(shape = deleteShape)
                         .background(color = MaterialTheme.colorScheme.error)
-                        .clickable(onClick = showDialog),
+                        .clickable(
+                            onClick = {
+                                if (passwordData.data.useFingerPrint) {
+                                    performAuthActionVerification(AuthenticatedActions.DELETE_PASSWORD)
+                                } else {
+                                    showDeleteDialog()
+                                }
+                            }
+                        ),
                     contentAlignment = Alignment.Center,
                     content = {
                         Text(
