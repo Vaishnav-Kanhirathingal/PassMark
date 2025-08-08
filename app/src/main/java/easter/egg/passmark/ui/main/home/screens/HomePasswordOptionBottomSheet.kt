@@ -63,6 +63,7 @@ import easter.egg.passmark.data.models.password.PasswordCapsule
 import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.ui.main.home.PasswordOptionChoices
 import easter.egg.passmark.ui.main.home.SecurityPromptState
+import easter.egg.passmark.ui.shared_components.CustomLoader
 import easter.egg.passmark.utils.ScreenState
 import easter.egg.passmark.utils.accessibility.Describable.Companion.hideFromAccessibility
 import easter.egg.passmark.utils.accessibility.Describable.Companion.setDescription
@@ -260,6 +261,7 @@ object HomePasswordOptionBottomSheet {
                                         }
                                         dismissSheet()
                                     },
+                                    isLoading = false
                                 )
                                 BigCardButton(
                                     modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.EDIT_PASSWORD),
@@ -297,6 +299,7 @@ object HomePasswordOptionBottomSheet {
                                             toPasswordEditScreen()
                                         }
                                     },
+                                    isLoading = false
                                 )
                                 BigCardButton(
                                     modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.DELETE_PASSWORD),
@@ -305,7 +308,8 @@ object HomePasswordOptionBottomSheet {
                                     actionIcon = Icons.Default.Clear,
                                     useErrorColor = true,
                                     enabled = !isLoading,
-                                    onClick = onDeleteClick
+                                    onClick = onDeleteClick,
+                                    isLoading = isLoading
                                 )
                             }
                         )
@@ -456,6 +460,7 @@ object HomePasswordOptionBottomSheet {
         useErrorColor: Boolean = false,
         enabled: Boolean,
         onClick: () -> Unit,
+        isLoading: Boolean
     ) {
         Column(
             modifier = modifier,
@@ -486,7 +491,7 @@ object HomePasswordOptionBottomSheet {
                         ),
                     content = {
                         val (mainIconRef, secondaryIconRef) = createRefs()
-                        Icon(
+                        Box(
                             modifier = Modifier
                                 .fillMaxSize(fraction = 0.5f)
                                 .constrainAs(
@@ -498,11 +503,27 @@ object HomePasswordOptionBottomSheet {
                                         this.end.linkTo(anchor = parent.end)
                                     }
                                 ),
-                            imageVector = mainIcon,
-                            contentDescription = null,
-                            tint =
-                                if (useErrorColor) MaterialTheme.colorScheme.onErrorContainer
-                                else MaterialTheme.colorScheme.onSurface
+                            contentAlignment = Alignment.Center,
+                            content = {
+                                val tint =
+                                    if (useErrorColor) MaterialTheme.colorScheme.onErrorContainer
+                                    else MaterialTheme.colorScheme.onSurface
+                                if (isLoading) {
+                                    CustomLoader.ButtonLoader(
+                                        modifier = Modifier.fillMaxSize(),
+                                        color = tint,
+                                        barWidth = 8.dp,
+                                        spacing = 2.dp
+                                    )
+                                } else {
+                                    Icon(
+                                        modifier = Modifier.fillMaxSize(),
+                                        imageVector = mainIcon,
+                                        contentDescription = null,
+                                        tint = tint
+                                    )
+                                }
+                            }
                         )
 
                         Icon(
