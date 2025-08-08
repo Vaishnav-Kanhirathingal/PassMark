@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import easter.egg.passmark.utils.annotation.PreviewRestricted
 import kotlin.math.absoluteValue
@@ -98,34 +99,30 @@ object CustomLoader {
     @Composable
     fun ButtonLoader(
         modifier: Modifier,
-        color: Color
+        color: Color,
+        barWidth: Dp = 4.dp,
+        spacing: Dp = 1.dp
     ) {
-        val config = object {
-            val barWidth = 4.dp
-            val spacing = 1.dp
-            val totalBarCount = 5
-        }
+        val totalBarCount = 5
+        val totalSizeMin = (barWidth * totalBarCount) + (spacing * (totalBarCount - 1))
 
-        val totalSizeMin = config.run {
-            (barWidth * totalBarCount) + (spacing * (totalBarCount - 1))
-        }
         Row(
             modifier = modifier.sizeIn(
                 minWidth = totalSizeMin,
                 minHeight = totalSizeMin
             ),
             horizontalArrangement = Arrangement.spacedBy(
-                space = config.spacing,
+                space = spacing,
                 alignment = Alignment.CenterHorizontally
             ),
             verticalAlignment = Alignment.CenterVertically,
             content = {
                 repeat(
-                    times = config.totalBarCount,
+                    times = totalBarCount,
                     action = { index ->
                         val height = rememberInfiniteTransition()
                             .animateFloat(
-                                initialValue = config.barWidth.value,
+                                initialValue = barWidth.value,
                                 targetValue = totalSizeMin.value,
                                 animationSpec = infiniteRepeatable(
                                     animation = tween(
@@ -142,7 +139,7 @@ object CustomLoader {
                         Box(
                             modifier = Modifier
                                 .size(
-                                    width = config.barWidth,
+                                    width = barWidth,
                                     height = height.value.dp
                                 )
                                 .background(
@@ -181,6 +178,30 @@ private fun CustomLoaderPreview() {
             CustomLoader.ButtonLoader(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+    )
+}
+
+@Composable
+@PreviewRestricted
+@Preview(widthDp = 200, heightDp = 48, showBackground = true)
+private fun DynamicButtonLoaderPreview() {
+    Box(
+        modifier = Modifier
+            .background(
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(
+                    size = 16.dp
+                )
+            ),
+        contentAlignment = Alignment.Center,
+        content = {
+            CustomLoader.ButtonLoader(
+                modifier = Modifier.size(size = 48.dp),
+                color = MaterialTheme.colorScheme.onPrimary,
+                barWidth = 8.dp,
+                spacing = 2.dp
             )
         }
     )
