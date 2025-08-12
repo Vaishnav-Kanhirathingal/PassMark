@@ -47,7 +47,7 @@ class PassMarkDataStore(
                     val input = it[passwordKey]
                     val iv = it[initializationVectorKey]
                     if (input == null || iv == null) {
-                        Log.d(TAG, "input null = ${input == null}, iv null = ${iv == null}")
+//                        Log.d(TAG, "input null = ${input == null}, iv null = ${iv == null}")
                         null
                     } else {
                         keyStoreHandler.decrypt(input = input, iv = iv)

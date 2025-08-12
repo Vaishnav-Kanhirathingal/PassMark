@@ -53,8 +53,6 @@ class MasterKeyViewModel @Inject constructor(
         _screenState.value = ScreenState.Loading()
         viewModelScope.launch {
             val password = this@MasterKeyViewModel.masterPasswordText.value
-            Log.d(TAG, "password = $password")
-
             val newState: ScreenState<Unit> = PassMarkConfig.holdForDelay(
                 task = {
                     try {

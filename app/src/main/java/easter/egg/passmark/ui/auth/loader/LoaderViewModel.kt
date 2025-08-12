@@ -86,7 +86,7 @@ class LoaderViewModel @Inject constructor(
                                     }
                             }
                         }
-                    Log.d(TAG, "user state = ${userState.name}")
+//                    Log.d(TAG, "user state = ${userState.name}")
                     ScreenState.Loaded(userState)
                 } catch (e: Exception) {
                     e.printStackTrace()
