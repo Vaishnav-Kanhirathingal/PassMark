@@ -11,6 +11,7 @@ import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.FragmentActivity
 
+// TODO: fix biometrics error has occurred
 object BiometricsHandler {
     enum class BiometricHandlerOutput {
         AUTHENTICATED, FAILED, ERROR;

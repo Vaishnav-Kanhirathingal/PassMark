@@ -8,8 +8,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +30,6 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
@@ -59,7 +60,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.FragmentActivity
-import easter.egg.passmark.data.models.password.PasswordCapsule
 import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.ui.main.home.PasswordOptionChoices
 import easter.egg.passmark.ui.main.home.SecurityPromptState
@@ -145,8 +145,9 @@ object HomePasswordOptionBottomSheet {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .height(intrinsicSize = IntrinsicSize.Min)
                                 .padding(bottom = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(space = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             content = {
                                 Column(
@@ -192,6 +193,8 @@ object HomePasswordOptionBottomSheet {
                                 Box(
                                     modifier = Modifier
                                         .setSizeLimitation()
+                                        .fillMaxHeight()
+                                        .aspectRatio(ratio = 1.0f)
                                         .clip(shape = CircleShape)
                                         .background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
                                         .border(
@@ -227,10 +230,8 @@ object HomePasswordOptionBottomSheet {
                                 BigCardButton(
                                     modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.COPY_PASSWORD),
                                     mainIcon = Icons.Default.Password,
-                                    text = "Copy password",
-                                    actionIcon =
-                                        if (passwordData.data.useFingerPrint) Icons.Default.Fingerprint
-                                        else Icons.Default.ContentCopy,
+                                    text = "Copy",
+                                    actionIcon = Icons.Default.ContentCopy,
                                     enabled = !isLoading,
                                     onClick = {
                                         if (passwordData.data.useFingerPrint) {
@@ -266,7 +267,7 @@ object HomePasswordOptionBottomSheet {
                                 BigCardButton(
                                     modifier = commonModifier.setDescription(describable = HomeDescribable.PasswordOptionsBottomSheet.EDIT_PASSWORD),
                                     mainIcon = Icons.Default.Edit,
-                                    text = "Edit Password",
+                                    text = "Edit",
                                     actionIcon = Icons.AutoMirrored.Filled.ArrowRight,
                                     enabled = !isLoading,
                                     onClick = {
@@ -382,11 +383,11 @@ object HomePasswordOptionBottomSheet {
                     color = MaterialTheme.colorScheme.surfaceContainerHighest,
                     shape = RoundedCornerShape(size = containerCornerRadius)
                 )
-                .clickable(
-                    enabled = enabled,
-                    onClick = onClick
-                )
-                .padding(start = 4.dp, end = 16.dp),
+                .clickable(enabled = enabled, onClick = onClick)
+                .padding(
+                    start = 8.dp, end = 16.dp,
+                    top = 4.dp, bottom = 4.dp
+                ),
             horizontalArrangement = Arrangement.spacedBy(
                 space = 8.dp,
                 alignment = Alignment.Start
@@ -583,13 +584,12 @@ object HomePasswordOptionBottomSheet {
 private fun PasswordOptionDrawerPreview() {
     val passwordData = PasswordData.testPasswordData.copy(
         data = PasswordData.testPasswordData.data.copy(
-            website = null,
-            email = null
+            useFingerPrint = false
         )
     )
     val deleteState = remember { mutableStateOf(ScreenState.PreCall<PasswordData>()) }
     HomePasswordOptionBottomSheet.PasswordOptionBottomSheet(
-        passwordData = PasswordData.testPasswordData,
+        passwordData = passwordData,
         sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },
         dismissSheet = {},
         toPasswordEditScreen = {},
