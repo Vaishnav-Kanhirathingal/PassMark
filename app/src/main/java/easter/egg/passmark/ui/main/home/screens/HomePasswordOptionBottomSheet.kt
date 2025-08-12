@@ -91,7 +91,7 @@ object HomePasswordOptionBottomSheet {
         toPasswordEditScreen: () -> Unit,
         setPromptState: (SecurityPromptState) -> Unit,
         onDeleteClick: () -> Unit,
-        deleteState: State<ScreenState<PasswordCapsule>>
+        deleteState: State<ScreenState<PasswordData>>
     ) {
         val isLoading = deleteState.value.isLoading
         ModalBottomSheet(
@@ -587,7 +587,7 @@ private fun PasswordOptionDrawerPreview() {
             email = null
         )
     )
-    val deleteState = remember { mutableStateOf(ScreenState.PreCall<PasswordCapsule>()) }
+    val deleteState = remember { mutableStateOf(ScreenState.PreCall<PasswordData>()) }
     HomePasswordOptionBottomSheet.PasswordOptionBottomSheet(
         passwordData = PasswordData.testPasswordData,
         sheetState = rememberModalBottomSheetState().apply { runBlocking { this@apply.show() } },

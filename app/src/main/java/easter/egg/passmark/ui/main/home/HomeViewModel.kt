@@ -10,11 +10,11 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import easter.egg.passmark.data.models.Vault
-import easter.egg.passmark.data.models.password.PasswordCapsule
 import easter.egg.passmark.data.models.password.PasswordData
 import easter.egg.passmark.data.models.password.PasswordSortingOptions
 import easter.egg.passmark.data.storage.SettingsDataStore
 import easter.egg.passmark.data.storage.database.PasswordDao
+import easter.egg.passmark.data.supabase.api.PasswordApi
 import easter.egg.passmark.data.supabase.api.VaultApi
 import easter.egg.passmark.di.supabase.SupabaseModule
 import easter.egg.passmark.utils.ScreenState
@@ -29,6 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val vaultApi: VaultApi,
+    private val passwordApi: PasswordApi,
     private val passwordDao: PasswordDao,
     private val settingsDataStore: SettingsDataStore
 ) : ViewModel() {
@@ -38,7 +39,8 @@ class HomeViewModel @Inject constructor(
             HomeViewModel(
                 vaultApi = (VaultApi(supabaseClient = SupabaseModule.mockClient)),
                 passwordDao = PasswordDao.getTestingDao(),
-                settingsDataStore = SettingsDataStore(context = LocalContext.current)
+                settingsDataStore = SettingsDataStore(context = LocalContext.current),
+                passwordApi = PasswordApi(supabaseClient = SupabaseModule.mockClient)
             )
     }
 
@@ -91,13 +93,40 @@ class HomeViewModel @Inject constructor(
     }
 
     //-----------------------------------------------------------------------------password-deletion
-    val deletePasswordScreenState: MutableStateFlow<ScreenState<PasswordCapsule>> get() = _deletePasswordScreenState
-
-    private val _deletePasswordScreenState: MutableStateFlow<ScreenState<PasswordCapsule>> =
+    private val _deletePasswordScreenState: MutableStateFlow<ScreenState<PasswordData>> =
         MutableStateFlow(ScreenState.PreCall())
 
+    val deletePasswordScreenState: StateFlow<ScreenState<PasswordData>> get() = _deletePasswordScreenState
+
     fun deletePassword() {
-        TODO()
+        this._deletePasswordScreenState.value = ScreenState.Loading()
+        viewModelScope.launch {
+            this@HomeViewModel._deletePasswordScreenState.value =
+                PassMarkConfig.holdForDelay {
+                    try {
+                        val password =
+                            this@HomeViewModel.passwordSheetState.value!!.also { password ->
+                                if (password.localId == null && password.cloudId == null) {
+                                    throw IllegalStateException("both local and cloud id are null")
+                                }
+                                password.cloudId?.let { cloudId ->
+                                    passwordApi.deletePassword(
+                                        passwordId = cloudId
+                                    )
+                                }
+                                password.localId?.let { localId -> passwordDao.deleteById(localId = localId) }
+                            }
+                        ScreenState.Loaded(result = password)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        ScreenState.ApiError.fromException(e = e)
+                    }
+                }
+        }
+    }
+
+    fun resetPasswordDeleteState() {
+        this._deletePasswordScreenState.value = ScreenState.PreCall()
     }
 
     //----------------------------------------------------------------------------vault-dialog-state

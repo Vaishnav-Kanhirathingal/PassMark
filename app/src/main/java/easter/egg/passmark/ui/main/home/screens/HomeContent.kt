@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -101,6 +102,25 @@ object HomeContent {
                 confirmValueChange = { !homeViewModel.deletePasswordScreenState.value.isLoading }
             )
             val passwordSheetState = homeViewModel.passwordSheetState.collectAsState()
+            val deleteState = homeViewModel.deletePasswordScreenState.collectAsState()
+            val context = LocalContext.current
+            LaunchedEffect(
+                key1 = deleteState.value,
+                block = {
+                    when (val deleteState = deleteState.value) {
+                        is ScreenState.PreCall, is ScreenState.Loading -> {}
+                        is ScreenState.Loaded -> {
+                            (mainViewModel.screenState.value as? ScreenState.Loaded)
+                                ?.result
+                                ?.deletePassword(passwordData = deleteState.result)
+                            homeViewModel.resetPasswordDeleteState()
+                            homeViewModel.dismissPasswordOptionSheet()
+                        }
+
+                        is ScreenState.ApiError -> deleteState.manageToastActions(context = context)
+                    }
+                }
+            )
 
             LaunchedEffect(
                 key1 = Unit,
@@ -130,7 +150,7 @@ object HomeContent {
                     },
                     setPromptState = { homeViewModel.securityPromptState.value = it },
                     onDeleteClick = { homeViewModel.deletePassword() },
-                    deleteState = homeViewModel.deletePasswordScreenState.collectAsState()
+                    deleteState = deleteState
                 )
             }
             val securityPromptState = homeViewModel.securityPromptState.collectAsState().value
