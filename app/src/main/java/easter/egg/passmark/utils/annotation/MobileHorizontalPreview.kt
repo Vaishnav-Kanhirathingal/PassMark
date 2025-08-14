@@ -4,7 +4,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @PreviewRestricted
 @Preview(
-    widthDp = 780,
+    widthDp = 700,
     heightDp = 360,
     showBackground = true
 )
